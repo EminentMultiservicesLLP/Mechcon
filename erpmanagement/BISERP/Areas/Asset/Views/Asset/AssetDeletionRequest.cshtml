@@ -1,0 +1,463 @@
+﻿@Scripts.Render("~/bundles/jquerymodels")
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        Entry Form
+                    </div>
+                </div>
+
+                <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <fieldset>
+                            <legend></legend>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                                    <a data-toggle="collapse" class="btn btn-success" id="btnAdd">Reset</a>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.Label("Branch")
+                                        @Html.DropDownList("ddlBranch", new SelectList(string.Empty, "Value", "Text"), "Select Branch", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.Label("Asset Code", new { @class = "required" })
+                                        @Html.TextBox("AssetCode", "", new { @class = "form-control " })
+                                        @Html.Hidden("AssetId")
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.Label("Deactive Cause")
+                                        <select id="DeactiveReason" class="wrapperdropdown-content form-control">
+                                            <option class="wrapperdropdown-content">Select</option>
+                                            <option class="wrapperdropdown-content" value="0">Sold</option>
+                                            <option class="wrapperdropdown-content" value="1">Scrap</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.Label("Serial No")
+                                        @Html.TextBox("SerialNo", "", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.Label("Asset Name")
+                                        @Html.TextBox("AssetName", "", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.Label("ModelNo")
+                                        @Html.TextBox("ModelNo", "", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.Label("Request No")
+                                        @Html.TextBox("RequestNo", "", new { @class = "form-control" })
+                                        @Html.Hidden("RequestId")
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.Label("Requested By")
+                                        @Html.TextBox("UserName", "", new { @class = "form-control", @disabled = "disabled" })
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.Label("Approved By", new { @class = "required" })
+                                        @Html.TextBox("ApprovedBy", "", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-group">
+                                <div class="panel panel-default">
+                                    <div class="panel-groupingBoder">
+                                        <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                                            <div class="panel-body">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <b>Details</b>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group form-horizontal">
+                                                        <div class="col-sm-3">
+                                                            @Html.Label("Supplier", new { @class = "required" })
+                                                            @Html.TextBox("Supplier", "", new { @class = "form-control ", @disabled = "disabled" })
+                                                            @Html.Hidden("SupplierId")
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group form-horizontal">
+                                                        <div class="col-sm-3">
+                                                            @Html.Label("NewSupplier", new { @class = "required" })
+                                                            @Html.TextBox("NewSupplier", "", new { @class = "form-control ", @disabled = "disabled" })
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group form-horizontal">
+                                                        <div class="col-sm-3">
+                                                            @Html.Label("others")
+                                                            @Html.CheckBox("others")
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group form-horizontal">
+                                                        <div class="col-sm-3">
+                                                            @Html.Label("Receiver", new { @class = "required" })
+                                                            @Html.TextBox("Receiver", "", new { @class = "form-control ", @disabled = "disabled" })
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group form-horizontal">
+                                                        <div class="col-sm-3">
+                                                            @Html.Label("Amount", new { @class = "required" })
+                                                            @Html.TextBox("Amount", "", new { @class = "form-control ", @disabled = "disabled" })
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group form-horizontal">
+                                                        <div class="col-sm-3">
+                                                            @Html.Label("Address", new { @class = "required" })
+                                                            @Html.TextBox("Address", "", new { @class = "form-control ", @disabled = "disabled" })
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group form-horizontal">
+                                                        <div class="col-sm-3">
+                                                            @Html.Label("Contact Person Name", new { @class = "required" })
+                                                            @Html.TextBox("ContactPerson", "", new { @class = "form-control", @disabled = "disabled" })
+                                                        </div>
+                                                    </div>
+                                                    @*<div class="form-group form-horizontal">
+                                                        <div class="col-sm-3">
+                                                            @Html.Label("Contact Person No", new { @class = "required" })
+                                                            @Html.TextBox("ContactNo", "", new { @class = "form-control", @disabled = "disabled" })
+                                                        </div>
+                                                    </div>*@
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div title="Select AssetNo" id="AssetNOModal" style="display: none;">
+        <div id="grid"></div>
+    </div>
+    <div title="Select AssetNo" id="SupplierModal" style="display: none;">
+        <div id="Suppliergrid"></div>
+    </div>
+    <script type="text/javascript">
+        ClearForm();
+        function LoadAssetGrid() {
+            var BranchId = $("#ddlBranch").val();
+            if (BranchId == undefined || BranchId == "") BranchId = 0
+            $("#AssetNOModal").dialog({
+                height: 500,
+                width: 700,
+                modal: true,
+                open: function (evt, ui) {
+                    $.ajax({
+                        url: "/Asset/RequestRegister/GetRequestNoDeletion",
+                        cache: false,
+                        async: true,
+                        method: "GET",
+                        dataType: "JSON",
+                        data: { BranchId: BranchId },
+                        success: function (response) {
+                            $("#grid").pqGrid("option", "dataModel.data", response);
+                            $("#grid").pqGrid("refreshDataAndView");
+                        },
+                        error: function (request, status, error) {
+                            ClearParamGrid("grid");
+                            return;
+                        }
+                    });
+                },
+                close: function (event, ui) {
+                },
+                show: {
+                    effect: "blind",
+                    duration: 500
+                }
+            });
+        }
+        function ClearForm() {
+            $("#ddlBranch").val("");
+            $("#AssetId").val("");
+            $("#AssetCode").val("");
+            $("#DeactiveReason").val("");
+            $("#SerialNo").val("");
+            $("#AssetName").val("")
+            $("#ModelNo").val("");
+            $("#RequestNo").val("");
+            $("#RequestId").val("");
+            $("#SupplierId").val("");
+            $("#Supplier").val("");
+            $("#Receiver").val("");
+            $("#Amount").val("");
+            $("#Address").val("");
+            $("#ContactPerson").val("");
+            $("#ContactNo").val("");
+            $("#UserName").val("");
+            $("#ApprovedBy").val("");
+            $("#NewSupplier").val("");
+            $("#others").prop('checked', false);
+            $("#Supplier").prop('disabled', true);
+            $("#NewSupplier").prop('disabled', true);
+            $("#Receiver").prop('disabled', true);
+            $("#Amount").prop('disabled', true);
+            $("#Address").prop('disabled', true);
+            $("#ContactPerson").prop('disabled', true);
+            $("#ContactNo").prop('disabled', true);
+           $("#others").attr("disabled", true);
+        }
+        $("#btnAdd").click(function () {
+            ClearForm();
+        });
+        $.ajax({
+            type: "GET",
+            url: "/Master/AllBranches",
+            datatype: "Json",
+            async: true,
+            success: function (data) {
+                $.each(data, function (index, value) {
+                    $('#ddlBranch').append('<option value="' + value.BranchID + '">' + value.BranchName + '</option>');
+                });
+            }
+        });
+
+        dataList = { location: 'local', sorting: 'local', paging: 'local', dataType: 'JSON' };
+        var setAssetCol = [
+               { dataIndx: "AssetId", hidden: true },
+               { title: "AssetCode", dataIndx: "AssetCode", width: 100, dataType: "string", filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } },
+               { title: "AssetName", dataIndx: "ItemName", width: 150, dataType: "string", filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } },
+               { title: "SerialNo", dataIndx: "SerialNo", dataType: "string" },
+               { dataIndx: "ModelNo", hidden: true, dataType: "string" },
+               { title: "RequestCode", dataIndx: "RequestCode", dataType: "string", width: 200 },
+               { title: "UserName", dataIndx: "UserName", width: 100, dataType: "string", hidden: true },
+               { dataIndx: "RequestId", dataType: "int", hidden: true }
+
+        ];
+        setAssetList = {
+            width: "auto", //auto width
+            height: "100%-30", //height in %age
+            selectionModel: { type: 'cell' },
+            autoSizeInterval: 0,
+            scrollModel: { autoFit: true },
+            dragColumns: { enabled: false },
+            hoverMode: 'cell',
+            editor: { type: 'textbox' },
+            filterModel: { on: true, mode: "AND", header: true },
+            showTop: false,
+            resizable: true,
+            virtualX: true,
+            colModel: setAssetCol,
+            dataModel: dataList,
+
+            cellClick: function (evt, ui) {
+                if (ui.rowData) {
+                    var rowIndx = parseInt(ui.rowIndx);
+                    var record = ui.rowData;
+                    $("#AssetId").val(record.AssetId);
+                    $("#AssetCode").val(record.AssetCode);
+                    $("#AssetName").val(record.ItemName);
+                    $("#SerialNo").val(record.SerialNo);
+                    $("#ModelNo").val(record.ModelNo);
+                    $("#RequestNo").val(record.RequestCode);
+                    $("#RequestId").val(record.RequestId);
+                    $("#UserName").val(record.UserName);
+                    ClosePopupWindow("AssetNOModal");
+                }
+            },
+            pageModel: { type: "local", rPP: 20 }
+        };
+        $("#grid").pqGrid(setAssetList);
+
+        $("#Suppliergrid").pqGrid(setAssetList);
+
+        $('#AssetCode').on('click', function () {
+            if ($("#ddlBranch").val() == "" || $("#ddlBranch").val() == undefined) {
+                ShowAlert("error", "Please Select Branch");
+                return;
+            }
+            LoadAssetGrid();
+        });
+
+        $("#DeactiveReason").change(function () {
+            if ($("#DeactiveReason").val() == "0") {
+                $("#Supplier").prop('disabled', false);
+                $("#Supplier").on('click', function () {
+                    ShowSupplierListPoup("Suppliergrid", "SupplierModal", SupplierM, "/Master/AllSupplier/");
+                });
+                $("#NewSupplier").prop('disabled', true);
+                $("#Receiver").prop('disabled', false);
+                $("#Amount").prop('disabled', false);
+                $("#Address").prop('disabled', false);
+                $("#ContactPerson").prop('disabled', false);
+                $("#ContactNo").prop('disabled', false);
+                $("#others").attr("disabled", false);
+            }
+            else {
+                $("#others").prop('checked', false);
+                $("#others").attr("disabled", true);
+                $("#Supplier").prop('disabled', true);
+                $("#NewSupplier").prop('disabled', true);
+                $("#Receiver").prop('disabled', false);
+                $("#Amount").prop('disabled', false);
+                $("#Address").prop('disabled', false);
+                $("#ContactPerson").prop('disabled', false);
+                $("#ContactNo").prop('disabled', false);
+            }
+        });
+
+        $("#DeactiveReason" && "#others").change(function () {
+
+            if ($("#DeactiveReason").val() == "0" && $("#others").prop('checked') == true) {
+                $("#Supplier").prop('disabled', true);
+                $("#NewSupplier").prop('disabled', false);
+                $("#Receiver").prop('disabled', false);
+                $("#Amount").prop('disabled', false);
+                $("#Address").prop('disabled', false);
+                $("#ContactPersonName").prop('disabled', false);
+            }
+            else {
+                $("#Supplier").prop('disabled', false);
+                $("#Supplier").on('click', function () {
+                    ShowSupplierListPoup("Suppliergrid", "SupplierModal", SupplierM, "/Master/AllSupplier/");
+                });
+                $("#NewSupplier").prop('disabled', true);
+                $("#Receiver").prop('disabled', false);
+                $("#Amount").prop('disabled', false);
+                $("#Address").prop('disabled', false);
+                $("#ContactPerson").prop('disabled', false);
+                $("#ContactNo").prop('disabled', false);
+            }
+
+        });
+        var SupplierM = {
+            height: 400,
+            autoSizeInterval: 0,
+            scrollModel: { autoFit: true },
+            dragColumns: { enabled: false },
+            hoverMode: 'cell',
+            editor: { type: 'textbox' },
+            filterModel: { on: true, mode: "AND", header: true },
+            showTop: false,
+            resizable: true,
+            virtualX: true,
+            colModel: colSupplierM,
+            dataModel: dataSupplierM,
+            pageModel: { type: "local", rPP: 20 },
+            toggle: function (evt, ui) {
+                if (ui.state == 'max') {
+                    $(".ui-dialog,.ui-widget-overlay").css('position', 'static');
+                }
+                else {
+                    $(".ui-dialog,.ui-widget-overlay").css('position', 'absolute');
+                }
+            },
+            cellClick: function (evt, ui) {
+                if (ui.rowData) {
+                    var rowIndx = parseInt(ui.rowIndx);
+                    var record = ui.rowData;
+                    $("#SupplierId").val(record.ID);
+                    $("#Supplier").val(record.Name);
+                    ClosePopupWindow("SupplierModal");
+                }
+            }
+        };
+        $("#btnSave").click(function () {
+            if ($("#AssetId").val() == "") {
+                ShowAlert("error", "Please Select AssetCode");
+                return;
+            }
+            if ($("#Receiver").val() == "") {
+                ShowAlert("error", "Please Enter Receiver");
+                return;
+            }
+            if ($("#Amount").val() == "") {
+                ShowAlert("error", "Please Enter Amount");
+                return;
+            }
+            if ($("#Address").val() == "") {
+                ShowAlert("error", "Please Enter Address");
+                return;
+            }
+            if ($("#ContactPerson").val() == "") {
+                ShowAlert("error", "Please Enter ContactPerson");
+                return;
+            }
+            //if ($("#ContactNo").val() == "") {
+            //    ShowAlert("error", "Please Enter ContactPerson");
+            //    return;
+            //}
+            if ($("#ApprovedBy").val() == "") {
+                ShowAlert("error", "Please Enter ApprovedBy");
+                return;
+            }
+            var griditems = JSON.stringify({
+                AssetId: $("#AssetId").val(),
+                AssetCode: $("#AssetCode").val(),
+                DeactiveReason: $("#DeactiveReason").val(),
+                SupplierId: $("#SupplierId").val(),
+                Receiver: $("#Receiver").val(),
+                Address: $("#Address").val(),
+                ContactPerson: $("#ContactPerson").val(),
+                ContactNo: $("#ContactNo").val(),
+                Amount: $("#Amount").val(),
+                RequestId: $("#RequestId").val(),
+                ApprovedBy: $("#ApprovedBy").val(),
+                NewSupplier: $("#NewSupplier").val(),
+            });
+
+            $.ajax(
+            {
+                type: "POST", //HTTP POST Method
+                traditional: true,
+                contentType: 'application/json; charset=utf-8',
+                url: '/AssetDeletionRequest/SaveAssetDeletionRequest', // Controller/View
+                data: griditems,
+                success: function (msg) {
+                    if (msg.success) {
+                        ShowAlert("success", msg.Message);
+                        ClearForm();
+                    }
+                    else {
+                        ShowAlert("error", msg.Message);
+                    }
+                },
+                error: function (jqXHR, exception) {
+                }
+            });
+        });
+
+    </script>
+}
+

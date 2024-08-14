@@ -1,0 +1,248 @@
+﻿@using (Html.BeginForm())
+{
+      @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-groupingBoder">
+                        <div class="panel-heading">
+                            <div class="panel-title">
+                                <a class="collapsediv" data-toggle="collapse" href="#SearchDetails" style="color:white">
+                                    Billing Status
+                                </a>
+                            </div>
+                        </div>
+                        <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                            <div class="panel-body">
+                                <div class="container fill">
+                                    <div id="ClientBillStatusGrid"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+     <div id="BilldetailModal" style="display: none;">
+         <form id="crud-form">
+             <div id="BilldetailGrid"></div>
+         </form>
+</div>
+    <script>
+        var $ClientBillStatusGrid;
+
+        databill = { location: 'local', sorting: 'local', paging: 'local', dataType: 'JSON' };
+        colbill = [
+                          {
+                              title: "Bill Details", editable: false, width: 150, sortable: false,
+                              listeners: [{ click: detailstRow }],
+                              render: function (ui) {
+                                  return "<button type='button' class='edit_btn' style='color:blue'>Detail</button>";
+                              },
+                              postRender: function (ui) {
+                                  var rowIndx = ui.rowIndx,
+                                      grid = this,
+                                      $cell = grid.getCell(ui);
+
+                                  $cell.find(".edit_btn").button({ icons: { primary: 'ui-icon-pencil' } })
+                                  .bind("click", function (evt) {
+                                      var billingId = ui.rowData.ClientBillId;
+                                      detailstRow(rowIndx, grid, true, billingId);
+                                  });
+                              }
+                          },
+                          {
+                              title: "Client", dataIndx: "ClientName", width: 100, dataType: "string", editable: false,
+                              filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                          },
+             {
+                 title:"Bill No" ,dataIndx: "BillNo", width: 150, dataType: "string", editable: false,
+                 filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+             },
+             { title: "Bill Date ", dataIndx: "StrBillDate", width: 130, dataType: "double", editable: false },
+            {
+                title: "Against To", dataIndx: "ProjectName", width: 150, dataType: "string", editable: false,
+                filter: {
+                    type: "select",
+                    condition: 'equal',
+                    prepend: { '': '--Select--' },
+                    valueIndx: "ProjectName",
+                    labelIndx: "ProjectName",
+                    listeners: ['change']
+                }
+            },
+            { title: "Project Code", dataIndx: "ProjectCode", width: 100, dataType: "string", editable: false },
+             { title: "Gross Value", dataIndx: "GrossAmt", width: 100, dataType: "double", editable: false },
+             { title: "Discount", dataIndx: "StanderdDis", width: 90, dataType: "double", editable: false },
+             { title: "Total Tax", dataIndx: "TaxAmt", width: 90, dataType: "double", editable: false },
+             { title: "Total Value", dataIndx: "NetAmt", width: 100, dataType: "double", editable: false },
+             { title: "Total Recieved", dataIndx: "TotalRecieved", width: 100, dataType: "double", editable: false },
+             {
+                 title: "Pending Amount", dataIndx: "PendAmt", width: 140, dataType: "double", editable: false,
+                 formula: function (ui) {
+                     var rd = ui.rowData;
+                     return rd["NetAmt"] - rd["TotalRecieved"];
+                 }
+             },
+
+             
+        ];
+
+        var totalData;
+        //calculate sum of  column.
+        function calculateSummary() {
+            var grossAmount = 0, gstAmount = 0, grandTotal = 0, discount = 0, recieved = 0, pending = 0;
+           var data = $("#ClientBillStatusGrid").pqGrid('option', 'dataModel.data');
+           for (var i = 0; i < data.length; i++) {
+                var row = data[i];
+                grossAmount += parseFloat(row["GrossAmt"]);
+                gstAmount += parseFloat(row["TaxAmt"]);
+                grandTotal += parseFloat(row["NetAmt"]);
+                recieved += parseFloat(row["TotalRecieved"]);
+                discount += parseFloat(row["StanderdDis"]);
+                pending += parseFloat(row["PendAmt"]);
+            }
+
+
+           grossAmount = $.paramquery.formatCurrency(grossAmount);
+           gstAmount = $.paramquery.formatCurrency(gstAmount);
+           grandTotal = $.paramquery.formatCurrency(grandTotal);
+           recieved = $.paramquery.formatCurrency(recieved);
+           discount = $.paramquery.formatCurrency(discount);
+           pending = $.paramquery.formatCurrency(pending);
+            totalData = { ProjectCode: "<b><span style='color:red;'>Total</span></b>", ClientName: "", BillNo: "", StrBillDate: "", ProjectName: "", GrossAmt: '<span style="color:red;">' + grossAmount + '</span>', TaxAmt: '<span style="color:red;">' + gstAmount + '</span>', NetAmt: '<span style="color:red;">' + grandTotal + '</span>', TotalRecieved: '<span style="color:red;">' + recieved, PendAmt: '<span style="color:red;">' + pending + '</span>', pq_rowcls: 'green' };
+        }
+
+       var  setgrid = {
+            width: "100%", //auto width
+            height: 580, //height in %age
+            sortable: false,
+            numberCell: { show: true },
+            selectionModel: { type: 'row' },
+            hoverMode: 'cell',
+            editor: { type: 'textbox' },
+            showTop: true,
+            toolbar:exportToExcelToolbar,
+            resizable: true,
+            filterModel: { on: true, mode: "AND", header: true },
+            virtualX: true,
+            virtualY: true,
+           editable:false,
+            draggable: false,
+            colModel: colbill,
+            dataModel: databill,
+            postRenderInterval: -1,
+            pageModel: { type: "local", rPP: 50 },
+        };
+      
+
+        var $summary = "";
+        setgrid.render = function (evt, ui) {
+            $summary = $("<div class='pq-grid-summary'  ></div>")
+                .prependTo($(".pq-grid-bottom", this.widget()));
+            calculateSummary();
+        }
+        //refresh summary whenever data changes due to edit, add, paste, undo, redo etc.
+        setgrid.change = function (evt, ui) {
+            setgrid.refresh.call(this);
+        }
+        setgrid.refresh = function (evt, ui) {
+            calculateSummary();
+            
+            var data = [totalData]; //2 dimensional array
+            var obj = { data: data, $cont: $summary }
+            this.createTable(obj);
+        }
+        $ClientBillStatusGrid = $("#ClientBillStatusGrid").pqGrid(setgrid);
+        LoadClientBillStatusGrid();
+
+
+        function LoadClientBillStatusGrid() {
+            $.ajax({
+                url: "/ClientBilling/GetClienBillNo",
+                cache: false,
+                async: true,
+                method: "GET",
+                dataType: "JSON",
+                data: { branchId: 0 },
+                success: function (response) {
+                    if (response.success) {
+                        $ClientBillStatusGrid.pqGrid("option", "dataModel.data", response.records);
+
+                        var column = $ClientBillStatusGrid.pqGrid("getColumn", { dataIndx: "ProjectName" });
+                        var filter = column.filter;
+                        filter.cache = null;
+                        filter.options = $ClientBillStatusGrid.pqGrid("getData", { dataIndx: ["ProjectName"] });
+
+                        $ClientBillStatusGrid.pqGrid("refreshDataAndView");
+                    } else {
+                        ClearParamGrid('ClientBillStatusGrid');
+                        ShowAlert("error", "Something Went Wrong");
+                        return;
+                    }
+                },
+                error: function () {
+                    ClearParamGrid('BillNoGrid');
+                    ShowAlert("error", "Something Went Wrong");
+                    return;
+                }
+            });
+        }
+
+        function detailstRow(rowIndx, grid, edit, billingId) {
+            if (rowIndx != null) {
+              LoadBilldetailGrid(billingId);
+                $("#BilldetailGrid").dialog({
+                    height: 500,
+                    width: 700,
+                    modal: true
+                }).dialog("open");
+            }
+        }
+        function LoadBilldetailGrid(billingId) {
+            $.ajax({
+                type: "GET",
+                url: "/ClientBilling/GetClienBilldeatailById",
+                datatype: "Json",
+                data: { clientBillId: billingId },
+                success: function (data) {
+                    $("#BilldetailGrid").pqGrid("option", "dataModel.data", data);
+                    $("#BilldetailGrid").pqGrid("refreshDataAndView");
+                },
+                error: function () {
+                    ClearParamGrid('BilldetailGrid');
+                    ShowAlert("error", "Something went Wrong");
+                    return;
+                }
+            });
+        }
+        databilldetail = { location: 'local', sorting: 'local', paging: 'local', dataType: 'JSON' };
+        colbilldetail = [
+             { title: "Service Name", dataIndx: "ItemName", width: 150, dataType: "string", editable: false },
+            { title: "Rate", dataIndx: "Rate", width: 150, dataType: "double", hidden: false },
+            { title: "Qty", dataIndx: "Qty", width: 100, dataType: "integer", hidden: false },
+             { title: "Bill Amount", dataIndx: "Amount", width: 150, dataType: "string", editable: false },
+             { title: "Discount", dataIndx: "Discount", width: 150, dataType: "double", hidden: false },
+        ];
+
+        setilldetailGrid = {
+            width: 700,
+            height: 400,
+            sortable: false,
+            numberCell: { show: false },
+            hoverMode: 'cell',
+            showTop: false,
+            resizable: true,
+            scrollModel: { autoFit: true },
+            draggable: false,
+            wrap: false,
+            editable: true,
+            columnBorders: true,
+            selectionModel: { type: 'row' },
+            colModel: colbilldetail,
+            dataModel: databilldetail,
+            pageModel: { type: "local", rPP: 20 },
+
+        };
+        $BilldetailGrid = $("#BilldetailGrid").pqGrid(setilldetailGrid);
+    </script>
+}

@@ -1,0 +1,138 @@
+﻿@model BISERP.Areas.Configuration.Models.StockViewModel
+
+<h5 class="page-header orangeDottedBottomBorder">Stock View</h5>
+<div class="row">
+    <div class="col-lg-2 col-md-3 col-sm-4">
+        @Html.Label("Project", new { @class = "required" })
+        @Html.DropDownList("ddlStores", new SelectList(string.Empty, "Value", "Text"), "Select Project", new { @class = "wrapperdropdown-content form-control" })
+    </div>
+    <div class="col-lg-2 col-md-3 col-sm-4" style="text-align:center">
+        @Html.Label("Grand-Total")
+        <input type="text" id="GrandTotal" class="form-control" disabled style="border-color: black; font-weight: bold; font-size: x-large; text-align:center" />
+    </div>
+</div>
+<div class="divider"></div>
+<div class="panel-group">
+    <div class="panel panel-default">
+        <div class="panel-groupingBoder">
+            <div class="panel-heading">
+                <div class="panel-title">
+                    <a class="collapsediv" data-toggle="collapse" href="#SearchDetails">
+                        Stock Details
+                    </a>
+                </div>
+            </div>
+            <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                <div class="panel-body">
+                    <div class="fill">
+                        <div id="StockDetailsGrid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $.ajax({
+        type: "GET",
+        url: "/Master/AllStores",
+        datatype: "Json",
+        success: function (data) {
+            $.each(data, function (index, value) {
+                $('#ddlStores').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+            });
+        }
+    });
+
+    var StockDetailsDataModel = { location: 'local', };
+    var StockDetailsColList = [
+
+        {
+            title: "Item Name & Description", dataIndx: "ItemName", dataType: "string", width: '30%', editable: false,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "ItemTypeName", dataIndx: "ItemTypeName", dataType: "string", width: '30%', editable: false,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "TotalQty", dataIndx: "TotalQty", dataType: "string", width: '20%', editable: false,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "TotalAmount", dataIndx: "TotalAmount", dataType: "string", width: '20%', editable: false,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        }
+    ];
+    var setStockDetailsGridObject = {
+        adjustGridWidth: false,
+        maxWidth: '100%',
+        height: 400,
+        width: 'auto',
+        minWidth: 800,
+        autofill: true,
+        numberCell: { show: true },
+        hoverMode: 'row',
+        showTop: true,
+        showTitle: true,
+        showBottom: true,
+        sortable: true,
+        resizable: true,
+        //scrollModel: { autoFit: true },
+        draggable: false,
+        hwrap: false,
+        wrap: false,
+        editable: false,
+        columnBorders: true,
+        menuIcon: true,
+        filterModel: { on: true, mode: "AND", header: true },
+        selectionModel: { type: 'row', mode: 'single', cbHeader: false },
+        //pageModel: { type: "local" },
+        colModel: StockDetailsColList,
+        dataModel: StockDetailsDataModel
+    }
+    var $StockDetailsGrid = $("#StockDetailsGrid").pqGrid(setStockDetailsGridObject);
+
+    $('#ddlStores').change(() => {
+        $("#GrandTotal").val("")
+        let storeID = $('#ddlStores').val();
+        if (storeID) { // Check if storeID is not empty or undefined
+            LoadStockDetailsGrid(storeID);
+        }
+    });
+
+    function LoadStockDetailsGrid(storeID) {
+        var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: "GET",
+            data: { StoreID: storeID },
+            url: "/StockView/GetStockDetails",
+            beforeSend: function () {
+                $("#StockDetailsGrid").pqGrid("showLoading");
+            },
+            complete: function () {
+                $("#StockDetailsGrid").pqGrid("hideLoading");
+            },
+            success: function (response) {
+                if (response.length > 0) {
+                    $("#GrandTotal").val(response[0].GrandTotal)
+                    $("#StockDetailsGrid").pqGrid("option", "dataModel.data", response);
+                    $("#StockDetailsGrid").pqGrid("refreshDataAndView");
+                    PqGridRefreshClick($("#StockDetailsGrid"));
+                } else {
+                    ShowAlert("error", "No data found.");
+                    $("#StockDetailsGrid").pqGrid("option", "dataModel.data", []);
+                    $("#StockDetailsGrid").pqGrid("refreshDataAndView");
+                    PqGridRefreshClick($("#StockDetailsGrid"));
+                }
+            },
+            error: function (xhr, status, error) {
+                ShowAlert("error", "Failed to load data.");
+            }
+        });
+    }
+
+</script>

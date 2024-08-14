@@ -1,0 +1,332 @@
+﻿
+<hgroup class="title">
+    @Styles.Render("~/Content/font-awesome/css/font-awesome.min.css")
+    
+</hgroup>
+
+@using (Html.BeginForm())
+{
+        @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div style="height: 100%; width: 100%; background-color: #EEF5F9; display: inline-block;">
+        <div class="row">
+            <div class="col-sm-12">
+                <section class="dashboard-counts no-padding-bottom">
+                    <div class="container-fluid">
+                        <div id="topSectionCountGRNReq" class='row bg-white has-shadow roundedBorder'>
+                            <div class="viewDetailSection">
+                                <a id="hrefMenu" href="#">
+                                    <span class="">View Details</span>
+                                    <span class=""><i class="fa fa-arrow-circle-right"></i></span>
+                                    <div class="clearfix"></div>
+                                </a>
+                            </div>
+                            <div class='col-xl-3 col-sm-3'>
+                                <div class='item d-flex align-items-center'>
+                                    <div class='title' style="margin: 0;">
+                                        <span> GRN Details </span>
+                                        <div class="centerDiv">
+                                            <div class="btn-group align-items-center">
+                                                <div class="btn  btn-default btn-rounded btn-icon" style="padding: 0">
+                                                    <i class="fa fa-calendar pull-left"></i>
+                                                    <input id="starGRNDt" type="text" class="date" placeholder="DD-MM-YYYY" title="Enter a date in this format DD-MMM-YYYY" />
+                                                </div>
+                                                <div class="btn btn-default btn-rounded btn-icon" style="padding: 0">
+                                                    <i class="fa fa-calendar pull-left"></i>
+                                                    <input id="endGRNDt" type="text" class="date" placeholder="DD-MM-YYYY" title="Enter a date in this format DD-MMM-YYYY" />
+                                                </div>
+                                                <span><i style="cursor:pointer;" class="fa fa-arrow-circle-right" id="btnGRNRefresh"></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="topSectionCountMIReq" class='row bg-white has-shadow roundedBorder'>
+                            <div class="viewDetailSection">
+                                <a id="hrefMenu" href="#">
+                                    <span class="">View Details</span>
+                                    <span class=""><i class="fa fa-arrow-circle-right"></i></span>
+                                    <div class="clearfix"></div>
+                                </a>
+                            </div>
+                            <div class='col-xl-3 col-sm-3'>
+                                <div class='item d-flex align-items-center'>
+                                    <div class='title' style="margin: 0;">
+                                        <span> Material Request Details </span>
+                                        <div class="centerDiv">
+                                            <div class="btn-group align-items-center">
+                                                <div class="btn  btn-default btn-rounded btn-icon" style="padding: 0">
+                                                    <i class="fa fa-calendar pull-left"></i>
+                                                    <input id="starMIDt" type="text" class="date" placeholder="DD-MM-YYYY" title="Enter a date in this format DD-MMM-YYYY" />
+                                                </div>
+                                                <div class="btn btn-default btn-rounded btn-icon" style="padding: 0">
+                                                    <i class="fa fa-calendar pull-left"></i>
+                                                    <input id="endMIDt" type="text" class="date" placeholder="DD-MM-YYYY" title="Enter a date in this format DD-MMM-YYYY" />
+                                                </div>
+                                                <span><i style="cursor:pointer;" class="fa fa-arrow-circle-right" id="btnMIefresh"></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="topSectionCountMIssueReq" class='row bg-white has-shadow roundedBorder'>
+                            <div class="viewDetailSection">
+                                <a id="hrefMenu" href="#">
+                                    <span class="">View Details</span>
+                                    <span class=""><i class="fa fa-arrow-circle-right"></i></span>
+                                    <div class="clearfix"></div>
+                                </a>
+                            </div>
+                            <div class='col-xl-3 col-sm-3'>
+                                <div class='item d-flex align-items-center'>
+                                    <div class='title' style="margin: 0;">
+                                        <span> Material Issue Details </span>
+                                        <div class="centerDiv">
+                                            <div class="btn-group align-items-center">
+                                                <div class="btn  btn-default btn-rounded btn-icon" style="padding: 0">
+                                                    <i class="fa fa-calendar pull-left"></i>
+                                                    <input id="starMIssueDt" type="text" class="date" placeholder="DD-MM-YYYY" title="Enter a date in this format DD-MMM-YYYY" />
+                                                </div>
+                                                <div class="btn btn-default btn-rounded btn-icon" style="padding: 0">
+                                                    <i class="fa fa-calendar pull-left"></i>
+                                                    <input id="endMIssueDt" type="text" class="date" placeholder="DD-MM-YYYY" title="Enter a date in this format DD-MMM-YYYY" />
+                                                </div>
+                                                <span><i style="cursor:pointer;" class="fa fa-arrow-circle-right" id="btnMIssueRefresh"></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="topSectionCountVIssueReq" class='row bg-white has-shadow roundedBorder'>
+                            <div class="viewDetailSection">
+                                <a id="hrefMenu" href="#">
+                                    <span class="">View Details</span>
+                                    <span class=""><i class="fa fa-arrow-circle-right"></i></span>
+                                    <div class="clearfix"></div>
+                                </a>
+                            </div>
+                            <div class='col-xl-3 col-sm-3'>
+                                <div class='item d-flex align-items-center'>
+                                    <div class='title' style="margin: 0;">
+                                        <span> Vendor Issue Details </span>
+                                        <div class="centerDiv">
+                                            <div class="btn-group align-items-center">
+                                                <div class="btn  btn-default btn-rounded btn-icon" style="padding: 0">
+                                                    <i class="fa fa-calendar pull-left"></i>
+                                                    <input id="starVIssueDt" type="text" class="date" placeholder="DD-MM-YYYY" title="Enter a date in this format DD-MMM-YYYY" />
+                                                </div>
+                                                <div class="btn btn-default btn-rounded btn-icon" style="padding: 0">
+                                                    <i class="fa fa-calendar pull-left"></i>
+                                                    <input id="endVIssueDt" type="text" class="date" placeholder="DD-MM-YYYY" title="Enter a date in this format DD-MMM-YYYY" />
+                                                </div>
+                                                <span><i style="cursor:pointer;" class="fa fa-arrow-circle-right" id="btnVIssueRefresh"></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+     <script src="~/Scripts/Chart/Chart.bundle.min.js"></script>
+      <script type="text/javascript">
+          var colors = ["#E74C3C", "#8E44AD", "#58D68D", "#FF33F3", "#dbba34", "#F5B041", "#f990a7", "#aad2ed", "#9966FF", "#99e5e5"];
+
+          $(document).ready(function () {
+              $('#starGRNDt').datepicker().datepicker("setDate", new Date());
+              $('#endGRNDt').datepicker().datepicker("setDate", new Date());
+              $('#starMIDt').datepicker().datepicker("setDate", new Date());
+              $('#endMIDt').datepicker().datepicker("setDate", new Date());
+              $('#starMIssueDt').datepicker().datepicker("setDate", new Date());
+              $('#endMIssueDt').datepicker().datepicker("setDate", new Date());
+              $('#starVIssueDt').datepicker().datepicker("setDate", new Date());
+              $('#endVIssueDt').datepicker().datepicker("setDate", new Date());
+              
+              GetGRNCounts(); GetMIndentCounts(); GetMIssueCounts(); GetVIssueCounts();
+              
+          });
+          function afterFail(msg) {
+              ShowAlert("error", "error");
+          }
+          /*GRN Count function*/
+          $('#btnGRNRefresh').on("click", function () {
+              GetGRNCounts();
+          });
+          function GetGRNCounts() {
+              if (isValidDate('starGRNDt', 'DD-MM-YYYY')) {
+                  ShowAlert("error", "Please select proper GRN From Date.");
+                  $("#starGRNDt").focus();
+                  return;
+              }
+              if (isValidDate('endGRNDt', 'DD-MM-YYYY')) {
+                  ShowAlert("error", "Please select proper GRN To Date.");
+                  $("#endGRNDt").focus();
+                  return;
+              }
+              ajaxCall("/StoreDashboard/GetGrnCount/", { fromdate: $("#starGRNDt").val(), todate: $("#endGRNDt").val()}, 10000, "GET", successGetGrnCount, afterFail, true, "topSectionCountGRNReq");
+          }
+          /********************GRN Today request status *************************/
+          function successGetGrnCount(data) {
+              if (data != null && data.result != null && data.result != undefined) {
+                  var colorColl = ["bg_lb", "bg_dg", "bg_lo", "bg_ly", "bg_ls", "bg_lr"];
+                  var pageMenu = "#";
+                  var mainDiv = $("#topSectionCountGRNReq");
+                  mainDiv.find('.dynamic').remove();
+                  var newHtml = "";
+                  $.each(data.result, function (index, jsonObject) {
+                      var newListItem = "";
+                      pageMenu = jsonObject.MenuId;
+                     
+                      newListItem = "<div class='col-xl-3 col-sm-3 dynamic'><div class='item d-flex align-items-center'><div class='icon " + colorColl[index] + "'>" +
+                          "<i class='" + jsonObject.Icon.toString() + " fa-2x'> </i></div><div class='title'><span>" + jsonObject.RequestType + " </span>" +
+                          "<div class='progress'><div role='progressbar' style='width: '" + jsonObject.RequestCount + "%;height: 4px;' aria-valuenow='"
+                          + jsonObject.RequestCount + "' aria-valuemin='0' aria-valuemax='100' class='progress-bar '" + colorColl[index] +
+                          "'></div></div></div><div class='number'><strong>" + jsonObject.RequestCount + "</strong></div> </div> </div>";
+                      newHtml = newHtml + newListItem;
+                  });
+
+                  mainDiv.append(newHtml);
+                  mainDiv.find("a#hrefMenu").attr("href", window.location.origin + '/' + pageMenu);
+              }
+
+          }
+          /********************Material Indent request status *************************/
+          $('#btnMIefresh').on("click", function () {
+              GetMIndentCounts();
+          });
+          function GetMIndentCounts() {
+              if (isValidDate('starMIDt', 'DD-MM-YYYY')) {
+                  ShowAlert("error", "Please select proper Indent From Date.");
+                  $("#starGRNDt").focus();
+                  return;
+              }
+              if (isValidDate('endMIDt', 'DD-MM-YYYY')) {
+                  ShowAlert("error", "Please select proper Indent To Date.");
+                  $("#endGRNDt").focus();
+                  return;
+              }
+              ajaxCall("/StoreDashboard/GetMIndentCount/", { fromdate: $("#starMIDt").val(), todate: $("#endMIDt").val() }, 10000, "GET", successGetMIndentCount, afterFail, true, "topSectionCountMIReq");
+          }
+          function successGetMIndentCount(data) {
+              if (data != null && data.result != null && data.result != undefined) {
+                  var colorColl = ["bg_lb", "bg_dg", "bg_lo", "bg_ly", "bg_ls", "bg_lr"];
+                  var pageMenu = "#";
+                  var mainDiv = $("#topSectionCountMIReq");
+                  mainDiv.find('.dynamic').remove();
+                  var newHtml = "";
+                  $.each(data.result, function (index, jsonObject) {
+                      pageMenu = jsonObject.MenuId;
+                      var newListItem = "";
+                      if (index > 0 && index % 3 == 0)
+                          newHtml = newHtml + "<div class='col-xl-3 col-sm-3 dynamic'/>";
+
+                      newListItem = "<div class='col-xl-3 col-sm-3 dynamic'><div class='item d-flex align-items-center'><div class='icon " + colorColl[index] + "'>" +
+                          "<i class='" + jsonObject.Icon.toString() + " fa-2x'> </i></div><div class='title'><span>" + jsonObject.RequestType + " </span>" +
+                          "<div class='progress'><div role='progressbar' style='width: '" + jsonObject.RequestCount + "%;height: 4px;' aria-valuenow='"
+                          + jsonObject.RequestCount + "' aria-valuemin='0' aria-valuemax='100' class='progress-bar '" + colorColl[index] +
+                          "'></div></div><div><span>" + jsonObject.TotalAmount + " </span></div></div><div class='number'><strong>" + jsonObject.RequestCount + "</strong></div> </div> </div>";
+                      newHtml = newHtml + newListItem;
+                  });
+
+                  mainDiv.append(newHtml);
+                  mainDiv.find("a#hrefMenu").attr("href", window.location.origin + '/' + pageMenu);
+              }
+
+          }
+
+          /********************Material Indent request status *************************/
+          $('#btnMIssueRefresh').on("click", function () {
+              GetMIssueCounts();
+          });
+          function GetMIssueCounts() {
+              if (isValidDate('starMIssueDt', 'DD-MM-YYYY')) {
+                  ShowAlert("error", "Please select proper Issue From Date.");
+                  $("#starMIssueDt").focus();
+                  return;
+              }
+              if (isValidDate('endMIssueDt', 'DD-MM-YYYY')) {
+                  ShowAlert("error", "Please select proper Issue To Date.");
+                  $("#endMIssueDt").focus();
+                  return;
+              }
+              ajaxCall("/StoreDashboard/GetMIssueCount/", { fromdate: $("#starMIssueDt").val(), todate: $("#endMIssueDt").val() }, 10000, "GET", successGetMIssueCount, afterFail, true, "topSectionCountMIssueReq");
+          }
+          function successGetMIssueCount(data) {
+              if (data != null && data.result != null && data.result != undefined) {
+                  var colorColl = ["bg_lb", "bg_dg", "bg_lo", "bg_ly", "bg_ls", "bg_lr"];
+                  var pageMenu = "#";
+                  var mainDiv = $("#topSectionCountMIssueReq");
+                  mainDiv.find('.dynamic').remove();
+                  var newHtml = "";
+                  $.each(data.result, function (index, jsonObject) {
+                      var newListItem = "";
+                      pageMenu = jsonObject.MenuId;
+
+                      newListItem = "<div class='col-xl-3 col-sm-3 dynamic'><div class='item d-flex align-items-center'><div class='icon " + colorColl[index] + "'>" +
+                          "<i class='" + jsonObject.Icon.toString() + " fa-2x'> </i></div><div class='title'><span>" + jsonObject.RequestType + " </span>" +
+                          "<div class='progress'><div role='progressbar' style='width: '" + jsonObject.RequestCount + "%;height: 4px;' aria-valuenow='"
+                          + jsonObject.RequestCount + "' aria-valuemin='0' aria-valuemax='100' class='progress-bar '" + colorColl[index] +
+                          "'></div></div></div><div class='number'><strong>" + jsonObject.RequestCount + "</strong></div> </div> </div>";
+                      newHtml = newHtml + newListItem;
+                  });
+
+                  mainDiv.append(newHtml);
+                  mainDiv.find("a#hrefMenu").attr("href", window.location.origin + '/' + pageMenu);
+              }
+
+          }
+         
+          /********************Vendor Issues request status *************************/
+          $('#btnVIssueRefresh').on("click", function () {
+              GetVIssueCounts();
+          });
+          function GetVIssueCounts() {
+              if (isValidDate('starVIssueDt', 'DD-MM-YYYY')) {
+                  ShowAlert("error", "Please select proper Issue From Date.");
+                  $("#starVIssueDt").focus();
+                  return;
+              }
+              if (isValidDate('endVIssueDt', 'DD-MM-YYYY')) {
+                  ShowAlert("error", "Please select proper Issue To Date.");
+                  $("#endVIssueDt").focus();
+                  return;
+              }
+              ajaxCall("/StoreDashboard/GetVIssueCount/", { fromdate: $("#starVIssueDt").val(), todate: $("#endVIssueDt").val() }, 10000, "GET", successGetVIssueCount, afterFail, true, "topSectionCountVIssueReq");
+          }
+          function successGetVIssueCount(data) {
+              if (data != null && data.result != null && data.result != undefined) {
+                  var colorColl = ["bg_lb", "bg_dg", "bg_lo", "bg_ly", "bg_ls", "bg_lr"];
+                  var pageMenu = "#";
+                  var mainDiv = $("#topSectionCountVIssueReq");
+                  mainDiv.find('.dynamic').remove();
+                  var newHtml = "";
+                  $.each(data.result, function (index, jsonObject) {
+                      var newListItem = "";
+                      pageMenu = jsonObject.MenuId;
+
+                      newListItem = "<div class='col-xl-3 col-sm-3 dynamic'><div class='item d-flex align-items-center'><div class='icon " + colorColl[index] + "'>" +
+                          "<i class='" + jsonObject.Icon.toString() + " fa-2x'> </i></div><div class='title'><span>" + jsonObject.RequestType + " </span>" +
+                          "<div class='progress'><div role='progressbar' style='width: '" + jsonObject.RequestCount + "%;height: 4px;' aria-valuenow='"
+                          + jsonObject.RequestCount + "' aria-valuemin='0' aria-valuemax='100' class='progress-bar '" + colorColl[index] +
+                          "'></div></div></div><div class='number'><strong>" + jsonObject.RequestCount + "</strong></div> </div> </div>";
+                      newHtml = newHtml + newListItem;
+                  });
+
+                  mainDiv.append(newHtml);
+                  mainDiv.find("a#hrefMenu").attr("href", window.location.origin + '/' + pageMenu);
+              }
+
+          }
+
+
+      </script>
+}

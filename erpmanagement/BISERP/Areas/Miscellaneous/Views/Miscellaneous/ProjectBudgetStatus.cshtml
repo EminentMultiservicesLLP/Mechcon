@@ -1,0 +1,224 @@
+﻿@model BISERP.Areas.Accounts.Models.ClientBillingModel
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <fieldset>
+        <div id="content">
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-groupingBoder">
+                        <div class="panel-heading">
+                            <div class="panel-title">
+                                <a class="collapsediv" data-toggle="collapse" href="#collapse2" style="color: white">
+                                    Search Detail
+                                </a>
+                            </div>
+                        </div>
+                        <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                            <div class="panel-body">
+                                <fieldset>
+                                    <div class="row">
+                                        <div class="form-group form-horizontal">
+                                            <div class="col-sm-2">
+                                                @Html.Label("Select Project", new { @class = "required" })
+                                                @Html.DropDownList("ddlProject", new SelectList(string.Empty, "Value", "Text"), "--Select Project--", new { @class = "form-control" })
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <br />
+                                                <button type="button" class="btn btn-success" id="btnShow">Show</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br />
+                                </fieldset>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-groupingBoder">
+                        <div class="panel-heading">
+                            <div class="panel-title">
+                                <a class="collapsediv" data-toggle="collapse" href="#Summary" style="color: white">
+                                    Summary
+                                </a>
+                            </div>
+                        </div>
+                        <div id="Summary" class="panel-collapse collapse in" aria-expanded="true">
+                            <div class="panel-body">
+                                <div class="container fill">
+                                    <div id="SummaryGrid"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+     <div id="detailModal" style="display: none;">
+        <div id="detailGrid"></div>
+    </div>
+}
+
+<script>
+
+    $.ajax({
+        type: "GET",
+        url: "/Master/MainStores",
+        datatype: "Json",
+        async: true,
+        success: function (data) {
+            
+            $.each(data,
+                function (index, value) {
+                    $('#ddlProject').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                });
+        }
+    });
+
+    dataSummaryGrid = { location: "local" };
+    colSummaryGrid = [
+         { title: "ProjectId", dataIndx: "ID", width: 250,hidden:true },
+        {
+            title: "Project", dataIndx: "Code", width: 300, dataType: "string", editable: false,
+            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+        },
+        {
+            title: "Project Name ", dataIndx: "Name", width: 300, dataType: "string", editable: false,
+            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+        },
+        { title: "ItemCategoryid", dataIndx: "StoreTypeID", width: 250, hidden: true },
+            { title: "Item Category", dataIndx: "StoreTypeName", width: 200 },
+            { title: "Allocated Budget", dataIndx: "ProjectBudget", width: 200 },
+            { title: "Utilized Budget", dataIndx: "Utlized", width: 200 },
+        {
+            title: "Balance", dataIndx: "Balance", width: 250,
+        },
+        {
+            title: "Details", editable: false, minWidth: 100, sortable: false,
+            listeners: [{ click: detailstRow }],
+            render: function (ui) {
+                return "<button type='button' class='edit_btn' style='color:blue'>Detail</button>";
+            },
+            postRender: function (ui) {
+                var rowIndx = ui.rowIndx,
+                    grid = this,
+                    $cell = grid.getCell(ui);
+
+                $cell.find(".edit_btn").button({ icons: { primary: 'ui-icon-pencil' } })
+                .bind("click", function (evt) {
+
+                    var ProjectID = ui.rowData.ID;
+                    var ItemTypeId = ui.rowData.StoreTypeID
+                    detailstRow(rowIndx, grid, true, ProjectID, ItemTypeId);
+                });
+            }
+        }
+    ];
+
+    setSummaryGrid = {
+        width: '100%',
+        height: 450,
+        sortable: false,
+        numberCell: { show: false },
+        hoverMode: 'cell',
+        showTop: true,
+        resizable: true,
+        scrollModel: { autoFit: true },
+        draggable: false,
+        wrap: false,
+        editable: false,
+        filterModel: { on: true, mode: "AND", header: true },
+        selectionModel: { type: 'row', subtype: 'incr', cbHeader: true, cbAll: true },
+        colModel: colSummaryGrid,
+        dataModel: dataSummaryGrid,
+        postRenderInterval: -1,
+        pageModel: { type: "local", rPP: 20 },
+    }
+
+    $SummaryGrid = $("#SummaryGrid").pqGrid(setSummaryGrid);
+
+
+    function detailstRow(rowIndx, grid, edit, ProjectID, ItemTypeId) {
+        if (rowIndx != null) {
+            LoaddetailGrid(ProjectID, ItemTypeId);
+            $("#detailGrid").dialog({
+                height: 500,
+                width: 700,
+                modal: true
+            }).dialog("open");
+        }
+    }
+
+    function LoaddetailGrid(ProjectID, ItemTypeId) {
+        $.ajax({
+            type: "GET",
+            url: "/StoreMaster/GetBudgetUtilzedDetails",
+            datatype: "Json",
+            data: { ProjectID: ProjectID,ItemTypeId:ItemTypeId },
+            success: function (data) {
+                $("#detailGrid").pqGrid("option", "dataModel.data", data);
+                $("#detailGrid").pqGrid("refreshDataAndView");
+            },
+            error: function () {
+                ClearParamGrid('detailGrid');
+                ShowAlert("error", "Something went Wrong");
+                return;
+            }
+        });
+    }
+    databilldetail = { location: 'local', sorting: 'local', paging: 'local', dataType: 'JSON' };
+    colbilldetail = [
+         { title: "PO No", dataIndx: "Code", width: 150, dataType: "string", editable: false },
+        { title: "Amount", dataIndx: "Utlized", width: 150, dataType: "double", hidden: false },
+        { title: "Po Status", dataIndx: "Description", width: 150, dataType: "string", editable: false },
+        { title: "Closed Amount", dataIndx: "Balance", width: 150, dataType: "double", hidden: false }
+    ];
+
+    setilldetailGrid = {
+        width: 700,
+        height: 400,
+        sortable: false,
+        numberCell: { show: false },
+        hoverMode: 'cell',
+        showTop: false,
+        resizable: true,
+        scrollModel: { autoFit: true },
+        draggable: false,
+        wrap: false,
+        editable: true,
+        columnBorders: true,
+        selectionModel: { type: 'row' },
+        colModel: colbilldetail,
+        dataModel: databilldetail,
+        pageModel: { type: "local", rPP: 20 },
+
+    };
+    var $detailGrid = $("#detailGrid").pqGrid(setilldetailGrid);
+
+    $("#btnShow").click(function () {
+        
+        var projectId = $("#ddlProject").val();
+        if (projectId === "") projectId = 0;
+        $.ajax({
+            type: "GET",
+            traditional: true,
+            contentType: 'application/json; charset=utf-8',
+            url: "/StoreMaster/GetProjectBudgetStatus",
+            data: { storeId: projectId },
+            success: function (data) {
+                
+                $SummaryGrid.pqGrid("option", "dataModel.data", data.records);
+                $SummaryGrid.pqGrid("refreshDataAndView");
+            }
+        });
+    });
+
+
+</script>

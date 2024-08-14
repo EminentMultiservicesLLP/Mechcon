@@ -3,3 +3,14 @@
 ################################################################################
 
 /.vs
+/API-ERPManagement/.vs
+/API-ERPManagement/BISERPService/obj
+/API-ERPManagement/BISERPDataLayer/obj
+/API-ERPManagement/BISERPCommon/obj
+/API-ERPManagement/BISERPBusinessLayer/obj
+/API-ERPManagement/packages
+/erpmanagement/BISERP/obj
+/erpmanagement/BISERPCommon/obj
+/erpmanagement/Library
+/erpmanagement/packages
+/erpmanagement/.vs

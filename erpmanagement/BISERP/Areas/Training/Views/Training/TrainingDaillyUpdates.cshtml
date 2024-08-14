@@ -1,0 +1,451 @@
+﻿@model BISERP.Areas.Training.Models.TrainingDailyUpdateHdrModel
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <fieldset>
+        <div id="content">
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-groupingBoder">
+                        <div class="panel-heading">
+                            <div class="panel-title">
+                                <a class="collapsediv" data-toggle="collapse" href="#collapse2" style="color: white">
+                                    Search Detail
+                                </a>
+                            </div>
+                        </div>
+                        <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                            <div class="panel-body">
+                                <fieldset>
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            @Html.Label("Training Program", new { @class = "required" })
+                                            @Html.DropDownList("ddlTrainingType", new SelectList(string.Empty, "Value", "Text"), "Select Type", new { @class = "wrapperdropdown-content form-control" })
+                                            @Html.HiddenFor(model=>model.DaillyUpdId)
+                                         </div>
+                                        <div class="col-md-3">
+                                            @Html.Label("Select Schedule", new { @class = "required" })
+                                            @Html.DropDownList("ddlSlot", new SelectList(string.Empty, "Value", "Text"), " -- Select Traning Schedule --", new { @class = "wrapperdropdown-content form-control" })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.Label("Select Days", new { @class = "required" })
+                                            @Html.DropDownList("ddlDays", new SelectList(string.Empty, "Value", "Text"), " -- Select Traning Day --", new { @class = "wrapperdropdown-content form-control" })
+                                        </div><br />
+                                        <div class="col-md-1">
+                                            @*<button type="button" class="btn btn-primary" id="btnShow">Show</button>*@
+                                            <button type="button" class="btn btn-primary" id="btnShowRecord">Showrecord</button>
+                                        </div>
+                                    </div>
+
+
+                                </fieldset>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-groupingBoder">
+                        <div class="panel-heading">
+                            <div class="panel-title">
+                                <a class="collapsediv" data-toggle="collapse" href="#collapse3" style="color: white">
+                                    Entry Form
+                                </a>
+                            </div>
+                        </div>
+                        <div id="collapse3" class="panel-collapse collapse in" aria-expanded="true">
+                            <div class="panel-body">
+                                <fieldset>
+                                    <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                                        <div class="panel-body">
+                                            <div class="container fill">
+                                                <div id="Slotgrid"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row" style="margin-top: -15px;">
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                                                <button type="button" class="btn btn-success" id="btnResetgrid">Reset</button>
+                                                <button type="button" class="btn btn-success" id="btnSendMail" style="display:none">SendMail</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="container fill">
+                                            <div id="Templateslotgrid"></div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="container fill">
+                                            <div id="grid"></div>
+                                        </div>
+                                    </div>
+
+                                </fieldset>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+
+
+    <script type="text/javascript">
+      
+
+        /******* Fill all dropdown used for filter data (top section) ********/
+        //$.ajax({
+        //    type: "GET",
+        //    url: "/TrainingType/AllTrainingType",
+        //    datatype: "Json",
+        //    success: function (data) {
+        //        $("#ddlTrainingType").html("");
+        //        InsertDefaultSelect($('#ddlTrainingType'));
+        //        $.each(data, function (index, value) {
+        //            $('#ddlTrainingType').append('<option value="' + value.TypeId + '">' + value.TrainingType + '</option>');
+        //        });
+        //    }
+        //});
+
+        $.ajax({
+            type: "GET",
+            url: "/TrainingType/GetdailyupdateTrainingType",
+            datatype: "Json",
+            success: function (data) {
+                $("#ddlTrainingType").html("");
+                InsertDefaultSelect($('#ddlTrainingType'));
+                $.each(data, function (index, value) {
+                    $('#ddlTrainingType').append('<option value="' + value.TypeId + '">' + value.TrainingType + '</option>');
+                });
+            }
+        });
+
+        $('select#ddlTrainingType')
+            .change(function () {
+             
+                Fillslot();
+            });
+
+        function Fillslot() {
+            var trainigtypeid = $("#ddlTrainingType").val();
+            if (trainigtypeid.length > 0)
+                $.ajax({
+                    type: "GET",
+                    url: '/TrainingDaillyUpdates/GetTrainingTemplate',
+                    data: { TrainingTypeId: trainigtypeid },
+                    datatype: "Json",
+                    success: function (data) {
+                        $("#ddlSlot").html("");
+                        InsertDefaultSelect($('#ddlSlot'));
+                        $.each(data,
+                            function (index, value) {
+                                $('#ddlSlot').append('<option value="' + value.TrainingId + '">' + value.TrainingName + '</option>');
+
+                            });
+                    }
+                });
+        }
+
+        $('select#ddlSlot')
+            .change(function () {
+                FillDays();
+                ClearParamGrid("grid");
+            });
+
+        function FillDays() {
+            $("#ddlDays").html("");
+            var id = $("#ddlSlot").val();
+            $.ajax({
+                type: "GET",
+                url: '/TrainingDaillyUpdates/GetTraniningDay',
+                data: { id: id },
+                datatype: "Json",
+                success: function (data) {
+                    InsertDefaultSelect($('#ddlDays'));
+                    $.each(data, function (index, value) {
+                        $('#ddlDays').append('<option value="' + value.TrainingDay + '">' + 'Day ' + value.TrainingDay + '</option>');
+                    });
+                }
+            });
+        }
+
+        $("#btnResetgrid").on('click', function () {
+
+            ClearParamGrid("grid");
+            DisplaySaveRecord();
+        });
+        /*****************************************************************/
+
+        /************* All Static list will be used in Grid **************/
+        var Rating = [];
+        $.ajax({
+            type: "GET",
+            url: '/Rating/AllActiveRating',
+            success: function (data) {
+                $.each(data,
+                    function (index, value) {
+                        Rating.push(value.Rating);
+                    });
+            }
+        });
+
+        var autoCompleteEditor = function (ui) {
+            var $cell = ui.$cell,
+                rowData = ui.rowData,
+                dataIndx = ui.dataIndx,
+                width = ui.column.width,
+                cls = ui.cls;
+            var dc = $.trim(rowData[dataIndx]);
+
+            var $inp = $("<input type='text' name='" + dataIndx + "' class='" + cls + " pq-ac-editor' />")
+                .width(width - 6)
+                .appendTo($cell)
+                .val(dc);
+
+            $inp.autocomplete({
+                    source: Rating,
+                    minLength: 0
+                })
+                .focus(function () {
+                    $(this).autocomplete("search", "");
+                });
+        }
+        /*****************************************************************/
+
+
+        /*********  Grid related Function's **********************/
+        var $grid;
+        var colModel = [];
+        var dynamicFirstCol = { title: "<b>Trainee</b>", dataIndx: "TraineeName", dataType: "string", width: 180 }; // always will be in first column position
+        var dynamicHiddenCol = { title: "Trainee", dataIndx: "DaillyUpdDtlId", dataType: "string", width: 1, hidden: true }; // always will be secons position & hidden
+        var dynamicLastCol = { title: "<b>Performance</b>", dataIndx: "Performance", dataType: "string", width: 250 }; //always will be last column position
+
+        var dataMGrid = {
+            location: 'local',
+            sorting: 'local',
+            data: []
+        };
+        var setMainItemList = {
+            showTop: true,
+            editModel: {
+                saveKey: $.ui.keyCode.ENTER
+            },
+            trackModel: { on: true, dirtyClass: 'pq-cell-dirty' },
+            filterModel: { on: false },
+            colModel: colModel,
+            dataModel: dataMGrid,
+            sortable: false,
+            showTitle: false,
+            wrap: false,
+            virtualX: true,
+            virtualY: true,
+            height: 400,
+            editable: true,
+            editor: { type: 'textbox' },
+            hwrap: false,
+            scrollModel: { autoFit: true },
+            pageModel: { type: "local", rPP: 50 },
+            selectionModel: { type: 'row' },
+            toolbar: exportToExcelToolbar
+           //cellBeforeSave: function (event, ui) {
+               
+           //     CheckMailValidation();
+           // }
+       
+        };
+        $grid = $("#grid").pqGrid(setMainItemList);
+      
+        function DisplayGridslotwise(isNew) {
+           
+
+            var template = $("#ddlSlot").val();
+            var trainingDay = $("#ddlDays").val();
+            $.ajax({
+                url: "/TrainingDaillyUpdates/GetTraniningTemplatePeriod",
+                data: {
+                    trainingtempdtId: template,
+                    trainingDay: trainingDay
+                },
+                cache: false,
+                async: true,
+                method: "GET",
+                dataType: "JSON",
+                success: function (response) {
+                    colModel = [];
+                    colModel.push(dynamicFirstCol);
+                    colModel.push(dynamicHiddenCol);
+
+                    $.each(response,
+                        function (index, value) {
+                            colModel
+                                .push({
+                                    title: '<b>Rating</b> for <br/>' + value.PeriodName, dataIndx: value.PeriodId, width: 170, dataType: "string", editable: true, resizable: false,
+                                    align: 'center', editor: { type: autoCompleteEditor }
+                               });
+                        });
+                    colModel.push(dynamicLastCol);
+
+                    $grid = $("#grid").pqGrid({ colModel: colModel });
+                    $("#grid").pqGrid("refresh");
+                   
+                    if (isNew)
+                        RefreshGridWithNewColModel();
+                    else
+                        DisplaySaveRecord();
+                }
+            });
+        }
+
+        function RefreshGridWithNewColModel() {
+           
+            $.ajax({
+                url: "/TrainingDaillyUpdates/GetTrainee",
+                cache: false,
+                async: true,
+                method: "GET",
+                dataType: "JSON",
+                success: function (response) {
+                   
+                    $grid.pqGrid("option", "dataModel.data", response);
+                    $grid.pqGrid("refreshDataAndView");
+                }
+            });
+        }
+
+
+        function DisplaySaveRecord() {
+           
+            var template = $("#ddlSlot").val();
+            var trainingDay = $("#ddlDays").val();
+            $.ajax({
+                url: "/TrainingDaillyUpdates/GetTraniningTemplatePeriodRecord",
+                data: {
+                    trainingtempdtId: template,
+                    trainingDay: trainingDay
+                },
+                method: "GET",
+                dataType: "JSON",
+                success: function (response) {
+                    var allUpdatesDone = true;
+                    $.each(response,
+                        function (index, item) {
+                            if(item.DaillyUpdDtlId === undefined || item.DaillyUpdDtlId === 0)
+                                allUpdatesDone = false;
+
+                            $.each(item,
+                                function (key, value) {
+                                    if (key === "Periods")
+                                        $.each(value,
+                                            function (childKey, childValue) {
+                                                item[childKey] = childValue;
+                                            });
+                                });
+                        });
+                    
+                    if (allUpdatesDone)
+                        $("#btnSendMail").show();
+                    else {
+                        $("#btnSendMail").hide();
+                    }
+                    $("#DaillyUpdId").val(response[0].DaillyUpdId);
+                    $grid.pqGrid("option", "dataModel.data", response);
+                    $grid.pqGrid("refreshDataAndView");
+                },
+                error: function (msg) {
+                    var sss = "";
+                }
+            });
+        }
+        $("#btnShowRecord").click(function () {
+            
+            if ($("#ddlTrainingType").val() == "" || $("#ddlTrainingType").val() == undefined) {
+                ShowAlert("error", "Please Select Training Program");
+                return;
+            }
+            if ($("#ddlSlot").val() == "" || $("#ddlSlot").val() == undefined) {
+                ShowAlert("error", "Please Select Training Schedule");
+                return;
+            }
+            if ($("#ddlDays").val() == "" || $("#ddlDays").val() == undefined) {
+                ShowAlert("error", "Please Select Training Day");
+                return;
+            }
+            //$("#btnSendMail").show();
+          
+            DisplayGridslotwise(false);
+
+        });
+        $("#btnSave").click(function () {
+           
+            var gridRows = $grid.pqGrid("option", "dataModel.data");
+            var gridCols = $grid.pqGrid("option", "colModel");
+            $.each(gridRows, function (key, value) {
+               
+            });
+
+            if (gridRows != undefined) {
+                if (gridRows.length > 0) {
+                }
+                else {
+                    ShowAlert("error", "No Items to Save");
+                    return;
+                }
+            }
+            $.each(gridRows,
+                function (rowColcount, detail) {
+                    var ratingDetails = [];
+
+                    //starting from 2 because 1 column is for Trainee & second column is hidden
+                    for (var c = 2; c < gridCols.length - 1; c++) {
+                        ratingDetails.push({
+                            DaillyUpdDtlId: detail[gridCols[1].dataIndx] == undefined ? 0 : detail[gridCols[1].dataIndx],
+                            RatingId: (detail[gridCols[c].dataIndx] == undefined) ? "" : detail[gridCols[c].dataIndx],
+                            TraingTemplateDtlId: gridCols[c].dataIndx.toString()
+                        });
+                    }
+                    detail.DailyUpdatesRatingModel = ratingDetails;
+                });
+
+            var item = JSON.stringify({
+                DailyUpdateDtlModel: gridRows,
+                TrainingDay: $("#ddlDays").val(),
+                TrainingTemplateID: $("#ddlSlot").val(),
+                DaillyUpdId: $("#DaillyUpdId").val()
+            });
+            $.ajax({
+                type: "POST", //HTTP POST Method
+                traditional: true,
+                contentType: 'application/json; charset=utf-8',
+                url: "/TrainingDaillyUpdates/CreateTrainingDaillyUpdates",
+                data: item,
+                success: function (msg) {
+                    if (msg.success) {
+                        ShowAlert("success", "Training Daily updates saved successfully.");
+                        ClearAll();
+                    }
+                    else {
+                        ShowAlert("error", msg.Message);
+                    }
+                }
+            });
+        });
+
+
+       
+        function ClearAll() {
+            $('#ddlTrainingType').val();
+            $("#ddlSlot").val();
+            $("#ddlDays").val();
+            ClearParamGrid("grid");
+
+        }
+
+
+    </script>
+}

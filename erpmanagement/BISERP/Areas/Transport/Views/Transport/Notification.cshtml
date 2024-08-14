@@ -1,0 +1,406 @@
+﻿@model BISERP.Areas.Transport.Models.DriverScheduleModel
+<script>
+    $(function () {
+        $(".datepicker").datepicker({
+            showOn: "button",
+            buttonImage: "",
+            buttonImage: "/Content/images/calendar.gif",
+            buttonImageOnly: true,
+            buttonText: "",
+            dateFormat: "dd-MM-yy ",
+        }).datepicker("setDate", new Date());
+        $("#anim").change(function () {
+            $(".datepicker").datepicker("option", "showAnim", "fadeIn");
+        });
+    });
+</script>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <a class="collapsediv" data-toggle="collapse" href="#SearchDetails" style="color:white">
+                            Notification
+                        </a>
+                    </div>
+                </div>
+                <br />
+                <div class="panel-groupingBoder">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="col-sm-1">
+                                @Html.Label("Due In")
+                            </div>
+                            <div class="col-sm-1">
+                                <select id="ddlDueDays" class="wrapperdropdown-content form-control">
+                                    <option class="wrapperdropdown-content" value="0"> Select </option>
+                                    <option class="wrapperdropdown-content" value="1"> Today </option>
+                                    <option class="wrapperdropdown-content" value="3">3</option>
+                                    <option class="wrapperdropdown-content" value="4">7</option>
+                                    <option class="wrapperdropdown-content" value="10">10</option>
+                                    <option class="wrapperdropdown-content" value="20">20</option>
+                                    <option class="wrapperdropdown-content" value="30">30</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-1">
+                                <button type="button" id="btnSearch" class="btn btn-success">Search</button>
+                            </div>
+                            @*<div class="col-sm-1">
+                                    @Html.Label("Due In")
+                                </div>
+                                <div class="col-sm-2">
+                                    <select id="ddlgrid" class="wrapperdropdown-content form-control">
+                                        <option class="wrapperdropdown-content" value="0"> Select </option>
+                                        <option class="wrapperdropdown-content" value="PUCgrid"> PUC Notification </option>
+                                        <option class="wrapperdropdown-content" value="3">Insurance Notification </option>
+                                        <option class="wrapperdropdown-content" value="4">RoadTax Notification</option>
+                                        <option class="wrapperdropdown-content" value="10">GreenTax Notification</option>
+                                        <option class="wrapperdropdown-content" value="20">PermitNotification</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-1">
+                                    <select id="ddlFormat" class="wrapperdropdown-content form-control">
+                                        <option class="wrapperdropdown-content" value="0"> Select </option>
+                                        <option class="wrapperdropdown-content" value="Csv"> Csv </option>
+                                        <option class="wrapperdropdown-content" value="Html">Html </option>
+                                        <option class="wrapperdropdown-content" value="Json">Json</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-1">
+                                    <button type="button" id="Export" class="btn btn-success">Export</button>
+                                </div>*@
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-groupingBoder">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="col-sm-5">
+                                <div id="PUCgrid"></div>
+                            </div>
+                            <div class="col-sm-5">
+                                <div id="Insurancegrid"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="col-sm-5">
+                                <div id="RoadTaxgrid"></div>
+                            </div>
+                            <div class="col-sm-5">
+                                <div id="GreenTaxgrid"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="col-sm-2"></div>
+                            <div class="col-sm-5">
+                                <div id="PermitDetailgrid"></div>
+                            </div>
+                            <div class="col-sm-2"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        var $Insurancegrid;
+        var $GreenTaxgrid;
+        var $PUCgrid;
+        var $RoadTaxgrid;
+        var $PermitDetailgrid;
+        function LoadPermitDetailGrid() {
+            $.ajax({
+                url: "/PermitDetails/PermitDetailsNotification",
+                cache: false,
+                async: true,
+                method: "GET",
+                dataType: "JSON",
+                data: { DueDays: $("#ddlDueDays").val() },
+                beforeSend: function () {
+                    $PermitDetailgrid.pqGrid("showLoading");
+                },
+                complete: function () {
+                    $PermitDetailgrid.pqGrid("hideLoading");
+                },
+                success: function (response) {
+                    $PermitDetailgrid.pqGrid("hideLoading");
+                    $PermitDetailgrid.pqGrid("option", "dataModel.data", response);
+                    $PermitDetailgrid.pqGrid("refreshDataAndView");
+                }
+            });
+        }
+        function LoadGreenTaxgrid() {
+            $.ajax({
+                url: "/GreenTax/GreenTaxNotification",
+                cache: false,
+                async: true,
+                method: "GET",
+                dataType: "JSON",
+                data: { DueDays: $("#ddlDueDays").val() },
+                beforeSend: function () {
+                    $GreenTaxgrid.pqGrid("showLoading");
+                },
+                complete: function () {
+                    $GreenTaxgrid.pqGrid("hideLoading");
+                },
+                success: function (response) {
+                    $GreenTaxgrid.pqGrid("hideLoading");
+                    $GreenTaxgrid.pqGrid("option", "dataModel.data", response);
+                    $GreenTaxgrid.pqGrid("refreshDataAndView");
+                }
+            });
+        }
+        function LoadInsuranceGrid() {
+            $.ajax({
+                url: "/Insurance/InsuranceNotification",
+                cache: false,
+                async: true,
+                method: "GET",
+                dataType: "JSON",
+                data: { DueDays: $("#ddlDueDays").val() },
+                beforeSend: function() {
+                    $Insurancegrid.pqGrid("showLoading");
+                },
+                complete: function() {
+                    $Insurancegrid.pqGrid("hideLoading");
+                },
+               
+                success: function (response) {
+                    $Insurancegrid.pqGrid("hideLoading");
+                    $Insurancegrid.pqGrid("option", "dataModel.data", response);
+                    $Insurancegrid.pqGrid("refreshDataAndView");
+                }
+            });
+        }
+        function LoadPUCGrid() {
+            $.ajax({
+                url: "/PUCDetails/PUCDetailNotification",
+                cache: false,
+                async: true,
+                method: "GET",
+                dataType: "JSON",
+                data: { DueDays: $("#ddlDueDays").val() },
+                beforeSend: function () {
+                    $PUCgrid.pqGrid("showLoading");
+                },
+                complete: function () {
+                    $PUCgrid.pqGrid("hideLoading");
+                },
+                success: function (response) {
+                    $PUCgrid.pqGrid("hideLoading");
+                    $PUCgrid.pqGrid("option", "dataModel.data", response);
+                    $PUCgrid.pqGrid("refreshDataAndView");
+                }
+            });
+        }
+        function LoadRoadTaxGrid() {
+            $.ajax({
+                url: "/RoadTax/RoadTaxNotification",
+                cache: false,
+                async: true,
+                method: "GET",
+                dataType: "JSON",
+                data: { DueDays: $("#ddlDueDays").val() },
+                beforeSend: function () {
+                    $RoadTaxgrid.pqGrid("showLoading");
+                },
+                complete: function () {
+                    $RoadTaxgrid.pqGrid("hideLoading");
+                },
+                success: function (response) {
+                    $RoadTaxgrid.pqGrid("hideLoading");
+                    $RoadTaxgrid.pqGrid("option", "dataModel.data", response);
+                    $RoadTaxgrid.pqGrid("refreshDataAndView");
+                }
+            });
+        }
+        $(document).ready(function () {
+            $("#btnSearch").click(function () {
+                ClearParamGrid("PUCgrid");
+                ClearParamGrid("RoadTaxgrid");
+                ClearParamGrid("GreenTaxgrid");
+                ClearParamGrid("Insurancegrid");
+                ClearParamGrid("PermitDetailgrid");
+                LoadPermitDetailGrid();
+                LoadGreenTaxgrid();
+                LoadInsuranceGrid();
+                LoadPUCGrid();
+                LoadRoadTaxGrid();
+            });
+        });
+        $(document).ready(function () {
+            var dataM = { location: "local", sorting: 'local' };
+            var colM = [
+                    { title: "", dataIndx: "InsuranceId", dataType: "integer", hidden: true },
+                    { title: "", dataIndx: "VehicleId", dataType: "integer", hidden: true },
+                    { title: "Vehicle No", dataIndx: "VehicleNo", width: 140 },
+                    { title: "Tax No", dataIndx: "GreenTaxNo", width: 140 },
+                    { title: "Expiry Date", dataIndx: "strExpiryDate", width: 150 },
+            ];
+
+            var setM = {
+                height: 200,
+                sortable: false,
+                numberCell: { show: false },
+                hoverMode: 'cell',
+                showTop: true,
+                resizable: false,
+                draggable: false,
+                wrap: false,
+                editable: false,
+                columnBorders: true,
+                title: "Green Tax Notification",
+                colModel: colM,
+                dataModel: dataM,
+                virtualX: true,
+                virtualY: true,
+                toolbar: exportToExcelToolbar,
+                scrollModel: { autoFit: true }
+            };
+            $GreenTaxgrid = $("#GreenTaxgrid").pqGrid(setM);
+            LoadGreenTaxgrid();
+        });
+        $(document).ready(function () {
+            var dataM = { location: "local", sorting: 'local' };
+            var colM = [
+                    { title: "", dataIndx: "InsuranceId", dataType: "integer", hidden: true },
+                    { title: "", dataIndx: "VehicleId", dataType: "integer", hidden: true },
+                    { title: "Vehicle No", dataIndx: "VehicleNo", width: 140 },
+                    { title: "Tax No", dataIndx: "PolicyNo", width: 140 },
+                    { title: "Expiry Date", dataIndx: "strExpiryDate", width: 150 },
+            ];
+
+            var setM = {
+                height: 200,
+                sortable: false,
+                numberCell: { show: false },
+                hoverMode: 'cell',
+                showTop: true,
+                resizable: false,
+                draggable: false,
+                wrap: false,
+                editable: false,
+                columnBorders: true,
+                scrollModel: { autoFit: true },
+                title: "Insurance Notification",
+                toolbar: exportToExcelToolbar,
+                colModel: colM,
+                dataModel: dataM,
+                virtualX: true,
+                virtualY: true
+            };
+            $Insurancegrid = $("#Insurancegrid").pqGrid(setM);
+            LoadInsuranceGrid();
+        });
+        $(document).ready(function () {
+            var dataM = { location: "local", sorting: 'local' };
+            var colM = [
+                    { title: "", dataIndx: "PUCId", dataType: "integer", hidden: true },
+                    { title: "", dataIndx: "VehicleId", dataType: "integer", hidden: true },
+                    { title: "Vehicle No", dataIndx: "VehicleNo", width: 140 },
+                    { title: "PUC No", dataIndx: "PUCNo", width: 140 },
+                    { title: "Expiry Date", dataIndx: "strExpiryDate", width: 150 },
+            ];
+
+            var setM = {
+                height: 200,
+                sortable: false,
+                numberCell: { show: false },
+                hoverMode: 'cell',
+                showTop: true,
+                resizable: false,
+                draggable: false,
+                wrap: false,
+                editable: false,
+                columnBorders: true,
+                scrollModel: { autoFit: true },
+                title: "PUC Notification",
+                toolbar: exportToExcelToolbar,
+                colModel: colM,
+                dataModel: dataM,
+                virtualX: true,
+                virtualY: true
+            };
+            $PUCgrid = $("#PUCgrid").pqGrid(setM);
+            LoadPUCGrid();
+        });
+        $(document).ready(function () {
+            var dataM = { location: "local", sorting: 'local' };
+            var colM = [
+                    { title: "", dataIndx: "RoadTaxId", dataType: "integer", hidden: true },
+                    { title: "", dataIndx: "VehicleId", dataType: "integer", hidden: true },
+                    { title: "Vehicle No", dataIndx: "VehicleNo", width: 140 },
+                    { title: "Tax No", dataIndx: "TaxNo", width: 140 },
+                    { title: "Expiry Date", dataIndx: "strExpiryDate", width: 150 },
+            ];
+
+            var setM = {
+                height: 200,
+                sortable: false,
+                numberCell: { show: false },
+                hoverMode: 'cell',
+                showTop: true,
+                resizable: false,
+                draggable: false,
+                wrap: false,
+                editable: false,
+                columnBorders: true,
+                scrollModel: { autoFit: true },
+                title: "Road Tax Notification",
+                toolbar: exportToExcelToolbar,
+                colModel: colM,
+                dataModel: dataM,
+                virtualX: true,
+                virtualY: true
+            };
+            $RoadTaxgrid = $("#RoadTaxgrid").pqGrid(setM);
+            LoadRoadTaxGrid();
+        });
+        $(document).ready(function () {
+            var dataM = { location: "local", sorting: 'local' };
+            var colM = [
+                    { title: "", dataIndx: "RoadTaxId", dataType: "integer", hidden: true },
+                    { title: "", dataIndx: "VehicleId", dataType: "integer", hidden: true },
+                    { title: "Vehicle No", dataIndx: "VehicleNo", width: 140 },
+                    { title: "Permit No", dataIndx: "PermitNo", width: 140 },
+                    { title: "Expiry Date", dataIndx: "strExpiryDate", width: 150 },
+            ];
+
+            var setM = {
+                height: 200,
+                sortable: false,
+                numberCell: { show: false },
+                hoverMode: 'cell',
+                showTop: true,
+                resizable: false,
+                draggable: false,
+                wrap: false,
+                editable: false,
+                columnBorders: true,
+                scrollModel: { autoFit: true },
+                title: "Permit Detail Notification",
+                toolbar: exportToExcelToolbar,
+                colModel: colM,
+                dataModel: dataM,
+                virtualX: true,
+                virtualY: true
+            };
+            $PermitDetailgrid = $("#PermitDetailgrid").pqGrid(setM);
+            LoadPermitDetailGrid();
+        });
+
+     
+
+    </script>
+}

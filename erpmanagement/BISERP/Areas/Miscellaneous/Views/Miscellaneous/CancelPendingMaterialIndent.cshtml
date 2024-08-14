@@ -1,0 +1,257 @@
+﻿@model BISERP.Areas.Miscellaneous.Models.CancelPendingMaterialIndentModel
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        Details
+                    </div>
+                </div>
+                <div class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                                    <button type="button" class="btn btn-success" id="btnAdd">Reset</button>
+                                </div>
+                            </div>
+                            <br />
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(model => model.storeId)
+                                        @Html.DropDownList("ddlStores", new SelectList(string.Empty, "Value", "Text"), "Select Store", new { @class = "wrapperdropdown-content form-control" })
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-2">
+                                        <button type="button" class="btn btn-primary" id="btnShowrequest">Show Request</button>
+                                    </div>
+                                </div>
+                            </div>                        
+                    </div>
+                    <div class="row">
+                        <div class="container fill">
+                            <div id="grid"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        var $gridMain;
+        $(document).ready(function () {
+            $.ajax({
+                type: "GET",
+                url: "/Master/AllStores",
+                datatype: "Json",
+                success: function (data) {
+                    $.each(data, function (index, value) {
+                        $('#ddlStores').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                    });
+                }
+            });
+        });
+        function ClearForm() {
+          
+            $("#ddlStores").val("");         
+            ClearParamGrid("grid");
+        }
+        $("#btnAdd").on("click", ClearForm);
+        
+        $(document).ready(function () {
+            var dataModel = { location: 'local', sorting: 'local', paging: 'local', dataType: 'JSON' };
+            $gridMain = $("div#grid").pqGrid({
+                height: 400,
+                sortable: false,
+                editable: true,
+                numberCell: { show: false },
+                //selectionModel: { type: 'row' },
+                showTop: true,
+                title: "Issue Item Details",
+                hoverMode: 'cell',
+                resizable: true,
+                virtualX: true,
+                virtualY: true,
+                scrollModel: { autoFit: true },
+                draggable: false,
+                wrap: false,
+                colModel: [
+                    
+                    { title: "", minWidth: 30, maxWidth: 30, type: "detail", dataIndx: "detail", resizable: false, sortable: false },
+                    { title: "", dataIndx: "Indent_Id", width: 10, hidden: true },
+                    { title: "", dataIndx: "IndentDetails_Id", width: 10, hidden: true },
+                    { title: "", dataIndx: "Indent_FromStoreID", width: 10, hidden: true },
+                    { title: "Indent No", dataIndx: "IndentNo", width: 400., editable: false },
+                    { title: "IndentDate", dataIndx: "strIndentDate", width: 200 ,editable: false},
+                    { title: "ToStore", dataIndx: "Indent_FromStore", width: 100, align: "left", editable: false },
+                    
+                ],
+                dataModel: dataModel,
+                scrollModel: { autoFit: true },
+                trackModel: { on: true }, //to turn on the track changes.
+                pageModel: { type: "local", rPP: 50 },
+                detailModel: {
+                    cache: true,
+                    collapseIcon: "ui-icon-plus",
+                    expandIcon: "ui-icon-minus",
+                    init: function (ui) {
+                        var rowData = ui.rowData,
+                            detailobj = gridDetailModel($(this), rowData), //get a copy of gridDetailModel
+                            $grid = $("<div id=detailgrid></div>").pqGrid(detailobj); //init the detail grid.
+                        return $grid;
+                    }
+                }
+            });
+
+            var gridDetailModel = function ($gridMain, rowData) {
+                return {
+                    width: '90%',
+                    scrollModel: { autoFit: true },
+                    height: 130,
+                    pageModel: { type: "local", rPP: 5, strRpp: "" },
+                    selectionModel: { type: 'row' },
+                    dataModel: {
+                        
+                        location: "remote",
+                        sorting: "local",
+                        dataType: "json",
+                        method: "GET",
+                        url: "/MaterialIndent/pedMIndentItemDetails/get?IndentId=" + rowData.Indent_Id,
+                        getData: function (dataJSON) {
+                            var data = dataJSON;
+                            return { curPage: dataJSON.curPage, totalRecords: dataJSON.totalRecords, data: data };
+                        }
+                    },
+                 
+                    colModel: [
+                        {
+                            dataIndx: "state", Width: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                            editor: false, dataType: 'bool',
+                            title: "<input type='checkbox' />",
+                            cb: { select: true, all: false, header: true }
+                        },
+                           { title: "IndentDetails_Id", width: 80, dataIndx: "IndentDetails_Id", hidden: true },
+                        { title: "Indent_Id", width: 80, dataType: "integer", dataIndx: "Indent_Id", hidden: true },
+                       // { title: "bal", width: 80, dataType: "float", dataIndx: "PendingQty", hidden: true },
+                        { title: "Item_Id", width: 80, dataType: "integer", dataIndx: "Item_Id", hidden: true },
+                        { title: "Item Name", width: 250, dataIndx: "ItemName", editable: false },
+                        { title: "Unit", width: 100, dataIndx: "DispensingUnit", editable: false },
+                        { title: "Auth Quantity", dataIndx: "Authorised_Quantity", width: 100, dataType: "float", align: "left", editable: false },
+                        { title: "Bal Qty", dataIndx: "PendingQty", width: 100, dataType: "float", align: "left" ,editable: false },
+                        { title: "Current Qty", dataIndx: "Item_Stock", width: 100, dataType: "float", align: "left", hidden: true },
+                        { title: "Reason", dataIndx: "MICancelReason", width: 130,  dataType: "string",align: "left", editable: true }
+                    ],
+                    editable: true,
+                    groupModel: {
+                        dataIndx: ["ItemName"],
+                        dir: ["up"],
+                        title: ["{0} - Total : {1}"],
+                        icon: [["ui-icon-triangle-1-se", "ui-icon-triangle-1-e"]]
+                    },
+                    flexHeight: true,
+                    flexWidth: true,
+                    numberCell: { show: false },
+                    title: "Item Details",
+                    showTop: false,
+                    showBottom: false
+                };
+            };
+        });
+     
+        $('#btnShowrequest').on('click', function () {
+            if ($("#ddlStores").val() == "") {
+                ShowAlert("error", "Please Select store");               
+                return;
+            }
+            var StoreId = $("#ddlStores").val();
+            $.ajax({
+                type: "GET",
+                url: "/MaterialIndent/PendingmaterialIndent/",
+                data: { StoreId: StoreId },
+                datatype: "Json",
+                beforeSend: function () {
+                    //$IndentSearchGrid = $("#Itemgrid").pqGrid(setIL);
+                    $("#grid").pqGrid("showLoading");
+                },
+                complete: function () {
+                    $("#grid").pqGrid("hideLoading");
+                },
+                success: function (response) {
+                    if (response.success) {
+                        $("#grid").pqGrid("hideLoading");
+                        $("#grid").pqGrid("option", "dataModel.data", response.mimodel);
+                        $("#grid").pqGrid("refreshDataAndView");
+                        return;
+                    } else {
+                        ClearParamGrid('grid');
+                        ShowAlert("error", response.Messsage);
+                        return;
+                    }
+                   },
+                error: function (request, status, error) {
+                    $("#grid").pqGrid("hideLoading");
+                    ClearParamGrid("grid");
+                    ShowAlert("error", "Error while loading list");
+                    return;
+                }
+            });
+        });
+       
+        $('#btnSave').on('click', function () {
+            
+            if ($("#Indent_Id").val() == "") {
+                ShowAlert("error", "Please Select Indent No.");
+                return;
+            }
+            var issueDetails = [];
+
+            var data = $gridMain.pqGrid("option", "dataModel.data");
+            for (var i = 0; i < data.length; i++) {
+                var rd = data[i],
+                    dt = rd.pq_detail,
+                    child;
+                if (dt && dt.child) {
+                    child = $(dt.child).pqGrid("option", "dataModel.data");//reference to instance of child grid.
+                    //child = $(dt.child).pqGrid("option", { dataIndx: ['IndentDetails_Id', 'Indent_Id', 'PendingQty', 'Item_Id', 'BatchId', 'Item_Stock', 'IssuedQuantity', 'state'] });                        
+                    if (child != null) {
+                        $.each(child, function (_, detail) {
+                            if (detail != null)
+                                issueDetails.push(detail);
+                        });
+                    }
+                }
+            }
+         
+            var mIssueData = JSON.stringify({
+                Materialindentdt: issueDetails
+            });
+
+            $.ajax({
+                type: "POST",
+                traditional: true,
+                contentType: 'application/json; charset=utf-8',
+                url: '/MaterialIndent/SavependingmaterialIndent',
+                data: mIssueData,
+                success: function (msg) {
+                    if (msg.success == true) {
+                      
+                        ClearParamGrid("grid");
+                        ShowAlert("success", "Cancellation Done Successfully");
+                    }
+                    else {
+                        ShowAlert("error", msg.responseText);
+                    }
+                },
+                error: function (jqXHR, exception) {
+                    ShowAlert("error", "Server Error! Please contact administrator!");
+                }
+            });
+        });
+    </script>
+}

@@ -1,0 +1,135 @@
+﻿@model BISERP.Areas.Asset.Models.RoomModel
+
+<script type="text/javascript">
+    var grid;
+
+    $(document).ready(function () {
+        var Floorlist = [];
+        var Branchlist = [];
+       
+            $.ajax({
+                type: "GET",
+                url: "/Master/AllBranches",
+            }).done(function (data) {
+                Branchlist = data;
+              
+                $.ajax({
+                    type: "GET",
+                    url: "/FloorMaster/AllActiveFloor",
+                }).done(function (data) {
+                    Floorlist = data;
+
+        grid = $("#grid").jsGrid({
+            width: "100%",
+            height: "400px",
+            filtering: true,
+            selecting: true,
+            inserting: true,
+            editing: true,
+            sorting: true,
+            autoload: true,
+            paging: true,
+            pageSize: 20,
+
+            controller: {
+
+                loadData: function (filter) {
+                    var d = $.Deferred();
+                    $.ajax({
+                        type: 'GET',
+                        url: '/RoomMaster/AllRoom',
+                        dataType: "json",
+                        data: { SearchName: filter.RoomName, SearchCode: filter.RoomCode },
+                        success: function (data) {
+                            d.resolve(data.records);
+                        },
+                        error: function (e) {
+                            ShowAlert("error", "Server Error! Please Contact administrator!");
+                        }
+                    });
+                    return d.promise();
+                },
+                insertItem: function (item) {
+                    var d = $.Deferred();
+                    $.ajax(
+                    {
+                        type: "POST",
+                        dataType: "json",
+                        url: '/RoomMaster/SaveRoom', // Controller/View
+                        data: item,
+                        success: function (msg) {
+                            if (msg.success) {
+                                ShowAlert("success", "Room Master added successfully to system.");
+                            } else {
+                                ShowAlert("error", msg.Message);
+                            }
+                        },
+                    }).done(function (item) {
+                        $("#grid").jsGrid("loadData");
+                    });
+
+                },
+                updateItem: function (item) {
+                    var d = $.Deferred();
+                    $.ajax(
+                    {
+                        type: "POST", //HTTP POST Method
+                        dataType: "json",
+                        url: '/RoomMaster/UpdateRoom', // Controller/View
+                        data: item,
+                        success: function (msg) {
+                            if (msg.success) {
+                                ShowAlert("success", "Room Master updated successfully to system.");
+                            } else {
+                                ShowAlert("error", msg.Message);
+                            }
+                        },
+                    }).done(function (insertedItem) {
+                        d.resolve(insertedItem.data);
+                        $("#grid").jsGrid("loadData");
+
+                    });
+                    return d.promise();
+                }
+            },
+            fields: [
+                { name: "RoomId", visible: false, width: 0 },
+                { name: "RoomCode", title: "Code", type: "text", validate: "required", autosearch: true, validate: { validator: "required", message: "Code is missing! Please enter the name" }, },
+                { name: "RoomName", title: "Name", type: "text", validate: "required", autosearch: true, validate: { validator: "required", message: "name is missing! Please enter the name" }, },
+                { name: "BranchId", title: "BranchName", type: "select", items: Branchlist, valueField: "BranchID", textField: "BranchName", validate: "required", filtering: false, width: 50 },
+                { name: "FloorId", title: "FloorName", type: "select", items: Floorlist, valueField: "FloorId", textField: "FloorName", validate: "required", filtering: false, width: 50 },
+                { name: "Deactive", title: "Deactive", type: "checkbox", filtering: false, width: 10, inserting: false },
+                { type: "control", deleteButton: false, width: 10 }
+            ],
+        });
+            });
+
+        });
+    });
+</script>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <fieldset>
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-groupingBoder">
+                    <div class="panel-heading">
+                        <div class="panel-title">
+                            <h4>
+                                Room
+                            </h4>
+                        </div>
+                    </div>
+                    <div class="panel-collapse collapse in" aria-expanded="true">
+                        <div class="panel-body">
+                            <div class="container fill">
+                                <div id="grid" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+}

@@ -1,0 +1,409 @@
+﻿@model BISERP.Areas.Accounts.Models.SupplierBillingModel
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <fieldset>
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-groupingBoder">
+                    <div class="panel-heading">
+                        <div class="panel-title">
+                            <a class="collapsediv" data-toggle="collapse" href="#collapse2" style="color: white">
+                                Search Detail
+                            </a>
+                        </div>
+                    </div>
+                    <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                        <div class="panel-body">
+                            <fieldset>
+                                <div class="row">
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @Html.Label("Select Supplier", new { @class = "required" })
+                                            @Html.DropDownList("ddlSupplier", new SelectList(string.Empty, "Value", "Text"), "--Select Supplier--", new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                    <br />
+                                    <div class="col-sm-3">
+                                        <div class="form-group" style="margin-left: 4px">
+                                            <button type="button" class="btn btn-primary" id="btnshow">Show</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </fieldset>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-groupingBoder">
+                    <div class="panel-heading">
+                        <div class="panel-title">
+                            <a class="collapsediv" data-toggle="collapse" href="#collapse4" style="color: white">
+                                GRN Detail
+                            </a>
+                        </div>
+                    </div>
+                    <div id="collapse4" class="panel-collapse collapse in" aria-expanded="true">
+                        <div class="panel-body">
+                            <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                                <div class="panel-body">
+                                    <div class="container fill">
+                                        <div id="GRNGrid"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+    <div id="AttachMentpopup" style="display: none;">
+        <div class="row">
+            <div class="col-sm-9">
+                @Html.Label("Upload")
+                <div>
+                    <input type='file' id="files" multiple="multiple" />
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <button type="button" class="btn btn-primary" id="AddAttachment">Add</button>
+            </div>
+        </div>
+    </div>
+    <div id="detailModal" style="display: none;">
+        <div id="detailGrid"></div>
+    </div>
+}
+<script>
+    var appSetting = '@BISERP.Common.Constants.ScandocUrl';
+    var $Summarygrid;
+    var GRNId, updateidx, saverowIndex;
+    $.ajax({
+        type: "GET",
+        url: "/SupplierMaster/AllSupplier",
+        datatype: "Json",
+        async: true,
+        success: function (data) {
+            $.each(data.records,
+                function (index, value) {
+                    $('#ddlSupplier').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                });
+        }
+    });
+    $("#btnshow").click(function () {
+        var supplierId = $("#ddlSupplier").val();
+        if (supplierId == undefined || supplierId === "") supplierId = 0;
+        ClearParamGrid('GRNGrid');
+        getGRNbySupplierId(supplierId);
+    });
+        
+
+    function getGRNbySupplierId(supplierId) {
+            $.ajax({
+                type: "GET",
+                url: "/SupplierBilling/getGRNbySupplierId",
+                data: { Supid: supplierId },
+                datatype: "Json",
+                async: true,
+                success: function (response) {
+                    
+                    $GRNgrid.pqGrid("option", "dataModel.data", response.records);
+                    $GRNgrid.pqGrid("refreshDataAndView");
+
+                }
+            });
+        }
+
+        var datagrn = { location: "local", sorting: 'local' };
+        var colgrn = [
+
+            { title: "", dataIndx: "ID", dataType: "integer", hidden: true },
+            {
+                title: "Supplier name", dataIndx: "SupplierName", dataType: "string", hidden: false, minWidth: 130, editable: false,
+                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            },
+            { title: "GSTIN", dataIndx: "SupGSTIN", width: 80, editable: false },
+            { title: "Invoice No", dataIndx: "InvoiceNo", width: 80, editable: false },
+            {
+                title: "GRN No", dataIndx: "GRNNo", dataType: "string", hidden: false, minWidth: 130, editable: false,
+                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            },
+            { title: "GRN Date", dataIndx: "strGRNDate", width: 100, dataType: "date", editable: false },
+            { title: "Payable Amount", dataIndx: "TotalAmount", width: 80, editable: false },
+            { title: "Paid Amount", dataIndx: "PaidAmount", width: 80, editable: false },
+            {
+                title: "OutStanding", dataIndx: "PendingAmount", width: 80, editable: false,
+                formula: function (ui) {
+                    var rd = ui.rowData;
+                    return rd["TotalAmount"] - rd["PaidAmount"];
+                }
+            },
+             {
+                 title: "Bill Received", dataIndx: "State", Width: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                 editor: false, dataType: 'bool',
+                 cb: { select: true, all: false, header: false }
+             },
+              { title: "filename", dataIndx: "FileName", width: 100, editable: true, hidden: true },
+            {
+                title: "Attachment", editable: false, minWidth: 100, sortable: false, listeners: [{ click: fnAttachment }],
+                render: function (ui) { return "<button type='button' class='edit_btn'>Attach</button>"; },
+                postRender: function (ui) {
+                    var rowIndx = ui.rowIndx,
+                        grid = this,
+                        $cell = grid.getCell(ui);
+                    $cell.find(".edit_btn").button({ icons: { primary: 'ui-icon-pencil' } })
+                        .bind("click", function (evt) {
+                            
+                            var ctx = ui.rowData.GRNId;
+                            updateidx = 0;
+                            updateidx = ui.rowIndx,
+                            fnAttachment(ui, grid, true, ctx);
+
+                        });
+                }
+            },
+            {
+                title: "Submit", editable: false, minWidth: 150, sortable: false, listeners: [{ click: fnUpdateFileName }],
+                render: function (ui) { return "<button type='button' class='edit_btn' style='color:green;'>Submit</button>"; },
+                postRender: function (ui) {
+                    var rowIndx = ui.rowIndx,
+                        grid = this,
+                        $cell = grid.getCell(ui);
+                    $cell.find(".edit_btn").button({ icons: { primary: 'ui-icon-pencil' } })
+                        .bind("click", function (evt) {
+                            var ctx = ui.rowData.GRNId;
+                            saverowIndex = 0;
+                            saverowIndex = ui.rowIndx;
+                            fnUpdateFileName(ui, grid, true, ctx);
+
+                        });
+                }
+            },
+            {
+                title: "Details", editable: false, minWidth: 100, sortable: false,
+                listeners: [{ click: detailstRow }],
+                render: function (ui) {
+                    return "<button type='button' class='edit_btn' style='color:blue'>Detail</button>";
+                },
+                postRender: function (ui) {
+                    var rowIndx = ui.rowIndx,
+                        grid = this,
+                        $cell = grid.getCell(ui);
+
+                    $cell.find(".edit_btn").button({ icons: { primary: 'ui-icon-pencil' } })
+                        .bind("click", function (evt) {
+
+                            var grnId = ui.rowData.ID;
+                            detailstRow(rowIndx, grid, true, grnId);
+                        });
+                }
+            }
+        ];
+        var setGrngrid = {
+            width: '100%',
+            height: 550,
+            sortable: false,
+            numberCell: { show: false },
+            hoverMode: 'cell',
+            showTop: false,
+            resizable: true,
+            scrollModel: { autoFit: true },
+            draggable: false,
+            wrap: false,
+            editable: true,
+            columnBorders: true,
+            selectionModel: { type: 'row', mode: 'single' },
+            colModel: colgrn,
+            dataModel: datagrn,
+            postRenderInterval: -1,
+            filterModel: { on: true, mode: "AND", header: true },
+            pageModel: { type: "local", rPP: 100 }
+        }
+        $GRNgrid = $("#GRNGrid").pqGrid(setGrngrid);
+
+    /*--------------- Save Function from Here----------------------------*/
+
+        function fnUpdateFileName(ui, grid, state, ctx) {
+            var rdata = ui.rowData;
+            var grnid = rdata.ID;
+            $.ajax({
+                type: "POST",
+                url: "/SupplierBilling/UpdateFileNamegrnBill",
+                datatype: "Json",
+                async: true,
+                data: { billingId: grnid },
+                success: function (data) {
+                    
+                    if (data.success) {
+                        SaveGridScandoc(rdata.FileName, rdata.ID, "Accounts", "GRNBills");
+                        ShowAlert("success", "Bill updated successfully.");
+                        getGRNbySupplierId();
+                    }
+                    else {
+                        ShowAlert("error", "Bill cannot be updated");
+                    }
+                },
+                error: function (x,s,a) {
+                    
+                    ShowAlert("error", "Something Went Wrong");
+                    return;
+                }
+            });
+            
+        }
+    /*--------------------------------Add Attachment Buttom---------------------------*/
+
+        function fnAttachment(rodata, grid, edit, ctx) {
+            
+            var rdata = rodata.rowData;
+            if (rdata.State !== true) {
+                ShowAlert('info', 'Select the bill first');
+                return;
+            }
+        $("#AttachMentpopup").dialog({
+            height: 200,
+            width: 700,
+            modal: true
+        }).dialog("open");
+
+        $("#AddAttachment").click(function () {
+            
+            var dataMGrid = [];
+            var getMainGridData = $("#GRNGrid").pqGrid("option", "dataModel.data");
+            $.each(getMainGridData,
+                function (key, value) {
+                    if (key === updateidx) {
+                        
+                        var grdData = {
+                            'ID': value.ID,
+                            'SupplierName': value.SupplierName,
+                            'GRNNo': value.GRNNo,
+                            'strGRNDate': value.strGRNDate,
+                            'TotalAmount': value.TotalAmount,
+                            'PaidAmount': value.PaidAmount,
+                            'State': value.State,
+                            'FileName': GetfileAttributes("files")
+                        }
+                    } else {
+                        var grdData = {
+                            'ID': value.ID,
+                            'SupplierName': value.SupplierName,
+                            'GRNNo': value.GRNNo,
+                            'strGRNDate': value.strGRNDate,
+                            'TotalAmount': value.TotalAmount,
+                            'PaidAmount': value.PaidAmount,
+                            'State': value.State,
+                            'FileName': value.FileName
+                        }
+                    }
+                    dataMGrid.push(grdData);
+                });
+            
+            $("#GRNGrid").pqGrid("option", "dataModel.data", dataMGrid);
+            $("#GRNGrid").pqGrid("refreshDataAndView");
+             ClosePopupWindow('AttachMentpopup');
+            });
+        }
+
+
+        function GetfileAttributes(file) {
+            
+            var filecontrol = $("#" + file);
+            var fdata = new FormData();
+            var files = filecontrol.get(0).files;
+            for (i = 0; i < files.length; i++) {
+                fdata.append("files" + i, files[i]);
+            }
+            return fdata;
+
+        }
+    /** Detail grid -----------------------*/
+    databilldetail = { location: 'local', sorting: 'local', paging: 'local', dataType: 'JSON' };
+    colbilldetail = [
+         { title: "", dataIndx: "ID", width: 10, dataType: "integer", editable: false, resizable: false, hidden: true },
+                { title: "", dataIndx: "ItemID", width: 10, dataType: "integer", editable: false, resizable: false, hidden: true },
+                { title: "", dataIndx: "GrnID", width: 10, dataType: "integer", editable: false, resizable: false, hidden: true },
+                { title: "", dataIndx: "Status", width: 10, dataType: "string", editable: false, resizable: false, hidden: true },
+                { title: "", dataIndx: "PackSizeId", width: 200, dataType: "integer", resizable: false, editable: false, hidden: true },
+                
+                { title: "ItemCode", dataIndx: "ItemCode", width: 150, dataType: "string", resizable: false, editable: false },
+                { title: "ItemName", dataIndx: "ItemName", width: 300, resizable: false, dataType: "string", editable: false },
+                  { title: "HSNCode", dataIndx: "HSNCode", width: 150, resizable: false, dataType: "string", editable: false },
+                {
+                    title: "Description", dataIndx: "DescriptiveName", minWidth: 300, dataType: "string", editable: true,
+                    editor: { type: "textarea", attr: "rows=5" }
+                },
+
+                { title: "BatchNo", dataIndx: "BatchName", width: 150, dataType: "float", resizable: false, editable: false, hidden: true },
+                { title: "Expiry Date", dataIndx: "strExpiryDate", width: 150, dataType: "DateTime", resizable: false, editable: false, hidden: true },
+                { title: "Qty", dataIndx: "Qty", width: 150, dataType: "double", resizable: false, editable: false },
+                { title: "Free Qty", dataIndx: "FreeQty", width: 150, dataType: "double", resizable: false, editable: false, hidden: true },
+                { title: "Rate", dataIndx: "Rate", width: 150, dataType: "double", resizable: false, editable: false, hidden: false },
+                { title: "Mrp", dataIndx: "MRP", width: 150, dataType: "double", resizable: false, editable: false, hidden: true },
+                
+        { title: "SGST", dataIndx: "SGST", width: 150, dataType: "double", resizable: false, editable: false, hidden: false },
+        { title: "CGST", dataIndx: "CGST", width: 150, dataType: "double", resizable: false, editable: false, hidden: false },
+        { title: "IGST", dataIndx: "IGST", width: 150, dataType: "double", resizable: false, editable: false, hidden: false },
+        { title: "UGST", dataIndx: "UGST", width: 150, dataType: "double", resizable: false, editable: false, hidden: false },
+        { title: "Amount", dataIndx: "Amount", width: 150, dataType: "double", resizable: false, editable: false, hidden: false },
+
+    ];
+
+    setilldetailGrid = {
+        width: 980,
+        height: 400,
+        sortable: false,
+        numberCell: { show: false },
+        hoverMode: 'cell',
+        showTop: false,
+        resizable: true,
+        scrollModel: { autoFit: true },
+        draggable: false,
+        wrap: false,
+        editable: true,
+        columnBorders: true,
+        selectionModel: { type: 'row' },
+        colModel: colbilldetail,
+        dataModel: databilldetail,
+        pageModel: { type: "local", rPP: 20 }
+
+    };
+    var $detailGrid = $("#detailGrid").pqGrid(setilldetailGrid);
+
+
+    function detailstRow(rowIndx, grid, edit, projectId) {
+        if (rowIndx != null) {
+            LoaddetailGrid(projectId);
+            $("#detailModal").dialog({
+                height: 500,
+                width: 1000,
+                modal: true
+            }).dialog("open");
+        }
+    }
+
+    function LoaddetailGrid(projectId) {
+        $.ajax({
+            type: "GET",
+            url: "/GRN/GRNDetails",
+            datatype: "Json",
+            data: { GRNId: projectId },
+            success: function (data) {
+                $("#detailGrid").pqGrid("option", "dataModel.data", data);
+                $("#detailGrid").pqGrid("refreshDataAndView");
+            },
+            error: function () {
+                ClearParamGrid('detailGrid');
+                ShowAlert("error", "Something went Wrong");
+                return;
+            }
+        });
+    }
+</script>

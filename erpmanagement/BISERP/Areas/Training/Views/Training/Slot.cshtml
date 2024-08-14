@@ -1,0 +1,285 @@
+﻿@model BISERP.Areas.Training.Models.SlotModel
+
+<script type="text/javascript">
+    var grid;
+    function handleException(request, message,
+                      error) {
+        var msg = "";
+        msg += "Code: " + request.status + "\n";
+        msg += "Text: " + request.statusText + "\n";
+        if (request.responseJSON != null) {
+            msg += "Message" +
+                request.responseJSON.Message + "\n";
+        }
+        alert(msg);
+    }
+    $(".datepicker").datepicker({
+        showOn: "button",
+        buttonImage: "/Content/images/calendar.gif",
+        buttonImageOnly: true,
+        buttonText: "Select date",
+        dateFormat: "dd-MM-yy"
+    }).datepicker("setDate", new Date());
+    $("#anim").change(function () {
+        $(".datepicker").datepicker("option", "showAnim", "fadeIn");
+    });
+    $(document).ready(function () {
+        grid = $("#grid").jsGrid({
+            width: "100%",
+            height: "320px",
+            filtering: true,
+            selecting: true,
+            inserting: false,
+            editing: false,
+            sorting: true,
+            autoload: true,
+            paging: true,
+            pageSize: 20,
+
+            controller: {
+                loadData: function (filter) {
+                    var d = $.Deferred();
+                    $.ajax({
+                        type: 'GET',
+                        url: '@Url.Action("AllSlot", "Slot")',
+                        dataType: "json",
+                        data: { SearchName: filter.SlotName, SearchCode: filter.SlotCode },
+                        success: function (data) {
+                            d.resolve(data);
+                        },
+                        error: function () {
+                            ShowAlert("error", "Server Error! Please Contact administrator!");
+                        }
+                    });
+                    return d.promise();
+                }
+            },
+
+            fields: [
+                { name: "SlotId", visible: false, width: 0 },
+                { name: "SlotCode", title: "SlotCode", type: "text", validate: "required", width: 20 },
+                { name: "SlotName", title: "SlotName", type: "text", validate: "required" },
+                { name: "Deactive", title: "Deactive", type: "checkbox", filtering: false, width: 10 },
+                { name: "FromDate", visible: false, width: 10, type: 'date', format: "dd/MM/yyyy" },
+                { name: "ToDate", visible: false, width: 10, type: 'date', format: "dd/MM/yyyy" },
+                { name: "NoOfDays", visible: false, width: 0 },
+                { name: "NoOfSlot", visible: false, width: 0 },
+                { name: "Remarks", visible: false, width: 0 },
+                { name: "TrainingTypeId", visible: false, width: 0 },
+                { type: "control", editButton: false, deleteButton: false, clearFilterButton: true, modeSwitchButton: true, width: 10 }
+
+            ],
+            /********** Row Selection Event you can use in Slot***********/
+            rowClick: function (args) {
+                var data = args.item;
+                $("#SlotId").val(data.SlotId);
+                $("#SlotCode").val(data.SlotCode);
+                $("#SlotName").val(data.SlotName);
+                $("#Deactive").prop('checked', data.Deactive);
+                $("#FromDate").val(data.strFromDate);
+                $("#ToDate").val(data.strToDate);
+                $("#NoOfDays").val(data.NoOfDays);
+                $("#NoOfSlot").val(data.NoOfSlot);
+                $("#Remarks").val(data.Remarks);
+                $("#ddlTrainingType").val(data.TrainingTypeId);
+                $("#Deactive").attr("disabled", false);
+                $(this).is(":checked") ? selectItem(item) : unselectItem(item);
+            }
+
+        });
+    });
+    $(document).ready(function () {
+        $("#btnSave").click(function () {
+            if ($("#SlotCode").val() == "") {
+                ShowAlert("error", "Slot Code is missing! Please enter the Slot Code");
+                return;
+            }
+            if ($("#SlotName").val() == "") {
+                ShowAlert("error", "Slot Name is missing! Please enter the Slot Name");
+                return;
+            }
+            $.ajax(
+            {
+                type: "POST", 
+                url: '/Slot/SaveSlot',
+                data: { 
+                    SlotId: $("#SlotId").val(), 
+                    SlotName: $("#SlotName").val(),
+                    SlotCode: $("#SlotCode").val(),
+                    FromDate: $("#FromDate").val(),
+                    ToDate: $("#ToDate").val(),
+                    NoOfDays: $("#NoOfDays").val(),
+                    NoOfSlot: $("#NoOfSlot").val(),
+                    Remarks: $("#Remarks").val(),
+                    TrainingTypeId: $("#ddlTrainingType").val(),
+                    Deactive: $("#Deactive").prop('checked')
+                },
+                success: function (msg) {
+                    if (msg.success) {
+                        ClearForm();
+                        $("#grid").jsGrid("loadData");
+                        ShowAlert("success", "Slot Master record added successfully to system.");
+                    }
+                    else {
+                        ShowAlert("error", msg.Message);
+                    }
+                }
+            });
+        });
+    });
+    $.ajax({
+        type: "GET",
+        url: "/TrainingType/AllTrainingType",
+        datatype: "Json",
+        success: function (data) {
+            $.each(data, function (index, value) {
+                $('#ddlTrainingType').append('<option value="' + value.TypeId + '">' + value.TrainingType + '</option>');
+            });
+        }
+    });
+
+    function ClearForm() {
+        $("#SlotId").val("");
+        $("#SlotCode").val("");
+        $("#SlotName").val("");
+        $("#Deactive").prop('checked', false);
+        $("#NoOfDays").val("");
+        $("#NoOfSlot").val("");
+        $("#ddlTrainingType").val("");
+        $("#Remarks").val("");
+        $("#Deactive").attr("disabled", true);
+        $("#FromDate").datepicker().datepicker("setDate", new Date());
+        $("#ToDate").datepicker().datepicker("setDate", new Date());
+    }
+    $(document).ready(function () {
+        $("#btnAdd").click(function () {
+            ClearForm();
+        });
+    });
+</script>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <fieldset>
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-groupingBoder">
+                    <div class="panel-heading">
+                        <div class="panel-title">
+                            <h4>
+                                <a class="collapsediv" data-toggle="collapse" href="#SearchDetails" style="color:white">
+                                    Slot Details
+                                </a>
+                            </h4>
+                        </div>
+                    </div>
+                    <div class="panel-collapse collapse in" aria-expanded="true" id="SearchDetails">
+                        <div class="panel-body">
+                            <div class="container fill">
+                                <div id="grid"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="panel-groupingBoder">
+            <div class="panel-heading">
+                <div class="panel-title">
+                    Entry Form
+                </div>
+            </div>
+            <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                <div class="panel-body">
+                    <fieldset>
+                        <div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <button type="button" id="btnSave" class="btn btn-success">Save</button>
+                                    <button type="button" id="btnAdd" class="btn btn-success">Reset</button>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-md-1">
+                                @Html.LabelFor(model => model.SlotCode, new { @class = "required" })
+                            </div>
+                            <div class="col-md-2">
+                                @Html.TextBoxFor(model => model.SlotCode, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.SlotCode)
+                                @Html.HiddenFor(model => model.SlotId)
+                            </div>
+                            <div class="col-md-1">
+                                @Html.LabelFor(model => model.SlotName, new { @class = "required" })
+                            </div>
+                            <div class="col-md-2">
+                                @Html.TextBoxFor(model => model.SlotName, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.SlotName)
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-2">
+                                    @Html.LabelFor(model => model.Deactive)
+                                    @Html.CheckBoxFor(model => model.Deactive, new { @disabled = "disabled" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-1">
+                                @Html.LabelFor(model => model.FromDate)
+                            </div>
+                            <div class="col-md-2">
+                                @Html.TextBoxFor(model => model.FromDate, new { @class = "form-control datepicker" })
+                                @Html.ValidationMessageFor(model => model.FromDate)
+                            </div>
+                            <div class="col-md-1">
+                                @Html.LabelFor(model => model.ToDate)
+                            </div>
+                            <div class="col-md-2">
+                                @Html.TextBoxFor(model => model.ToDate, new { @class = "form-control datepicker" })
+                                @Html.ValidationMessageFor(model => model.ToDate)
+                            </div>
+                            <div class="col-md-1">
+                                @Html.LabelFor(model => model.NoOfDays)
+                            </div>
+                            <div class="col-md-2">
+                                @Html.TextBoxFor(model => model.NoOfDays, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.NoOfDays)
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-1">
+                                @Html.LabelFor(model => model.NoOfSlot)
+                            </div>
+                            <div class="col-md-2">
+                                @Html.TextBoxFor(model => model.NoOfSlot, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.NoOfSlot)
+                            </div>
+                            <div class="col-md-1">
+                                @Html.LabelFor(model => model.Remarks)
+                            </div>
+                            <div class="col-md-2">
+                                @Html.TextBoxFor(model => model.Remarks, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.Remarks)
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-1">
+                                @Html.LabelFor(model => model.TrainingTypeId)
+                            </div>
+                            <div class="col-md-2">
+                                @Html.DropDownList("ddlTrainingType", new SelectList(string.Empty, "Value", "Text"), "Select Traning Type", new { @class = "wrapperdropdown-content form-control" })
+                                @Html.ValidationMessageFor(model => model.TrainingTypeId)
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+
+    </fieldset>
+
+}

@@ -1,0 +1,396 @@
+﻿@model BISERP.Areas.Miscellaneous.Models.MaterialReturnModel
+<script>
+    $(function () {
+        $(".datepicker").datepicker({
+            showOn: "button",
+            buttonImage: "/Content/images/calendar.gif",
+            buttonImageOnly: true,
+            buttonText: "Select date",
+            'changeMonth': true,
+            'changeYear': true,
+            'yearRange': '2021:2030',
+            "format": "dd-M-yyyy",
+            todayBtn: "linked",
+            pickerPosition: "bottom-left",
+            "todayHighlight": true,
+            autoclose: true,
+        }).datepicker("setDate", new Date());
+        $("#anim").change(function () {
+            $(".datepicker").datepicker("option", "showAnim", "fadeIn");
+        });
+    });
+</script>
+<h5 class="page-header orangeDottedBottomBorder">Material Return</h5>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBorder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <a class="collapsediv" data-toggle="collapse" href="#collapse2" style="color:white">
+                            Entry Form
+                        </a>
+                    </div>
+                </div>
+                <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <div class="fill">
+                            <div class="submit-row">
+                                <!-- Uncomment to enable search button
+                                <a data-toggle="collapse" class="btn btn-success" href="#collapse1">Search</a>
+                                -->
+                                <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                                <button type="button" class="btn btn-primary" id="btnReset">Reset</button>
+                            </div>
+
+                            <fieldset class="fieldsetCustom">
+                                <div class="row">
+                                    <div class="col-sm-2">
+                                        @Html.Label("Material Return No")
+                                        @Html.TextBoxFor(m => m.ReturnNo, new { @readonly = "readonly", Value = "Auto", @class = "form-control" })
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.Label("Return Date")
+                                        @Html.TextBoxFor(m => m.ReturnDate, new { @class = "form-control datepicker", @readonly = "true" })
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.Label("Return Type")
+                                        <select id="ReturnType" class="form-control">
+                                            <option value="Issue">Issue</option>
+                                            <!-- Uncomment to enable "Lend" option
+                                            <option value="Lend">Lend</option>
+                                            -->
+                                        </select>
+                                        @Html.HiddenFor(m => m.IssueId)
+                                    </div>
+
+                                    <div class="col-sm-2">
+                                        @Html.Label("Material Issue No")
+                                        @Html.TextBoxFor(m => m.IssueNo, new { @class = "form-control" })
+                                        @Html.HiddenFor(m => m.IssueId)
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.LabelFor(model => model.ReturnFrom)
+                                        @Html.TextBoxFor(m => m.FromStore, new { @readonly = "readonly", @class = "form-control" })
+                                        @Html.HiddenFor(m => m.FromStoreID)
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.LabelFor(model => model.ReturnTo)
+                                        @Html.TextBoxFor(m => m.ToStore, new { @readonly = "readonly", @class = "form-control" })
+                                        @Html.HiddenFor(m => m.ToStoreID)
+                                    </div>
+                                </div>
+                            </fieldset>
+
+                            <div class="submit-row">
+                                <!-- Uncomment to enable add item button
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ItemModal">Add Item</button>
+                                -->
+                                <button type="button" class="btn btn-danger" id="btnRemove">Remove Item</button>
+                            </div>
+
+                            <div id="grid"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="IndentModal" style="display: none;" title="Select Issue No">
+        <div id="Indentgrid"></div>
+    </div>
+
+    <script type="text/javascript">
+        var selectedItem_RowIndx = null;
+        function LoadSearchGrid() {
+
+            $("#IndentModal").dialog({
+                height: 500,
+                width: 700,
+                modal: true,
+                open: function (evt, ui) {
+                    $.ajax({
+                        type: "GET",
+                        url: "/MaterialReturn/AllMaterialReturn",
+                        datatype: "Json",
+                        beforeSend: function () {
+                            $Indentgrid.pqGrid("showLoading");
+                        },
+                        complete: function () {
+                            $Indentgrid.pqGrid("hideLoading");
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                $Indentgrid.pqGrid("hideLoading");
+                                $Indentgrid.pqGrid("option", "dataModel.data", response.records);
+
+                                var column = $Indentgrid.pqGrid("getColumn", { dataIndx: "FromStore" });
+                                var filter = column.filter;
+                                filter.cache = null;
+                                filter.options = $Indentgrid.pqGrid("getData", { dataIndx: ["FromStore"] });
+
+                                var column = $Indentgrid.pqGrid("getColumn", { dataIndx: "ToStore" });
+                                var filter = column.filter;
+                                filter.cache = null;
+                                filter.options = $Indentgrid.pqGrid("getData", { dataIndx: ["ToStore"] });
+                                $Indentgrid.pqGrid("refreshDataAndView");
+                            } else {
+                                ClearParamGrid('Indentgrid');
+                                ShowAlert("error", response.Messsage);
+                                return;
+                            }
+                        },
+                        error: function (request, status, error) {
+                            $Indentgrid.pqGrid("hideLoading");
+                            ShowAlert("error", "Server error! Please Contact Administrator");
+                            return;
+                        }
+                    });
+                },
+                close: function (event, ui) {
+                },
+                show: {
+                    effect: "blind",
+                    duration: 500
+                }
+            });
+        }
+        var $Indentgrid;
+        var $DetailsGrid;
+        $(document).ready(function () {
+            var dataSearchGrid = { location: "local", sorting: 'local' };
+            var colSearchGrid = [
+                { title: "", dataIndx: "IssueId", dataType: "integer", hidden: true },
+                { title: "", dataIndx: "FromStoreID", dataType: "integer", hidden: true },
+                { title: "", dataIndx: "ToStoreID", dataType: "integer", hidden: true },
+                {
+                    title: "Issue No", dataIndx: "IssueNo", width: 220,
+                    filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+                },
+                {
+                    title: "Issue Date", dataIndx: "strIssueDate", width: 150, dataType: "date",
+                },
+                {
+                    title: "Project", dataIndx: "FromStore", width: 150,
+                    filter: {
+                        type: "select",
+                        condition: 'equal',
+                        prepend: { '': '--Select--' },
+                        valueIndx: "FromStore",
+                        labelIndx: "FromStore",
+                        listeners: ['change']
+                    }
+                },
+                {
+                    title: "To Store", dataIndx: "ToStore", width: 200, filter: {
+                        type: "select",
+                        condition: 'equal',
+                        prepend: { '': '--Select--' },
+                        valueIndx: "ToStore",
+                        labelIndx: "ToStore",
+                        listeners: ['change']
+                    }
+                }
+            ];
+            var setSearchGrid = {
+                height: "100%-30", //height in %age
+                sortable: false,
+                numberCell: { show: false },
+                showTop: false,
+                resizable: true,
+                scrollModel: { autoFit: true },
+                draggable: false,
+                wrap: false,
+                editable: false,
+                columnBorders: true,
+                selectionModel: { type: 'row' },
+                filterModel: { on: true, mode: "AND", header: true },
+                colModel: colSearchGrid,
+                dataModel: dataSearchGrid,
+                virtualX: true,
+                virtualY: true,
+                pageModel: { type: "local", rPP: 20 },
+                rowClick: function (evt, ui) {
+                    ClosePopupWindow("IndentModal");
+                    if (ui.rowData) {
+                        var rowIndx = parseInt(ui.rowIndx);
+                        var record = ui.rowData;
+                        $("#IssueId").val(record.IssueId);
+                        $("#IssueNo").val(record.IssueNo);
+                        $("#FromStore").val(record.ToStore);
+                        $("#ToStore").val(record.FromStore);
+                        $("#FromStoreID").val(record.ToStoreID);
+                        $("#ToStoreID").val(record.FromStoreID);
+                        $.ajax({
+                            type: "GET",
+                            url: "/MaterialReturn/MaterialIssueItems/",
+                            data: { IssueId: record.IssueId },
+                            datatype: "Json",
+                            async: true,
+                            beforeSend: function () {
+                                $DetailsGrid.pqGrid("showLoading");
+                            },
+                            complete: function () {
+                                $DetailsGrid.pqGrid("hideLoading");
+                            },
+                            success: function (data) {
+                                var dataMGrid = [];
+                                $.each(data, function (index, value) {
+                                    var grdData = {
+                                        'ReturnDtlID': value.ReturnDtlID,
+                                        'ItemName': value.ItemName,
+                                        'ItemCode': value.ItemCode,
+                                        'ItemID': value.ItemID,
+                                        'BatchId': value.BatchId,
+                                        'Batch': value.Batch,
+                                        'strExpiryDate': value.strExpiryDate,
+                                        'StockQty': value.StockQty,
+                                        'IssueQty': value.IssueQty,
+                                    }
+                                    dataMGrid.push(grdData);
+                                });
+                                $DetailsGrid.pqGrid("hideLoading");
+                                $DetailsGrid.pqGrid("option", "dataModel.data", dataMGrid);
+                                try {
+                                    $DetailsGrid.pqGrid("refreshDataAndView");
+                                }
+                                catch (e) { $("#grid").pqGrid("refreshDataAndView"); }
+                            },
+                            error: function (request, status, error) {
+                                $DetailsGrid.pqGrid("hideLoading");
+                                ShowAlert("error", "Error while loading Itemlist");
+                                return;
+                            }
+                        });
+                    }
+                }
+            }
+            $Indentgrid = $("#Indentgrid").pqGrid(setSearchGrid);
+        });
+        $(document).ready(function () {
+            $("#IssueNo").click(function () {
+                LoadSearchGrid();
+            });
+
+            colIID = [
+                { title: "", dataIndx: "ReturnDtlID", dataType: "integer", editable: false, hidden: true },
+                { title: "", dataIndx: "ItemID", dataType: "integer", editable: false, hidden: true },
+                { title: "Item Name & Description", dataIndx: "ItemName", dataType: "string", width: "30%", editable: false },
+                { title: "", dataIndx: "BatchId", width: 200, dataType: "integer", editable: false, hidden: true },
+                { title: "Batch", dataIndx: "Batch", width: 100, dataType: "string", editable: false, hidden: true },
+                { title: "Expiry Date", dataIndx: "strExpiryDate", width: "10%", dataType: "string", editable: false },
+                { title: "StockQty", dataIndx: "StockQty", width: "10%", dataType: "string", editable: false },
+                { title: "IssueQty", dataIndx: "IssueQty", width: "10%", dataType: "float", editable: false },
+                { title: "ReturnQty", dataIndx: "Quantity", width: "10%", dataType: "float", editable: true },
+                { title: "Reason", dataIndx: "Reason", width: "30%", dataType: "string", editable: true, type: 'textarea' },
+            ];
+            dataIID = {
+                location: 'local',
+                sorting: 'local',
+                paging: 'local',
+                dataType: 'JSON'
+            };
+
+            setIID = {
+                virtualX: true,
+                virtualY: true,
+                height: '300',
+                maxheight: '400',
+                title: "Material Return Item Details",
+                sortable: false,
+                numberCell: { show: false },
+                selectionModel: { type: 'row' },
+                hoverMode: 'cell',
+                editor: { type: 'textbox' },
+                showTop: true,
+                resizable: true,
+                editModel: {
+                    saveKey: $.ui.keyCode.ENTER
+                },
+                draggable: false,
+                rowClick: function (evt, ui) {
+                    if (ui.rowData) {
+                        selectedItem_RowIndx = ui.rowIndx;
+                    }
+                },
+                colModel: colIID,
+                dataModel: dataIID,
+                pageModel: { type: "local", rPP: 50 },
+            };
+            $DetailsGrid = $("#grid").pqGrid(setIID);
+
+            $('#btnSave').on('click', function () {
+                if ($("#IssueNo").val() == "") {
+                    ShowAlert("error", "Please Select Issue No.");
+                    return;
+                }
+                if ($("#ReturnID").val() == "") {
+                    ShowAlert("error", "Please Select Item ");
+                    return;
+                }
+                DisableClick("btnSave");
+                var gridData = $DetailsGrid.pqGrid("getData", { dataIndx: ['ItemID', 'ReturnDtlID', 'BatchId', 'ReturnDtlID', 'Reason', 'Quantity', 'StockQty', 'IssueQty', 'ItemName'] });
+
+                var mIssueData = JSON.stringify({ //Passing data
+                    ReturnID: $("#ReturnID").val(),
+                    IssueId: $("#IssueId").val(),
+                    ReturnType: $("#ReturnType").val(),
+                    ReturnDate: $("#ReturnDate").val(),
+                    ReturnFrom: $("#FromStoreID").val(),
+                    ReturnTo: $("#ToStoreID").val(),
+                    StrReturnTo: $("#ToStore").val(),
+                    StrReturnFrom: $("#FromStore").val(),
+                    ReturnNo: $("#ReturnNo").val(),
+                    FromStoreID: $("#FromStoreID").val(),
+                    ToStoreID: $("#ToStoreID").val(),
+                    //Quantity: $("#Quantity").val(),
+                    MaterialReturnDt: gridData
+                });
+                $.ajax({
+                    type: "POST", //HTTP POST Method
+                    traditional: true,
+                    contentType: 'application/json; charset=utf-8',
+                    url: '/MaterialReturn/SaveMaterialReturn', // Controller/View
+                    data: mIssueData,
+                    success: function (msg) {
+                        if (msg.success == true) {
+                            ClearForm();
+                            ShowAlert("success", "Generated Return No : " + msg.Message);
+                        }
+                        else {
+                            ShowAlert("error", "Falied to Save! " + msg.Message);
+                        }
+                    },
+                    error: function (jqXHR, exception) {
+                    }
+                });
+            });
+            $("#btnReset").on("click", ClearForm);
+        });
+
+        function ClearForm() {
+            $("#ReturnID").val("");
+            $("#IssueNo").val("");
+            $("#IssueId").val("");
+            $("#ReturnType").val("");
+            $("#ReturnDate").datepicker().datepicker("setDate", new Date());
+            $("#FromStore").val("");
+            $("#ToStore").val("");
+            $("#ReturnNo").val("");
+            ClearParamGrid("grid");
+        }
+
+        $('#btnRemove').on('click', function () {
+            if (selectedItem_RowIndx == null) {
+                return;
+            }
+            $("#grid").pqGrid("deleteRow", { rowIndx: selectedItem_RowIndx });
+            selectedItem_RowIndx = null;
+        });
+
+    </script>
+}

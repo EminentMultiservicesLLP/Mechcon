@@ -1,0 +1,136 @@
+﻿@model BISERP.Areas.Training.Models.TrainingCategoryModel
+<script type="text/javascript">
+    var grid;
+    $(document).ready(function () {
+        function handleException(request, message,
+                         error) {
+            var msg = "";
+            msg += "Code: " + request.status + "\n";
+            msg += "Text: " + request.statusText + "\n";
+            if (request.responseJSON != null) {
+                msg += "Message" +
+                    request.responseJSON.Message + "\n";
+            }
+            alert(msg);
+        }
+
+        grid = $("#grid").jsGrid({
+            width: "100%",
+            height: "400px",
+            filtering: true,
+            selecting: true,
+            inserting: true,
+            editing: true,
+            sorting: true,
+            autoload: true,
+            paging: true,
+            pageSize: 20,
+
+            controller: {
+
+                loadData: function (filter) {
+                    var d = $.Deferred();
+                    $.ajax({
+                        type: 'GET',
+                        url: '/TrainingCategory/AllTrainingCategory',
+                        dataType: "json",
+                        data: { SearchName: filter.Category, SearchCode: filter.Code },
+                        success: function (data) {
+                            d.resolve(data);
+                        },
+                        error: function () {
+                            ShowAlert("error", "Server Error! Please Contact administrator!");
+                        }
+                    });
+                    return d.promise();
+                },
+                insertItem: function (item) {
+                    $.ajax(
+                    {
+                        type: "POST",
+                        dataType: "json",
+                        url: '/TrainingCategory/SaveTrainingCategory', // Controller/View
+                        data: item,
+                        success: function (msg) {
+                            if (msg.success) {
+                                ShowAlert("success", "Training Category Master added successfully to system.");
+                            } else {
+                                ShowAlert("error", msg.Message);
+                            }
+                        }, error: function (request, message, error) {
+                            handleException(request, message, error);
+                        }
+
+                    }).done(function () {
+                        $("#grid").jsGrid("loadData");
+                    }).fail(function (jqXhr, textStatus, errorThrown) {
+                        if (jqXhr.getResponseHeader('Content-Type').indexOf('application/json') > -1) {
+                            // only parse the response if you know it is JSON
+                            var error = $.parseJSON(jqXhr.responseText);
+                            alert(error.Message);
+                        } else {
+                            alert('Fatal error');
+                        }
+                    });;
+
+                },
+                updateItem: function (item) {
+                    var d = $.Deferred();
+                    $.ajax(
+                    {
+                        type: "Put", //HTTP POST Method
+                        dataType: "json",
+                        url: '/TrainingCategory/UpdateTrainingCategory', // Controller/View
+                        data: item,
+                        success: function (msg) {
+                            if (msg.success) {
+                                ShowAlert("success", "Training Category Master updated successfully to system.");
+                            } else {
+                                ShowAlert("error", msg.Message);
+                            }
+                        },
+                    }).done(function (insertedItem) {
+                        d.resolve(insertedItem.data);
+                        $("#grid").jsGrid("loadData");
+
+                    });
+                    return d.promise();
+                }
+            },
+            fields: [
+                { name: "CategoryId", visible: false, width: 0 },
+                { name: "Code", title: "Code", type: "text", validate: "required", autosearch: true, validate: { validator: "required", message: "Code is missing! Please enter the Code" }},
+                { name: "Category", title: "Category", type: "text", validate: "required", autosearch: true, validate: { validator: "required", message: "Training Type is missing! Please enter the Training Type" }},
+                { name: "Deactive", title: "Deactive", type: "checkbox", filtering: false, width: 10, inserting: false },
+                { type: "control", deleteButton: false, width: 10 }
+            ],
+        });
+    });
+
+</script>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <fieldset>
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-groupingBoder">
+                    <div class="panel-heading">
+                        <div class="panel-title">
+                            <h4>
+                                Training Category
+                            </h4>
+                        </div>
+                    </div>
+                    <div class="panel-collapse collapse in" aria-expanded="true">
+                        <div class="panel-body">
+                            <div class="container fill">
+                                <div id="grid" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+}

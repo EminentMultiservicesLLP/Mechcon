@@ -1,0 +1,354 @@
+﻿@model BISERP.Areas.Branch.Models.MomentOrderModel
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <a class="collapsediv" data-toggle="collapse" href="#SearchDetails" style="color:white">
+                            Search Details
+                        </a>
+                    </div>
+                </div>
+                <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <div class="container fill">
+                            <div id="searchgrid"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        Entry Form
+                    </div>
+                </div>
+                <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <fieldset>
+                            <legend></legend>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <a data-toggle="collapse" class="btn btn-success" href="#SearchDetails">Show Search</a>
+                                    <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                                    <button type="button" class="btn btn-success" id="btnReset">Reset</button>
+                                    <button type="button" class="btn btn-success" id="btnClearTrainee" style="display: none">Clear</button>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-4">
+                                        @*@Html.Label("EmployeeType","", new { @class = "required" })*@
+                                        @Html.LabelFor(m => m.EmployeeType)
+                                        <input type="radio" name="EmployeeType" value="0"> Temporary
+                                        <input type="radio" name="EmployeeType" value="1" > Recruited
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.BranchId)
+                                        @Html.TextBox("ddlBranch", "", new { @class = "form-control", @disabled = "disabled" })
+                                        @Html.HiddenFor(m => m.BranchId)
+                                        @Html.HiddenFor(m => m.OrderId)
+                                    </div>
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.TempEmpId)
+                                        @Html.TextBox("ddlTemp", "", new { @class = "form-control", @disabled = "disabled" })
+                                        @Html.HiddenFor(m => m.TempEmpId)
+                                    </div>
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.EmpName)
+                                        @Html.TextBoxFor(m => m.EmpName, new { @class = "form-control", @disabled = "disabled" })
+                                        @Html.HiddenFor(m => m.EmpId)
+                                    </div>
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.TicketCode)
+                                        @Html.TextBoxFor(m => m.TicketCode, new { @class = "form-control", @disabled = "disabled" })
+                                        @Html.HiddenFor(m => m.EmpId)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.CheckBoxFor(m => m.Medical)
+                                        @Html.LabelFor(m => m.Medical)
+                                        @Html.TextBoxFor(m => m.Details, "", new { @class = "form-control", @disabled = "disabled" })
+                                    </div>
+                                    <div class="col-sm-3">
+                                        @Html.Label("Training Centre")
+                                        @Html.TextBox("ddlTrainingCentre", "", new { @class = "form-control", @disabled = "disabled" })
+                                    </div>
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.TrainingDate)
+                                        @Html.TextBox("TrainingDate", "", new { @class = "form-control", @disabled = "disabled" })
+                                    </div>
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.BatchId)
+                                        @Html.TextBox("ddlBatchdate", "", new { @class = "form-control", @disabled = "disabled" })
+                                        @Html.HiddenFor(m=>m.BatchId)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.Label("Status", new {@class = "required"})
+                                        <input type="radio" name="AuthCancel" value="Authorized" checked> Accept
+                                        <input type="radio" name="AuthCancel" value="Cancel"> Reject
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.Remarks)
+                                        @Html.TextAreaFor(m =>m.Remarks, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+            @*<div class="panel-groupingBoder">
+                <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <fieldset>
+                            <legend>Guard Detail</legend>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.Height)
+                                        @Html.TextBoxFor(m => m.Height, new { @class = "form-control", @disabled = "disabled" })
+                                    </div>
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.Weight)
+                                        @Html.TextBoxFor(m => m.Weight, new { @class = "form-control", @disabled = "disabled" })
+                                    </div>
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.Waist)
+                                        @Html.TextBoxFor(m => m.Waist, new { @class = "form-control", @disabled = "disabled" })
+                                    </div>
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.Fitness)
+                                        @Html.TextBoxFor(m => m.Fitness, new { @class = "form-control", @disabled = "disabled" })
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>*@
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        var $SearchGrid;
+        var $MainGrid;
+        var setMainGrid, dataMainGrid, colMainGrid;
+        function LoadSearchGrid() {
+          
+            $.ajax({
+                url: "/MomentOrder/GetAllMomentOrderList",
+                cache: false,
+                async: true,
+                method: "GET",
+                dataType: "JSON",
+                success: function (response) {
+                    $SearchGrid.pqGrid("option", "dataModel.data", response.mimodel);
+                    $SearchGrid.pqGrid("refreshDataAndView");
+                }
+            });
+        }
+
+
+        $("#btnSave").click(function () {
+          
+            var authCancel;
+            if ($("[name='AuthCancel']:checked").val() == "Authorized")
+                authCancel = true;
+            else
+                authCancel = false;
+            if ($("[name='AuthCancel']:checked").val() == "Cancel" && $("#Remarks").val() == "") {
+                ShowAlert("error", "Please Enter Remarks");
+                return;
+            }
+           
+            $.ajax(
+            {
+                type: "POST", //HTTP POST Method
+                url: '/MomentOrder/SaveMomentOrderacceptance', // Controller/View
+                data: { //Passing data
+                    OrderId: $("#OrderId").val(),
+                    BatchId: $("#BatchId").val(),
+                    Accepted: authCancel, //Reading text box values using Jquery
+                    Remarks: $("#Remarks").val(),
+                  
+                },
+                success: function (msg) {
+                  
+                    if (msg.success) {
+                        ClearForm();
+                        if (msg.Status == true) 
+                            ShowAlert("success", msg.Message);
+                        else {
+                            ShowAlert("error", msg.Message);
+                        }
+                        LoadSearchGrid();
+                    }
+                    else {
+                        ShowAlert("error", msg.Message);
+                    }
+                },
+
+            });
+        });
+
+        //*************************
+
+        $("#btnClearTrainee").click(function () {
+
+            var authCancel;
+            var clearReason = "Batch Full";
+            if ($("[name='AuthCancel']:checked").val() == "Authorized")
+                authCancel = true;
+            else
+                authCancel = false;
+            if ($("[name='AuthCancel']:checked").val() == "Cancel" && $("#Remarks").val() == "") {
+                ShowAlert("error", "Please Enter Remarks");
+                return;
+            }
+            $.ajax(
+            {
+                type: "POST", //HTTP POST Method
+                url: '/MomentOrder/ClearBatchFullOrderacceptance', // Controller/View
+                data: { //Passing data
+                    OrderId: $("#OrderId").val(),
+                    BatchId: $("#BatchId").val(),
+                    Accepted: authCancel, //Reading text box values using Jquery
+                    Remarks: clearReason
+
+                },
+                success: function (msg) {
+                    if (msg.success) {
+                        ClearForm();
+                        if (msg.Status == true)
+                            ShowAlert("success", msg.Message);
+                        else {
+                            ShowAlert("error", msg.Message);
+                        }
+                        LoadSearchGrid();
+                    }
+                    else {
+                        ShowAlert("error", msg.Message);
+                    }
+                }
+
+            });
+        });
+
+        function ClearForm() {
+            $("#OrderId").val("");
+            $("#Remarks").val("");
+            $("#ddlTemp").val("");
+            $("#ddlBranch").val("");
+            $("#TicketCode").val("");
+            $("#EmpName").val("");
+            $("#ddlTrainingCentre").val("");
+            $("#ddlBatchdate").val("");
+            $("#TrainingDate").val("");
+            $("input[name=AuthCancel][value='Authorized']").prop("checked", true);
+        }
+        $("#btnReset").on("click", ClearForm);
+        /********* Search Grid *********/
+        $(document).ready(function () {
+            var dataM = { location: "local", sorting: 'local' };
+            var colM = [
+                    { title: "", dataIndx: "OrderId", dataType: "integer" , hidden: true  },
+                    { title: "", dataIndx: "EmployeeType", dataType: "integer", hidden: true },
+                    { title: "", dataIndx: "TrainingCentreId", dataType: "integer", hidden: true },
+                    { title: "", dataIndx: "BranchId", dataType: "integer", hidden: true },
+                    { title: "", dataIndx: "EmpId", dataType: "integer", hidden: true },
+                    { title: "", dataIndx: "TempEmpId", dataType: "integer", hidden: true },
+                    { title: "", dataIndx: "BatchId", dataType: "integer", hidden: true },
+                    { title: "", dataIndx: "Medical", hidden: true },
+                    { title: "", dataIndx: "EmpName", hidden: true },
+                    { title: "", dataIndx: "Temporaryname", hidden: true },
+                    { title: "", dataIndx: "TrainingDate", hidden: true },
+                     { title: "", dataIndx: "TrainingCentre", hidden: true },
+                    { title: "BranchName", dataIndx: "BranchName", width: 160 },
+                    {
+                        title: "OrderNO", dataIndx: "Code", width: 160,
+                        filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                    },
+                    { title: "EmployeeType", dataIndx: "StrEmployeeType", width: 70 },
+                    {
+                        title: "Employee", dataIndx: "EmployeeName", width: 150, filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                    },
+                    { title: "TicketCode", dataIndx: "TicketCode", width: 100, filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } },
+                    { title: "TrainingDate", dataIndx: "StrTrainingDate", width: 100 , hidden: true},
+                    { title: "Slot", dataIndx: "BatchName", width: 200, dataType: "string" },
+                    { title: "Details", dataIndx: "Details", width: 170, dataType: "string", hidden: true },
+            ];
+
+            var setM = {
+                height: 250,
+                sortable: false,
+                numberCell: { show: false },
+                hoverMode: 'cell',
+                showTop: false,
+                resizable: true,
+                scrollModel: { autoFit: true },
+                draggable: false,
+                wrap: false,
+                editable: false,
+                columnBorders: true,
+                filterModel: { on: true, mode: "AND", header: true },
+                colModel: colM,
+                dataModel: dataM,
+                virtualX: true,
+                virtualY: true,
+                pageModel: { type: "local", rPP: 20 },
+                rowClick: function (evt, ui) {
+                    
+                    if (ui.rowData) {
+                      
+                        var rowIndx = parseInt(ui.rowIndx);
+                        var record = ui.rowData;
+                        $("#OrderId").val(record.OrderId);
+                        $("input[name=EmployeeType][value=" + record.EmployeeType + "]").prop('checked', true);
+                        $("#TrainingDate").val(record.StrTrainingDate);
+                        $("#ddlTrainingCentre").val(record.TrainingCentre);
+                        $("#ddlBranch").val(record.BranchName);
+                        $("#BatchId").val(record.BatchId);//---------
+                        $("#ddlTemp").val(record.Temporaryname);
+                        $("#TicketCode").val(record.TicketCode);
+                        $("#EmpName").val(record.EmpName);
+                        $("#Details").val(record.Details);
+                        $("#Medical").prop('checked', record.Medical);
+                        $("#Code").val(record.Code);
+                        $("#ddlBatchdate").val(record.BatchName);
+                        $("#Medical").attr("disabled", true);
+                        //$("#Code").val(record.Code))
+                        if (record.BatchQty === 3) {
+                        $("#btnClearTrainee").show();
+                        }
+                    }
+                  
+                }
+            };
+           
+            $SearchGrid = $("#searchgrid").pqGrid(setM);
+            LoadSearchGrid();
+           
+        });
+    </script>
+
+}

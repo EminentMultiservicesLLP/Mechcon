@@ -1,0 +1,421 @@
+﻿@model BISERP.Areas.Training.Models.ScheduleModel
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <a class="collapsediv" data-toggle="collapse" href="#SearchDetails" style="color:white">
+                            Search Details
+                        </a>
+                    </div>
+                </div>
+                <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <div class="container fill">
+                            <div id="searchgrid"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        Entry Form
+                    </div>
+                </div>
+                <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <fieldset>
+                            <legend></legend>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <a data-toggle="collapse" class="btn btn-success" href="#SearchDetails">Show Search</a>
+                                    <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                                    <button type="button" class="btn btn-success" id="btnReset">Reset</button>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.BatchId, new { @class = "required" })
+                                        @Html.DropDownList("ddlBatch", new SelectList(string.Empty, "Value", "Text"), " Select Batch", new { @class = "form-control" })
+                                        @Html.HiddenFor(m => m.ScheduleId)
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.Label("Start Date")
+                                        @Html.TextBox("StartDate", "", new { @class = "form-control", @readonly = "true" })
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.Label("End Date")
+                                        @Html.TextBox("EndDate", "", new { @class = "form-control", @readonly = "true" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.ScheduleDate, new { @class = "required" })
+                                        <div class='input-group date'>
+                                            <input type='text' id='ScheduleDate' class="form-date-control" />
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.LabelFor(m => m.StartTime, new { @class = "required" })
+                                        <div class='input-group date'>
+                                            <input type='text' id='StartTime' class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.LabelFor(m => m.EndTime, new { @class = "required" })
+                                        <div class='input-group date'>
+                                            <input type='text' id='EndTime' class="form-control" />
+                                        </div>
+                                    </div>                                    
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.TrainerId, new { @class = "required" })
+                                        @Html.DropDownList("ddlTrainer", new SelectList(string.Empty, "Value", "Text"), " Select Trainer", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.SubjectId, new { @class = "required" })
+                                        @Html.DropDownList("ddlSubject", new SelectList(string.Empty, "Value", "Text"), " Select Subject", new { @class = "form-control" })
+                                    </div>                                    
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.SubjectTopicId)
+                                        @Html.DropDownList("ddlSubjectTopic", new SelectList(string.Empty, "Value", "Text"), " Select Subject Topic", new { @class = "form-control" })
+                                    </div>
+                                    <div class="col-sm-1"></div>
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.Remark)
+                                        @Html.TextAreaFor(m => m.Remark, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>            
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        var $SearchGrid;
+        var $MainGrid;
+        var setMainGrid, dataMainGrid, colMainGrid;
+        function LoadSearchGrid() {
+            $.ajax({
+                url: "/TrainingSchedule/GetAllSchedules",
+                cache: false,
+                async: true,
+                method: "GET",
+                dataType: "JSON",
+                beforeSend: function () {
+                    $SearchGrid.pqGrid("showLoading");
+                },
+                complete: function () {
+                    $SearchGrid.pqGrid("hideLoading");
+                },
+                success: function (response) {
+                    $SearchGrid.pqGrid("hideLoading");
+                    $SearchGrid.pqGrid("option", "dataModel.data", response);
+                    $SearchGrid.pqGrid("refreshDataAndView");
+                }
+            });
+        }
+        function fillTopicDropdown() {
+            $('#ddlSubjectTopic').html("");
+            $.ajax({
+                type: "GET",
+                url: "/SubjectTopic/AllActiveSubjectTopic",
+                datatype: "Json",
+                async: true,
+                data: { SubjectId: $('#ddlSubject').val() },
+                success: function (data) {
+                    $.each(data, function (index, value) {
+                        $('#ddlSubjectTopic').append('<option value="' + value.TopicId + '">' + value.TopicName + '</option>');
+                    });
+                }
+            });
+        }
+        function toDate(dateStr) {
+            var parts = dateStr.split("/");
+            return new Date(parts[2], parts[1] - 1, parts[0]);
+        }
+        function toDate2(dateStr) {
+            var parts = dateStr.split("-");
+            return new Date(parts[2], parts[1] - 1, parts[0]);
+        }
+        $(document).ready(function () {
+            $('#StartTime').timepicker();
+            $('#StartTime').timepicker('setTime', new Date());
+
+            $('#EndTime').timepicker();
+            $('#EndTime').timepicker('setTime', new Date());
+
+            $('#ScheduleDate').datepicker({
+                defaultDate: new Date(),
+                dateFormat: 'dd-mm-yy',
+                yearRange: '2015:2099',
+                showOn: "button",
+                buttonImage: "../../Content/images/calendar.gif",
+                buttonImageOnly: true,
+                changeMonth: true,
+                changeYear: true
+            });
+
+            $.ajax({
+                type: "GET",
+                url: "/Training/Training/GetAllBatch",
+                datatype: "Json",
+                async: true,
+                success: function (data) {
+                    $.each(data, function (index, value) {
+                        $('#ddlBatch').append('<option value="' + value.BatchId + '">' + value.Batchname + '</option>');
+                    });
+                }
+            });
+            $('select#ddlBatch').change(function () {
+                var daterange = $('#ddlBatch option:selected').text();
+                var res = daterange.split(" - ");
+                $('#StartDate').val(res[0]);
+                $('#EndDate').val(res[1]);
+            });
+
+            $('#ScheduleDate').datepicker()
+            .on("input change", function (e) {
+                if ($('#StartDate').val() === "" || $('#StartDate').val() == undefined) {
+                    ShowAlert("error", "Please Select Batch First");
+                    $('#ScheduleDate').val("");
+                    return;
+                }
+                if ($('#EndDate').val() === "" || $('#EndDate').val() == undefined) {
+                    ShowAlert("error", "Please Select Batch First");
+                    $('#ScheduleDate').val("");
+                    return;
+                }
+
+                var sdate = $('#StartDate').val();
+                var edate = $('#EndDate').val();
+                var startDate = toDate(sdate);
+                var endDate = toDate(edate);
+                var scheduleDate = toDate2(e.target.value);
+                
+                if (startDate === "" || startDate == undefined) {
+                    ShowAlert("error", "Please Select Batch First");
+                    return;
+                }
+                if (endDate === "" || endDate == undefined) {
+                    ShowAlert("error", "Please Select Batch First");
+                    return;
+                }
+                if (scheduleDate < startDate) {
+                    ShowAlert("error", "Schedule Date Can Not Be Less Than Start Date");
+                    $('#ScheduleDate').val("");
+                    return;
+                }
+                if (scheduleDate > endDate) {
+                    ShowAlert("error", "Schedule Date Can Not Be Greate Than End Date");
+                    $('#ScheduleDate').val("");
+                    return;
+                }                
+            });
+
+            $.ajax({
+                type: "GET",
+                url: "/Trainer/AllActiveTrainer",
+                datatype: "Json",
+                async: true,
+                success: function (data) {
+                    $.each(data, function (index, value) {
+                        $('#ddlTrainer').append('<option value="' + value.TrainerId + '">' + value.TrainerName + '</option>');
+                    });
+                }
+            });
+            $.ajax({
+                type: "GET",
+                url: "/SubjectMaster/AllActiveSubject",
+                datatype: "Json",
+                async: true,
+                success: function (data) {
+                    $.each(data, function (index, value) {
+                        $('#ddlSubject').append('<option value="' + value.SubjectId + '">' + value.SubjectName + '</option>');
+                    });
+                }
+            });
+
+            $('select#ddlSubject').change(function () {
+                fillTopicDropdown();
+            });
+                     
+
+            $('input[type=radio][name=AuthCancel]').change(function () {
+                if ($("[name='AuthCancel']:checked").val() === "Authorized") {
+                    $("#grid").pqGrid("selection", { type: 'row', method: 'selectAll' });
+                }
+                else {
+                    $("#grid").pqGrid("selection", { type: 'row', method: 'selectAll' });
+                }
+            });
+
+            $('#btnSave').on('click', function () {                
+                if ($('#ddlBatch').val() === "") {
+                    ShowAlert("error", "Please Select Batch");
+                    return;
+                }
+                if ($('#ScheduleDate').val() === "") {
+                    ShowAlert("error", "Please Select ScheduleDate");
+                    return;
+                }
+                if ($('#StartTime').val() === "") {
+                    ShowAlert("error", "Please Select Start Time");
+                    return;
+                }
+                if ($('#EndTime').val() === "") {
+                    ShowAlert("error", "Please Select End Time");
+                    return;
+                }
+                if ($('#ddlTrainer').val() === "") {
+                    ShowAlert("error", "Please Select Trainer");
+                    return;
+                }
+                if ($('#ddlSubject').val() === "") {
+                    ShowAlert("error", "Please Select Start Time");
+                    return;
+                }                
+
+                var grdData = JSON.stringify({ //Passing data
+                    ScheduleId: $("#ScheduleId").val(),
+                    BatchId: $("#ddlBatch").val(),
+                    ScheduleDate: $("#ScheduleDate").val(),
+                    StartTime: $("#StartTime").val(),
+                    EndTime: $("#EndTime").val(),
+                    SubjectId: $("#ddlSubject").val(),
+                    SubjectTopicId: $("#ddlSubjectTopic").val(),
+                    TrainerId: $("#ddlTrainer").val(),
+                    Remark: $("#Remark").val()
+                });
+                $.ajax(
+                {
+                    type: "POST", //HTTP POST Method
+                    traditional: true,
+                    contentType: 'application/json; charset=utf-8',
+                    url: "/TrainingSchedule/SaveTrainingSchedule/", // Controller/View
+                    data: grdData,
+                    success: function (msg) {
+                        ClearForm();
+                        LoadSearchGrid();                       
+                            ShowAlert("success", "Training Schedule Added Succefully.");
+                    },
+                    error: function (jqXhr, exception) {
+                        ShowAlert("error", "Error while updation! Please contact administrator!");
+                    }
+                });
+            });
+        });
+
+
+        /********* Search Grid *********/
+        $(document).ready(function () {
+            var dataM = { location: "local", sorting: 'local' }
+            var colM = [
+                    { title: "", dataIndx: "ScheduleId", dataType: "integer", hidden: true },
+                    { title: "", dataIndx: "BatchId", dataType: "integer", hidden: true },
+                    { title: "", dataIndx: "SubjectId", dataType: "integer", hidden: true },
+                    { title: "", dataIndx: "SubjectTopicId", dataType: "integer", hidden: true },
+                    { title: "", dataIndx: "TrainerId", dataType: "integer", hidden: true },
+                    { title: "Batch Name", dataIndx: "BatchName", width: 200 },
+                    { title: "ScheduleDate", dataIndx: "strScheduleDate", width: 150 },
+                    { title: "Start Time", dataIndx: "strStartTime", width: 100, dataType: "date" },
+                    { title: "End Time", dataIndx: "strEndTime", width: 100, dataType: "date" },
+                    { title: "Subject", dataIndx: "Subject", width: 150 },
+                    { title: "Topic Name", dataIndx: "TopicName", width: 150 },
+                    { title: "Trainer", dataIndx: "Trainer", width: 200 },
+                    { title: "Remark", dataIndx: "Remark", hidden: true },
+                    { title: "Deactive", dataIndx: "Deactive", hidden: true }
+            ];
+
+            var setM = {
+                width: '100%',
+                height: 250,
+                sortable: false,
+                numberCell: { show: false },
+                hoverMode: 'cell',
+                showTop: false,
+                resizable: true,
+                scrollModel: { autoFit: true },
+                draggable: false,
+                wrap: false,
+                editable: false,
+                columnBorders: true,
+                selectionModel: { type: 'row' },
+                filterModel: { on: false },
+                colModel: colM,
+                dataModel: dataM,
+                pageModel: { type: "local", rPP: 20 },
+                rowClick: function (evt, ui) {
+                    ClearParamGrid("grid");
+                    if (ui.rowData) {
+                        var record = ui.rowData;                        
+                        $("#ScheduleId").val(record.ScheduleId);
+                        $("#ddlBatch").val(record.BatchId);
+                        $("#ScheduleDate").val(record.strScheduleDate);
+                        $("#StartTime").val(record.strStartTime);
+                        $("#EndTime").val(record.strEndTime);
+                        $("#ddlSubject").val(record.SubjectId);
+                        $("#ddlTrainer").val(record.TrainerId);
+                        $("#Remark").val(record.Remark);
+
+                        var daterange = $('#ddlBatch option:selected').text();
+                        var res = daterange.split(" - ");
+                        $('#StartDate').val(res[0]);
+                        $('#EndDate').val(res[1]);
+                        
+                        $('#ddlSubjectTopic').html("");
+                        $.ajax({
+                            type: "GET",
+                            url: "/SubjectTopic/AllActiveSubjectTopic",
+                            datatype: "Json",
+                            async: true,
+                            data: { SubjectId: $('#ddlSubject').val() },
+                            success: function (data) {
+                                $.each(data, function (index, value) {
+                                    $('#ddlSubjectTopic').append('<option value="' + value.TopicId + '">' + value.TopicName + '</option>');
+                                });
+                                $("#ddlSubjectTopic").val(record.SubjectTopicId);
+                            }
+                        });
+                        
+                    }
+                }
+            };
+            $SearchGrid = $("#searchgrid").pqGrid(setM);
+            LoadSearchGrid();
+        });
+        function ClearForm() {
+            $("#ScheduleId").val("");
+            $("#ddlBatch").val("");
+            $("#ScheduleDate").val("");
+            $("#StartDate").val("");
+            $("#EndDate").val("");
+            $("#StartTime").val("");
+            $("#EndTime").val("");
+            $("#ddlSubject").val("");
+            $("#ddlSubjectTopic").val("");
+            $("#ddlTrainer").val("");
+            $("#Remark").val("");
+            $('#ddlSubjectTopic').html("");
+            $('#StartTime').timepicker('setTime', new Date());
+            $('#EndTime').timepicker('setTime', new Date());
+        }
+        $("#btnReset").on("click", ClearForm);
+    </script>
+}

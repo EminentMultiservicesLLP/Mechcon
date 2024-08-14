@@ -1,0 +1,568 @@
+﻿@model BISERP.Areas.Training.Models.MonthlyExpenditureModel
+                                                                                     
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <fieldset>
+        <div id="content">
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-groupingBoder">
+                        <div class="panel-heading">
+                            <div class="panel-title">
+                                <a class="collapsediv" data-toggle="collapse" href="#collapse2" style="color:white">
+                                   Search Detail
+                                </a>
+                            </div>
+                        </div>
+                        <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                            <div class="panel-body">
+                                <fieldset>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            @Html.LabelFor(model => model.ExpMonth, new { @class = "required" })
+                                            <div class='input-group date'>
+                                                <input type='text' id='ExpMonth' class="form-date-control" />
+                                                <button type="button" class="btn btn-primary" id="btnShow" style="margin-left: 5px">Show</button>
+                                            </div>
+                                            @Html.HiddenFor(m => m.Id)
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-groupingBoder">
+                        <div class="panel-heading">
+                            <div class="panel-title">
+                                <a class="collapsediv" data-toggle="collapse" href="#collapse3" style="color: white">
+                                    Entry Form
+                                </a>
+                            </div>
+                        </div>
+                        <div id="collapse3" class="panel-collapse collapse in" aria-expanded="true">
+                            <div class="panel-body">
+                                <fieldset>
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                                                <button type="button" class="btn btn-success" data-target="#ExpenditureGrid" id="btnResetgrid">Reset</button>
+                                            </div>
+                                        </div>
+                                    </div><br />
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                <button type="button" class="btn btn-primary" data-target="#ItemModal" id="btnAddItem">Add</button>
+                                                <button type="button" class="btn btn-primary" data-target="#ExpenditureGrid" id="btnRemoveItem">Remove</button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                                        <div class="panel-body">
+                                            <div class="container fill">
+                                                <div id="ExpenditureGrid"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                <div class="col-md-1">
+                                                    @Html.LabelFor(model => model.RecieptTotal)
+                                                    @Html.HiddenFor(m=>m.BudgetId)
+                                                </div>
+                                                <div class="col-md-2">
+                                                    @Html.TextBoxFor(model => model.RecieptTotal)
+                                                </div>
+
+                                                <div class="col-md-1">
+                                                    @Html.LabelFor(model => model.ExpTotal)
+                                                </div>
+                                                <div class="col-md-1">
+                                                    @Html.TextBoxFor(model => model.ExpTotal)
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </div>
+                        </div>
+                    </div>
+                        </div>
+                    </div>
+        </div>
+    </fieldset>
+
+    <script type="text/javascript">
+        $('#ExpMonth')
+            .datepicker({
+                defaultDate: new Date(),
+                dateFormat: 'mm-yy',
+                yearRange: '2015:2099',
+                showOn: "button",
+                buttonImage: "../../Content/images/calendar.gif",
+                buttonImageOnly: true,
+                changeMonth: true,
+                changeYear: true
+            }).datepicker("setDate", new Date());
+        $(document).ready(function () {
+            $("#RecieptTotal").prop('disabled', true);
+            $("#ExpTotal").prop('disabled', true);
+        });
+
+        var BudgetHeads = [];
+        $.ajax({
+            type: "GET",
+            url: "/BudgetHeads/AllActiveBudgetHeads",
+            success: function (data) {
+                $.each(data,
+                    function (index, value) {
+                        BudgetHeads.push(value.BudgetHeads);
+                    });
+            }
+        });
+
+
+        //-------------
+        //$.ajax({
+        //    type: "GET",
+        //    url: "/BudgetHeads/AllActiveBudgetHeads",
+        //    success: function (response) {
+               
+        //    }
+        //});
+        //---------------
+        var autoCompleteEditor = function (ui) {
+            var $cell = ui.$cell,
+                rowData = ui.rowData,
+                dataIndx = ui.dataIndx,
+                width = ui.column.width,
+                cls = ui.cls;
+            var dc = $.trim(rowData[dataIndx]);
+
+            var $inp = $("<input type='text' name='" + dataIndx + "' class='" + cls + " pq-ac-editor' />")
+                .width(width - 6)
+                .appendTo($cell)
+                .val(dc);
+
+            $inp.autocomplete({
+                    source: BudgetHeads,
+                    minLength: 0
+                })
+                .focus(function () {
+                    $(this).autocomplete("search", "");
+                });
+
+        }
+
+        var dateEditor = function (ui) {
+            var $inp = ui.$cell.find("input"),
+                grid = this,
+                validate = function (that) {
+                    var valid = grid.isValid({
+                        dataIndx: ui.dataIndx,
+                        value: $inp.val(),
+                        rowIndx: ui.rowIndx
+                    }).valid;
+                    if (!valid) {
+                        that.firstOpen = false;
+                    }
+                };
+
+            $inp.on("input", function () {
+                    validate(this);
+                })
+                .datepicker({
+                    changeMonth: true,
+                    changeYear: true,
+                    showAnim: '',
+                    onSelect: function () {
+                        this.firstOpen = true;
+                        validate(this);
+                    },
+                    beforeShow: function () {
+                        return !this.firstOpen;
+                    },
+                    onClose: function () {
+                        this.focus();
+                    }
+                });
+        }
+
+
+
+
+        var $ExpenditureGrid;
+
+        /************ Main Grid control ****************/
+        var dateEditor = function (ui) {
+            var $cell = ui.$cell,
+                rowData = ui.rowData,
+                dataIndx = ui.dataIndx,
+                cls = ui.cls,
+                dc = $.trim(rowData[dataIndx]);
+            $cell.css('padding', '0');
+
+            var $inp = $("<input type='text' name='" + dataIndx + "' class='" + cls + " pq-date-editor' />")
+            .appendTo($cell)
+            .val(dc).datepicker({
+                changeMonth: true,
+                changeYear: true,
+                onClose: function () {
+                    $inp.focus();
+                }
+            });
+            //.focus();
+        }
+
+
+
+        var dataExpenditureGrid = { location: "local", sorting: 'local' };
+
+        var colExpenditureGridGrid = [
+            /*{
+                title: "Date",
+                dataIndx: "ExpDate",
+                dataType: 'date',
+                width: 250,
+                editor: { type: gridDateEditor },
+                render: function (ui) {
+
+
+                    if (ui.cellData == null) {
+                        return '';
+                    }
+                    else {
+                        var res = ui.cellData.split("/");
+                        var date = new Date(res[1] + "/" + res[0] + "/" + res[2]);
+                        var xdd = date.getDate();
+                        var xmm = (date.getMonth() + 1);
+                        var xyy = date.getFullYear();
+                        if (parseInt(xdd) < 10) { xdd = '0' + xdd; }
+                        if (parseInt(xmm) < 10) { xmm = '0' + xmm; }
+                        return xdd + '/' + xmm + '/' + xyy;
+                        
+                    }
+                }
+             
+               
+            },*/
+            {
+                title: "Date", dataIndx: "ExpDate", width: 90, editable: true, editor: { type: dateEditor },
+                dataType: 'date',
+                format: 'dd-MM-yy',
+                validations: [{ type: 'regexp', value: '[0-9]{2}/[0-9]{2}/[0-9]{4}', msg: 'Not in dd-MM-yy format' }]
+            },
+
+            { dataIndx: "DtlId", width: 10, dataType: "integer", editable: false, resizable: false, hidden: true },
+            { dataIndx: "Id", width: 10, dataType: "integer", editable: false, resizable: false, hidden: true },
+            {
+                title: "Receipts", dataIndx: "Reciepts", dataType: "string", width: 250
+                //editable: function (ui) {
+                //    
+                //    var column = this.getColumn({ dataIndx: 'BudgetHeads' }),
+                //        obj = ui.rowData.BudgetHeads,
+                //        val = column.val;
+                //    if (obj == "" || obj == undefined)
+                //        return true;
+                //    else
+                //        return false;
+                //}
+            },
+            {
+                title: "ReieptsAmt", dataIndx: "ReieptsAmt", dataType: "double", width: 250
+             
+            },
+            {
+                title: "Expenses/Heads", dataIndx: "BudgetHeads", dataType: "string", width: 250,
+                editor: { type: autoCompleteEditor }
+                //editor: {
+                //    type: function (ui) {
+                //        dropDownEditor(ui, autoCompleteEditor);
+                //    },
+                //    getData: function (ui) {
+                //        saveProduct(ui);
+                //    }
+                //}
+            },
+             { dataIndx: "BudgetId", width: 10, dataType: "integer", editable: false, resizable: false, hidden: true },
+
+            
+            {
+                title: "ExpenseAmt", dataIndx: "ExpenseAmt", dataType: "double", width: 250
+           
+            }
+        ];
+
+
+        //function dropDownEditor(ui, arr) {
+        //    
+        //    var $cell = ui.$cell,
+        //        rowData = ui.rowData,
+        //        dataIndx = ui.dataIndx,
+        //        width = ui.column.width,
+        //        cls = ui.cls;
+        //    var dc = $.trim(rowData[dataIndx]);
+
+        //    var str = "";
+        //    for (var i = 0; i < arr.length; i++) {
+        //        if (dc == arr[i])
+        //            str += "<option data-id='" + arr[i].Id + "' selected>" + arr[i].Name + "</option>";
+        //        else
+        //            str += "<option data-id='" + arr[i].Id + "' >" + arr[i].Name + "</option>";
+        //    }
+        //    var $sel = $("<select style='width:150px;' onchange='chooseProduct()'>" + str + "</select>").appendTo($cell);
+        //}
+
+        //function saveProduct(ui) {
+        //    var $cell = ui.$cell;
+        //    var DM = $("#ExpenditureGrid").pqGrid("option", "dataModel");
+        //    var gridData = DM.data;
+        //    gridData[ui.rowIndx]['BudgetId'] = $cell.children().find('option:selected').attr('data-id');
+        //    $("#ExpenditureGrid").pqGrid("refreshCell", { rowIndx: ui.rowIndx, dataIndx: 'BudgetId' });
+        //    return $cell.children().val();
+        //}
+
+        var setExpenditureGrid = {
+            width: '100%',
+            height: 400,
+            numberCell: { show: true },
+            editModel: {
+                saveKey: $.ui.keyCode.ENTER
+            },
+            trackModel: { on: true, dirtyClass: 'pq-cell-dirty' },
+            virtualX: true,
+            virtualY: true,
+            sortable: false,
+            showTop: false,
+            resizable: false,
+            scrollModel: { autoFit: true },
+            draggable: false,
+            wrap: false,
+            editor: { type: 'textbox' },
+            editable: true,
+            hwrap: false,
+            columnBorders: true,
+            rowBorders: true,
+            showHeader: true,
+            selectionModel: { type: 'row' },
+            filterModel: { on: false },
+            colModel: colExpenditureGridGrid,
+            dataModel: dataExpenditureGrid,
+            pageModel: { type: "local" },
+            cellSave: function (evt, ui) {
+                this.refreshRow(ui);
+                calculatetotal();
+            },
+            cellBeforeSave: function (event, ui) {
+                
+              
+                //var dataIndx = ui.dataIndx, newVal = ui.newVal.split("/");
+                //var syy = newVal[1] + "-" + newVal[2];
+                //var smm = $("#ExpMonth").val();
+                //if (dataIndx == 'ExpDate') {
+                //    if (syy != smm)
+                //    {
+                //        ShowAlert('error', "Please Select valid month");
+                //    } else {
+                //        return true;
+                //    }
+                //}
+                   
+                }
+        }
+        $ExpenditureGrid = $("#ExpenditureGrid").pqGrid(setExpenditureGrid);
+
+        $('#btnAddItem').on('click', function () {
+            if ($("#ExpMonth").val() == "" || $("#ExpMonth").val() == undefined) {
+                ShowAlert("error", "Please Select Month");
+                return;
+            }
+            var dataMGrid = [];
+            var getData = $("#ExpenditureGrid").pqGrid("option", "dataModel.data");
+
+            $.each(getData, function (key, value) {
+                var grdData = {
+                    'ExpDate': value.ExpDate, 'Reciepts': value.Reciepts, 'ReieptsAmt': value.ReieptsAmt, 'BudgetHeads': value.BudgetHeads, 'ExpenseAmt': value.ExpenseAmt, 'DtlId': value.DtlId
+                };
+                dataMGrid.push(grdData);
+            });
+            var gridData = { 'ExpDate': '', 'Reciepts': '', 'ReieptsAmt': '', 'BudgetHeads': '', 'ExpenseAmt': '', 'DtlId': '' };
+            dataMGrid.push(gridData);
+
+            $("#ExpenditureGrid").pqGrid("option", "dataModel.data", dataMGrid);
+            $("#ExpenditureGrid").pqGrid("refreshDataAndView");
+        });
+
+        function getRowIndx() {
+            var arr = $("#ExpenditureGrid").pqGrid('selection', { type: 'row', method: 'getSelection' });
+            if (arr && arr.length > 0) {
+                return arr[0].rowIndx;
+            }
+            else {
+                ShowAlert("error", "Select a row.");
+                return null;
+            }
+        }
+
+        $('#btnRemoveItem').on('click', function () {
+            var rowIndx = getRowIndx();
+            if (rowIndx == null) {
+                return;
+            }
+            $("#ExpenditureGrid").pqGrid("deleteRow", { rowIndx: rowIndx });
+        });
+
+        $("#btnResetgrid").on('click', function () {
+           
+            ClearParamGrid("ExpenditureGrid");
+            $("#RecieptTotal").val("");
+            $("#ExpTotal").val("");
+        });
+
+        function clearform() {
+            ClearParamGrid("ExpenditureGrid");
+            $("#RecieptTotal").val("");
+            $("#ExpTotal").val("");
+
+        };
+        $("#btnShow").click(function () {
+            if ($("#ExpMonth").val() == "" || $("#ExpMonth").val() == undefined) {
+                ShowAlert("error", "Please Select Month");
+                return;
+            }
+            clearform();
+            var dt = $("#ExpMonth").val().split("-");
+            if (dt != undefined && dt.length >1 ) {
+                $.ajax({
+                    type: "POST", //HTTP POST Method
+                    url: '/MonthlyExpenditure/GetExpenditureByMonth',
+                    data:{ExpMonth: dt[0],
+                        ExpYear:dt[1]
+                    },
+                    datatype: "Json",
+                    beforeSend: function () {
+                        $ExpenditureGrid.pqGrid("showLoading");
+                    },
+                    complete: function () {
+                        $ExpenditureGrid.pqGrid("hideLoading");
+                    },
+                    success: function (response) {
+                        $ExpenditureGrid.pqGrid("hideLoading");
+                        $("#RecieptTotal").val(response[0].RecieptTotal);
+                        $("#ExpTotal").val(response[0].ExpTotal);
+                        $ExpenditureGrid.pqGrid("option", "dataModel.data", response);
+                        $ExpenditureGrid.pqGrid("refreshDataAndView");
+                    },
+                     error: function () {
+                        $ExpenditureGrid.pqGrid("hideLoading");
+                        ClearParamGridByObject($ExpenditureGrid);
+                        ShowAlert("error", "Error while loading Itemlist");
+                        return;
+                    }
+                });
+            }
+        });
+
+        $("#btnSave")
+            .click(function () {
+                var item = $ExpenditureGrid.pqGrid("option", "dataModel.data");
+
+                var chekReciepts = 0, chekDate = 0, chekRecieptsamt = 0, chekExpenseAmts = 0, chekBudgetHeads=0;
+                $.each(item, function (key, value) {
+                    if (value.Reciepts === "" || value.Reciepts == undefined) chekReciepts++;
+
+                    if (value.BudgetHeads == "" || value.BudgetHeads == undefined) chekBudgetHeads++;
+                    if (value.ExpDate == "" || value.ExpDate == undefined) chekDate++;
+                    if (value.ReieptsAmt <= 0 || value.ReieptsAmt == undefined) chekRecieptsamt++;
+                    if (value.ExpenseAmt <= 0 || value.ExpenseAmt == undefined) chekExpenseAmts++;
+                });
+
+                if (chekDate > 0) {
+                    ShowAlert("error", "Enter Select Date");
+                    return;
+                }
+                
+                if (chekExpenseAmts > 0) {
+                    ShowAlert("error", "Enter Expence Amount");
+                    return;
+                }
+
+                if (chekBudgetHeads > 0) {
+                    ShowAlert("error", "Enter Budget head");
+                    return;
+                }
+
+
+                if (item != undefined) {
+                    if (item.length > 0) {
+
+                    }
+                    else {
+                        ShowAlert("error", "No Items to Save");
+                        return;
+                    }
+                }
+                var dt = $("#ExpMonth").val().split("-");
+                if (dt != undefined && dt.length >1 ) {
+                    var items = JSON.stringify({
+                        ExpMonth: dt[0],
+                        ExpYear: dt[1],
+                        RecieptTotal: $("#RecieptTotal").val(),
+                        ExpTotal: $("#ExpTotal").val(),
+                        Id: $("#Id").val(),
+                        ExpenditureModel: item
+                    });
+                    $.ajax({
+                        type: "POST", //HTTP POST Method
+                        traditional: true,
+                        contentType: 'application/json; charset=utf-8',
+                        url: '/MonthlyExpenditure/SaveMonthlyExpenditure', // Controller/View   SlotId
+                        data: items,
+                        success: function (msg) {
+                            if (msg.success) {
+                                ShowAlert("success", "Record added successfully to system.");
+                                ClearParamGrid("ExpenditureGrid");
+                            }
+                            else {
+                                ShowAlert("error", msg.Message);
+                                ClearParamGrid("ExpenditureGrid");
+                            }
+                        }
+                    });
+                }
+            });
+
+        function calculatetotal() {
+            var getData = $ExpenditureGrid.pqGrid("option", "dataModel.data");
+            // if (expenseAmt == "" || expenseAmt == undefined) expenseAmt = 0;
+            var reieptAmt = 0, expAmt = 0;
+            $.each(getData,
+                function (_, item) {
+                    if (item.ReieptsAmt == undefined || item.ReieptsAmt === "") item.ReieptsAmt = 0;
+                    if (item.ExpenseAmt == undefined || item.ExpenseAmt === "") item.ExpenseAmt = 0;
+                    if (!isNaN(item.ReieptsAmt))
+                        reieptAmt += parseFloat(item.ReieptsAmt);
+                    if (!isNaN(item.ExpenseAmt))
+                        expAmt += parseFloat(item.ExpenseAmt);
+
+
+                    $("#RecieptTotal").val(reieptAmt.toFixed(2));
+                    $("#ExpTotal").val(expAmt.toFixed(2));
+                });
+
+        }
+    </script>
+}

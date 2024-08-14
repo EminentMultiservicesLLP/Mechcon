@@ -1,0 +1,112 @@
+﻿@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <a class="collapsediv" data-toggle="collapse" href="#SearchDetails" style="color: white">
+                            Tax Credited
+                        </a>
+                    </div>
+                </div>
+                <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <div class="container fill">
+                            <div id="TaxDetailGrid"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<script>
+    var $TaxDetailGrid;
+    dataTax = { location: 'local', sorting: 'local', paging: 'local', dataType: 'JSON' };
+    colbill = [
+
+     {
+         title: "GRN No", dataIndx: "GRNNo", width: 150, dataType: "string", editable: false,
+         filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+     },
+     { title: "GRN Date ", dataIndx: "strGRNDate", width: 130, dataType: "double", editable: false },
+    {
+        title: "Project", dataIndx: "StoreName", width: 150, dataType: "string", editable: false,
+        filter: {
+            type: "select",
+            condition: 'equal',
+            prepend: { '': '--Select--' },
+            valueIndx: "StoreName",
+            labelIndx: "StoreName",
+            listeners: ['change']
+        }
+    },
+    { title: "Project Code", dataIndx: "ProjectCode", width: 100, dataType: "string", editable: false,hidden:true },
+     { title: "Total Value", dataIndx: "TotalAmount", width: 100, dataType: "double", editable: false },
+     { title: "Total Tax", dataIndx: "TotalTaxamt", width: 90, dataType: "double", editable: false },
+     { title: "Tot", dataIndx: "BillPaid", width: 100, dataType: "double", editable: false },
+     {
+         title: "Pending Amount", dataIndx: "PendAmt", width: 140, dataType: "double", editable: false,
+         format: 'Rs ##,###.00',
+         formula: function (ui) {
+             var rd = ui.rowData;
+             return rd["NetAmt"] - rd["TotalRecieved"];
+         }
+     }
+    ];
+    setgrid = {
+        width: "100%", //auto width
+        height: 580, //height in %age
+        sortable: false,
+        numberCell: { show: true },
+        selectionModel: { type: 'row' },
+        hoverMode: 'cell',
+        editor: { type: 'textbox' },
+        showTop: true,
+        resizable: true,
+        filterModel: { on: true, mode: "AND", header: true },
+        virtualX: true,
+        virtualY: true,
+        editable: false,
+        draggable: false,
+        colModel: colbill,
+        dataModel: dataTax,
+        postRenderInterval: -1,
+        pageModel: { type: "local", rPP: 50 }
+    };
+    $TaxDetailGrid = $("#TaxDetailGrid").pqGrid(setgrid);
+    LoadGrid();
+    function LoadGrid() {
+        $.ajax({
+            url: "/ClientBillCancel/GetTaxCredited",
+            cache: false,
+            async: true,
+            method: "GET",
+            dataType: "JSON",
+            data: { projectId: 0 },
+            success: function (response) {
+                if (response.success) {
+                    $TaxDetailGrid.pqGrid("option", "dataModel.data", response.records);
+
+                    var column = $TaxDetailGrid.pqGrid("getColumn", { dataIndx: "StoreName" });
+                    var filter = column.filter;
+                    filter.cache = null;
+                    filter.options = $TaxDetailGrid.pqGrid("getData", { dataIndx: ["StoreName"] });
+
+                    $TaxDetailGrid.pqGrid("refreshDataAndView");
+                } else {
+                    ClearParamGrid('TaxDetailGrid');
+                    ShowAlert("error", "Something Went Wrong");
+                    return;
+                }
+            },
+            error: function () {
+                ShowAlert("error", "Something Went Wrong");
+                return;
+            }
+        });
+    }
+</script>

@@ -1,0 +1,309 @@
+﻿<h5 class="page-header orangeDottedBottomBorder">City Masters</h5>
+<div id="SearchGridModal" class="modal fade" role="dialog" data-backdrop="false">
+    <div class="modal-dialog find-search-grid-modal">
+        <div class="modal-content gridmodal-content">
+            <div class="modal-header gridmodal-header">
+                <button type="button" class="close" onclick="closeModal()">&times;</button>
+                <h4 class="modal-title">ItemType  Master Details</h4>
+            </div>
+            <div class="modal-body">
+                <div class="fill">
+                    <div id="CityGrid" hidden></div>
+                    <div id="StateGrid" hidden></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="panel-group">
+    <div class="panel panel-default">
+        <div class="panel-groupingBoder">
+            <div class="panel-heading">
+                <div class="panel-title">
+                    <a class="collapsediv" data-toggle="collapse" href="#SearchDetails">
+                        City Master
+                    </a>
+                </div>
+            </div>
+            <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                <div class="panel-body">
+                    <div class="fill">
+                        <div class="submit-row">
+                            <button type="button" id="btnSaveCity" class="btn btn-success" onclick="saveCity()">Save</button>
+                            <button type="button" id="btnResetCity" class="btn btn-primary" onclick="clearCityForm()">Reset</button>
+                            <button type="button" id="btnFindCity" class="btn btn-info" onclick="findCity()">Find</button>
+                        </div>
+                        <fieldset class="fieldsetCustom">
+                            <legend class="legendCustom">Create City</legend>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    @Html.Label("Select State", new { @class = "required" })
+                                    @Html.DropDownList("ddlState", new SelectList(string.Empty, "Value", "Text"), "Select State", new { @class = "form-control" })
+                                </div>
+                                <div class="col-sm-2">
+                                    <label for="cityName" class="required">City</label>
+                                    <input class="form-control" placeholder="City Name" id="cityName" cityName="text" />
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="divider"></div>
+<h5 class="page-header orangeDottedBottomBorder">State Masters</h5>
+<div class="panel-group">
+    <div class="panel panel-default">
+        <div class="panel-groupingBoder">
+            <div class="panel-heading">
+                <div class="panel-title">
+                    <a class="collapsediv" data-toggle="collapse" href="#StateForm">
+                        State Master
+                    </a>
+                </div>
+            </div>
+            <div id="StateForm" class="panel-collapse collapse in" aria-expanded="true">
+                <div class="panel-body">
+                    <div class="fill">
+                        <div class="submit-row">
+                            <button type="button" id="btnSaveState" class="btn btn-success" onclick="saveState()">Save</button>
+                            <button type="button" id="btnResetState" class="btn btn-primary" onclick="clearStateForm()">Reset</button>
+                            <button type="button" id="btnFindState" class="btn btn-info" onclick="findState()">Find</button>
+                        </div>
+                        <fieldset class="fieldsetCustom">
+                            <legend class="legendCustom">Create State</legend>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    @Html.Label("Select Country", new { @class = "required" })
+                                    @Html.DropDownList("ddlCountry", new SelectList(string.Empty, "Value", "Text"), "Select Country", new { @class = "form-control" })
+                                </div>
+                                <div class="col-sm-2">
+                                    <label for="stateName" class="required">State</label>
+                                    <input class="form-control" placeholder="State Name" id="stateName" stateName="text" />
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    //City Master Starts Form Here
+
+    var tempCityId = 0;
+    $.ajax({
+        type: "GET",
+        url: "/Master/AllStates",
+        datatype: "Json",
+        success: function (data) {
+            $.each(data, function (index, value) {
+                $('#ddlState').append('<option value="' + value.ID + '">' + value.StateName + '</option>');
+            });
+        }
+    });
+    var CityGrid = $("#CityGrid").jsGrid({
+        width: "100%",
+        height: "400px",
+        filtering: true,
+        selecting: true,
+        sorting: true,
+        paging: true,
+        pageSize: 100,
+        controller: {
+            loadData: function (filter) {
+                var d = $.Deferred();
+                $.ajax({
+                    type: "GET",
+                    url: "/Master/AllCities",
+                    datatype: "Json",
+                    data: { SearchName: filter.CityName },
+                    success: function (data) {
+                        if (data.length > 0) {
+                            if (filter.CityName != "") {
+                                data = data.filter(item => item.CityName.toLowerCase().includes(filter.CityName.toLowerCase()));
+                            }
+                            d.resolve(data);
+                        } else {
+                            ShowAlert("error", data.Massage);
+                            $(".jsgrid-load-panel").hide();
+                        }
+                    },
+                    error: function (e) {
+                        ShowAlert("error", "No Record Found");
+                    }
+                });
+                return d.promise();
+            }
+        },
+        fields: [
+            { name: "ID", visible: false, width: 0 },
+            { name: "CityName", title: "City Name", type: "text", validate: { validator: "required", message: "City is missing! Please enter the cityName ", }, width: '100%' }
+        ],
+        rowClick: function (args) {
+            var data = args.item;
+            $("#ddlState").val(data.StateId);
+            $("#cityName").val(data.CityName);
+            tempCityId = data.ID;
+            closeModal();
+        }
+    });
+    function saveCity() {
+        if ($("#ddlState").val() == "") {
+            ShowAlert("error", "Please Select State!");
+            return false;
+        }
+        if ($("#cityName").val() == "") {
+            ShowAlert("error", "Please Enter City Name!");
+            return false;
+        }
+        var Details = {
+            StateId: $("#ddlState").val(),
+            CityName: $("#cityName").val(),
+            ID: tempCityId
+        }
+        $.ajax({
+            type: "POST", //HTTP POST Method
+            traditional: true,
+            contentType: 'application/json; charset=utf-8',
+            url: '/CityStateCountryMaster/SaveCity/', // Controller/View
+            data: JSON.stringify(Details),
+            datatype: "Json",
+            success: function (msg) {
+                if (msg.success) {
+                    tempCityId > 0 ? ShowAlert("success", "City Updated Successfully") : ShowAlert("success", "City Save Successfully");
+                    clearCityForm();
+                }
+                else {
+                    ShowAlert("error", "Failed to Save Data");
+                }
+
+            }
+        });
+    }
+    function clearCityForm() {
+        $("#ddlState").val('');
+        $("#cityName").val('');
+        tempCityId = 0;
+    }
+    function findCity() {
+        $("#SearchGridModal").modal('show');
+        $("#CityGrid").show();
+        $("#CityGrid").jsGrid("loadData");
+    }
+    //City Master Ends Here
+
+
+    //////////////////////////////////////////////////////////////////////////////////////State Master Starts Form Here//////////////////////////////////////////////////////////////////////////////////////
+
+    var tempStateId = 0;
+    $.ajax({
+        type: "GET",
+        url: "/Master/AllCountry",
+        datatype: "Json",
+        success: function (data) {
+            $.each(data, function (index, value) {
+                $('#ddlCountry').append('<option value="' + value.ID + '">' + value.CountryName + '</option>');
+            });
+        }
+    });
+    var StateGrid = $("#StateGrid").jsGrid({
+        width: "100%",
+        height: "400px",
+        filtering: true,
+        selecting: true,
+        sorting: true,
+        paging: true,
+        pageSize: 100,
+        controller: {
+            loadData: function (filter) {
+                var d = $.Deferred();
+                $.ajax({
+                    type: "GET",
+                    url: "/Master/AllStates",
+                    datatype: "Json",
+                    data: { SearchName: filter.StateName },
+                    success: function (data) {
+                        if (data.length > 0) {
+                            if (filter.StateName != "") {
+                                data = data.filter(item => item.StateName.toLowerCase().includes(filter.StateName.toLowerCase()));
+                            }
+                            d.resolve(data);
+                        } else {
+                            ShowAlert("error", data.Massage);
+                            $(".jsgrid-load-panel").hide();
+                        }
+                    },
+                    error: function (e) {
+                        ShowAlert("error", "No Record Found");
+                    }
+                });
+                return d.promise();
+            }
+        },
+        fields: [
+            { name: "ID", visible: false, width: 0 },
+            { name: "StateName", title: "State Name", type: "text", validate: { validator: "required", message: "State is missing! Please enter the stateName ", }, width: '100%' }
+        ],
+        rowClick: function (args) {
+            var data = args.item;
+            $("#ddlCountry").val(data.CountryID);
+            $("#stateName").val(data.StateName);
+            tempStateId = data.ID;
+            closeModal();
+        }
+    });
+    function saveState() {
+        if ($("#ddlCountry").val() == "") {
+            ShowAlert("error", "Please Select Country!");
+            return false;
+        }
+        if ($("#stateName").val() == "") {
+            ShowAlert("error", "Please Enter State Name!");
+            return false;
+        }
+        var Details = {
+            CountryId: $("#ddlCountry").val(),
+            StateName: $("#stateName").val(),
+            ID: tempStateId
+        }
+        $.ajax({
+            type: "POST", //HTTP POST Method
+            traditional: true,
+            contentType: 'application/json; charset=utf-8',
+            url: '/CityStateCountryMaster/SaveState/', // Controller/View
+            data: JSON.stringify(Details),
+            datatype: "Json",
+            success: function (msg) {
+                if (msg.success) {
+                    tempStateId > 0 ? ShowAlert("success", "State Updated Successfully") : ShowAlert("success", "State Save Successfully");
+                    clearStateForm();
+                }
+                else {
+                    ShowAlert("error", "Failed to Save Data");
+                }
+
+            }
+        });
+    }
+    function clearStateForm() {
+        $("#ddlCountry").val('');
+        $("#stateName").val('');
+        tempStateId = 0;
+    }
+    function findState() {
+        $("#SearchGridModal").modal('show');
+        $("#StateGrid").show();
+        $("#StateGrid").jsGrid("loadData");
+    }
+    //State Master Ends Here
+
+    function closeModal() {
+        $("#CityGrid").hide();
+        $("#StateGrid").hide();
+        $("#SearchGridModal").modal('hide');
+    }
+</script>

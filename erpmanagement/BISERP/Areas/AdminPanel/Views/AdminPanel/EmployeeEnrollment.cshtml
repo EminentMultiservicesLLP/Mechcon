@@ -1,0 +1,299 @@
+﻿@model BISERP.Areas.AdminPanel.Models.EmployeeEnrollmentModel
+@using (Html.BeginForm())
+{
+    <h5 class="page-header orangeDottedBottomBorder">User Enrollment Form</h5>
+    @* new addition 2024 *@
+    <div id="SearchGridModal" class="modal fade" role="dialog" data-backdrop="false">
+        <div class="modal-dialog find-search-grid-modal">
+            <div class="modal-content gridmodal-content">
+                <div class="modal-header gridmodal-header">
+                    <button type="button" class="close" onclick="closeModal()">&times;</button>
+                    <h4 class="modal-title">User Details</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="fill">
+                        <div id="Usergrid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <fieldset>
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-groupingBoder">
+                    <div class="panel-heading">
+                        <a class="collapsediv" data-toggle="collapse" href="#collapse2" style="color: white">
+                            User Creation
+                        </a>
+                    </div>
+
+                    <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                        <div class="panel-body">
+                            <div class="fill">
+                                <div class="submit-row">
+                                    <button type="button" class="btn btn-primary" id="btnAdd">Add New</button>
+                                    <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                                    <button type="button" class="btn btn-warning" id="btnReset">Reset</button>
+                                    <button type="button" class="btn btn-info" id="btnSearch">Find</button>
+                                </div>
+                                <fieldset class="fieldsetCustom">
+                                    <legend class="legendCustom">User Form</legend>
+                                    <div class="row">
+                                        <div class="col-sm-3" @*style="display:none"*@>
+                                            @Html.Label("User Code")
+                                            @Html.TextBox("UserCode", "", new { @class = "form-control " })
+                                        </div>
+                                        <div class="col-sm-3">
+                                            @Html.Label("Enter Employee Name")
+                                            @Html.TextBoxFor(M => M.UserName, new { @class = "form-control " })
+                                            @Html.HiddenFor(M => M.UserID)
+                                            @Html.HiddenFor(M => M.IsDeactive)
+                                        </div>
+                                        <div class="col-sm-3">
+                                            @Html.Label("User Name")
+                                            @Html.TextBoxFor(M => M.LoginName, new { @class = "form-control " })
+                                        </div>
+                                        <div class="col-sm-3">
+                                            @Html.Label("Password")
+                                            @Html.PasswordFor(M => M.Password, new { @class = "form-control " })
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+}
+<script>
+    $("#UserCode").prop('disabled', true);
+    /****************Block Speacial Characters fn*******************/
+    $("#UserName").keypress(function (e) {
+
+        var regex = new RegExp("^[a-zA-Z \b]+$");//(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/)
+        var str = String.fromCharCode(!e.charCode ? e.which : e.charCode);
+        if (regex.test(str)) {
+            return true;
+        }
+
+        e.preventDefault();
+        return false;
+    });
+
+    /****************GetUserCode Fn*******************/
+    $("#btnAdd").click(function () {
+        GetCode();
+        Clearform();
+        fieldsDisable(false);
+    });
+
+    function GetCode() {
+
+        $('#Code').empty().html("");
+
+        $.ajax({
+            type: "GET",
+            url: "/EmployeeEnrollment/GetUserCode",
+            datatype: "Json",
+            async: true,
+            success: function (data) {
+                $("#UserCode").val(data[0].UserCode);
+            }
+        });
+    }
+    /****************RowIndex Fn*******************/
+    function getRowIndx() {
+        var arr = $("#Usergrid").pqGrid('selection', { type: 'row', method: 'getSelection' });
+        if (arr && arr.length > 0) {
+            return arr[0].rowIndx;
+        }
+        else {
+            alert("Select a row.");
+            return null;
+        }
+    }
+    /****************Get User Details and Grid Details Fn*******************/
+    function GetUserDetails() {
+        $.ajax({
+            type: "GET",
+            url: "/EmployeeEnrollment/GetUserDetails",
+            datatype: "Json",
+            async: true,
+            success: function (data) {
+                $("#Usergrid").pqGrid("option", "dataModel.data", data);
+                $("#Usergrid").pqGrid("refreshDataAndView");
+            }
+        });
+    }
+
+    dataList = { location: 'local', sorting: 'local', paging: 'local', dataType: 'JSON' };
+    var setUserCol = [
+        { title: "User Code", dataIndx: "UserCode", width: '15%' },
+        { title: "UserID", dataIndx: "UserID", width: '15%' },
+        {
+            title: "Employee Name", dataIndx: "UserName", width: '68%',
+            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+        },
+        //{ title: "Active/Inactive", dataIndx: "IsDeactive", width: 90 },
+        { title: "Login Name", dataIndx: "LoginName", width: 90, hidden: true },
+        { title: "Password", dataIndx: "Password", width: 90, hidden: true },
+
+
+
+    ];
+    setUserList = {
+        width: "auto", //auto width
+        height: 400, //height in %age
+        autoSizeInterval: 0,
+        dragColumns: { enabled: false },
+        hoverMode: 'cell',
+        editable: false,
+        filterModel: { on: true, mode: "AND", header: true },
+        showTop: true,
+        resizable: true,
+        virtualX: true,
+        colModel: setUserCol,
+        selectionModel: { type: 'row', subtype: 'incr', cbHeader: true, cbAll: true },
+        dataModel: dataList,
+        pageModel: { type: "local", rPP: 20 },
+        rowClick: function (evt, ui) {
+            if (ui.rowData) {
+                var rowIndx = parseInt(ui.rowIndx);
+                var Details = ui.rowData;
+                $("#UserCode").val(Details.UserCode);
+                $("#UserName").val(Details.UserName);
+                $("#UserID").val(Details.UserID);
+                $("#LoginName").val(Details.LoginName);
+                $("#Password").val(Details.Password);
+                fieldsDisable(false);
+                closeModal();
+            }
+        }
+    };
+    $("#Usergrid").pqGrid(setUserList);
+
+    /****************User Deactivate Fn*******************/
+
+    $('#btnDelete').on('click', function () {
+        if ($("#UserName").val() == "") {
+            ShowAlert("error", " Please Select the User to Deactivate");
+            return;
+        }
+        var rowIndx = getRowIndx();
+        if (rowIndx == null) {
+            return;
+        }
+        $("#Usergrid").pqGrid("deleteRow", { rowIndx: rowIndx });
+        var Details = JSON.stringify({
+            UserCode: $("#UserCode").val(),
+            UserName: $("#UserName").val(),
+            UserID: $("#UserID").val(),
+
+
+        });
+        $.ajax(
+            {
+                type: "POST", //HTTP POST Method
+                traditional: true,
+                contentType: 'application/json; charset=utf-8',
+                url: '/EmployeeEnrollment/DeleteUser', // Controller/View
+                data: Details,
+                success: function (msg) {
+
+                    if (msg.success) {
+                        Clearform();
+                        ShowAlert("success", "Request Updated Successfully");
+                    }
+                    else {
+                        ShowAlert("error", msg.Message);
+                    }
+                },
+                error: function (jqXHR, exception) {
+                }
+            });
+    });
+
+    /***********Add Login Details Fn********************/
+
+    function saveUser() {
+
+        var Details = JSON.stringify({
+            UserCode: $("#UserCode").val(),
+            UserName: $("#UserName").val(),
+            LoginName: $("#LoginName").val(),
+            Password: $("#Password").val(),
+            UserID: $("#UserID").val(),
+        });
+
+        $.ajax(
+            {
+                type: "POST", //HTTP POST Method
+                traditional: true,
+                contentType: 'application/json; charset=utf-8',
+                url: '/EmployeeEnrollment/SaveUser', // Controller/View
+                data: Details,
+                success: function (msg) {
+
+                    if (msg.success) {
+                        Clearform();
+                        ShowAlert("success", "User Details Added Successfully");
+                    }
+                    else {
+                        ShowAlert("warning", msg.Message);
+                    }
+                },
+                error: function (jqXHR, exception) {
+                }
+            });
+    }
+
+    $("#btnSave").click(function () {
+
+        if ($("#UserCode").val() == "") {
+            ShowAlert("error", "UserCode cannot be empty");
+            return;
+        }
+        if ($("#UserName").val() == "") {
+            ShowAlert("error", "LoginName is missing! Please enter the Employee Name");
+            return;
+        }
+        if ($("#LoginName").val() == "") {
+            ShowAlert("error", "UserName is missing! Please enter the UserName");
+            return;
+        }
+        if ($("#Password").val() == "") {
+            ShowAlert("error", "Password is missing! Please enter the Password");
+            return;
+        }
+        saveUser();
+    });
+
+    /****************Reset Complete Details Fn*******************/
+    $("#btnReset").on("click", Clearform);
+
+    function Clearform() {
+        $("#LoginName").val("");
+        $("#Password").val("");
+        $("#PasswordValidate").val("");
+        $("#UserName").val("");
+        $("#UserCode").val("");
+        $("#UserID").val("");
+        fieldsDisable(true);
+    }
+    fieldsDisable(true);
+    function fieldsDisable(state) {
+        $("#UserName").prop("disabled", state);
+        $("#LoginName").prop("disabled", state);
+        $("#Password").prop("disabled", state);
+    }
+    $("#btnSearch").on('click', function () {
+        $("#SearchGridModal").modal('show');
+        GetUserDetails();
+    });
+    function closeModal() {
+        $("#SearchGridModal").modal('hide');
+    }
+</script>

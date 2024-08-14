@@ -1,0 +1,466 @@
+﻿@model BISERP.Areas.Branch.Models.MomentOrderModel
+@{
+    Layout = "~/Areas/Branch/Views/Shared/_IssueReturnLayout.cshtml";
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <a class="collapsediv" data-toggle="collapse" href="#SearchDetails" style="color:white">
+                            Search Details
+                        </a>
+                    </div>
+                </div>
+                <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <div class="container fill">
+                            <div id="searchgrid"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        Entry Form
+                    </div>
+                </div>
+                <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <fieldset>
+                            <legend></legend>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                                    <a data-toggle="collapse" class="btn btn-success" id="btnAdd">Reset</a>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-4">
+                                        @*@Html.Label("EmployeeType","", new { @class = "required" })*@
+                                        @Html.LabelFor(m => m.EmployeeType)
+                                        <input type="radio" name="EmployeeType" value="0"> Temporary
+                                        <input type="radio" name="EmployeeType" value="1" checked> Recruited
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.BranchId, new { @class = "required" })
+                                        @Html.DropDownList("ddlBranch", new SelectList(string.Empty, "Value", "Text"), "Select Branch", new { @class = "form-control" })
+                                        @Html.HiddenFor(m => m.BranchId)
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.TempEmpId)
+                                        @Html.DropDownList("ddlTemp", new SelectList(string.Empty, "Value", "Text"), "Select Temporary Employee", new { @class = "form-control" })
+                                        @Html.HiddenFor(m => m.TempEmpId)
+                                    </div>
+                                </div>
+
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.EmpName)
+                                        @Html.TextBoxFor(m => m.EmpName, new { @class = "form-control" })
+                                        @Html.HiddenFor(m => m.EmpId)
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.TicketCode)
+                                        @Html.TextBoxFor(m => m.TicketCode, new { @class = "form-control" })
+                                        @Html.HiddenFor(m => m.EmpId)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.CheckBoxFor(m => m.Medical)
+                                        @Html.LabelFor(m => m.Medical)
+                                        @Html.TextBoxFor(m => m.Details, "", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.TrainingCentreId, new { @class = "required" })
+                                        @Html.DropDownList("ddlTrainingCentre", new SelectList(string.Empty, "Value", "Text"), " Select TrainingCenter", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.TrainingDate)
+                                        <div class='input-group date' id='TrainingDate'>
+                                            <input type='text' class="form-control" />
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.BatchId, new { @class = "required" })
+                                        @Html.DropDownList("ddlBatchdate", new SelectList(string.Empty, "Value", "Text"),  new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+       
+        $('#TrainingDate').datetimepicker({
+            format: 'DD-MMM-YYYY',
+            extraFormats: ['DD-MM-YYYY', 'DD-MM-YY'],
+            defaultDate: new Date()
+        });
+        $("#ddlTemp").prop('disabled', true);
+        $("#ddlBranch").prop('disabled', true);
+        $("#Details").prop('disabled', true);
+        $("input[name=EmployeeType][value='1']").prop("checked", true);
+        $.ajax({
+            type: "GET",
+            url: "/Master/AllBranches",
+            datatype: "Json",
+            async: true,
+            success: function (data) {
+                $.each(data, function (index, value) {
+                    $('#ddlBranch').append('<option value="' + value.BranchID + '">' + value.BranchName + '</option>');
+                });
+                if ($("#ddlBranch").val() === "") {
+                    var ddlBranch = $("#BranchId").val();
+                    $("#ddlBranch").val(ddlBranch);
+                    LoadGuardTemp();
+                }
+            }
+        });
+        function LoadGuardTemp() {
+        $.ajax({
+            type: "GET",
+            url: "/GuardDetails/GetAllGuardInfo",
+            datatype: "Json",
+            async: true,
+            data: { branchId: $("#ddlBranch").val() },
+            success: function (data) {
+                $("#ddlTemp").html("");
+                $('#ddlTemp').append('<option value="0">Select Temporary Employee</option>');
+                $.each(data, function (index, value) {
+                    $('#ddlTemp').append('<option value="' + value.GuardId + '">' + value.EmpFName + '</option>');
+                });
+            }
+        });
+        }
+      
+        function LoadSearchGrid() {
+            $.ajax({
+                url: "/MomentOrder/GetAllMomentOrderList",
+                cache: false,
+                async: true,
+                method: "GET",
+                dataType: "JSON",
+                success: function (response) {
+                    $SearchGrid.pqGrid("option", "dataModel.data", response.mimodel);
+                    $SearchGrid.pqGrid("refreshDataAndView");
+                }
+            });
+        }
+       
+        $.ajax({
+            type: "GET",
+            url: "/Training/Training/GetAllTrainingCentre",
+            datatype: "Json",
+            async: true,
+            success: function (data) {
+                $.each(data, function (index, value) {
+                    $('#ddlTrainingCentre').append('<option value="' + value.TrainingCentreId + '">' + value.TrainingCentre + '</option>');
+                });
+            }
+        });
+
+        $('select#ddlTrainingCentre')
+           .change(function () {
+               DateWiseSlot();
+           });
+        function DateWiseSlot() {
+        $.ajax({
+            type: "GET",
+            url: "/Training/BatchMaster/GetDateWiseSlot",
+            data: { trainingCentreId: $("#ddlTrainingCentre").val() },
+            datatype: "Json",
+            async: true,
+            success: function (data) {
+                $('#ddlBatchdate').append('<option value="0">Select Batch </option>');
+                $.each(data, function (index, value) {
+                    $('#ddlBatchdate').append('<option value="' + value.BatchId + '">' + value.BatchName + '</option>');
+                });
+            }
+        });
+        }
+        $('#Medical').change(function () {
+            if ($(this).is(':checked')) {
+                $("#Details").prop('disabled', false);
+
+            } else {
+                $("#Details").prop('disabled', true);
+            }
+        });
+
+        $("#TicketCode").autocomplete({
+            source: function (request, response) {
+                console.log(request.term);
+                $.ajax({
+                    url: "/Branch/Branch/SearchTicketCode",
+                    type: "POST",
+                    dataType: "json",
+                    data: { ticketcode: request.term },
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            return { label: item.TicketCode + ' ' + item.EmployeeName, value: item.TicketCode, EmpName: item.EmployeeName, EmpId: item.EmpId, BranchId: item.BranchId };
+                        }));
+                    }
+                });
+            },
+            select: function (e, i) {
+                $("#EmpName").val(i.item.EmpName);
+                $("#EmpId").val(i.item.EmpId);
+                $("#ddlBranch").val(i.item.BranchId);
+            }
+        });
+        $("#btnAdd").on("click", ClearForm);
+        function ClearForm() {
+            $("#ddlBranch").val("");
+            $("#ddlTemp").val("");
+            $("#ddlBatchdate").val("");
+            $("#ddlBatchdate").html("");
+            $("#TempEmpId").val("");
+            $("#TicketCode").val("");
+            $("#EmpName").val("");
+            $("#Details").val("");
+            $("#EmpId").val("");
+            $("#Medical").prop('checked', false);
+            ResetDate("TrainingDate");
+            $("#ddlTemp").prop('disabled', true);
+            $("#ddlBranch").prop('disabled', true);
+            $("#Details").prop('disabled', true);
+            $("#ddlTrainingCentre").val("");
+            $("#EmployeeType").val("");
+            $("#ddlTrainingCentre").prop('disabled', false);
+            $("#ddlBatchdate").prop('disabled', false);
+            $("#Medical").attr("disabled", false);
+            $("#btnSave").attr("disabled", false);
+            $("input[type=radio][name=EmployeeType]").attr('disabled', false);
+            $("#TicketCode").prop('disabled', false);
+            $("#EmpName").prop('disabled', false);
+            $("input[name=EmployeeType][value='1']").prop("checked", true);
+            $('#TrainingDate').data("DateTimePicker").enable();
+
+        }
+        $('input[type=radio][name=EmployeeType]').change(function () {
+
+            if ($("[name='EmployeeType']:checked").val() === "1") {
+                $("#ddlTemp").prop('disabled', true);
+                $("#ddlBranch").prop('disabled', true);
+                $("#TicketCode").prop('disabled', false);
+                $("#EmpName").prop('disabled', false);
+                $("#ddlBranch").val("");
+                $("#ddlTemp").val("");
+                $("#TempEmpId").val("");
+            }
+            else {
+                $("#ddlBranch").prop('disabled', false);
+                $("#ddlTemp").prop('disabled', false);
+                $("#TicketCode").prop('disabled', true);
+                $("#EmpName").prop('disabled', true);
+                $("#TicketCode").val("");
+                $("#EmpName").val("");
+                $("#EmpId").val("");
+            }
+        });
+        $("#btnSave").click(function () {
+        
+            var employeeType;
+            if ($("[name='EmployeeType']:checked").val() === "1")
+                employeeType = 1;
+            else
+                employeeType = 0;
+
+            if ($("#ddlTrainingCentre").val() === "") {
+                ShowAlert("error", "Please Select TrainingCentre");
+                return;
+            }
+            if ($("#ddlBatchdate").val() === "") {
+                ShowAlert("error", "Please Select Batch ");
+                return;
+            }
+            if ($("[name='EmployeeType']:checked").val() === "1" && $("#TicketCode").val() === "") {
+                ShowAlert("error", "Please Select TicketCode ");
+                return;
+            }
+
+            $.ajax(
+            {
+                type: "POST", //HTTP POST Method
+                url: '/MomentOrder/SaveMomentOrder', // Controller/View
+                data: { //Passing data
+                    BatchId: $("#ddlBatchdate").val(),
+                    TrainingCentreId: $("#ddlTrainingCentre").val(),
+                    EmployeeType: employeeType, //Reading text box values using Jquery
+                    BranchId: $("#ddlBranch").val(),
+                    TempEmpId: $("#ddlTemp").val(),
+                    EmpId: $("#EmpId").val(),
+                    Medical: $("#Medical").prop('checked'),
+                    Details: $("#Details").val(),
+                    TrainingDate: $("#TrainingDate").data('date')
+                },
+                success: function (msg) {
+                    if (msg.success) {
+                        ClearForm();
+                        ShowAlert("success", "Order No : " + msg.Message);
+                        LoadSearchGrid();
+                        $("#ddlBatchdate").html("");
+                    }
+                    else {
+                        ShowAlert("error", msg.Message);
+                    }
+                }  
+               
+            });
+        });
+        /********* Search Grid *********/
+        $(document).ready(function () {
+            var dataM = { location: "local", sorting: 'local' };
+            var colM = [
+                { title: "", dataIndx: "OrderId", dataType: "integer", hidden: true },
+                { title: "", dataIndx: "EmployeeType", dataType: "integer", hidden: true },
+                { title: "", dataIndx: "TrainingCentreId", dataType: "integer", hidden: true },
+                { title: "", dataIndx: "BranchId", dataType: "integer", hidden: true },
+                { title: "", dataIndx: "EmpId", dataType: "integer", hidden: true },
+                { title: "", dataIndx: "TempEmpId", dataType: "integer", hidden: true },
+                { title: "", dataIndx: "BatchId", dataType: "integer", hidden: true },
+                { title: "", dataIndx: "Medical", hidden: true },
+                { title: "", dataIndx: "EmpName", hidden: true },
+                { title: "", dataIndx: "Temporaryname", hidden: true },
+                { title: "", dataIndx: "OrderDate", hidden: true },
+                { title: "BranchName", dataIndx: "BranchName", width: 200 },
+                {
+                    title: "OrderNO", dataIndx: "Code", width: 200,
+                    filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                },
+                { title: "EmployeeType", dataIndx: "StrEmployeeType", width: 100 },
+                {
+                    title: "Employee", dataIndx: "EmployeeName", width: 250, filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                },
+                { title: "TicketCode", dataIndx: "TicketCode", width: 100, filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } },
+                { title: "TrainingDate", dataIndx: "StrTrainingDate", width: 100, hidden: true },
+                { title: "Batch", dataIndx: "BatchName", width: 170, dataType: "string" },
+                { title: "Details", dataIndx: "Details", width: 170, dataType: "string", hidden: true },
+            ];
+
+            var setM = {
+                height: 250,
+                sortable: false,
+                numberCell: { show: false },
+                hoverMode: 'cell',
+                showTop: false,
+                resizable: true,
+                scrollModel: { autoFit: true },
+                draggable: false,
+                wrap: false,
+                editable: false,
+                columnBorders: true,
+                filterModel: { on: true, mode: "AND", header: true },
+                colModel: colM,
+                dataModel: dataM,
+                virtualX: true,
+                virtualY: true,
+                pageModel: { type: "local", rPP: 20 },
+                rowClick: function (evt, ui) {
+                    if (ui.rowData) {
+                        var rowIndx = parseInt(ui.rowIndx);
+                        var record = ui.rowData;
+
+
+                        $('#TrainingDate').data({ date: record.StrTrainingDate });
+                        $('#TrainingDate').datetimepicker('update');
+                        $('#TrainingDate').datetimepicker().children('input').val(record.StrTrainingDate);
+
+                        $("#ddlTrainingCentre").val(record.TrainingCentreId);
+                        $.ajax({
+                            type: "GET",
+                            url: "/Training/BatchMaster/GetDateWiseSlot",
+                            data: { trainingCentreId: record.TrainingCentreId },
+                            datatype: "Json",
+                            async: true,
+                            success: function (data) {
+                                $("#ddlBatchdate").html("");
+                                $('#ddlBatchdate').append('<option value="0">Select Batch </option>');
+                                $.each(data, function (index, value) {
+                                    $('#ddlBatchdate').append('<option value="' + value.BatchId + '">' + value.BatchName + '</option>');
+                                });
+                                $("#ddlBatchdate").val(record.BatchId);
+                            }
+                        });
+                        $("#ddlBranch").val(record.BranchId);
+                        $.ajax({
+                            type: "GET",
+                            url: "/GuardDetails/GetAllGuardInfo",
+                            datatype: "Json",
+                            async: true,
+                            data: { BranchId: record.BranchId },
+                            success: function (data) {
+                                $("#ddlTemp").html("");
+                                $('#ddlTemp').append('<option value="0">Select Temporary Employee</option>');
+                                $.each(data, function (index, value) {
+                                    $('#ddlTemp').append('<option value="' + value.GuardId + '">' + value.EmpFName + '</option>');
+                                });
+                            }
+                        });
+
+                        $("#ddlTemp").val(record.TempEmpId);
+                        $("#TicketCode").val(record.TicketCode);
+                        $("#EmpName").val(record.EmpName);
+                        $("#Details").val(record.Details);
+                        $("#Medical").prop('checked', record.Medical);
+                        $("#Code").val(record.Code);
+                        $("#ddlBatchdate").val(record.BatchId);
+                        $('input:radio[name="EmployeeType"][value="' + record.EmployeeType + '"]').prop('checked', true);
+                        $("#ddlTemp").prop('disabled', true);
+                        $("#ddlBranch").prop('disabled', true);
+                        $("#TicketCode").prop('disabled', true);
+                        $("#EmpName").prop('disabled', true);
+                        $("#Details").prop('disabled', true);
+                        $("#ddlTrainingCentre").prop('disabled', true);
+                        $("#ddlBatchdate").prop('disabled', true);
+                        $("#Medical").attr("disabled", true);
+                        $("#btnSave").attr("disabled", true);
+                        $("input[type=radio][name=EmployeeType]").attr('disabled', true);
+                        $('#TrainingDate').data("DateTimePicker").disable();
+                    }
+                }
+            };
+            $SearchGrid = $("#searchgrid").pqGrid(setM);
+            LoadSearchGrid();
+        });
+    </script>
+
+}

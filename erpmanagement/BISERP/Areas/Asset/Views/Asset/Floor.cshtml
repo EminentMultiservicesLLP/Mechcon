@@ -1,0 +1,131 @@
+﻿@model BISERP.Areas.Asset.Models.FloorModel
+
+<script type="text/javascript">
+    var grid;
+   
+    $(document).ready(function () {
+        var Branchlist = [];
+        var Locationlist = [];
+        $.ajax({
+            type: "GET",
+            url: "/Master/AllBranches",
+        }).done(function (data) {
+            Branchlist = data;
+         
+            $.ajax({
+                type: "GET",
+                url: "/Master/AllActivelocation",
+            }).done(function (data) {
+                Locationlist = data;
+
+        grid = $("#grid").jsGrid({
+            width: "100%",
+            height: "400px",
+            filtering: true, 
+            selecting: true,
+            inserting: true, 
+            editing: true,
+            sorting: true,
+            autoload: true,
+            paging: true,
+            pageSize: 20,
+            controller: {
+                loadData: function (filter) {
+                    var d = $.Deferred();
+                    $.ajax({
+                        type: 'GET',
+                        url: '/FloorMaster/AllFloor',
+                        dataType: "json",
+                        data: { SearchName: filter.FloorName, SearchCode: filter.FloorCode },
+                        success: function (data) {
+                            d.resolve(data.records);
+                        },
+                        error: function (e) {
+                            ShowAlert("error", "Server Error! Please Contact administrator!");
+                        }
+                    });
+                    return d.promise();
+                },
+                insertItem: function (item) {
+                    var d = $.Deferred();
+                    $.ajax(
+                    {
+                        type: "POST",
+                        dataType: "json",
+                        url: '/FloorMaster/SaveFloor', // Controller/View
+                        data: item,
+                        success: function (msg) {
+                            if (msg.success) {
+                                ShowAlert("success", "Floor Master added successfully to system.");
+                            } else {
+                                ShowAlert("error", msg.Message);
+                            }
+                        },
+                    }).done(function (item) {
+                        $("#grid").jsGrid("loadData");
+                    });
+
+                },
+                updateItem: function (item) {
+                    var d = $.Deferred();
+                    $.ajax(
+                    {
+                        type: "POST", //HTTP POST Method
+                        dataType: "json",
+                        url: '/FloorMaster/UpdateFloor', // Controller/View
+                        data: item,
+                        success: function (msg) {
+                            if (msg.success) {
+                                ShowAlert("success", "Floor Master updated successfully to system.");
+                            } else {
+                                ShowAlert("error", msg.Message);
+                            }
+                        },
+                    }).done(function (insertedItem) {
+                        d.resolve(insertedItem.data);
+                        $("#grid").jsGrid("loadData");
+
+                    });
+                    return d.promise();
+                }
+            },
+            fields: [
+                { name: "FloorId", visible: false, width: 0 },
+                { name: "FloorCode", title: "Code", type: "text", validate: "required", autosearch: true, validate: { validator: "required", message: "Code is missing! Please enter the Code" }, },
+                { name: "FloorName", title: "Name", type: "text", validate: "required", autosearch: true, validate: { validator: "required", message: "Name is missing! Please enter the name" }, },
+                //{ name: "BranchId", title: "BranchName", type: "select", items: Branchlist, valueField: "BranchID", textField: "BranchName", validate: "required", filtering: false, width: 50 },
+                { name: "LocationId", title: "LocationName", type: "select", items: Locationlist, valueField: "LocationId", textField: "LocationName", validate: "required", filtering: false, width: 50 },
+                { name: "Deactive", title: "Deactive", type: "checkbox", filtering: false, width: 10, inserting: false },
+                { type: "control", deleteButton: false, width: 10 }
+            ],
+        });
+    });
+   });
+  });
+</script>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <fieldset>
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-groupingBoder">
+                    <div class="panel-heading">
+                        <div class="panel-title">
+                            <h4>
+                                Floor
+                            </h4>
+                        </div>
+                    </div>
+                    <div class="panel-collapse collapse in" aria-expanded="true">
+                        <div class="panel-body">
+                            <div class="container fill">
+                                <div id="grid" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+}

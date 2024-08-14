@@ -1,0 +1,286 @@
+﻿@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        Entry Form
+                    </div>
+                </div>
+                <div class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                                <button type="button" class="btn btn-success" id="btnAdd">Reset</button>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-3">
+                                    @Html.Label("Select Store", new { @class = "required" })
+                                    @Html.DropDownList("ddlStore", new SelectList(string.Empty, "Value", "Text"), "Select Store", new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-3">
+                                    @Html.Label("Item Type", new { @class = "required" })
+                                    @Html.DropDownList("ddlItemtype", new SelectList(string.Empty, "Value", "Text"), "All", new { @class = "wrapperdropdown-content form-control" })
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <button type="button" class="btn btn-primary" id="btnViewItem">Display Records</button>
+                                <button type="button" class="btn btn-primary">Calculate</button>
+                            </div>
+                        </div>
+                        <div class="panel-groupingBoder">
+                            <fieldset>
+                                <div class="container fill">
+                                    <div class="row">
+                                        <div id="grid"></div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $.ajax({
+                type: "GET",
+                url: "/Master/AllStores",
+                datatype: "Json",
+                async: true,
+                success: function (data) {
+                    $.each(data, function (index, value) {
+                        $('#ddlStore').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                    });
+                }
+            });
+
+            $.ajax({
+                type: "GET",
+                url: "/Master/AllItemType",
+                datatype: "Json",
+                success: function (data) {
+                    $.each(data, function (index, value) {
+                        $('#ddlItemtype').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                    });
+                }
+            });
+        });
+        var $grid;
+
+        $(document).ready(function () {
+            var packsizes = [];
+            $.ajax({
+                type: "GET",
+                url: "/Master/AllItemPackSize",
+                success: function (data) {
+                    $.each(data, function (index, value) {
+                        packsizes.push(value.Name)
+                    });
+                }
+            });
+            var autoCompleteEditor = function (ui) {
+                var $cell = ui.$cell,
+                    rowData = ui.rowData,
+                    dataIndx = ui.dataIndx,
+                    width = ui.column.width,
+                    cls = ui.cls;
+                var dc = $.trim(rowData[dataIndx]);
+
+                var $inp = $("<input type='text' name='" + dataIndx + "' class='" + cls + " pq-ac-editor' />")
+                    .width(width - 6)
+                    .appendTo($cell)
+                    .val(dc);
+
+                $inp.autocomplete({
+                    source: packsizes,
+                    minLength: 0
+                }).focus(function () {
+                    $(this).autocomplete("search", "");
+                });
+            }
+            var dataM = { location: "local", sorting: 'local' };
+            var colM = [
+                     {
+                         dataIndx: "state", Width: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                         editor: false, dataType: 'bool',
+                         cb: {
+                             select: true,
+                             all: false, //checkbox selection in the header affect current page only.
+                             header: true //show checkbox in header.
+                         }
+                     },
+                   { dataIndx: "ID", width: 10, dataType: "integer", hidden: true },
+                   { dataIndx: "storeId", width: 10, dataType: "integer", hidden: true },
+                    { dataIndx: "ItemId", width: 10, dataType: "integer", hidden: true },
+                   { dataIndx: "PackSizeId", width: 10, dataType: "integer", hidden: true },
+                   { title: "ItemName", dataIndx: "ItemName", width: 300, dataType: "string", editable: false },
+                   { dataIndx: "UnitName", width: 120, title: "Dispensing U", dataType: "string" },
+                   { dataIndx: "MinLevel", width: 120, title: "Min. Qty", dataType: "integer" },
+                   { dataIndx: "MaxLevel", width: 120, title: "Max. Qty", dataType: "integer" },
+                   { dataIndx: "ReOrderLevel", width: 120, title: "Reorder Qty", dataType: "integer" },
+                   {
+                       title: "Pack Size", dataIndx: "Packsize", width: 120, dataType: "string", editable: true,
+                       editor: { type: autoCompleteEditor },
+                       validations: [
+                           { type: 'minLen', value: 1, msg: "Required" },
+                               {
+                                   type: function (ui) {
+                                       var value = ui.value;
+                                       if ($.inArray(ui.value, packsizes) == -1) {
+                                           ui.msg = value + " not found in list";
+                                           return false;
+                                       }
+                                   }
+                               }
+                       ]
+                   },
+            ];
+
+            var setM = {
+                virtualX: true,
+                virtualY: true,
+                height: 500,
+                sortable: false,
+                numberCell: { show: false },
+                showTop: true,
+                resizable: true,
+                scrollModel: { flexContent: true },
+                selectionModel: { type: 'row', mode: 'single' },
+                hoverMode: 'cell',
+                editor: { type: 'textbox' },
+                draggable: false,
+                columnBorders: true,
+                cellSave: function (evt, ui) {
+                    this.refreshRow(ui);
+
+                },
+                editModel: {
+                    saveKey: $.ui.keyCode.ENTER,
+                    keyUpDown: false
+                },
+                colModel: colM,
+                dataModel: dataM,
+                pageModel: { type: "local", rPP: 20 }
+            }
+            $grid = $("#grid").pqGrid(setM);
+        });
+        $('#btnViewItem').on('click', function () {
+            if ($("#ddlStore").val() == "") {
+                ShowAlert("error", "Please Select Store");
+                return;
+            }
+            var searchStoreId = $("#ddlStore").val();
+            var searchItemType = $("#ddlItemtype").val();
+        
+            $.ajax({
+               
+                type: "GET",
+                url: "/StoreQuantityLimits/Getallitemlimits/",
+                data: { StoreId: searchStoreId, ItemTypeId: searchItemType },
+                datatype: "Json",
+                beforeSend: function () {
+                    $grid.pqGrid("showLoading");
+                },
+                complete: function () {
+                    $grid.pqGrid("hideLoading");
+                },
+                success: function (data) {
+                    if (data.success) {
+                        $grid.pqGrid("hideLoading");
+                        $grid.pqGrid("option", "dataModel.data", data.records);
+                        $grid.pqGrid("refreshDataAndView");
+                    } else {
+                        ClearParamGrid('grid');
+                        ShowAlert("error", data.Messsage);
+                        return;
+                    }
+                },
+                error: function (request, status, error) {
+                    //ClearParamGrid("Itemgrid");
+                    $grid.pqGrid("hideLoading");
+                    ShowAlert("error", "Server error! Please Contact Administrator");
+                    return;
+                }
+            });
+        });
+        function ClearForm() {
+            $("#ddlStore").val("");
+            $("#ddlItemtype").val("");
+            ClearParamGrid("grid");
+        }
+
+        $("#btnAdd").on("click", ClearForm);
+        $("#btnSave").click(function () {
+
+            var StoreId = $("#ddlStore").val();
+            var selectedItems;
+            var selectedItemsMainGrid = [];
+            try {
+                selectedItems = $grid.pqGrid("option", "dataModel.data");
+
+            }
+            catch (err) {
+                selectedItems = $("#grid").pqGrid("option", "dataModel.data");
+            }
+            if (selectedItems != undefined) {
+              
+                selectedItemsMainGrid = jLinq.from(selectedItems).equals("state", true).select();
+                if (selectedItemsMainGrid.length > 0) {
+                    if (jLinq.from(selectedItemsMainGrid).lessEquals("MinLevel", 0).or(undefined).count() > 0) {
+                        ShowAlert("error", "Please Enter MinQty  for selected items");
+                        return;
+                    }
+                    if (jLinq.from(selectedItemsMainGrid).lessEquals("MaxLevel", 0).or(undefined).count() > 0) {
+                        ShowAlert("error", "Please Enter MaxQty for selected items");
+                        return;
+                    }
+                    if (jLinq.from(selectedItemsMainGrid).lessEquals("ReOrderLevel", 0).or(undefined).count() > 0) {
+                        ShowAlert("error", "Please Enter ReOrderQty for selected items");
+                        return;
+                    }
+                    if (jLinq.from(selectedItemsMainGrid).lessEquals("PackSize", 0).or(undefined).count() > 0) {
+                        ShowAlert("error", "Please Enter PackSize for selected items");
+                        return;
+                    }
+                }
+                else {
+                    ShowAlert("error", "Please Select at least one Item before saving.");
+                    return;
+                }
+            }
+
+            var griditems = JSON.stringify(selectedItemsMainGrid);
+
+            $.ajax(
+              {
+                  type: "POST", //HTTP POST Method
+                  traditional: true,
+                  contentType: 'application/json; charset=utf-8',
+                  url: '/StoreQuantityLimits/SaveStoreQuantityLimits', // Controller/View
+                  data: griditems,
+                  success: function (msg) {
+                      ClearForm()
+                      ShowAlert("success", "Record saved successfully to system.");
+                  },
+                  error: function (jqXHR, exception) {
+                      ShowAlert("error", "Error while saving StoreQuantityLimits.");
+                  }
+              });
+        });
+    </script>
+}

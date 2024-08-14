@@ -1,0 +1,492 @@
+﻿@model BISERP.Areas.Training.Models.GeneralBudgetProposalModel
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <fieldset>
+        <div id="content">
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-groupingBoder">
+                        <div class="panel-heading">
+                            <div class="panel-title">
+                                <a class="collapsediv" data-toggle="collapse" href="#collapse2" style="color:white">
+                                    Search Detail
+                                </a>
+                            </div>
+                        </div>
+                        <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                            <div class="panel-body">
+                                <fieldset>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            @Html.LabelFor(model => model.BudgetMonth, new { @class = "required" })
+                                            <div class='input-group date'>
+                                                <input type='text' id='BudgetMonth' class="form-date-control" />
+                                                <button type="button" class="btn btn-primary" id="btnShow" style="margin-left: 5px">Show</button>
+                                            </div>
+                                            @Html.HiddenFor(m => m.BudgetId)
+
+                                        </div>
+                                    </div>
+
+                                </fieldset>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-groupingBoder">
+                        <div class="panel-heading">
+                            <div class="panel-title">
+                                <a class="collapsediv" data-toggle="collapse" href="#collapse3" style="color: white">
+                                    Entry Form
+                                </a>
+                            </div>
+                        </div>
+                        <div id="collapse3" class="panel-collapse collapse in" aria-expanded="true">
+                            <div class="panel-body">
+                                <fieldset>
+                                    <div class="row">
+                                        <div class="col-sm-8">
+                                            <div class="form-group">
+                                                <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                                                <button type="button" class="btn btn-success" id="btnResetgrid">Reset</button>
+
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                <button type="button" class="btn btn-primary" data-target="#ItemModal" id="Balance">Balance Due</button>
+                                                @Html.TextBox("BalanceAmt")
+                                            </div>
+                                        </div>
+                                    </div><br />
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                <button type="button" class="btn btn-primary" data-target="#ItemModal" id="btnAddItem">Add</button>
+                                                <button type="button" class="btn btn-primary" data-target="#BudgetGrid" id="btnRemoveItem">Remove</button>
+
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div id="BudgetDetails" class="panel-collapse collapse in" aria-expanded="true">
+                                        <div class="panel-body">
+                                            <div class="container fill">
+                                                <div id="BudgetGrid"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                <div class="col-md-1">
+                                                    @Html.LabelFor(model => model.ExpenseTotal)
+
+                                                </div>
+                                                <div class="col-md-2">
+                                                    @Html.TextBoxFor(model => model.ExpenseTotal)
+                                                </div>
+
+                                                <div class="col-md-1">
+                                                    @Html.LabelFor(model => model.ProposedTotal)
+                                                </div>
+                                                <div class="col-md-1">
+                                                    @Html.TextBoxFor(model => model.ProposedTotal)
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+
+
+    <script type="text/javascript">
+        
+        $(document).ready(function () {
+            $("#ExpenseTotal").prop('disabled', true);
+            $("#ProposedTotal").prop('disabled', true);
+            //$("#btnAddItem").hide();
+        });
+
+        $('#BudgetMonth').datepicker({
+            defaultDate: new Date(),
+            dateFormat: 'mm-yy',
+            yearRange: '2015:2099',
+            showOn: "button",
+            buttonImage: "../../Content/images/calendar.gif",
+            buttonImageOnly: true,
+            changeMonth: true,
+            changeYear: true
+
+        }).datepicker("setDate", new Date());
+
+
+        var BudgetHeads = [];
+        $.ajax({
+            type: "GET",
+            url: "/BudgetHeads/AllActiveBudgetHeads",
+            success: function (data) {
+                $.each(data,
+                    function (index, value) {
+                        BudgetHeads.push(value.BudgetHeads);
+                        // $( ".selector" .pqGrid( { dataModel: { data: BudgetHeads } })) ;
+
+                    });
+            }
+        });
+
+        var autoCompleteEditor = function (ui) {
+            var $cell = ui.$cell,
+                rowData = ui.rowData,
+                dataIndx = ui.dataIndx,
+                //cellData = ui.rowData[dataIndx],
+                width = ui.column.width,
+                cls = ui.cls;
+            var dc = $.trim(rowData[dataIndx]);
+
+
+            var $inp = $("<input type='text' name='" + dataIndx + "' class='" + cls + " pq-ac-editor' />")
+                .width(width - 6)
+                .appendTo($cell)
+                .val(dc);
+
+
+            $inp.autocomplete({
+                source: BudgetHeads,
+                minLength: 0
+
+            })
+                .focus(function () {
+                    $(this).autocomplete("search", "");
+                });
+
+
+            //.onSelect(function() {
+            //    $(this).autocomplete("search", "");
+            //});
+        }
+
+
+        //$( ".selector" .on( "pqgridchange", function(event, ui) {
+
+        //  var  dataIndx = ui.dataIndx,
+        //        cellData = ui.rowData[dataIndx];
+        //    alert(cellData);
+
+        //}));
+
+
+
+        //**************************************
+        
+        //$("$BudgetGrid").on("change", "BudgetHeads", function () {
+        //    $grid.pqGrid('saveEditCell');
+        //});
+
+
+
+        //  BudgetHeads.onSelect(function () {
+        //      var item = BudgetHeads.select
+
+        //});
+
+        //********************************
+        var $BudgetGrid;
+        var dataBudgetGrid = { location: "local", sorting: 'local' };
+        var colBudgetGrid = [
+            {
+                dataIndx: "BudgetDtlId",
+                width: 10,
+                dataType: "integer",
+                editable: false,
+                resizable: false,
+                hidden:
+                    true
+            },
+            { dataIndx: "BudgetId", width: 10, dataType: "integer", editable: false, resizable: false, hidden: true },
+            {
+                title: "BudgetHeads", dataIndx: "BudgetHeads", dataType: "string", width: 250,
+                editor: {
+                    type: autoCompleteEditor
+                }
+            },
+            { title: "ActualExpense", dataIndx: "ActualExpense", editable: true, dataType: "double", width: 250, editable: false },
+            { title: "ProposalBudget", dataIndx: "ProposalBudget", dataType: "double", width: 250 }
+        ];
+
+        var setBudgetGrid = {
+            width: '100%',
+            height: 400,
+            numberCell: { show: true },
+            editModel: {
+                saveKey: $.ui.keyCode.ENTER
+            },
+            trackModel: { on: true, dirtyClass: 'pq-cell-dirty' },
+            virtualX: true,
+            virtualY: true,
+            sortable: false,
+            showTop: false,
+            resizable: false,
+            scrollModel: { autoFit: true },
+            draggable: false,
+            wrap: false,
+            editor: { type: 'textbox' },
+            editable: true,
+            hwrap: false,
+            columnBorders: true,
+            rowBorders: true,
+            showHeader: true,
+            selectionModel: { type: 'row' },
+            filterModel: { on: false },
+            colModel: colBudgetGrid,
+            dataModel: dataBudgetGrid,
+            pageModel: { type: "local" },
+            cellSave: function (evt, ui) {
+                this.refreshRow(ui);
+                calculatetotal();
+            }
+        }
+
+        $BudgetGrid = $("#BudgetGrid").pqGrid(setBudgetGrid);
+
+        $('#btnAddItem').on('click', function () {
+            if ($("#BudgetMonth").val() == "" || $("#BudgetMonth").val() == undefined) {
+                ShowAlert("error", "Please Select Month");
+                return;
+            }
+            var dataBGrid = [];
+            var getData = $("#BudgetGrid").pqGrid("option", "dataModel.data");
+
+            $.each(getData, function (key, value) {
+                var grdData = {
+                    'BudgetHeads': value.BudgetHeads, 'ActualExpense': value.ActualExpense, 'ProposalBudget': value.ProposalBudget, 'BudgetDtlId': value.BudgetDtlId, 'BudgetId': value.BudgetId
+                };
+                dataBGrid.push(grdData);
+            });
+            var gridData = { 'BudgetHeads': '', 'ActualExpense': '', 'ProposalBudget': '', 'BudgetDtlId': '', 'BudgetId': '' };
+            dataBGrid.push(gridData);
+
+            $("#BudgetGrid").pqGrid("option", "dataModel.data", dataBGrid);
+            $("#BudgetGrid").pqGrid("refreshDataAndView");
+
+
+        });
+
+
+
+        function getRowIndx() {
+            var arr = $("#BudgetGrid").pqGrid('selection', { type: 'row', method: 'getSelection' });
+            if (arr && arr.length > 0) {
+                return arr[0].rowIndx;
+            }
+            else {
+                alert("Select a row.");
+                return null;
+            }
+        }
+
+        $('#btnRemoveItem').on('click', function () {
+            var rowIndx = getRowIndx();
+            if (rowIndx == null) {
+                return;
+            }
+            $("#BudgetGrid").pqGrid("deleteRow", { rowIndx: rowIndx });
+        });
+
+
+        $("#btnResetgrid").on('click', function () {
+            clearform();
+            ClearParamGrid("BudgetGrid");
+            $("#btnAddItem").show();
+            //var dt = $("#BudgetMonth").val().split("-");
+            //$.ajax({
+            //    type: "POST", //HTTP POST Method
+            //    url: '/GeneralBudgetProposal/GetExpenditureByMonth',
+            //    data: {
+            //        BudgetMonth: dt[0],
+            //        BudgetYear: dt[1]
+            //    },
+            //    datatype: "Json",
+            //    beforeSend: function () {
+            //        $BudgetGrid.pqGrid("showLoading");
+            //    },
+            //    complete: function () {
+            //        $BudgetGrid.pqGrid("hideLoading");
+            //    },
+            //    success: function (response) {
+            //        $("#ExpenseTotal").val(response[0].ExpenseTotal);
+            //        $("#ProposedTotal").val(response[0].ProposedTotal);
+            //        $BudgetGrid.pqGrid("hideLoading");
+            //        $BudgetGrid.pqGrid("option", "dataModel.data", response);
+            //        $BudgetGrid.pqGrid("refreshDataAndView");
+
+            //    },
+            //    error: function () {
+            //        $BudgetGrid.pqGrid("hideLoading");
+            //        ClearParamGridByObject($BudgetGrid);
+            //        ShowAlert("error", "Error while loading Itemlist");
+            //        return;
+            //    }
+            //});
+        });
+        function clearform() {
+            ClearParamGridByObject($BudgetGrid);
+            $("#ExpenseTotal").val("");
+            $("#ProposedTotal").val("");
+            $("#BalanceAmt").val("");
+        };
+
+
+
+        $("#btnShow").click(function () {
+            if ($("#BudgetMonth").val() === "" || $("#BudgetMonth").val() == undefined) {
+                ShowAlert("error", "Please Select Month");
+                return;
+            }
+            clearform();
+            $("#btnAddItem").show();
+            var dt = $("#BudgetMonth").val().split("-");
+            if (dt != undefined && dt.length > 1) {
+                
+
+                $.ajax({
+                    type: "POST", //HTTP POST Method
+                    url: '/GeneralBudgetProposal/GetExpenditureByMonth',
+                    data: {
+                        BudgetMonth: dt[0],
+                        BudgetYear: dt[1]
+                    },
+                    datatype: "Json",
+                    beforeSend: function () {
+                        $BudgetGrid.pqGrid("showLoading");
+                    },
+                    complete: function () {
+                        $BudgetGrid.pqGrid("hideLoading");
+                    },
+                    success: function (response) {
+                        $BudgetGrid.pqGrid("hideLoading");
+                        $("#ExpenseTotal").val(response[0].ExpenseTotal);
+                        $("#ProposedTotal").val(response[0].ProposedTotal);
+                        $("#BalanceAmt").val(response[0].BalanceAmt);
+                        $BudgetGrid.pqGrid("option", "dataModel.data", response);
+                        $BudgetGrid.pqGrid("refreshDataAndView");
+                        calculatetotal();
+
+                    },
+                    error: function () {
+                        $BudgetGrid.pqGrid("hideLoading");
+                        ClearParamGridByObject($BudgetGrid);
+                        ShowAlert("error", "Error while loading Itemlist");
+                        return;
+                    }
+                });
+            }
+        });
+
+        $("#btnSave").click(function () {
+            var item = $BudgetGrid.pqGrid("option", "dataModel.data");
+
+            if ($("#BudgetMonth").val() == "" || $("#BudgetMonth").val() == undefined) {
+                ShowAlert("error", "Please Select Month");
+                return;
+            }
+            var chekBudgethead = 0, chekActualExp = 0, chekProposalBdgt = 0;
+
+            $.each(item, function (key, value) {
+                if (value.BudgetHeads == "" || value.BudgetHeads == undefined) chekBudgethead++;
+                if (value.ActualExpense < 0 || value.ActualExpense == undefined) chekActualExp++;
+                if (value.ProposalBudget < 0 || value.ProposalBudget == undefined) chekProposalBdgt++;
+            });
+
+            if (chekBudgethead > 0) {
+                ShowAlert("error", "Select Budget Heads");
+                return;
+            }
+            if (chekProposalBdgt > 0) {
+                ShowAlert("error", "Enter Proposal Amount");
+                return;
+            }
+            if (item != undefined) {
+                if (item.length > 0) {
+
+                }
+                else {
+                    ShowAlert("error", "No Items to Save");
+                    return;
+                }
+            }
+
+            $("#btnAddItem").hide();
+            var dt = $("#BudgetMonth").val().split("-");
+
+            if (dt != undefined && dt.length > 1) {
+                var items = JSON.stringify({
+                    BudgetMonth: dt[0],
+                    BudgetYear: dt[1],
+                    ExpenseTotal: $("#ExpenseTotal").val(),
+                    ProposedTotal: $("#ProposedTotal").val(),
+                    BudgetId: $("#BudgetId").val(),
+                    BudgetDtModel: item
+                });
+                $.ajax({
+                    type: "POST", //HTTP POST Method
+                    traditional: true,
+                    contentType: 'application/json; charset=utf-8',
+                    url: '/GeneralBudgetProposal/SaveGeneralBudgetProposal', // Controller/View   SlotId
+                    data: items,
+                    success: function (msg) {
+                        if (msg.success) {
+                            ShowAlert("success", "Record added successfully to system.");
+                            ClearParamGrid("BudgetGrid");
+                        }
+
+                        else {
+                            ShowAlert("error", msg.Message);
+                            ClearParamGrid("BudgetGrid");
+                        }
+                    }
+                });
+            }
+
+        });
+        function calculatetotal() {
+            var getData = $BudgetGrid.pqGrid("option", "dataModel.data");
+            var actualAmt = 0, proposalAmt = 0;
+            $.each(getData,
+                function (_, item) {
+                    if (item.ActualExpense == undefined || item.ActualExpense == "") item.ActualExpense = 0;
+                    if (item.ProposalBudget == undefined || item.ProposalBudget == "") item.ProposalBudget = 0;
+
+                    if (!isNaN(item.ActualExpense))
+                        actualAmt += parseFloat(item.ActualExpense);
+
+                    if (!isNaN(item.ProposalBudget))
+                        proposalAmt += parseFloat(item.ProposalBudget);
+
+
+                    $("#ExpenseTotal").val(actualAmt.toFixed(2));
+                    $("#ProposedTotal").val(proposalAmt.toFixed(2));
+                });
+        }
+    </script>
+
+}
+

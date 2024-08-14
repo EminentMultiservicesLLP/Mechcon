@@ -1,0 +1,757 @@
+﻿@model BISERP.Areas.Masters.Models.PackingListModel
+@Scripts.Render("~/bundles/jquerymodels")
+
+<script>
+    $(function () {
+        $(".datepicker").datepicker({
+            showOn: "button",
+            buttonImage: "/Content/images/calendar.gif",
+            buttonImageOnly: true,
+            buttonText: "Select date",
+            'changeMonth': true,
+            'changeYear': true,
+            'yearRange': '2021:2030',
+            "format": "dd-M-yyyy",
+            todayBtn: "linked",
+            pickerPosition: "bottom-left",
+            "todayHighlight": true,
+            autoclose: true,
+        }).datepicker("setDate", new Date());
+        $("#anim").change(function () {
+            $(".datepicker").datepicker("option", "showAnim", "fadeIn");
+        });
+    });
+</script>
+
+<h5 class="page-header orangeDottedBottomBorder">Packing List</h5>
+<div id="SearchGridModal" class="modal fade" role="dialog" data-backdrop="false">
+    <div class="modal-dialog find-search-grid-modal">
+        <div class="modal-content gridmodal-content">
+            <div class="modal-header gridmodal-header">
+                <button type="button" class="close" onclick="closeModal()">&times;</button>
+                <h4 class="modal-title">Inventory Entry Details.</h4>
+            </div>
+            <div class="modal-body">
+                <div class="fill">
+                    <div id="PackingListGrid"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="ReportModal" class="modal fade" role="dialog" data-backdrop="false">
+    <div class="modal-dialog find-search-grid-modal">
+        <div class="modal-content gridmodal-content">
+            <div class="modal-header gridmodal-header">
+                <button type="button" class="close" onclick="closeModal()">&times;</button>
+                <h4 class="modal-title">Report</h4>
+            </div>
+            <div class="modal-body">
+                <div class="fill">
+                    <iframe id="iframeReportViewer" style="width:100%;height:400px"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="panel-group">
+    <div class="panel panel-default">
+        <div class="panel-groupingBoder">
+            <div class="panel-heading">
+                <div class="panel-title">
+                    <a class="collapsediv" data-toggle="collapse" href="#SearchDetails">
+                        Packing List
+                    </a>
+                </div>
+            </div>
+            <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                <div class="panel-body">
+                    <div class="fill">
+                        <div class="submit-row">
+                            <div class="col-sm-6" style="text-align:start">
+                                <button type="button" id="btnSave" class="btn btn-success" onclick="SavePackingList()">Save</button>
+                                <button type="button" class="btn btn-warning" id="btnResetT" onclick="clearFormData()">Clear</button>
+                                <button type="button" id="btnFind" class="btn btn-primary" onclick="showModal()">Find</button>
+                            </div>
+                            <div class="col-sm-6" style="text-align:end">
+                                <a data-toggle="collapse" class="btn btn-warning" id="btnExport" href="#ReportPreview">Report</a>
+
+                            </div>
+                        </div>
+                        <fieldset class="fieldsetCustom">
+                            <legend class="legendCustom">Create Inventory Entry</legend>
+
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    @Html.LabelFor(model => model.PackingListNo, new { @class = "" })
+                                    @Html.TextBoxFor(model => model.PackingListNo, new { @class = "form-control", placeholder = "Auto", disabled = "disabled" })
+                                    @Html.HiddenFor(model => model.PackingListId)
+                                </div>
+                                <div class="col-sm-2">
+                                    @Html.LabelFor(model => model.PackingListDate, new { @class = "" })
+                                    @Html.TextBoxFor(model => model.PackingListDate, new { @class = "form-control datepicker", @disabled = "disabled" })
+                                </div>
+                                <div class="col-sm-2">
+                                    @Html.LabelFor(model => model.StoreId, new { @class = "required" })
+                                    @Html.DropDownList("StoreId", new SelectList(string.Empty, "Value", "Text"), "--Select Project--", new { @class = "wrapperdropdown-content form-control" })
+                                </div>
+                                <div class="col-sm-2">
+                                    @Html.LabelFor(model => model.InvoiceNo, new { @class = "required" })
+                                    @Html.TextBoxFor(model => model.InvoiceNo, new { @class = "form-control", placeholder = "Enter Invoice No." })
+                                </div>
+                                <div class="col-sm-2">
+                                    @Html.LabelFor(model => model.InvoiceDate, new { @class = "required" })
+                                    @Html.TextBoxFor(model => model.InvoiceDate, new { @class = "form-control datepicker" })
+                                </div>
+                                <div class="col-sm-2">
+                                    @Html.LabelFor(model => model.VehicleNo, new { @class = "required" })
+                                    @Html.TextBoxFor(model => model.VehicleNo, new { @class = "form-control", placeholder = "Enter Vehicle No." })
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    @Html.LabelFor(model => model.PONo, new { @class = "required" })
+                                    @Html.TextBoxFor(model => model.PONo, new { @class = "form-control", placeholder = "Enter PO No." })
+                                </div>
+                                <div class="col-sm-2">
+                                    @Html.LabelFor(model => model.PODate, new { @class = "required" })
+                                    @Html.TextBoxFor(model => model.PODate, new { @class = "form-control datepicker" })
+                                </div>
+                                <div class="col-sm-2">
+                                    @Html.LabelFor(model => model.LRNo, new { @class = "required" })
+                                    @Html.TextBoxFor(model => model.LRNo, new { @class = "form-control", placeholder = "Enter LR No." })
+                                </div>
+                                <div class="col-sm-2">
+                                    @Html.LabelFor(model => model.LRDate, new { @class = "required" })
+                                    @Html.TextBoxFor(model => model.LRDate, new { @class = "form-control datepicker" })
+                                </div>
+                                <div class="col-sm-2">
+                                    @Html.LabelFor(model => model.SupplierName, new { @class = "required" })
+                                    @Html.TextBoxFor(model => model.SupplierName, new { @class = "form-control", placeholder = "Select Supplier" })
+                                    @Html.HiddenFor(model => model.SupplierID)
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    @Html.LabelFor(model => model.ConsigneeAddress, new { @class = "required" })
+                                    @Html.TextAreaFor(model => model.ConsigneeAddress, new { @class = "form-control", placeholder = "Consignee Address" })
+                                </div>
+                                <div class="col-sm-4">
+                                    @Html.LabelFor(model => model.BuyerAddress, new { @class = "" })
+                                    @Html.TextAreaFor(model => model.BuyerAddress, new { @class = "form-control", placeholder = "Buyer Address", disabled = "disabled" })
+                                </div>
+                            </div>
+
+                        </fieldset>
+                        <div class="submit-row">
+                            <button type="button" class="btn btn-primary" data-target="#ItemModal" id="btnViewItem">Add Item</button>
+                            <button type="button" class="btn btn-danger" id="btnRemoveItem">Remove Item</button>
+                        </div>
+                        <fieldset class="fieldsetCustom">
+                            <legend class="legendCustom">Item Details</legend>
+                            <div id="ItemDetailGrid"></div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="SupplierModal" title="Select Items" style="display: none;">
+    <div id="Suppliergrid"></div>
+</div>
+
+<div title="Select Items" id="ItemModal" style="display: none;">
+    <div id="ItemListGrid"></div>
+    <div style="margin-top:5px;">
+        <button type="button" class="btn btn-primary" id="btnAddItem">Add</button>
+        <button type="button" class="btn btn-primary" id="btnCloseItem">Close</button>
+    </div>
+</div>
+
+<script>
+    var tempPackingListId = 0;
+    var selectedRowIndx = null;
+    var storeDetails = [];
+    function loadStores() {
+        $.ajax({
+            type: "GET",
+            url: "/Master/MainStores",
+            dataType: "json",
+            success: function (data) {
+                storeDetails = data;
+                $.each(data, function (index, value) {
+                    $('#StoreId').append(`<option value="${value.ID}">${value.Code}</option>`);
+                });
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                console.error("Error loading stores:", errorThrown);
+            }
+        });
+    }
+    loadStores();
+    $('#StoreId').change(() => {
+        const selectedID = $('#StoreId').val();
+        const filteredObjects = storeDetails.filter(obj => obj.ID == selectedID);
+        const firstFilteredObject = filteredObjects[0];
+
+        $('#PONo').val(firstFilteredObject?.ClientPoNo || '');
+    });
+
+
+    //-----------------------------------PackingListGrid (Starts here)-----------------------------------//
+    var PackingListGrid_GDM = { location: "local" };
+    var PackingListGrid_GCM = [
+        {
+            title: "PackingList No", dataIndx: "PackingListNo", width: '25%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "PackingListDate", dataIndx: "strPackingListDate", width: '25%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Store", dataIndx: "StoreName", width: '35%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Supplier", dataIndx: "SupplierName", width: '14%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        }];
+    var setPackingListGrid = {
+        height: 300,
+        width: 'auto',
+        maxWidth: '100%',
+        minWidth: 800,
+        sortable: true,
+        autofill: true,
+        numberCell: { show: true },
+        hoverMode: 'row',
+        showTop: true,
+        showTitle: true,
+        showBottom: true,
+        resizable: true,
+        scrollModel: { autoFit: true },
+        filterModel: { on: true, mode: "AND", header: true },
+        draggable: false,
+        hwrap: false,
+        wrap: false,
+        editable: false,
+        columnBorders: true,
+        menuIcon: true,
+        selectionModel: { type: 'row', mode: 'single', cbHeader: false },
+        colModel: PackingListGrid_GCM,
+        dataModel: PackingListGrid_GDM,
+        pageModel: { type: "local" },
+        rowClick: function (evt, ui) {
+            if (ui.rowData) {
+                var data = ui.rowData;
+                clearFormData();
+                tempPackingListId = data.PackingListId;
+                $("#PackingListNo").val(data.PackingListNo);
+                $('#PackingListDate').datepicker('setDate', data.strPackingListDate);
+                $("#StoreId").val(data.StoreId);
+                $("#InvoiceNo").val(data.InvoiceNo);
+                $('#InvoiceDate').datepicker('setDate', data.strInvoiceDate);
+                $("#VehicleNo").val(data.VehicleNo);
+                $("#PONo").val(data.PONo);
+                $('#PODate').datepicker('setDate', data.strPODate);
+                $("#LRNo").val(data.LRNo);
+                $('#LRDate').datepicker('setDate', data.strLRDate);
+                $("#SupplierID").val(data.SupplierID);
+                $("#SupplierName").val(data.SupplierName);
+                $("#BuyerAddress").val(data.BuyerAddress);
+                $("#ConsigneeAddress").val(data.ConsigneeAddress);
+                GetPackingListDetail(tempPackingListId);
+                closeModal();
+            }
+        }
+    }
+
+    var $PackingListGrid = $("#PackingListGrid").pqGrid(setPackingListGrid);
+
+    function loadPackingListGrid() {
+        var antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            url: "/PackingList/GetPackingList",
+            data: { StoreId: 0 },
+            dataType: "json",
+
+            beforeSend: function () {
+                $("#PackingListGrid").pqGrid("showLoading");
+            },
+
+            complete: function () {
+                $("#PackingListGrid").pqGrid("hideLoading");
+            },
+
+            success: function (response) {
+                if (response.success === true) {
+                    $("#PackingListGrid").pqGrid("option", "dataModel.data", response.records);
+                    $("#PackingListGrid").pqGrid("refreshDataAndView");
+                    PqGridRefreshClick($("#PackingListGrid"));
+                } else {
+                    $("#PackingListGrid").pqGrid("option", "dataModel.data", []);
+                    $("#PackingListGrid").pqGrid("refreshDataAndView");
+                    PqGridRefreshClick($("#PackingListGrid"));
+                }
+            },
+
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Error loading packing list grid: " + textStatus, errorThrown);
+                $("#PackingListGrid").pqGrid("hideLoading");
+            }
+        });
+    }
+    //-----------------------------------PackingListGrid (Ends here)-----------------------------------//
+
+    //-------------------------Supplier Grid (Starts here)--------------------------//
+    $(document).ready(function () {
+        var SupplierM = {
+            height: 400,
+            autoSizeInterval: 0,
+            scrollModel: { autoFit: true },
+            dragColumns: { enabled: false },
+            hoverMode: 'cell',
+            editor: { type: 'textbox' },
+            filterModel: { on: true, mode: "AND", header: true },
+            showTop: false,
+            resizable: true,
+            virtualX: true,
+            colModel: colSupplierM,
+            dataModel: dataSupplierM,
+            pageModel: { type: "local", rPP: 20 },
+            toggle: function (evt, ui) {
+                if (ui.state == 'max') {
+                    $(".ui-dialog,.ui-widget-overlay").css('position', 'static');
+                }
+                else {
+                    $(".ui-dialog,.ui-widget-overlay").css('position', 'absolute');
+                }
+            },
+            cellClick: function (evt, ui) {
+                if (ui.rowData) {
+                    var record = ui.rowData;
+                    $("#SupplierID").val(record.ID);
+                    $("#SupplierName").val(record.Name);
+                    $("#BuyerAddress").val(record.FullAddress);
+                    $("#ConsigneeAddress").val(record.FullAddress);
+                    ClosePopupWindow("SupplierModal");
+                }
+            }
+        };
+        $("#SupplierName").on('click', function () {
+            ShowSupplierListPoup("Suppliergrid", "SupplierModal", SupplierM, "/Master/AllSupplier/");
+        });
+    });
+    //-------------------------Supplier Grid (Ends here)--------------------------//
+
+    function GetPackingListDetail(PackingListId) {
+        var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            url: "/PackingList/GetPackingListDetail",
+            data: { PackingListId: PackingListId },
+            dataType: "json",
+            beforeSend: function () {
+                $ItemDetailGrid.pqGrid("showLoading");
+            },
+            complete: function () {
+                $ItemDetailGrid.pqGrid("hideLoading");
+            },
+            success: function (response) {
+                $("#ItemDetailGrid").pqGrid("option", "dataModel.data", response.records);
+                $("#ItemDetailGrid").pqGrid("refreshDataAndView");
+                PqGridRefreshClick($ItemDetailGrid);
+            },
+            error: function (xhr, status, error) {
+                console.error("Error: " + status + " " + error);
+            }
+        });
+    }
+
+    //-----------------Item List Grid (Starts here)------------------------//
+    var ItemListGrid_GDM = { location: "local" };
+    var ItemListGrid_GCM = [
+        {
+            //custom title.
+            title: "",
+            dataIndx: "State",
+            maxWidth: 25,
+            minWidth: 25,
+            menuIcon: false,
+            type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false, editor: true,
+            dataType: 'bool',
+            cb: {
+                all: false, //header checkbox to affect checkboxes on all pages.
+                header: true //for header checkbox.
+            },
+        },
+        {
+            title: "Item Name & Description", dataIndx: "Name", width: '80%', editable: false,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Description", dataIndx: "DescriptiveName", width: '50%', editable: false,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }, hidden: true
+        },
+        {
+            title: "Item Type", dataIndx: "itemtypename", width: '19%', editable: false,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        }];
+    var setItemListGrid = {
+        height: 300,
+        width: 'auto',
+        maxWidth: '100%',
+        minWidth: 800,
+        sortable: true,
+        autofill: true,
+        numberCell: { show: true },
+        hoverMode: 'row',
+        showTop: true,
+        showTitle: true,
+        showBottom: true,
+        resizable: true,
+        scrollModel: { autoFit: true },
+        filterModel: { on: true, mode: "AND", header: true },
+        draggable: false,
+        hwrap: false,
+        wrap: false,
+        editable: true,
+        columnBorders: true,
+        menuIcon: true,
+        selectionModel: { type: 'row', mode: 'single', cbHeader: false },
+        colModel: ItemListGrid_GCM,
+        dataModel: ItemListGrid_GDM,
+        pageModel: { type: "local", rPP: 100 }
+    }
+
+    var $ItemListGrid = $("#ItemListGrid").pqGrid(setItemListGrid);
+
+    function loadItemList() {
+        // Prepare antiForgeryToken
+        var antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+
+        // AJAX call to fetch data
+        $.ajax({
+            type: 'GET',
+            url: "/ItemMaster/GetPackingListItemMaster/",
+            dataType: "json",
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            beforeSend: function () {
+                $ItemListGrid.pqGrid("showLoading"); // Assuming $ItemListGrid is defined elsewhere
+            },
+            success: function (response) {
+                // Update grid data and refresh
+                $("#ItemListGrid").pqGrid("option", "dataModel.data", response.items);
+                $("#ItemListGrid").pqGrid("refreshDataAndView");
+                PqGridRefreshClick($ItemListGrid); // Assuming PqGridRefreshClick is defined elsewhere
+            },
+            complete: function () {
+                $ItemListGrid.pqGrid("hideLoading");
+            }
+        });
+    }
+    loadItemList();
+
+    //-----------------Item List Grid (Ends here)------------------------//
+    $('#btnViewItem').on('click', function () {
+        // Validate OutletID
+        if ($("#OutletID").val() == 0) {
+            ShowAlert("error", "Please Select Outlet");
+            return false;
+        }
+        if ($("#StoreId").val() == 0) {
+            ShowAlert("error", "Please Select Project");
+            return false;
+        }
+
+        // Open ItemModal dialog
+        $("#ItemModal").dialog({
+            height: 400,
+            width: 900,
+            modal: true,
+            show: {
+                effect: "blind",
+                duration: 500
+            },
+            open: function () {
+                loadItemList();
+            },
+            close: function () {
+                $(this).dialog("destroy");
+            }
+        });
+    });
+
+    $('#btnAddItem').on('click', async function () {
+        $("#ItemModal").dialog("destroy");
+        var dataMGrid = [];
+        // Iterate through the main item list grid
+        var getData = $("#ItemListGrid").pqGrid("option", "dataModel.data");
+        var selectedItems = jLinq.from(getData).equals("State", true).select();
+        let storeId = $("#StoreId").val();
+        const itemDetails = await getSelectedItemDetails(selectedItems, storeId);
+
+        $.each(itemDetails, function (key, value) {
+            var grdData1 = {
+                'ItemId': value.ID,
+                'ItemName': value.Name,
+                'ItemDescription': value.DescriptiveName,
+                'Qty': 0,
+                'Unit': value.UnitName
+            };
+            dataMGrid.push(grdData1);
+        });
+
+        // Iterate through the item details grid and add existing items
+        var itemDetailsGridData = $ItemDetailGrid.pqGrid("option", "dataModel.data");
+        $.each(itemDetailsGridData, function (key, value) {
+            var grdData2 = {
+                'ItemId': value.ItemId,
+                'ItemName': value.ItemName,
+                'ItemDescription': value.ItemDescription,
+                'Qty': value.Qty,
+                'Unit': value.Unit
+            };
+            dataMGrid.push(grdData2);
+        });
+
+        // Update the item details grid with combined data
+        $ItemDetailGrid.pqGrid("option", "dataModel.data", dataMGrid);
+        $ItemDetailGrid.pqGrid("refreshDataAndView");
+    });
+
+
+    $("#btnCloseItem").on("click", function () {
+        $("#ItemModal").dialog("destroy");
+    })
+
+    $('#btnRemoveItem').on('click', function () {
+        if (selectedRowIndx == null) {
+            return;
+        }
+        $("#ItemDetailGrid").pqGrid("deleteRow", { rowIndx: selectedRowIndx });
+        selectedRowIndx = null;
+    });
+
+    //--------------------------------------------- ItemDetailGrid (Starts Here) ----------------------------------------------------//
+
+    var ItemDetailGrid_GDM = { location: "local" };
+    var ItemDetailGrid_GCM = [
+        {
+            title: "Item Name & Description", dataIndx: "ItemName", width: '60%', editable: false,
+        },
+        {
+            title: "Description", dataIndx: "ItemDescription", width: '35%', hidden: true
+        },
+        {
+            title: "Qty", dataIndx: "Qty", width: '12%',
+        },
+        {
+            title: "Unit", dataIndx: "Unit", width: '12%', editable: false,
+        },
+        {
+            title: "Remark", dataIndx: "Remark", width: '15%', editable: true,
+        }
+    ];
+    var setItemDetailGrid = {
+        height: 300,
+        width: 'auto',
+        maxWidth: '100%',
+        minWidth: 800,
+        sortable: true,
+        autofill: true,
+        numberCell: { show: true },
+        hoverMode: 'row',
+        showTop: true,
+        showTitle: true,
+        showBottom: true,
+        resizable: true,
+        scrollModel: { autoFit: true },
+        //filterModel: { on: true, mode: "AND", header: true },
+        draggable: false,
+        hwrap: false,
+        wrap: false,
+        editable: true,
+        columnBorders: true,
+        menuIcon: true,
+        selectionModel: { type: 'row', mode: 'single', cbHeader: false },
+        colModel: ItemDetailGrid_GCM,
+        dataModel: ItemDetailGrid_GDM,
+        pageModel: { type: "local" },
+        rowClick: function (evt, ui) {
+            if (ui.rowData) {
+                selectedRowIndx = ui.rowIndx;
+            }
+        }
+    }
+
+    var $ItemDetailGrid = $("#ItemDetailGrid").pqGrid(setItemDetailGrid);
+    //--------------------------------------------- ItemDetailGrid (Ends Here) ----------------------------------------------------//
+
+    function validateFormData() {
+        // Check if any required field is empty
+        const requiredFields = ["#StoreId", "#InvoiceNo", "#VehicleNo", "#PONo", "#LRNo", "#SupplierID", "#SupplierName", "#ConsigneeAddress"];
+
+        for (let field of requiredFields) {
+            const fieldValue = $(field).val();
+            const fieldName = $(field).attr("id");
+
+            if (!fieldValue) {
+                ShowAlert("error", fieldName + " is required!");
+                return false;
+            }
+        }
+
+        // Check if any item's quantity is zero
+        const itemDetailsGridData = $ItemDetailGrid.pqGrid("option", "dataModel.data");
+        if (itemDetailsGridData.some(item => item.Qty <= 0)) {
+            ShowAlert("error", "Item quantity cannot be zero!");
+            return false;
+        }
+
+        // Check if at least one item is selected
+        if (itemDetailsGridData.length === 0) {
+            ShowAlert("error", "Please select at least one item!");
+            return false;
+        }
+
+        return true; // All validations passed
+    }
+
+    function SavePackingList() {
+
+        // Validate form data
+        if (!validateFormData()) {
+            return false;
+        }
+
+        const packingListDetails = [];
+        const itemDetailsGridData = $ItemDetailGrid.pqGrid("option", "dataModel.data");
+
+        // Prepare packing list details
+        itemDetailsGridData.forEach(function (value) {
+            if (value.Qty > 0) {
+                packingListDetails.push({
+                    ItemId: value.ItemId,
+                    ItemName: value.ItemName,
+                    ItemDescription: value.ItemDescription,
+                    Qty: value.Qty,
+                    Unit: value.Unit,
+                    Remark: value.Remark
+                });
+            }
+        });
+
+        const Details = {
+            PackingListId: tempPackingListId,
+            PackingListNo: $("#PackingListNo").val(),
+            PackingListDate: $("#PackingListDate").val(),
+            StoreId: $("#StoreId").val(),
+            InvoiceNo: $("#InvoiceNo").val(),
+            InvoiceDate: $("#InvoiceDate").val(),
+            InwardDate: $("#InwardDate").val(),
+            VehicleNo: $("#VehicleNo").val(),
+            PONo: $("#PONo").val(),
+            PODate: $("#PODate").val(),
+            LRNo: $("#LRNo").val(),
+            LRDate: $("#LRDate").val(),
+            SupplierID: $("#SupplierID").val(),
+            SupplierName: $("#SupplierName").val(),
+            BuyerAddress: $("#BuyerAddress").val(),
+            ConsigneeAddress: $("#ConsigneeAddress").val(),
+            PackingListDetails: packingListDetails
+        };
+
+        const antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: "POST",
+            contentType: 'application/json; charset=utf-8',
+            url: "/PackingList/SavePackingList",
+            data: JSON.stringify(Details),
+            success: function (msg) {
+                if (msg.success === true) {
+                    const message = tempPackingListId === 0 ? "Packing List saved successfully!" : "Packing List updated successfully!";
+                    ShowAlert("success", message);
+                    clearFormData();
+                } else {
+                    ShowAlert("error", msg.message);
+                }
+            }
+        });
+    }
+
+    function clearFormData() {
+        tempPackingListId = 0;
+        $("#PackingListNo").val('');
+        $("#StoreId").val('');
+        $("#InvoiceNo").val('');
+        $("#VehicleNo").val('');
+        $("#PONo").val('');
+        $("#LRNo").val('');
+        $("#SupplierID").val('');
+        $("#SupplierName").val('');
+        $("#BuyerAddress").val('');
+        $("#ConsigneeAddress").val('');
+        $(".datepicker").datepicker().datepicker("setDate", new Date());
+        ClearParamGrid('ItemDetailGrid');
+    }
+
+    function showModal() {
+        $("#SearchGridModal").modal('show');
+        loadPackingListGrid();
+    }
+
+    function closeModal() {
+        $("#SearchGridModal").modal('hide');
+        $("#ReportModal").modal('hide');
+    }
+
+    $('#btnExport').on('click', function () {
+
+        if (tempPackingListId === "" || tempPackingListId === 0) {
+            ShowAlert("error", "Please Select PackingList Number");
+            return;
+        }
+        $("#ReportModal").modal('show');
+
+        ReportValidationCheck(tempPackingListId);
+    });
+    function ReportValidationCheck(ID) {
+        var url = "";
+
+        url = "../../Reports/ReportViewer.aspx?reportid=" + 240 + "&packingListId=" + ID;
+
+        console.log(url);
+        var myframe = document.getElementById("iframeReportViewer");
+        if (myframe != null) {
+            if (myframe.src) {
+                myframe.src = url;
+            }
+            else if (myframe.contentWindow != null && myframe.contentWindow.location != null) {
+                myframe.contentWindow.location = url;
+            }
+            else {
+                myframe.setAttribute('src', url);
+            }
+            return false;
+        }
+    }
+
+</script>

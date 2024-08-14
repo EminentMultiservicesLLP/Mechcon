@@ -1,0 +1,170 @@
+﻿@model BISERP.Areas.Accounts.Models.ClientBillingModel
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <fieldset>
+        <div id="content">
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-groupingBoder">
+                        <div class="panel-heading">
+                            <div class="panel-title">
+                                <a class="collapsediv" data-toggle="collapse" href="#collapse2" style="color: white">
+                                    Search Detail
+                                </a>
+                            </div>
+                        </div>
+                        <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                            <div class="panel-body">
+                                <fieldset>
+                                    <div class="row">
+                                        <div class="form-group form-horizontal">
+                                            <div class="col-sm-2">
+                                                @Html.Label("Select Client", new { @class = "required" })
+                                                @Html.DropDownList("ddlClient", new SelectList(string.Empty, "Value", "Text"), "--Select Client--", new { @class = "form-control" })
+                                            </div>
+                                        </div>
+                                        <div class="form-group form-horizontal">
+                                            <div class="col-sm-2">
+                                                @Html.Label("Select Project", new {@class = "required"})
+                                                @Html.DropDownList("ddlProject", new SelectList(string.Empty, "Value", "Text"), "--Select Project--", new {@class = "form-control"})
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <br/>
+                                                <button type="button" class="btn btn-success" id="btnShow">Show</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br />
+                                </fieldset>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-groupingBoder">
+                        <div class="panel-heading">
+                            <div class="panel-title">
+                                <a class="collapsediv" data-toggle="collapse" href="#Summary" style="color: white">
+                                   Summary
+                                </a>
+                            </div>
+                        </div>
+                        <div id="Summary" class="panel-collapse collapse in" aria-expanded="true">
+                            <div class="panel-body">
+                                <div class="container fill">
+                                    <div id="SummaryGrid"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+}
+
+<script>
+
+    $.ajax({
+        type: "GET",
+        url: "/Master/MainStores",
+        datatype: "Json",
+        async: true,
+        success: function (data) {
+            
+            $.each(data,
+                function (index, value) {
+                    $('#ddlProject').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                });
+        }
+    });
+
+    $.ajax({
+        type: "GET",
+        url: "/ClientMaster/AllClient",
+        datatype: "Json",
+        success: function (data) {
+            
+            $.each(data.records, function (index, value) {
+                $('#ddlClient').append('<option value="' + value.ClientId + '">' + value.Name + '</option>');
+            });
+        }
+    });
+
+
+    dataSummaryGrid = { location: "local" };
+    colSummaryGrid = [
+        {
+            title: "Client Name ", dataIndx: "ClientName", width: 300, dataType: "string", editable: false,
+            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+        },
+        {
+            title: "Project Name ", dataIndx: "ProjectName", width: 300, dataType: "string", editable: false,
+            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+        },
+        {
+            title: "Project Code ", dataIndx: "ProjectCode", width: 300, dataType: "string", editable: false,
+            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+        },
+            {title: "Client Total", dataIndx: "ClientTotal", width: 250},
+            {title: "Supplier Total", dataIndx: "SupplierTotal", width: 250},
+            { title: "Vendor Total", dataIndx: "VendorTotal", width: 250 },
+        {
+            title: "Org Balance", dataIndx: "Outstanding", width: 250 ,
+            formula:function(ui) {
+                var rd = ui.rowData;
+                var total = rd["ClientTotal"] - rd["SupplierTotal"] - rd["VendorTotal"];
+                return total.toFixed(2);
+            }
+        }
+           ];
+
+    setSummaryGrid = {
+        width: '100%',
+        height: 450,
+        sortable: false,
+        numberCell: { show: false },
+        hoverMode: 'cell',
+        showTop: true,
+        resizable: true,
+        scrollModel: { autoFit: true },
+        draggable: false,
+        wrap: false,
+        editable: false,
+        filterModel: { on: true, mode: "AND", header: true },
+        selectionModel: { type: 'row', subtype: 'incr', cbHeader: true, cbAll: true },
+        colModel: colSummaryGrid,
+        dataModel: dataSummaryGrid,
+        pageModel: { type: "local", rPP: 20 },
+    }
+
+    $SummaryGrid = $("#SummaryGrid").pqGrid(setSummaryGrid);
+
+
+    $("#btnShow").click(function () {
+            var clientId = $('#ddlClient').val();
+            var projectId = $("#ddlProject").val();
+        if (clientId === "") clientId = 0;
+        if (projectId === "") projectId = 0;
+        $.ajax({
+            type: "GET", 
+            traditional: true,
+            contentType: 'application/json; charset=utf-8',
+            url: '/ClientBilling/GetSummary', 
+            data: { clientId: clientId,projectId :projectId },
+            success: function (data) {
+                
+                $SummaryGrid.pqGrid("option", "dataModel.data", data.records);
+                $SummaryGrid.pqGrid("refreshDataAndView");
+            }
+        });
+    });
+
+
+    </script>

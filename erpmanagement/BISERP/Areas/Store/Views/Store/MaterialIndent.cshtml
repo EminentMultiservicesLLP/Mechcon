@@ -1,0 +1,685 @@
+﻿@model BISERP.Areas.Store.Models.Store.MaterialIndentModel
+
+<script>
+    $(".datepicker").datepicker({
+        showOn: "button",
+        buttonImage: "/Content/images/calendar.gif",
+        buttonImageOnly: true,
+        buttonText: "Select date",
+        'changeMonth': true,
+        'changeYear': true,
+        'yearRange': '2021:2030',
+        "format": "dd-MM-yyyy",
+        todayBtn: "linked",
+        pickerPosition: "bottom-left",
+        "todayHighlight": true,
+        autoclose: true,
+    }).datepicker("setDate", new Date());
+    $("#anim").change(function () {
+        $(".datepicker").datepicker("option", "showAnim", "fadeIn");
+    });
+</script>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <h5 class="page-header orangeDottedBottomBorder"> MATERIAL REQUEST</h5>
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        Material Request Entry Form
+                    </div>
+                </div>
+                <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+
+                        <div class="submit-row">
+                            <div class="col-sm-6" style="text-align:start">
+                                <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                                <a data-toggle="collapse" class="btn btn-primary" id="btnAdd">Reset</a>
+                            </div>
+                            <div class="col-sm-6" style="text-align:end">
+                                <button type="button" class="btn btn-info" id="btnSearch">Find</button>
+                                @*<button type="button" class="btn btn-success">Report</button>*@
+                            </div>
+                        </div>
+                        <fieldset class="fieldsetCustom">
+                            <legend class="legendCustom"></legend>
+
+                            <br>
+                            <div class="row">
+                                <div class="col-sm-2" hidden>
+                                    @Html.LabelFor(m => m.Indent_Date)
+                                    @Html.TextBoxFor(model => model.Indent_Date, new { @class = "form-control datepicker", @readonly = "true" })
+                                    @Html.HiddenFor(model => model.Indent_Id)
+                                </div>
+                                <div class="col-sm-2">
+                                    @Html.LabelFor(m => m.IndentNo)
+                                    @Html.TextBoxFor(model => model.IndentNo, new { @class = "form-control", @readonly = "true" })
+                                    @Html.ValidationMessageFor(model => model.IndentNo)
+                                </div>
+                                <div class="col-sm-2">
+                                    @Html.LabelFor(m => m.Priority)
+                                    <select id="Prioritystr" class="wrapperdropdown-content form-control" disabled>
+                                        <option class="wrapperdropdown-content" value="0" selected="selected">Normal</option>
+                                        @*<option class="wrapperdropdown-content" value="1">Emergency</option>*@
+                                    </select>
+                                </div>
+
+                                <div class="col-sm-2">
+                                    @Html.LabelFor(m => m.Indent_FromStore, "Project", new { @class = "required" })
+                                    @Html.DropDownList("ddlFromStore", new SelectList(string.Empty, "Value", "Text"), "--Select Project--", new { @class = "form-control" })
+                                </div>
+                                <div class="col-sm-2" hidden>
+                                    @Html.LabelFor(m => m.Indent_ToStore, "To Project", new { @class = "required" })
+                                    @*@Html.DropDownList("ddlToStore", new SelectList(string.Empty, "Value", "Text"), "Select Store", new { @class = "form-control" })*@
+                                    <select id="ddlToStore" class="wrapper-dropdown form-control">
+                                        <option class="wrapperdropdown-content" value="1" selected="selected">Central Store</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-2">
+                                    @Html.LabelFor(m => m.ItemCategoryId)
+                                    @Html.DropDownList("ddlItemtype", new SelectList(string.Empty, "Value", "Text"), "", new { @class = "wrapperdropdown-content form-control" })
+                                </div>
+                                <div class="col-sm-4">
+                                    @Html.LabelFor(m => m.Remarks)
+                                    @Html.TextAreaFor(model => model.Remarks, new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="row">
+
+                                <div class="col-lg-2 col-md-4 col-sm-3">
+                                    @Html.Label("Upload")
+                                    <input type='file' id="files" multiple accept=".jpg,.jpeg,.png,.pdf" class="form-control btn-primary uploadup" />
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-8"><ul class="list" id="appendImg"> </ul></div>
+                                <div class="col-lg-2 col-md-4 col-sm-8"><ul class="list" id="preApproveImg"> </ul></div>
+
+                            </div>
+
+                        </fieldset>
+                        <div class="submit-row">
+                            <div class="col-sm-12">
+                                <button type="button" class="btn btn-primary" id="btnViewItem">Add Item</button>
+                                <button type="button" class="btn btn-danger" data-toggle="modal" id="btnRemoveItem">Remove Item</button>
+                                <button type="button" class="btn btn-primary" id="btnShowAttachments">View Upload</button>
+
+                            </div>
+                        </div>
+
+                        <fieldset>
+                            <legend></legend>
+                            <div id="grid"></div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div title="Select Items" id="ItemModal" style="display: none;">
+        <div id="Itemgrid"></div>
+        <div style="margin-top:5px;">
+            <button type="button" class="btn btn-primary" id="btnAddItem">Add</button>
+            <button type="button" class="btn btn-warning" id="btnCloseItem">Close</button>
+        </div>
+    </div>
+
+
+    @* new addition 2024 *@
+    <div id="SearchGridModal" class="modal fade" role="dialog" data-backdrop="false">
+        <div class="modal-dialog find-search-grid-modal">
+            <div class="modal-content gridmodal-content">
+                <div class="modal-header gridmodal-header">
+                    <button type="button" class="close" onclick="closeModal()">&times;</button>
+                    <h4 class="modal-title">Search Details </h4>
+                </div>
+                <div class="modal-body">
+                    <div class="fill">
+                        <div id="searchgrid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    @*The Modal*@
+    <div id="ViewModal" class="modal slideModal">
+        @*Modal content*@
+        <div class="modal-content slideContent">
+            <span class="close slideClose" onclick="closeImageModal()"> &#x2715 </span>
+            <div id="slideshow-container">
+                <!--Slidshow-->
+            </div>
+            <div>
+                <a class="prev slide-prev" onclick="plusSlides(-1)">❮</a>
+                <a class="next slide-next" onclick="plusSlides(1)">❯</a>
+            </div>
+        </div>
+    </div>
+    @********@
+}
+<script>
+    var appSetting = '@BISERP.Common.Constants.ScandocUrl';
+var $IndentSearchGrid;
+var $IndentItemDetailsGrid;
+var setIID, colIID, dataIID;
+var colIL, dataIL, setIL;
+
+function ClearForm() {
+    $("#Indent_Id").val("");
+    $("#Indent_Date").datepicker().datepicker("setDate", new Date());
+    $("#Prioritystr").val(0);
+    $("#IndentNo").val("");
+    $("#ddlFromStore").val("");
+    $("#ddlItemtype").val("");
+    $("#Remarks").val("");
+    ClearParamGrid("grid");
+    $("#btnSave").attr('disabled', false);
+    /* $("#files").val("");*/
+    $("#preApproveImg").empty(); $("#appendImg").empty(); $("#files").val(null);
+}
+function LoadSearchGrid() {
+    $.ajax({
+        url: "/MaterialIndent/IndentForVerification",
+        cache: false,
+        async: true,
+        method: "GET",
+        dataType: "JSON",
+        beforeSend: function () {
+            $IndentSearchGrid.pqGrid("showLoading");
+        },
+        complete: function () {
+            $IndentSearchGrid.pqGrid("hideLoading");
+        },
+        success: function (response) {
+            let unverified = response.mimodel.filter(req => req.Status === 'Request');
+
+            $IndentSearchGrid.pqGrid("hideLoading");
+            $IndentSearchGrid.pqGrid("option", "dataModel.data", unverified);
+            $IndentSearchGrid.pqGrid("refreshDataAndView");
+        }
+    });
+}
+
+$("#btnSearch").on('click', function () {
+    LoadSearchGrid();
+    $("#SearchGridModal").modal('show');
+});
+
+function closeModal() {
+    $("#SearchGridModal").modal('hide');
+}
+
+$('#ddlFromStore').change(function () {
+    loadMappedItemType($('#ddlFromStore').val());
+});
+
+(function ($) {
+
+    /******* Load All Store List *******/
+    $.ajax({
+        type: "GET",
+        url: "/Master/AllStores",
+        datatype: "Json",
+        async: true,
+        success: function (data) {
+            $.each(data, function (index, value) {
+                $('#ddlFromStore').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+            });
+        }
+    });
+
+    $('#btnRemoveItem').on('click', function () {
+        var getData = $IndentItemDetailsGrid.pqGrid("option", "dataModel.data");
+        var selectedItems = jLinq.from(getData).equals("state", true).select();
+
+        $.each(selectedItems, function (key, value) {
+            var obj = $IndentItemDetailsGrid.pqGrid("getRowIndx", { rowData: value });
+            var rowIndx = obj.rowIndx;
+            $IndentItemDetailsGrid.pqGrid("deleteRow", { rowIndx: rowIndx });
+        });
+    });
+    //});
+
+
+
+    /********* Build Search Grid *********/
+    //$(document).ready(function () {
+    var dataSearchGrid = { location: "local", sorting: 'local' };
+    var colSearchGrid = [
+        { title: "", dataIndx: "Indent_Id", dataType: "integer", hidden: true },
+        { title: "", dataIndx: "Priority", dataType: "integer", hidden: true },
+        { title: "", dataIndx: "Indent_FromStoreID", dataType: "integer", hidden: true },
+        { title: "", dataIndx: "Indent_ToStoreID", dataType: "integer", hidden: true },
+        {
+            title: "MR No", dataIndx: "IndentNo", width: "20%",
+            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+        },
+        {
+            title: "MR Date", dataIndx: "strIndentDate", width: "20%",
+            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+        },
+        {
+            title: "Project Code", dataIndx: "Indent_FromStore", width: "20%",
+            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+        },
+        {
+            title: "Item Type", dataIndx: "ItemCategory", width: "20%",
+            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+        },
+        {
+            title: "Created-By", dataIndx: "InsertedByName", width: "20%",
+            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+        },
+    ];
+    var setSearchGrid = {
+        width: '100%',
+        height: 400,
+        sortable: false,
+        numberCell: { show: false },
+        showTop: true,
+        title: "List Of Material Request",
+        resizable: true,
+        scrollModel: { autoFit: true },
+        draggable: false,
+        wrap: false,
+        editable: false,
+        columnBorders: true,
+        selectionModel: { type: 'row', subtype: 'incr', cbHeader: true, cbAll: true },
+        filterModel: { on: true, mode: "AND", header: true },
+        colModel: colSearchGrid,
+        dataModel: dataSearchGrid,
+        pageModel: { type: "local", rPP: 20 },
+        rowClick: function (evt, ui) {
+            ClearParamGrid("grid");
+            ClearForm();
+            if (ui.rowData) {
+                var rowIndx = parseInt(ui.rowIndx);
+                var record = ui.rowData;
+                $("#Indent_Id").val(record.Indent_Id);
+                $("#IndentNo").val(record.IndentNo);
+                $("#Prioritystr").val(record.Priority);
+                $("#Indent_Date").val(record.strIndentDate);
+                $("#ddlFromStore").val(record.Indent_FromStoreID);
+                $("#ddlToStore").val(record.Indent_ToStoreID);
+                $("#ddlItemtype").val(record.ItemCategoryId);
+                $("#Remarks").val(record.Remarks);
+                $("#SearchGridModal").modal('hide');
+                viewAttachments(record.Indent_Id);
+                $.ajax({
+                    type: "GET",
+                    url: "/MaterialIndent/MaterialIndentItems/",
+                    data: { Indent_Id: record.Indent_Id },
+                    datatype: "Json",
+                    async: true,
+                    success: function (data) {
+                        $IndentItemDetailsGrid.pqGrid("option", "dataModel.data", data);
+                        $IndentItemDetailsGrid.pqGrid("refreshDataAndView");
+                    }
+                });
+            }
+        }
+    }
+    $IndentSearchGrid = $("#searchgrid").pqGrid(setSearchGrid);
+
+    /*************** Indent Item Details grid after row selection *************/
+    //$(document).ready(function () {
+    colIID = [
+        {
+            dataIndx: "state", Width: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+            editor: false, dataType: 'bool',
+            title: "<input type='checkbox' />",
+            cb: { select: true, all: false, header: true }
+        },
+        { title: "", dataIndx: "IndentDetails_Id", width: 10, dataType: "integer", editable: false, resizable: false, hidden: true },
+        { title: "", dataIndx: "Item_Id", width: 10, dataType: "integer", editable: false, resizable: false, hidden: true },
+        {
+            title: "Item Name & Description", dataIndx: "ItemName", width: "42%", dataType: "string", resizable: true, editable: false, align: "left"
+        },
+        //{ title: "HSN/SAC Code", dataIndx: "HSNCode", width: 150, editable: false },
+        {
+            title: "Description", dataIndx: "DescriptiveName", width: "21%", dataType: "string", resizable: true, editable: true, align: "left",
+            editor: { type: "textarea", attr: "rows=5" }, hidden: true
+        },
+        {
+            title: "Unit", dataIndx: "DispensingUnit", width: "18%", dataType: "string", resizable: true, editable: false, align: "left"
+        },
+        {
+            title: "Pack Size", dataIndx: "PackSizeName", width: "18%", resizable: true, dataType: "string", editable: false, align: "left"
+        },
+        {
+            title: "Indent Qty", dataIndx: "User_Quantity", width: "18%", dataType: "float", resizable: true, align: "left"
+        }
+    ];
+    dataIID = {
+        location: 'local',
+        sorting: 'local',
+        paging: 'local',
+        dataType: 'JSON'
+    };
+
+    setIID = {
+        height: '300',
+        maxheight: '400',
+        title: "Material Request Item Details",
+        sortable: false,
+        numberCell: { show: false },
+        selectionModel: { type: 'row' },
+        hoverMode: 'cell',
+        editor: { type: 'textbox' },
+        showTop: true,
+        resizable: true,
+        editModel: {
+            saveKey: ""
+        },
+        draggable: false,
+        virtualX: true,
+        virtualY: true,
+        colModel: colIID,
+        dataModel: dataIID,
+        wrap: false,
+        pageModel: { type: "local", rPP: 20 }
+    };
+    $IndentItemDetailsGrid = $("#grid").pqGrid(setIID);
+
+    /*************** Item Grid which willbe available for ALl item list **********/
+    setItemList = {
+        width: "auto", //auto width
+        height: "100%-30", //height in %age
+        selectionModel: { type: 'cell' },
+        autoSizeInterval: 0,
+        scrollModel: { autoFit: true },
+        dragColumns: { enabled: false },
+        hoverMode: 'cell',
+        editor: { type: 'textbox' },
+        filterModel: { on: true, mode: "AND", header: true },
+        showTop: false,
+        resizable: true,
+        virtualX: true,
+        colModel: colMIItemList,
+        dataModel: dataItemList,
+        toggle: function (evt, ui) {
+            if (ui.state == 'max') {
+                $(".ui-dialog,.ui-widget-overlay").css('position', 'static');
+            }
+            else {
+                $(".ui-dialog,.ui-widget-overlay").css('position', 'absolute');
+            }
+        },
+        pageModel: { type: "local", rPP: 20 }
+    };
+
+    //Click on View/Add Item button on main page
+    $('#btnViewItem').on('click', function () {
+        if ($("#ddlFromStore").val() == "") {
+            ShowAlert("error", "Please Select Project");
+            return;
+        }
+        //if ($("#ddlFromStore").val() == $("#ddlToStore").val()) {
+        //    ShowAlert("error", "From Project and To Project Cannot be Same");
+        //    return;
+        //}
+        if ($("#ddlItemtype").val() == "") {
+            ShowAlert("error", "Please Select Item Type");
+            return;
+        }
+        var searchStoreId = $("#ddlFromStore").val();
+        var searchItemtype = $("#ddlItemtype").val();
+        ShowItemListPoupByItemtype("Itemgrid", "ItemModal", setItemList, "/ItemMaster/GetItemsByStoreItemType/", searchStoreId, searchItemtype);
+    });
+
+    //Click on Add selected items to main grid
+    $('#btnAddItem').on('click', async function () {
+        ClosePopupWindow("ItemModal");
+        $("#Itemgrid").pqGrid("reset", { filter: true });
+        var getData = $("#Itemgrid").pqGrid("option", "dataModel.data");
+        var selectedItems = jLinq.from(getData).equals("state", true).select();
+        let storeId = $("#ddlFromStore").val();
+        const itemDetails = await getSelectedItemDetails(selectedItems, storeId);
+
+        var dataMGrid = [];
+        var getMainGridData = $IndentItemDetailsGrid.pqGrid("option", "dataModel.data");
+        $.each(getMainGridData, function (key, value) {
+            var grdData = {
+                'IndentDetails_Id': value.IndentDetails_Id, 'Item_Id': value.Item_Id, 'ItemName': value.ItemName, 'DispensingUnit': value.DispensingUnit,
+                'PackSizeName': value.PackSizeName, 'User_Quantity': value.User_Quantity, 'state': true, 'DescriptiveName': value.DescriptiveName, 'HSNCode': value.HSNCode
+            };
+            dataMGrid.push(grdData);
+        });
+
+        $.each(itemDetails, function (key, value) {
+            var grdData = {
+                'IndentDetails_Id': 0, 'Item_Id': value.ID, 'ItemName': value.Name, 'DispensingUnit': value.UnitName,
+                'PackSizeName': value.PackSize, 'User_Quantity': 0, 'state': true, 'DescriptiveName': value.DescriptiveName, 'HSNCode': value.HSNCode
+            };
+            dataMGrid.push(grdData);
+        });
+
+        $IndentItemDetailsGrid.pqGrid("option", "dataModel.data", dataMGrid);
+        $IndentItemDetailsGrid.pqGrid("refreshDataAndView");
+    });
+
+    /******************************************************************************************/
+    $('#btnCloseItem').on('click', function () {
+        ClosePopupWindow("ItemModal");
+    });
+    $("#btnAdd").on("click", ClearForm);
+
+    validateFiles('files', 'preApproveImg');
+    $("#btnSave").click(function () {
+        if ($("#ddlFromStore").val() == $("#ddlToStore").val()) {
+            ShowAlert("error", "From Project and To Project Cannot be Same");
+            return;
+        }
+        if ($("#ddlItemtype").val() == "") {
+            ShowAlert("error", "Please Select Item Type");
+            return;
+        }
+        DisableClick("btnSave");
+        var items = $IndentItemDetailsGrid.pqGrid("getData", { dataIndx: ['ItemName', 'Item_Id', 'IndentDetails_Id', 'DescriptiveName', 'PackSizeName', 'User_Quantity', 'state'] });
+
+        if (items != undefined) {
+            var selectedItemsMainGrid = jLinq.from(items).equals("state", true).select();
+
+            if (selectedItemsMainGrid.length > 0) {
+
+                if (jLinq.from(selectedItemsMainGrid).lessEquals("User_Quantity", 0).or(undefined).count() > 0) {
+                    ShowAlert("error", "Please Enter Indent Quantity for selected items");
+                    return;
+                }
+
+                if (jLinq.from(selectedItemsMainGrid).empty("User_Quantity").or(undefined).count() > 0) {
+                    ShowAlert("error", "Please Enter Indent Quantity for selected items");
+                    return;
+                }
+            }
+            else {
+                ShowAlert("error", "Please Select at least one Item before saving.");
+                return;
+            }
+        }
+        var items = JSON.stringify({
+            Indent_Id: $("#Indent_Id").val(),
+            Indent_Date: $("#Indent_Date").val(), //Reading text box values using Jquery
+            IndentNo: $("#IndentNo").val(),
+            Priority: $("#Prioritystr").val(),
+            Indent_FromStoreID: $("#ddlFromStore").val(),
+            Indent_ToStoreID: $("#ddlToStore").val(),
+            Indent_FromStore: $("#ddlFromStore option:selected").text(),
+            Indent_ToStore: $("#ddlToStore option:selected").text(),
+            ItemCategoryId: $("#ddlItemtype").val(),
+            Remarks: $("#Remarks").val(),
+            Deactive: $("#Deactive").prop('checked'),
+            Status: 0,
+            Materialindentdt: items
+        });
+
+        $.ajax(
+            {
+                type: "POST", //HTTP POST Method
+                traditional: true,
+                contentType: 'application/json; charset=utf-8',
+                url: '/MaterialIndent/SaveMaterialIndent', // Controller/View
+                data: items,
+                success: function (msg) {
+
+                    if (msg.success) {
+                        var fileSaveMsg = "";
+                        try {
+                            var indentData = msg.Data;
+                            if (indentData != undefined) {
+                                var indId;
+                                if (isNaN(indentData.Indent_Id))
+                                    indId = $("#IndentId").val();
+                                else
+                                    indId = indentData.Indent_Id;
+
+                                SaveScandoc("files", indId, "Store", "MaterialIndent");
+                            }
+                        } catch (err) {
+                            fileSaveMsg = "But failed to save attached files."
+                        }
+                        finally {
+                            if ($("#Indent_Id").val() == "") {
+                                ShowAlert("success", "Request No : " + msg.Message + " generated successfully.\n" + fileSaveMsg);
+                            }
+                            else {
+                                ShowAlert("success", "Request updated successfully.");
+                            }
+                        }
+
+                        ClearForm();
+
+                    }
+                    else {
+                        ShowAlert("error", msg.Message);
+                    }
+                },
+                error: function (jqXHR, exception) {
+                }
+            });
+    });
+})(jQuery);
+
+//*********************Image/File Section ******************//
+
+// on upload of Image and Video this function run
+var fileTypes = ['jpg', 'jpeg', 'png', 'pdf'];
+$(document).on("change", '.uploadup', function (z) {
+    $("#preApproveImg").empty();
+    let Img = $("#files").get(0).files;
+    uploadImg(Img, 'preApproveImg');
+});
+$(document).on("click", '.imgclick', function (e) {
+    let name = e.currentTarget.getAttribute("name");
+    let files = $("#files").get(0).files;
+    for (f = 0; f < files.length; f++) {
+        if (files.item(f).name == name) {
+            imagefile = $("#files").get(0).files[f];
+            imagefile_url = URL.createObjectURL(imagefile);
+            window.open(imagefile_url, '_blank');
+        }
+    }
+});
+
+//************View uploaded Images in List ******//
+function viewAttachments(Id) {
+    $.ajax({
+        type: "GET",
+        url: "/ScanDoc/ScanDoc/GetScanDocUrl",
+        data: { FileId: Id, ScanDocSubTypeId: 13 },
+        datatype: "Json",
+        success: function (data) {
+            if (data != '') {
+                $.each(data, function (key, value) {
+                    DisplayUploadedDocuments("appendImg", value, appSetting, 17);
+                });
+            }
+        }
+    });
+}
+
+$("#btnShowAttachments").click(function () {
+    let indendId = $("#Indent_Id").val();
+    if ($("#Indent_Id").val() === "" || $("#Indent_Id").val() == undefined) {
+        ShowAlert("error", "Please first select Request No. to see already attached files");
+        return;
+    }
+    else {
+
+        $.ajax({
+            type: "GET",
+            url: "/ScanDoc/ScanDoc/GetScanDocUrl",
+            data: { FileId: indendId, ScanDocSubTypeId: 13 },
+            datatype: "Json",
+            success: function (data) {
+                if (data != '') {
+                    ViewSlideShow(data, 'slideshow-container', appSetting);
+                }
+                else {
+                    ShowAlert("error", "No Documents Found")
+                }
+            }
+        });
+    }
+})
+
+
+/////*********Image Slide Show in Modal**********************//
+let ImgIndex = 1;
+
+function plusSlides(n) {
+    showGallary(ImgIndex += n);
+}
+function showGallary(n) {
+    let i;
+    let ImgSlides = document.getElementsByClassName("imgSlide");
+    let video = document.getElementById("video");
+    if (n > ImgSlides.length) { ImgIndex = 1 }
+    if (n < 1) { ImgIndex = ImgSlides.length }
+    for (i = 0; i < ImgSlides.length; i++) {
+        ImgSlides[i].style.display = "none";
+    }
+    ImgSlides[ImgIndex - 1].style.display = "block";
+    if (video) {
+        video.play();
+    }
+}
+
+function closeImageModal() {
+    $("#slideshow-container").empty();
+    $("#ViewModal").css('display', 'none');
+}
+//***********Close SlideShow Modal*********************////
+
+loadMappedItemType(0);
+function loadMappedItemType(id) {
+    id == 1 ? id = 0 : id;
+    $.ajax({
+        type: "GET",
+        url: "/StorewiseItemTypeMapping/StorewiseItemTypeItems/",
+        data: { StoreId: id },
+        datatype: "Json",
+        success: function (response) {
+            var data = [];
+            if (id != 0) {
+                data = response.records.filter(item => item.Select == true);
+            } else {
+                data = response.records;
+            }
+            $('#ddlItemtype').empty();
+            $('#ddlItemtype').append('<option value>' + 'Select Item Type' + '</option>');
+            $.each(data, function (index, value) {
+                $('#ddlItemtype').append('<option value="' + value.ItemTypeID + '">' + value.Name + '</option>');
+            });
+        }
+    });
+}
+</script>

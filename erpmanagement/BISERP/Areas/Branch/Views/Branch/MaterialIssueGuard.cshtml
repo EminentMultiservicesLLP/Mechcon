@@ -1,0 +1,802 @@
+﻿@model BISERP.Area.Branch.Models.MaterialIssueGuardModel
+@{
+    Layout = "~/Areas/Branch/Views/Shared/_IssueReturnLayout.cshtml";
+}
+<script>
+    $(function () {        
+        $('#IssueDate').datetimepicker({
+            format: 'DD-MMM-YYYY',
+            extraFormats: ['DD-MM-YYYY', 'DD-MM-YY'],
+            defaultDate: new Date()
+        });
+        $('#StartDate').datetimepicker({
+            format: 'DD-MMM-YYYY',
+            extraFormats: ['DD-MM-YYYY', 'DD-MM-YY'],
+            defaultDate: new Date()
+        });
+    });     
+</script>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <fieldset>
+        <div id="content">
+
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-groupingBoder">
+                        <div class="panel-heading">
+                            <div class="panel-title">
+                                <a class="collapsediv" data-toggle="collapse" href="#SearchDetails" style="color:white">
+                                    Search Details
+                                </a>
+                            </div>
+                        </div>
+                        <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                            <div class="panel-body">
+                                <div class="container fill">
+                                    <div id="searchgrid"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-groupingBoder">
+                        <div class="panel-heading">
+                            <div class="panel-title">
+                                Guard Issue Form
+                            </div>
+                        </div>
+                        <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                            <div class="panel-body">
+                                <div>
+                                    <a data-toggle="collapse" class="btn btn-success" id="btnAdd">Reset</a>
+                                    <button type="button" class="btn btn-success" id="btnRenew">Renew issue</button>
+                                    <button type="button" class="btn btn-success" id="btnFresh">Fresh issue</button>
+                                    <button type="button" class="btn btn-danger" id="btnExit">Exit</button>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @Html.LabelFor(m => m.TicketCode, new { @class = "required" })
+                                            @Html.TextBoxFor(m => m.TicketCode, new { @class = "form-control" })
+                                            @Html.HiddenFor(m => m.EmpId)
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @Html.LabelFor(m => m.EmpName)
+                                            @Html.TextBoxFor(m => m.EmpName, new { @class = "form-control", @disabled = "true" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @Html.LabelFor(m => m.IssueDate)
+                                            <div class='input-group date' id='IssueDate'>
+                                                <input type='text' class="form-control" />
+                                                <span class="input-group-addon">
+                                                    <span class="glyphicon glyphicon-calendar"></span>
+                                                </span>
+                                            </div>
+                                            @Html.HiddenFor(m => m.IssueId)
+                                            @Html.HiddenFor(m => m.BranchId)                                            
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @Html.LabelFor(m => m.IssueNo)
+                                            @Html.TextBoxFor(m => m.IssueNo, new { @class = "form-control", @readonly = "true" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @Html.Label("Priority", new { @class = "required" })
+                                            <select id="Prioritystr" class="wrapperdropdown-content form-control">
+                                                <option class="wrapperdropdown-content" value="0">Normal</option>
+                                                <option class="wrapperdropdown-content" value="1">Emergency</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @Html.LabelFor(m => m.StoreId, new { @class = "required" })
+                                            @Html.DropDownList("ddlStore", new SelectList(string.Empty, "Value", "Text"), new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @Html.LabelFor(m => m.StartDate)
+                                            <div class='input-group date' id='StartDate'>
+                                                <input type='text' class="form-control" />
+                                                <span class="input-group-addon">
+                                                    <span class="glyphicon glyphicon-calendar"></span>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @Html.LabelFor(m => m.InstallmentPeriod)
+                                            @Html.TextBoxFor(m => m.InstallmentPeriod, new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div style="display: none">
+                                        <div class="col-sm-3">
+                                            @Html.CheckBoxFor(m => m.IsRenewal)
+                                            @Html.LabelFor(m => m.IsRenewal)
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-6">
+                                            @Html.LabelFor(m => m.Remark)
+                                            @Html.TextBoxFor(m => m.Remark, new { @class = "form-control" })
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <button type="button" class="btn btn-primary" id="btnViewItem">Add Item</button>
+                                            <button type="button" class="btn btn-primary" id="btnRemoveItem">Remove Item</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="container fill">
+                                        <div id="grid"></div>
+                                    </div>
+                                </div>
+                                <div class="row">                                    
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-2">
+                                            @Html.LabelFor(m => m.AdminCharges)
+                                            @Html.TextBoxFor(m => m.AdminCharges, new { @class = "form-control", @readonly="true" })
+                                        </div>
+                                        <div class="col-sm-2">
+                                            @Html.LabelFor(m => m.OtherCharges)
+                                            @Html.TextBoxFor(m => m.OtherCharges, new { @class = "form-control" })
+                                        </div>
+                                        <div class="col-sm-2">
+                                            @Html.LabelFor(m => m.GrossAmount)
+                                            @Html.TextBoxFor(m => m.GrossAmount, new { @class = "form-control" })
+                                        </div>
+                                        <div class="col-sm-2">
+                                            @Html.LabelFor(m => m.Discount)
+                                            @Html.TextBoxFor(m => m.Discount, new { @class = "form-control" })
+                                        </div>
+                                        <div class="col-sm-2">
+                                            @Html.LabelFor(m => m.NetAmount)
+                                            @Html.TextBoxFor(m => m.NetAmount, new { @class = "form-control" })
+                                        </div>
+                                        <div class="col-sm-2">
+                                            @Html.LabelFor(m => m.ReceivedAmount, new { @class = "required" })
+                                            @Html.TextBoxFor(m => m.ReceivedAmount, new { @class = "form-control" })
+                                        </div> 
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-10"></div>
+                                    <div class="form-group form-horizontal">                                                                          
+                                        <div class="col-sm-2">
+                                            @Html.LabelFor(m => m.BalanceAmount)
+                                            @Html.TextBoxFor(m => m.BalanceAmount, new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</fieldset>
+    <div title="Select Items" id="ItemModal" style="display: none;">
+        <div id="Itemgrid"></div>
+        <div style="margin-top:5px;">
+            <button type="button" class="btn btn-primary" id="btnAddItem">Add</button>
+            <button type="button" class="btn btn-primary" id="btnCloseItem">Close</button>
+        </div>
+    </div>
+    <div title="Question" id="ConfirmModal" style="display: none;">
+        <div>Received Amount is 0. Are you want to save this entry?</div>
+        <div style="margin-top: 5px;">
+            <button type="button" class="btn btn-primary" id="btnYes">Yes</button>
+            <button type="button" class="btn btn-primary" id="btnNo">No</button>
+        </div>
+    </div>
+     
+    <script type="text/javascript">
+        var $IndentItemDetailsGrid;
+        var $ItemListGrid;
+        var setIID, colIID, dataIID;
+        var colIL, dataIL, setIL;
+        var $SearchGrid;
+        function ClearForm() {
+            $("#IssueId").val("");
+            ResetDate("IssueDate");
+            ResetDate("StartDate");
+            $("#Prioritystr").val("");
+            $("#IssueNo").val("");
+            $("#ddlStore").val("");            
+            $("#Remark").val("");
+            $("#Discount").val("");
+            $("#NetAmount").val("");
+            $("#NetAmount").val("");
+            $("#BalanceAmount").val("");
+            $("#ReceivedAmount").val("");
+            $("#GrossAmount").val("");
+
+            $("#EmpName").val("");
+            $("#EmpId").val("");
+            $("#TicketCode").val("");
+            $("#AdminCharges").val("");
+            $("#OtherCharges").val("");
+            $("#TicketCode").prop('disabled', false);
+            ClearParamGrid("grid");
+        }
+        function LoadSearchGrid() {
+            $.ajax({
+                url: "/MaterialIssueGuard/GetAllMaterialIssueGuard",
+                cache: false,
+                async: true,
+                method: "GET",
+                dataType: "JSON",
+                success: function (response) {
+                    $SearchGrid.pqGrid("option", "dataModel.data", response.mimodel);
+                    $SearchGrid.pqGrid("refreshDataAndView");
+                }
+            });
+        }
+        function getRowIndx() {
+            var arr = $IndentItemDetailsGrid.pqGrid('selection', { type: 'row', method: 'getSelection' });
+            if (arr && arr.length > 0) {
+                return arr[0].rowIndx;
+            }
+            else {
+                ShowAlert("warning", "Select a row.");
+                return null;
+            }
+        }
+        function CalculateTotalAmount() {
+            var getData = $IndentItemDetailsGrid.pqGrid("option", "dataModel.data");
+
+            var grossAmt = 0, netAmount = 0, discountAmount = 0;            
+            $.each(getData, function (_, item) {
+                if (!isNaN(item.Amount))
+                    grossAmt += parseFloat(item.Amount);
+                if (!isNaN(item.Discount))
+                    discountAmount += parseFloat(item.Discount);
+            });            
+            netAmount = parseFloat(grossAmt) - parseFloat(discountAmount);
+
+            $("#GrossAmount").val(grossAmt.toFixed(2));
+            $("#Discount").val(discountAmount.toFixed(2));
+            $("#NetAmount").val(netAmount.toFixed(2));
+            var receivedAmount = $("#ReceivedAmount").val();
+            var adminCharges = $("#AdminCharges").val();
+            var otherCharges = $("#OtherCharges").val();
+                        
+            if (receivedAmount === "" || receivedAmount == undefined) receivedAmount = 0;
+            if (adminCharges === "" || adminCharges == undefined) adminCharges = 0;
+            if (otherCharges === "" || otherCharges == undefined) otherCharges = 0;
+            
+            var balance = 0;
+            balance = parseFloat(netAmount) - receivedAmount;
+            if (parseFloat(balance) < 0) {
+                $("#AdminCharges").val(Math.abs(balance));
+                $("#BalanceAmount").val("0");
+            }
+            else {
+                $("#AdminCharges").val("0");
+                $("#BalanceAmount").val(balance);
+            }
+        }
+        function SaveGuardIssue() {
+            var grdData = $IndentItemDetailsGrid.pqGrid("getData", { dataIndx: ['ItemId', 'BatchId', 'IssuedQuantity', 'MRP', 'Discount', 'Amount', 'strRenewDate'] });
+            if (grdData != undefined) {
+                if (grdData.length > 0) {
+                    if (jLinq.from(grdData).lessEquals("IssuedQuantity", 0).or(undefined).count() > 0) {
+                        ShowAlert("error", "Please Enter Issued Quantity for all items");
+                        return;
+                    }
+                    if (jLinq.from(grdData).lessEquals("strRenewDate", "").or(undefined).count() > 0) {
+                        ShowAlert("error", "Please Enter Renew Date for all items");
+                        return;
+                    }
+                }
+                else {
+                    ShowAlert("error", "No Items for Issue.");
+                    return;
+                }
+            }
+            var items = JSON.stringify({
+                IssueDate: $("#IssueDate").data('date'),
+                StartDate: $("#StartDate").data('date'),
+                InstallmentPeriod: $("#InstallmentPeriod").val(),
+                StoreId: $("#ddlStore").val(),
+                BranchId: $("#BranchId").val(),
+                EmpId: $("#EmpId").val(),
+                NetAmount: $("#NetAmount").val(),
+                Discount: $("#Discount").val(),
+                GrossAmount: $("#GrossAmount").val(),
+                Remark: $("#Remark").val(),
+                ReceivedAmount: $("#ReceivedAmount").val(),
+                BalanceAmount: $("#BalanceAmount").val(),
+                AdminCharges: $("#AdminCharges").val(),
+                OtherCharges: $("#OtherCharges").val(),
+                IsRenewal: $("#IsRenewal").prop('checked'),
+                MaterialIssueGuardDt: grdData
+            });
+
+            $.ajax(
+            {
+                type: "POST", //HTTP POST Method
+                traditional: true,
+                contentType: 'application/json; charset=utf-8',
+                url: '/MaterialIssueGuard/SaveMaterialIssueGuard', // Controller/View
+                data: items,
+                success: function (msg) {
+                    if (msg.success) {
+                        ClearForm();
+                        LoadSearchGrid();
+                        ShowAlert("success", "Generated Issue No : " + msg.responseText);
+                    }
+                    else {
+                        ShowAlert("error", msg.responseText);
+                    }
+                },
+                error: function (jqXhr, exception) {
+                    ShowAlert("error", "Server Error! Please contact administrator.");
+                }
+            });
+        }
+        $(document).ready(function () {
+            $("#ReceivedAmount").val("");
+            $("#GrossAmount").prop('disabled', true);
+            $("#Discount").prop('disabled', true);
+            $("#NetAmount").prop('disabled', true);
+            $("#BalanceAmount").prop('disabled', true);
+            $("#TicketCode").prop('disabled', true);
+            $("#ReceivedAmount").keyup(function () {
+                CalculateTotalAmount();
+            });
+            $("#AdminCharges").keyup(function () {
+                CalculateTotalAmount();
+            });
+            $("#OtherCharges").keyup(function () {
+                CalculateTotalAmount();
+            });
+            var branchid = @Model.BranchId.ToString();
+            $.ajax({
+                type: "GET",
+                url: "/Master/BranchStores",
+                data: { BranchId: branchid },
+                datatype: "Json",
+                async: true,
+                success: function (data) {
+                    $.each(data, function (index, value) {
+                        $('#ddlStore').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                    });
+                }
+            });
+
+            $("#TicketCode").autocomplete({
+                source: function (request, response) {
+                    console.log(request.term);
+                    $.ajax({
+                        url: "/Branch/Branch/SearchTicketCode",
+                        type: "POST",
+                        dataType: "json",
+                        data: { ticketcode: request.term },
+                        success: function(data) {
+                            response($.map(data,
+                                function(item) {
+                                    return {
+                                        label: item.TicketCode + ' ' + item.EmployeeName,
+                                        value: item.TicketCode,
+                                        EmpName: item.EmployeeName,
+                                        EmpId: item.EmpId
+                                    };
+                                }));
+                            }
+                    });
+                },
+                select: function (e, i) {
+                    $("#EmpName").val(i.item.EmpName);
+                    $("#EmpId").val(i.item.EmpId);
+                }
+            });
+        });
+        (function ($) {
+            /*************** Indent Item Details grid after row selection *************/
+            var dateEditor = function (ui) {
+                var $inp = ui.$cell.find("input"),
+                    grid = this,
+                    validate = function (that) {
+                        var valid = grid.isValid({
+                            dataIndx: ui.dataIndx,
+                            value: $inp.val(),
+                            rowIndx: ui.rowIndx
+                        }).valid;
+                        if (!valid) {
+                            that.firstOpen = false;
+                        }
+                    };
+
+                $inp.on("input", function (evt) {
+                    validate(this);
+                })
+                .datepicker({
+                    changeMonth: true,
+                    changeYear: true,
+                    showAnim: '',
+                    onSelect: function () {
+                        this.firstOpen = true;
+                        validate(this);
+                    },
+                    beforeShow: function (input, inst) {
+                        return !this.firstOpen;
+                    },
+                    onClose: function () {
+                        this.focus();
+                    }
+                });
+            }
+            colIID = [
+                    { title: "", dataIndx: "IndentDetails_Id", width: 10, dataType: "integer", editable: false, resizable: false, hidden: true },
+                    { title: "", dataIndx: "ItemId", width: 10, dataType: "integer", editable: false, resizable: false, hidden: true },
+                    { title: "", dataIndx: "BatchId", width: 10, dataType: "integer", editable: false, resizable: false, hidden: true },
+                    { title: "Item Code", dataIndx: "ItemCode", width: 100, dataType: "string", resizable: false, hidden: true },
+                    { title: "Item Name", dataIndx: "ItemName", width: 200, dataType: "string", resizable: false, editable: false },
+                    { title: "Current Stock", dataIndx: "Item_Stock", width: 150, dataType: "string", resizable: false, editable: false },
+                    { title: "MRP", dataIndx: "MRP", width: 100, resizable: false, dataType: "string", editable: false },
+                    {
+                        title: "Issue Qty", dataIndx: "IssuedQuantity", width: 200, dataType: "float", resizable: false, align: "left",
+                        formula: function (ui) {
+                            var rd = ui.rowData;
+                            if (rd.IssuedQuantity === "" || rd.IssuedQuantity == undefined)
+                                return 0;
+                            else
+                                return rd.IssuedQuantity;
+                        }
+                    },
+                    {
+                        title: "Discount", dataIndx: "Discount", width: 150, dataType: "float", resizable: false,
+                        formula: function (ui) {
+                            var rd = ui.rowData;
+                            if (rd.Discount === "" || rd.Discount == undefined)
+                                return 0;
+                            else
+                                return rd.Discount;
+                        }
+                    },                    
+                    {
+                        title: "Amount", dataIndx: "Amount", width: 150, resizable: false, dataType: "float", editable: false,
+                        format: '##,###.00',
+                        formula: function (ui) {
+                            var rd = ui.rowData;
+                            return (rd.MRP * rd.IssuedQuantity);
+                        }
+                    },
+                    {
+                        title: "Renew Date", width: "100", dataIndx: "strRenewDate", dataType: 'date',
+                        format: 'dd-mm-yy',
+                        editor: {
+                            type: 'textbox',
+                            init: dateEditor
+                        },
+                        validations: [
+                            { type: 'regexp', value: '^[0-9]{2}/[0-9]{2}/[0-9]{4}$', msg: 'Not in dd/mm/yyyy format' }
+                        ]
+                    }
+            ];
+            dataIID = {
+                location: 'local',
+                sorting: 'local',
+                paging: 'local',
+                dataType: 'JSON'
+            };
+
+            setIID = {                
+                height: '300',
+                maxheight: '400',
+                title: "Item Details",
+                sortable: false,
+                numberCell: { show: false },
+                selectionModel: { type: 'row' },
+                hoverMode: 'cell',
+                editor: { type: 'textbox' },
+                showTop: true,
+                resizable: true,
+                editModel: {
+                    saveKey: $.ui.keyCode.ENTER
+                },
+                cellSave: function (evt, ui) {
+                    this.refreshRow(ui);    
+                    CalculateTotalAmount();
+                },
+                cellBeforeSave: function (event, ui) {
+                    var dataIndx = ui.dataIndx, newVal = ui.newVal;
+                    var data = ui.rowData;
+                    if (dataIndx === 'IssuedQuantity') {
+                        if (newVal > data.Item_Stock) {
+                            ShowAlert("error", "IssuedQuantity CanNot be Greater Than Current Stock");
+                            return false;
+                        }
+                    }
+                },                
+                draggable: false,
+                colModel: colIID,
+                dataModel: dataIID,
+                virtualX: true,
+                virtualY: true,                
+                pageModel: { type: "local", rPP: 50 }
+            };
+            $IndentItemDetailsGrid = $("#grid").pqGrid(setIID);
+            
+            /*************** Item Grid which willbe available for ALl item list **********/
+            var setItemList = {
+                width: "auto", //auto width
+                height: "100%-30", //height in %age
+                selectionModel: { type: 'cell' },
+                autoSizeInterval: 0,
+                scrollModel: { autoFit: true },
+                dragColumns: { enabled: false },
+                hoverMode: 'cell',
+                editor: { type: 'textbox' },
+                filterModel: { on: true, mode: "AND", header: true },
+                showTop: false,
+                resizable: true,
+                virtualX: true,
+                colModel: colItemList,
+                dataModel: dataItemList,
+                toggle: function (evt, ui) {
+                    //fix for IE                
+                    if (ui.state === 'max') {
+                        $(".ui-dialog,.ui-widget-overlay").css('position', 'static');
+                    }
+                    else {
+                        $(".ui-dialog,.ui-widget-overlay").css('position', 'absolute');
+                    }
+                },
+                pageModel: { type: "local", rPP: 20 }
+            };
+            $('#btnCloseItem').on('click', function () {
+                ClosePopupWindow("ItemModal");
+            });
+            $('#btnViewItem').on('click', function () {
+                if ($("#ddlStore").val() === "") {
+                    ShowAlert("error", "Please Select Store From List");
+                    return;
+                }
+                var searchStoreId = $("#ddlStore").val();
+                CollapsePqGrid($SearchGrid);
+                ShowItemListPoup("Itemgrid", "ItemModal", setItemList, "/ItemMaster/GetStoreStock/", searchStoreId);
+            });
+
+            $('#btnAddItem').on('click', function () {
+                ClosePopupWindow("ItemModal");
+
+                var dataMGrid = [];
+                $("#Itemgrid").pqGrid("reset", { filter: true });
+                var detailgrid = $IndentItemDetailsGrid.pqGrid("option", "dataModel.data");
+                $.each(detailgrid, function (key, value) {
+                    var grdData = {
+                        'ItemId': value.ItemId, 'BatchId': value.BatchId, 'ItemCode': value.ItemCode, 'ItemName': value.ItemName,
+                        'MRP': value.MRP, 'IssuedQuantity': value.IssuedQuantity, 'Item_Stock': value.Item_Stock,
+                        'Discount': value.Discount, 'Amount': value.Amount, 'strRenewDate': value.strRenewDate
+                    };
+                    dataMGrid.push(grdData);
+                });
+
+                var getData = $("#Itemgrid").pqGrid("option", "dataModel.data");
+                var selectedItems = jLinq.from(getData).equals("state", true).select();
+
+                $.each(selectedItems, function (key, value) {
+                    var grdData = {
+                        'ItemId': value.ID, 'BatchId': value.BatchId, 'ItemCode': value.Code, 'ItemName': value.Name, 'MRP': value.MRP,
+                        'Discount': value.Discount, 'Item_Stock': value.CurrentQty//, 'RenewDate': RenewDate
+                    };
+                    dataMGrid.push(grdData);
+                });
+                $IndentItemDetailsGrid.pqGrid("option", "dataModel.data", dataMGrid);
+                try {
+                    $IndentItemDetailsGrid.pqGrid("refreshDataAndView");
+                }
+                catch (e) { $("#grid").pqGrid("refreshDataAndView"); }
+            });
+
+            /*******************************************************************************/
+
+            $('#btnRemoveItem').on('click', function () {
+                var rowIndx = getRowIndx();
+                if (rowIndx == null) {
+                    return;
+                }
+                $IndentItemDetailsGrid.pqGrid("deleteRow", { rowIndx: rowIndx });
+            });
+
+            $("#btnAdd").on("click", ClearForm);
+            $('#btnExit').on('click', function () {
+                var url = "/Home/Index";
+                window.location.href = url;
+            });
+            $('#btnNo').on('click', function () {
+                ClosePopupWindow("ConfirmModal");
+            });
+
+            $("#btnYes").click(function () {
+                if ($("#ddlStore").val() == undefined) {
+                    ShowAlert("error", "Please Select Store");
+                    return;
+                }
+                if ($("#ReceivedAmount").val() == undefined) {
+                    ShowAlert("error", "Please Enter Received Amount");
+                    return;
+                }
+                ClosePopupWindow("ConfirmModal");
+                SaveGuardIssue();
+            });
+
+            $("#btnRenew")
+                .click(function() {
+                    $("#IsRenewal").prop('checked', true);
+                    validateBeforeSave();
+                });
+
+            $("#btnFresh")
+                .click(function() {
+                    $("#IsRenewal").prop('checked', false);
+                    validateBeforeSave();
+                });
+
+            function validateBeforeSave() {
+                if ($("#ddlStore").val() == undefined) {
+                    ShowAlert("error", "Please Select Store");
+                    return;
+                }
+                var balanceAmt = $("#BalanceAmount").val();
+                if (parseFloat(balanceAmt) < 0) {
+                    ShowAlert("error", "Balance Amount Can Not Be Less Than Zero");
+                    return;
+                }
+
+                DisableClick("btnRenew");
+                DisableClick("btnFresh");
+
+                if ($("#ReceivedAmount").val() == undefined || $("#ReceivedAmount").val() === "0" || $("#ReceivedAmount").val() === "") {
+                    $("#ConfirmModal").dialog({
+                        height: 117,
+                        width: 423,
+                        modal: true,
+                        open: function (evt, ui) {
+                            $("#btnNo").focus();
+                        },
+                        close: function (event, ui) {
+                        },
+                        show: {
+                            effect: "blind",
+                            duration: 500
+                        }
+                    });
+                    return;
+                }
+                SaveGuardIssue();
+            }
+
+        })(jQuery);        
+        /********* Search Grid *********/
+        $(document).ready(function () {
+            var dataM = { location: "local", sorting: 'local' }
+            var colM = [
+                    { title: "", dataIndx: "IssueId", dataType: "integer", hidden: true },
+                    { title: "", dataIndx: "StoreId", dataType: "integer", hidden: true },
+                    { title: "", dataIndx: "BranchId", dataType: "integer", hidden: true },
+                    { title: "", dataIndx: "BranchId", dataType: "integer", hidden: true },
+                    { title: "", dataIndx: "IsRenewal", hidden: true },                    
+                    {
+                        title: "Issue No", dataIndx: "IssueNo", width: 200,
+                        filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                    },
+                    { title: "Issue Date", dataIndx: "strIssueDate", width: 170, dataType: "date" },
+                    {
+                        title: "Type", dataIndx: "Type", formula: function (ui) {
+                            var rd = ui.rowData;
+                            if (rd.IsRenewal === "0")
+                                return 'Issue';
+                            else
+                                return 'Renew';
+                        }
+                    },                    
+                    {
+                        title: "Store", dataIndx: "StoreName", width: 200,
+                        filter: {
+                            type: "select",
+                            condition: 'equal',
+                            prepend: { '': '--Select--' },
+                            valueIndx: "StoreName",
+                            labelIndx: "StoreName",
+                            listeners: ['change']
+                        }
+                    },
+                    { title: "TicketCode", dataIndx: "TicketCode", width: 100 },
+                    {
+                        title: "Employee", dataIndx: "EmpName", width: 250, filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                    }
+            ];
+
+            var setM = {
+                height: 250,
+                sortable: false,
+                numberCell: { show: false },
+                hoverMode: 'cell',
+                showTop: true,
+                title :"List Of Material Issue Guard" ,
+                resizable: true,
+                scrollModel: { autoFit: true },
+                draggable: false,
+                wrap: false,
+                editable: false,
+                columnBorders: true,
+                filterModel: { on: true, mode: "AND", header: true },
+                colModel: colM,
+                dataModel: dataM,
+                virtualX: true,
+                virtualY:true,
+                pageModel: { type: "local", rPP: 20 },
+                rowClick: function (evt, ui) {
+                    ClearParamGrid("grid");
+                    if (ui.rowData) {
+                        var record = ui.rowData;
+
+                        $('#IssueDate').data({ date: record.strIssueDate });
+                        $('#IssueDate').datetimepicker('update');
+                        $('#IssueDate').datetimepicker().children('input').val(record.strIssueDate);
+                        
+                        $("#IssueId").val(record.IssueId);
+                        $("#EmpId").val(record.EmpId),
+                        $("#BranchId").val(record.BranchId);
+                        $("#IssueNo").val(record.IssueNo);
+                        $("#InstallmentPeriod").val(record.InstallmentPeriod);
+                        $("#EmpName").val(record.EmpName);
+                        $("#TicketCode").val(record.TicketCode);
+                        $("#ddlStore").val(record.StoreId);
+
+                        $('#StartDate').data({ date: record.strStartDate });
+                        $('#StartDate').datetimepicker('update');
+                        $('#StartDate').datetimepicker().children('input').val(record.strStartDate);
+
+                        $("#IsRenewal").prop('checked', record.IsRenewal);
+                        $("#NetAmount").val(record.NetAmount);
+                        $("#Discount").val(record.Discount);
+                        $("#GrossAmount").val(record.GrossAmount);
+                        $("#ReceivedAmount").val(record.ReceivedAmount);
+                        $("#BalanceAmount").val(record.BalanceAmount);
+                        $("#AdminCharges").val(record.AdminCharges);
+                        $("#OtherCharges").val(record.OtherCharges);
+                        $("#TicketCode").prop('disabled', true);
+                        $.ajax({
+                            type: "GET",
+                            url: "/MaterialIssueGuard/GetIssueGuardDetails/",
+                            data: { IssueId: record.IssueId },
+                            datatype: "Json",
+                            success: function (data) {                                
+                                $IndentItemDetailsGrid.pqGrid("option", "dataModel.data", data.dtmodel);
+                                $IndentItemDetailsGrid.pqGrid("refreshDataAndView");
+                            }
+                        });
+                    }
+                }
+            };
+            $SearchGrid = $("#searchgrid").pqGrid(setM);
+            LoadSearchGrid();
+        });
+    </script>
+}

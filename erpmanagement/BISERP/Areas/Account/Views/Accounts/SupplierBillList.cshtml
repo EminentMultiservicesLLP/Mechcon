@@ -1,0 +1,141 @@
+﻿@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        Details
+                    </div>
+                </div>
+                <div class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div id="grid"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  
+    <script>
+        var $gridMain;
+        function LoadSupplierListgrid() {
+           
+            $.ajax({
+                type: "GET",
+                url: "/Master/AllSupplier",
+                datatype: "Json",
+                beforeSend: function () {
+                    $("div#grid").pqGrid("showLoading");
+                },
+                complete: function () {
+                    $("div#grid").pqGrid("hideLoading");
+                },
+                success: function (data) {
+                    $("div#grid").pqGrid("hideLoading");
+                    $("div#grid").pqGrid("option", "dataModel.data", data);
+                    $("div#grid").pqGrid("refreshDataAndView");
+                },
+                error: function (request, status, error) {
+                    $("div#grid").pqGrid("hideLoading");
+                    ShowAlert("error", "Error while loading Itemlist");
+                    return;
+                }
+            });
+        }
+        $(document).ready(function () {
+            var dataModel = { location: 'local', sorting: 'local', paging: 'local', dataType: 'JSON' };
+            $gridMain = $("div#grid").pqGrid({
+                height: 500,
+                sortable: false,
+                editable: false,
+                numberCell: { show: false },
+                //selectionModel: { type: 'row' },
+                showTop: true,
+                title: "Issue Item Details",
+                hoverMode: 'cell',
+                resizable: true,
+                virtualX: true,
+                virtualY: true,
+                scrollModel: { autoFit: true },
+                draggable: false,
+                wrap: false,
+                colModel: [
+
+                    { title: "", minWidth: 30, maxWidth: 30, type: "detail", dataIndx: "detail", resizable: false, sortable: false },
+                    { title: "", dataIndx: "ID", width: 10, hidden: true },
+                    { title: "SupplierCode", dataIndx: "Code", width: 400., editable: false },
+                    { title: "SupplierName", dataIndx: "Name", width: 200, editable: false },
+                ],
+                dataModel: dataModel,
+                scrollModel: { autoFit: true },
+                trackModel: { on: true }, //to turn on the track changes.
+                pageModel: { type: "local", rPP: 50 },
+                detailModel: {
+                    cache: true,
+                    collapseIcon: "ui-icon-plus",
+                    expandIcon: "ui-icon-minus",
+                    init: function (ui) {
+                        var rowData = ui.rowData,
+                            detailobj = gridDetailModel($(this), rowData), //get a copy of gridDetailModel
+                            $grid = $("<div id=detailgrid></div>").pqGrid(detailobj); //init the detail grid.
+                        return $grid;
+                    }
+                }
+            });
+            LoadSupplierListgrid();
+
+            var gridDetailModel = function ($gridMain, rowData) {
+                return {
+                    width: '90%',
+                    scrollModel: { autoFit: true },
+                    height: 130,
+                    pageModel: { type: "local", rPP: 5, strRpp: "" },
+                    selectionModel: { type: 'row' },
+                    dataModel: {
+                        location: "remote",
+                        sorting: "local",
+                        dataType: "json",
+                        method: "GET",
+                        url: "/SupplierBillList/GetSupplierBilldt/get?SupplierId=" + rowData.ID,
+                        getData: function (dataJSON) {
+                            var data = dataJSON;
+                            return { curPage: dataJSON.curPage, totalRecords: dataJSON.totalRecords, data: data };
+                        }
+                    },
+
+                    colModel: [
+                       
+                        { title: "SupplierId", width: 80, dataType: "integer", dataIndx: "SupplierId", hidden: true },
+                        { title: "GrnId", width: 80, dataType: "integer", dataIndx: "GrnId", hidden: true },
+                        { title: "BillId", width: 80, dataType: "integer", dataIndx: "GrnId", hidden: true },
+                        { title: "BillNo", width: 200, dataIndx: "BillNo", dataType: "string", editable: false },
+                        { title: "BillDate", dataIndx: "strBillDate", width: 170, dataType: "string", align: "right", editable: false },
+                        { title: "BillDate", dataIndx: "BillDate", width: 100, dataType: "dateTime", align: "right", editable: false, hidden: true },
+                        { title: "BillAmount", dataIndx: "BillAmount", width: 100, dataType: "float", align: "right", editable: false }
+                    ],
+                    editable: true,
+                    groupModel: {
+                        dataIndx: ["BillNo"],
+                        dir: ["up"],
+                        title: ["{0} - Total : {1}"],
+                        icon: [["ui-icon-triangle-1-se", "ui-icon-triangle-1-e"]]
+                    },
+                    flexHeight: true,
+                    flexWidth: true,
+                    numberCell: { show: false },
+                    title: "Item Details",
+                    showTop: false,
+                    showBottom: false
+                };
+            };
+         
+        });
+
+       
+    </script>
+}

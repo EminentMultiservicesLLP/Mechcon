@@ -1,0 +1,384 @@
+﻿@model IEnumerable<BISERP.Models.UserMangement.ReportListModel>
+<script>
+    $(function () {
+        $('#FromDate').datetimepicker({
+            format: 'DD-MMM-YYYY',
+            extraFormats: ['DD-MM-YYYY', 'DD-MM-YY'],
+            defaultDate: new Date()
+        });
+        $('#ToDate').datetimepicker({
+            format: 'DD-MMM-YYYY',
+            extraFormats: ['DD-MM-YYYY', 'DD-MM-YY'],
+            defaultDate: new Date()
+        });
+    });
+</script>
+@using (Html.BeginForm())
+{
+
+    <div id="MasterPlaceHolder" style="height:100%">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-groupingBoder">
+                    <div class="panel-body">
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        Report
+                                        <select id="selMasters" class="wrapper-dropdown-content form-control">
+                                            <option class="wrapperdropdown-content">Select</option>
+                                            @foreach (var item in Model)
+                                            {
+                                                <option class="wrapperdropdown-content" value="@item.ReportID">@item.ReportName</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.Label("From Date")
+                                        <div class='input-group date' id='FromDate'>
+                                            <input type='text' class="form-control" />
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.Label("To Date")
+                                        <div class='input-group date' id='ToDate'>
+                                            <input type='text' class="form-control" />
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.Label("In Days")
+                                        @Html.TextBox("MaxDays", "", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.Label("Store")
+                                        @Html.DropDownList("ddlStore", new SelectList(string.Empty, "Value", "Text"), "Select Store", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.Label("Item Type")
+                                        @Html.DropDownList("ddlItemtype", new SelectList(string.Empty, "Value", "Text"), new { @class = "wrapperdropdown-content form-control" })
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.Label("Item Name")
+                                        @Html.TextBox("ItemName", "", new { @class = "form-control" })
+                                        @Html.Hidden("ItemId")
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <button type="button" class="btn btn-success" id="btnPrint">Show</button>
+                                    <button type="button" class="btn btn-success" id="btnReset">Reset</button>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <iframe id="iframeReportViewer" style="width:100%;height:300px"></iframe>
+                                </div>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>  
+    <div id="ItemModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div id="Itemgrid"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>  
+}
+<script>
+    var $Itemgrid;
+    function ClearForm() {
+        $('#FromDate').data("DateTimePicker").disable();
+        $('#ToDate').data("DateTimePicker").disable();
+        ResetDate("FromDate");
+        ResetDate("ToDate");
+        $('#ddlStore').prop('disabled', true);
+        $("#MaxDays").prop('disabled', true);
+        $('#ddlItemtype').prop('disabled', true); 
+        $('#ddlStore').val("0");
+        $('#ddlItemtype').html("");
+        $("#ItemName").val("");
+        $("#ItemId").val("");
+        $("#ItemName").prop('disabled', true);        
+    }
+    function LoadItemGrid() {
+        var storeid = $("#ddlStore").val();
+        if (storeid == "" || storeid == "Select" || storeid == undefined)
+            storeid = 0;
+        var typeid = $("#ddlItemtype").val();
+        if (typeid == "" || typeid == undefined)
+            typeid = 0;
+        $.ajax({
+            url: "/ItemMaster/GetItemsByStoreItemType",
+            cache: false,
+            async: true,
+            method: "GET",
+            dataType: "JSON",
+            data: { StoreId: storeid, ItemTypeId: typeid },
+            beforeSend: function () {
+                $Itemgrid.pqGrid("showLoading");
+            },
+            complete: function () {
+                $Itemgrid.pqGrid("hideLoading");
+            },
+            success: function (response) {
+                $("#ItemModal").modal('toggle');
+                $Itemgrid.pqGrid("hideLoading");
+                $Itemgrid.pqGrid("option", "dataModel.data", response);
+                $Itemgrid.pqGrid("refreshDataAndView");
+            },
+            error: function (request, status, error) {
+                $Itemgrid.pqGrid("hideLoading");
+                ShowAlert("error", "Error while loading Itemlist");
+            }
+        });
+    }
+    $(document).ready(function () {
+        ClearForm();
+        $.ajax({
+            type: "GET",
+            url: "/Master/AllStores",
+            datatype: "Json",
+            success: function (data) {
+                $.each(data, function (index, value) {
+                    $('#ddlStore').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                });
+            }
+        });
+
+        $('select#ddlStore').change(function () {
+            var storeId = $(this).val();
+            $.ajax({
+                type: "GET",
+                url: "/Master/GetItemTypeByStoreId",
+                data: { storeId: storeId },
+                datatype: "Json",
+                success: function (data) {
+                    $("#ddlItemtype").html("");
+                    $('#ddlItemtype').append('<option value="' + "0" + '">' + "All" + '</option>');
+                    $.each(data, function (index, value) {
+                        $('#ddlItemtype').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                    });
+                }
+            });
+        });
+
+        $('#selMasters').change(function () {
+            ClearForm();
+            if ($("#selMasters").val() == "161") {
+                $('#ddlStore').prop('disabled', false);
+                $('#ddlItemtype').prop('disabled', false);
+            }
+            else if ($("#selMasters").val() == "162") {
+                $('#ddlStore').prop('disabled', false);
+                $('#ddlItemtype').prop('disabled', false);
+            }
+            else if ($("#selMasters").val() == "163") {
+                $('#FromDate').data("DateTimePicker").enable();
+                $('#ToDate').data("DateTimePicker").enable();
+                $('#ddlStore').prop('disabled', false);
+                $('#ddlItemtype').prop('disabled', false);
+                $("#ItemName").prop('disabled', false);
+            }
+            else if ($("#selMasters").val() == "164") {
+                $('#ToDate').data("DateTimePicker").enable();
+                $('#ddlStore').prop('disabled', false);
+                $('#ddlItemtype').prop('disabled', false);                
+            }
+            else if ($("#selMasters").val() == "165") {
+                $('#FromDate').data("DateTimePicker").enable();
+                $('#ToDate').data("DateTimePicker").enable();
+                $('#ddlStore').prop('disabled', false);
+                $('#ddlItemtype').prop('disabled', false);
+            }
+            else if ($("#selMasters").val() == "166") {
+                $('#FromDate').data("DateTimePicker").enable();
+                $("#MaxDays").prop('disabled', false);
+            }
+        });
+        $('#ItemName').on('click', function () {
+            if ($("#ddlStore").val() == "" || $("#ddlStore").val() == "Select Store" || $("#ddlStore").val() == undefined) {
+                ShowAlert("error", "Please Select Store");
+                return;
+            }
+            LoadItemGrid();
+        });
+        
+        $('#btnReset').on('click', function () {
+            $("#selMasters").val("");
+            ClearForm();
+        });
+        $('#btnPrint').on('click', function () {
+            if ($("#selMasters").val() == "161" || $("#selMasters").val() == "162" || $("#selMasters").val() == "163"
+                    || $("#selMasters").val() == "164" || $("#selMasters").val() == "165") {
+                if ($("#ddlStore").val() == "" || $("#ddlStore").val() == "Select Store" || $("#ddlStore").val() == undefined) {
+                    ShowAlert("error", "Please Select Store");
+                    return;
+                }
+            }            
+            else if ($("#selMasters").val() == "166") {
+                if ($("#MaxDays").val() == "" || $("#MaxDays").val() == undefined) {
+                    ShowAlert("error", "Please Enter In-Days");
+                    return;
+                }
+            }
+            ReportValidationCheck();
+        });
+    });
+    $(document).ready(function () {
+        var dataM = { location: "local", sorting: 'local' };
+        var colM = [
+                { title: "", dataIndx: "ID", dataType: "integer", hidden: true },
+                {
+                    title: "Item Name", dataIndx: "Name", width: 400,
+                    filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                },
+                {
+                    title: "Category", dataIndx: "itemtypename", width: 150, dataType: "date", filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                }
+        ];
+
+        var setM = {
+            height: 400,
+            sortable: false,
+            numberCell: { show: false },
+            hoverMode: 'cell',
+            showTop: false,
+            resizable: false,
+            draggable: false,
+            wrap: false,
+            editable: false,
+            columnBorders: true,
+            filterModel: { on: true, mode: "AND", header: true },
+            colModel: colM,
+            dataModel: dataM,
+            resizable: true,
+            virtualX: true,
+            pageModel: { type: "local", rPP: 20 },
+            rowClick: function (evt, ui) {
+                $("#ItemModal").modal('toggle');
+                if (ui.rowData) {
+                    var rowIndx = parseInt(ui.rowIndx);
+                    var record = ui.rowData;
+                    $("#ItemId").val(record.ID);
+                    $("#ItemName").val(record.Name);
+                }
+            }
+        };
+        $Itemgrid = $("#Itemgrid").pqGrid(setM);
+    });
+    function ReportValidationCheck() {
+        if ($("#selMasters").val() == "161") {
+            var storeid = $("#ddlStore").val();
+            if (storeid == "" || storeid == "Select" || storeid == undefined)
+                storeid = 0;
+            var typeid = $("#ddlItemtype").val();
+            if (typeid == "" || typeid == undefined)
+                typeid = 0;
+
+            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#selMasters").val() + "&storeid=" + storeid + "&typeid=" + typeid;
+        }
+        else if ($("#selMasters").val() == "162") {
+            var storeid = $("#ddlStore").val();
+            if (storeid == "" || storeid == "Select" || storeid == undefined)
+                storeid = 0;
+            var typeid = $("#ddlItemtype").val();
+            if (typeid == "" || typeid == undefined)
+                typeid = 0;
+
+            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#selMasters").val() + "&storeid=" + storeid + "&typeid=" + typeid;
+        }
+        else if ($("#selMasters").val() == "163") {
+            var storeid = $("#ddlStore").val();
+            if (storeid == "" || storeid == "Select" || storeid == undefined)
+                storeid = 0;
+            var typeid = $("#ddlItemtype").val();
+            if (typeid == "" || typeid == undefined)
+                typeid = 0;
+
+            var itemid = $("#ItemId").val();
+            if (itemid == "" || itemid == undefined)
+                itemid = 0;
+
+            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#selMasters").val() + "&fromdate=" + $("#FromDate").data('date') + "&todate=" + $("#ToDate").data('date') + "&storeid=" + storeid + "&typeid=" + typeid + "&itemid=" + itemid;
+        }
+        else if ($("#selMasters").val() == "164") {
+            var storeid = $("#ddlStore").val();
+            if (storeid == "" || storeid == "Select" || storeid == undefined)
+                storeid = 0;
+            var typeid = $("#ddlItemtype").val();
+            if (typeid == "" || typeid == undefined)
+                typeid = 0;
+
+            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#selMasters").val() + "&storeid=" + storeid + "&typeid=" + typeid + "&todate=" + $("#ToDate").data('date');
+        }
+        else if ($("#selMasters").val() == "165") {
+            var storeid = $("#ddlStore").val();
+            if (storeid == "" || storeid == "Select" || storeid == undefined)
+                storeid = 0;
+            var typeid = $("#ddlItemtype").val();
+            if (typeid == "" || typeid == undefined)
+                typeid = 0;
+
+            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#selMasters").val() + "&fromdate=" + $("#FromDate").data('date') + "&todate=" + $("#ToDate").data('date') + "&storeid=" + storeid + "&typeid=" + typeid;
+        }
+        else if ($("#selMasters").val() == "166") {
+            
+            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#selMasters").val() + "&maxdays=" + $("#MaxDays").val() + "&fromdate=" + $("#FromDate").data('date');
+        }
+        else {
+            ShowAlert("error","Please Select Report");
+        }
+        //url = "../Reports/ReportViewer.aspx";
+        var myframe = document.getElementById("iframeReportViewer");
+        if (myframe != null) {
+            if (myframe.src) {
+                myframe.src = url;
+            }
+            else if (myframe.contentWindow != null && myframe.contentWindow.location != null) {
+                myframe.contentWindow.location = url;
+            }
+            else {
+                myframe.setAttribute('src', url);
+            }
+            return false;
+        }
+    }
+</script>

@@ -1,0 +1,49 @@
+﻿@model BISERP.Areas.Store.Models.Store.VendorMaterialIssueModel
+@{
+    Layout = null;
+}
+
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+<div style="width: 95%; margin: 10px;">
+    <div align="center">
+        <h2>Vender Issue</h2>
+    </div>
+    <table style="padding: 2px;">
+        <tr>
+            <td style="text-align: left">Issue Date::@DateTime.Now.ToString("dd-MMM-yyyy")</td>
+        </tr>
+        <tr>
+            <td style="align-content: stretch;">
+                <u>Indent Requested by</u>: <b>@Model.StoreName</b>
+            </td>
+        </tr>
+        <tr style="height: 20px" />
+        <tr>
+            <td style="align-content: center">
+                <table style="padding: 5px;" border="1">
+                    <tr>
+                        <th>Item Name</th>
+                        <th>Stock</th>
+                        <th>IssueQty</th>
+                        <th>Total Amount</th>
+                    </tr>
+                    @foreach (var menu in Model.VendorMaterialIssueDt)
+                    {
+                        <tr>
+                            <td>@menu.ItemName</td>
+                            <td>@menu.Item_Stock</td>
+                            <td>@menu.IssuedQuantity</td>
+                            <td>@menu.TotalAmt</td>
+                        </tr>
+                    }
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

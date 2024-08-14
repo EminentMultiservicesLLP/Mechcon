@@ -1,0 +1,1073 @@
+﻿@model BISERP.Areas.Accounts.Models.ClientBillingModel
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <fieldset>
+        <div id="content">
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-groupingBoder">
+                        <div class="panel-heading">
+                            <div class="panel-title">
+                                <a class="collapsediv" data-toggle="collapse" href="#collapse2" style="color: white">
+                                    Search Detail
+                                </a>
+                            </div>
+                        </div>
+                        <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                            <div class="panel-body">
+                                <fieldset>
+                                    <div class="row">
+                                        <div class="col-sm-3">
+                                            <div class="form-group" >
+                                                <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                                                <button type="button" class="btn btn-success" id="btnReset">Reset</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group form-horizontal">
+                                            <div class="col-sm-2">
+                                                @Html.Label("Select Client", new { @class = "required" })
+                                                @Html.DropDownList("ddlClient", new SelectList(string.Empty, "Value", "Text"), "--Select Client--", new { @class = "form-control" })
+                                            </div>
+                                        </div>
+                                        <div class="form-group form-horizontal">
+                                            <div class="col-sm-2">
+                                                @Html.Label("Select Project", new { @class = "required" })
+                                                @Html.DropDownList("ddlProject", new SelectList(string.Empty, "Value", "Text"), "--Select Project--", new { @class = "form-control" })
+                                            </div>
+                                        </div>
+                                        <div class="form-group form-horizontal">
+                                            <div class="col-sm-2">
+                                                @Html.Label("Select Consignee", new { @class = "required" })
+                                                @Html.DropDownList("ddlConsignee", new SelectList(string.Empty, "Value", "Text"), "--Select Consignee--", new { @class = "form-control" })
+                                            </div>
+                                        </div>
+                                        <div class="form-group form-horizontal">
+                                            <div class="col-sm-2">
+                                                @Html.LabelFor(m => m.BillDate, new { @class = "required" })
+                                                @Html.TextBoxFor(model => model.BillDate, new { @class = "form-control" })
+                                                @Html.ValidationMessageFor(model => model.BillDate)
+                                            </div>
+                                        </div>
+                                        <div class="form-group form-horizontal">
+                                            <div class="col-sm-2">
+                                                @Html.LabelFor(m => m.DueDate, new { @class = "required" })
+                                                @Html.TextBoxFor(model => model.DueDate, new { @class = "form-control" })
+                                            </div>
+                                        </div>
+                                        <div class="form-group form-horizontal">
+                                            <div class="col-sm-2">
+                                                @Html.Label("PO No")
+                                                @Html.TextBoxFor(model => model.ClientPONo, new { @class = "form-control" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                  <br/>
+                                </fieldset>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-groupingBoder">
+                        <div class="panel-heading">
+                            <div class="panel-title">
+                                <a class="collapsediv" data-toggle="collapse" href="#collapse3" style="color: white">
+                                    Entry Form
+                                </a>
+                            </div>
+                        </div>
+                        <div id="collapse3" class="panel-collapse collapse in" aria-expanded="true">
+                            <div class="panel-body">
+                                <fieldset>
+                                    <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                                        <div class="panel-body">
+                                            <div class="row">
+                                                <div class="col-sm-12" style="margin-left:15px">
+                                                    <button type="button" class="btn btn-primary" id="btnAddItem">AddItem</button>
+                                                    <button type="button" class="btn btn-primary" id="btnRemoveItem">RemoveItem</button>
+                                                    <button type="button" class="btn btn-primary" id="btnViewPayTerms">Add Payment Term</button>
+                                                </div>
+                                            </div>
+                                            <br />
+                                            <div class="container fill">
+                                                <div id="ClientBillGrid"></div>
+                                            </div>
+                                            <br/>
+                                            <div class="form-group form-horizontal">
+                                                <div class="col-sm-1">
+                                                    @Html.Label("Remark")
+                                                </div>
+                                                <div class="col-sm-11">
+                                                    @Html.TextAreaFor(model => model.Remark, new {@class = "form-control"})
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="panel-groupingBoder">
+                                        <div class="panel-body">
+                                            <div class="row">
+                                                <div class="col-sm-4">
+                                                </div>
+                                                <div class="col-sm-4">
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <table align="right">
+                                                        <tr>
+                                                            <td>Gross Amount</td>
+                                                            <td>@Html.TextBoxFor(m => m.GrossAmt, new Dictionary<string, object> {{"Id", "GrossAmt"}, {"readonly", "true"}, {"class", "form-control"}})</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Standerd Discount</td>
+                                                            <td>@Html.TextBoxFor(m => m.StanderdDis, new Dictionary<string, object> {{"Id", "StanderdDis"}, {"readonly", "true"}, {"class", "form-control"}})</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>SGST</td>
+                                                            <td>@Html.TextBoxFor(m => m.Sgst, new Dictionary<string, object> { { "Id", "Sgst" }, { "readonly", "true" }, { "class", "form-control" } })</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>CGST</td>
+                                                            <td>@Html.TextBoxFor(m => m.Cgst, new Dictionary<string, object> { { "Id", "Cgst" }, { "readonly", "true" }, { "class", "form-control" } })</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>IGST</td>
+                                                            <td>@Html.TextBoxFor(m => m.Igst, new Dictionary<string, object> {{"Id", "Igst"}, {"readonly", "true"}, {"class", "form-control"}})</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>UGST</td>
+                                                            <td>@Html.TextBoxFor(m => m.Ugst, new Dictionary<string, object> { { "Id", "Ugst" }, { "readonly", "true" }, { "class", "form-control" } })</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Net Amt</td>
+                                                            <td>@Html.TextBoxFor(m => m.NetAmt, new Dictionary<string, object> {{"Id", "NetAmt"}, {"readonly", "true"}, {"class", "form-control"}})</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Round Off Amt</td>
+                                                            <td>@Html.TextBoxFor(m => m.RoundOffAmt, new Dictionary<string, object> { { "Id", "RoundOffAmt" }, { "readonly", "true" }, { "class", "form-control" } })</td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                                </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+    <div title="Select Items" id="ItemModal" style="display: none;">
+        <div id="Itemgrid"></div>
+        <div style="margin-top: 5px;">
+            <button type="button" class="btn btn-primary" id="btnAddItems">Add</button>
+            <button type="button" class="btn btn-primary" id="btnCloseItem">Close</button>
+        </div>
+    </div>
+     <div id="PaymentItemModal" title="Select Payment Terms" style="display: none;">
+        <div id="SearchPaymentTermgrid"></div><br />
+        <button type="button" class="btn btn-primary" data-dismiss="modal" id="btnAddPaymentTerm">Add Term</button>
+    </div>
+    <div title="Select Items" id="BillNoModal" style="display: none;">
+        <div id="BillNoGrid"></div>
+    </div>
+       <div id="popup-dialog-crud" style="display:none;">
+           <form id="crud-form">
+               <div id="Taxgrid"></div>
+           </form>
+    </div> 
+    
+}
+<script>
+
+   // $("#BillDate").prop('disabled', true);
+    $('#DueDate').datepicker({ dateFormat: "dd-mm-yy" }).datepicker('setDate', 'today'); //'setDate', 'today', 
+    $('#BillDate').datepicker({ dateFormat: "dd-mm-yy" }).datepicker('setDate', 'today');
+    var $billingitemgrid;
+    var $billNogrid;
+    var $Taxgrid; var $SearchPaymentTermgrid;
+    function GetClientProject(clientId) {
+        $.ajax({
+            type: "GET",
+            url: "/StoreMaster/GetClientProject",
+            datatype: "Json",
+            async: true,
+            data: { clientId: clientId },
+            success: function (data) {
+                $('#ddlProject').append('<option value="">--Select Project---</option>');
+                $.each(data,
+                    function (index, value) {
+                        $('#ddlProject').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                    });
+            }
+        });
+    }
+    $.ajax({
+        type: "GET",
+        url: "/ClientMaster/AllClient",
+        datatype: "Json",
+        success: function (data) {
+            $.each(data.records, function (index, value) {
+                $('#ddlClient').append('<option value="' + value.ClientId + '">' + value.Name + '</option>');
+            });
+        }
+    });
+
+    $('#ddlClient').change(function () {
+        var clientId = $('#ddlClient').val();
+        $('#ddlProject').val(""); $('#ddlProject').html(""); $('#ddlConsignee').val(""); $('#ddlConsignee').html(""); $('#ClientPONo').val("");
+        GetClientProject(clientId)
+        GetclientConsignee(clientId);
+    })
+
+    $('#ddlProject').change(function () {
+        $('#ClientPONo').val("");
+        $.ajax({
+            type: "GET",
+            url: "/StoreMaster/ProjectPoNo",
+            data: { projectId: $('#ddlProject').val()},
+            datatype: "Json",
+            async: true,
+            success: function (data) {
+                $('#ClientPONo').val(data[0]);
+            }
+        });
+    })
+    function GetclientConsignee(clientId)
+    {
+        $.ajax({
+            type: "GET",
+            url: "/ClientMaster/GetClientConsignee",
+            datatype: "Json",
+            data: { clientId: clientId },
+            success: function (data) {
+                $.each(data.records, function (index, value) {
+                    $('#ddlConsignee').append('<option value="' + value.ConsigneeId + '">' + value.ConsigneeName + '</option>');
+                });
+            }
+        });
+    }
+    var dateEditor = function (ui) {
+        var $cell = ui.$cell,
+            rowData = ui.rowData,
+            dataIndx = ui.dataIndx,
+            cls = ui.cls,
+            dc = $.trim(rowData[dataIndx]);
+        $cell.css('padding', '0');
+
+        var $inp = $("<input type='text' name='" + dataIndx + "' class='" + cls + " pq-date-editor' />")
+        .appendTo($cell)
+        .val(dc).datepicker({
+            changeMonth: true,
+            changeYear: true,
+            onClose: function () {
+                $inp.focus();
+            }
+        });
+        //.focus();
+    }
+
+
+    function LoadTaxgrid() {
+        $.ajax({
+            type: "GET",
+            url: "/Master/TaxMaster",
+            datatype: "Json",
+            success: function (data) {
+                $Taxgrid.pqGrid("option", "dataModel.data", data);
+                $Taxgrid.pqGrid("refreshDataAndView");
+            }
+        });
+    }
+    colItemList = [
+        {
+            dataIndx: "state",
+            Width: 25,
+            align: "center",
+            type: 'checkBoxSelection',
+            cls: 'ui-state-default',
+            sortable: false,
+            editor: false,
+            dataType: 'bool',
+            title: "<input type='checkbox' />",
+            cb: { select: true, all: false, header: true }
+        },
+        { title: "Code", dataIndx: "ID", hidden: true },
+        { dataIndx: "ExpiryDate", hidden: true },
+        {
+            title: "Code",
+            dataIndx: "Code",
+            width: 100,
+            dataType: "string",
+            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] },
+            hidden: true
+        },
+        {
+            title: "Item Name",
+            dataIndx: "Name",
+            width: 200,
+            dataType: "string",
+            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+        },
+        { title: "Unit Name", dataIndx: "UnitName", width: 90 },
+        { title: "PackSize", dataIndx: "PackSize", width: 80 },
+        { title: "Purchase Rate", dataIndx: "PurchaseRate", width: 60, hidden: true },
+        { title: "Current Stock", dataIndx: "CurrentQty", width: 90, dataType: "double", editable: false, hidden: true },
+    ];
+    dataMItemList = {
+        location: 'local',
+        sorting: 'local',
+        paging: 'local',
+        dataType: 'JSON'
+    };
+    setItemList = {
+        width: "auto", //auto width
+        height: "100%-30", //height in %age
+        selectionModel: { type: 'cell' },
+        autoSizeInterval: 0,
+        scrollModel: { autoFit: true },
+        dragColumns: { enabled: false },
+        hoverMode: 'cell',
+        editor: { type: 'textbox' },
+        filterModel: { on: true, mode: "AND", header: true },
+        showTop: false,
+        resizable: true,
+        virtualX: true,
+        colModel: colItemList,
+        dataModel: dataMItemList,
+        toggle: function(evt, ui) {
+            if (ui.state == 'max') {
+                $(".ui-dialog,.ui-widget-overlay").css('position', 'static');
+            } else {
+                $(".ui-dialog,.ui-widget-overlay").css('position', 'absolute');
+            }
+        },
+        pageModel: { type: "local", rPP: 20 }
+    };
+    $ItemListGrid = $("#Itemgrid").pqGrid(setItemList);
+
+
+    $('#btnAddItem')
+        .on('click',
+            function() {
+                if ($("#ddlProject").val() === "") {
+                    ShowAlert("error", "Please Select Project");
+                    return;
+                }
+                var searchStoreId = $("#ddlProject").val();
+                $("#ItemModal")
+                    .dialog({
+                        height: 500,
+                        width: 700,
+                        modal: true,
+                        open: function(evt, ui) {
+                            $.ajax({
+                                type: "GET",
+                                url: "/ItemMaster/GetItemsforclientbilling/",
+                                data: { StoreId: searchStoreId },
+                                datatype: "Json",
+                                beforeSend: function() {
+                                    $ItemListGrid.pqGrid("showLoading");
+                                },
+                                complete: function() {
+                                    $ItemListGrid.pqGrid("hideLoading");
+                                },
+                                success: function (data) {
+                                    if (data.success) {
+                                        $ItemListGrid.pqGrid("hideLoading");
+                                        $ItemListGrid.pqGrid("option", "dataModel.data", data.items);
+                                        $ItemListGrid.pqGrid("refreshDataAndView");
+                                    } else {
+                                        ClearParamGrid('Itemgrid');
+                                        ShowAlert("error", data.Messsage);
+                                        return;
+                                    }
+                                },
+                                error: function (request, status, error) {
+                                    ClearParamGrid('Itemgrid');
+                                    $ItemListGrid.pqGrid("hideLoading");
+                                    ShowAlert("error", "Server error! Please Contact Administrator");
+                                    return;
+                                }
+                            });
+                        },
+                        close: function(event, ui) {
+                        },
+                        show: {
+                            effect: "blind",
+                            duration: 500
+                        }
+                    });
+
+            });
+
+    function getRowIndx() {
+        var arr = $("#ClientBillGrid").pqGrid('selection', { type: 'row', method: 'getSelection' });
+        if (arr && arr.length > 0) {
+            return arr[0].rowIndx;
+        } else {
+            ShowAlert("error", "Select a row.");
+            return null;
+        }
+    }
+
+    $('#btnRemoveItem')
+        .on('click',
+            function() {
+                var rowIndx = getRowIndx();
+                if (rowIndx == null) {
+                    return;
+                }
+                $("#ClientBillGrid").pqGrid("deleteRow", { rowIndx: rowIndx });
+            });
+
+    //BTN FROM GRIDS ITEM
+    $('#btnAddItems').on('click',
+            function() {
+                ClosePopupWindow("ItemModal");
+                $("#Itemgrid").pqGrid("reset", { filter: true });
+                var getData = $("#Itemgrid").pqGrid("option", "dataModel.data");
+                var selectedItems = jLinq.from(getData).equals("state", true).select();
+                var dataMGrid = [];
+                var getMainGridData = $billingitemgrid.pqGrid("option", "dataModel.data");
+                $.each(getMainGridData,
+                    function (key, value) {
+                        var grdData = {
+                            'ItemId': value.ItemId,
+                            'ItemName': value.ItemName,
+                            'state': true,
+                            'Qty': value.Qty,
+                            'Amount': value.Amount, 'TaxableVal': value.TaxableVal, 'Taxes': value.Taxes, 'TaxRates': value.TaxRates,
+                            'SGST': value.SGST, 'SGSTAmt': value.SGSTAmt,
+                            'CGST': value.CGST, 'CGSTAmt': value.CGSTAmt,
+                            'IGST': value.IGST, 'IGSTAmt': value.IGSTAmt,
+                            'UGST': value.UGST, 'UGSTAmt': value.UGSTAmt,
+                            'TaxAmount': value.TaxAmount, 'Discount': value.Discount, 'DiscountPer': value.DiscountPer
+                        };
+                        dataMGrid.push(grdData);
+                    });
+
+                $.each(selectedItems,
+                    function(key, value) {
+                       var grdData = {
+                            'ItemId': value.ID,
+                            'ItemName': value.Name,
+                            'state': true,
+                            'Qty': 0,
+                            'Amount': 0, 'TaxableVal': 0, 'Taxes':0, 'TaxRates': 0,
+                            'SGST':0, 'SGSTAmt':0,
+                            'CGST':0, 'CGSTAmt':0,
+                            'IGST': 0, 'IGSTAmt':0,
+                            'UGST':0, 'UGSTAmt':0,
+                            'TaxAmount': 0, 'Discount': 0, 'DiscountPer': 0
+                        };
+                        dataMGrid.push(grdData);
+                    });
+                $billingitemgrid.pqGrid("option", "dataModel.data", dataMGrid);
+                $billingitemgrid.pqGrid("refreshDataAndView");
+            });
+    $("#btnSave").click(function () {
+        var item = $billingitemgrid.pqGrid("option", "dataModel.data");
+        var chkdate = 0, chkqty = 0, chkrate = 0;
+        $.each(item, function (key, value) {
+                if (value.Qty === "" || value.Qty == undefined) chkqty++;
+                if (value.Rate === "" || value.Rate == undefined) chkrate++;
+            });
+        if (chkrate > 0) {
+            ShowAlert("error", "Enter Rate for item");
+            return;
+        }
+        if (chkqty > 0) {
+            ShowAlert("error", "Enter Quantity for item");
+            return;
+        }
+        var items = JSON.stringify({
+            ClientBillId: $("#ClientBillId").val(),
+            BranchId: $("#ddlProject").val(),
+            BillDate: $("#BillDate").val(),
+            StanderdDis: $("#StanderdDis").val(),
+            GrossAmt: $("#GrossAmt").val(),
+            NetAmt: $("#NetAmt").val(),
+            Sgst: $("#Sgst").val(),
+            Cgst: $("#Cgst").val(),
+            Igst: $("#Igst").val(),
+            Ugst: $("#Ugst").val(),
+            ClientId: $("#ddlClient").val(),
+            ConsigneeId: $("#ddlConsignee").val(),
+            DueDate: $("#DueDate").val(),//.data('date'),
+            ClientPONo: $("#ClientPONo").val(),
+            Remark: $("#Remark").val(),
+            RoundOffAmt: $("#RoundOffAmt").val(),
+            ClientBillingDt: item
+        });
+        $.ajax({
+            type: "POST", //HTTP POST Method
+            traditional: true,
+            contentType: 'application/json; charset=utf-8',
+            url: '/ClientBilling/CreateClientBill', // Controller/Action
+            data: items,
+            success: function (msg) {
+                if (msg.success) {
+                    ShowAlert("success", "Bill No : " + msg.billNo);
+                    ClearForm();
+                }
+                else {
+                    ShowAlert("error", msg.Message);
+                    ClearForm();
+                }
+            }
+        });
+    });
+    $('#BillNo').on('click', function () {
+        if ($("#ddlProject").val() === "" || $("#ddlProject").val() == undefined) {
+            ShowAlert("error", "Please Select Project");
+            return;
+        }
+
+        LoadBilNogrid();
+    });
+    function LoadBilNogrid() {
+        var branchId = $("#ddlProject").val();
+        if (branchId == undefined || branchId === "") branchId = 0;
+        $("#BillNoModal").dialog({
+            height: 500,
+            width: 700,
+            modal: true,
+            open: function (evt, ui) {
+                $.ajax({
+                    url: "/ClientBilling/GetClienBillNo",
+                    cache: false,
+                    async: true,
+                    method: "GET",
+                    dataType: "JSON",
+                    data: { branchId: branchId },
+                    success: function (response) {
+                        if (response.success) {
+                            $("#BillNoGrid").pqGrid("option", "dataModel.data", response.records);
+                            $("#BillNoGrid").pqGrid("refreshDataAndView");
+                        } else {
+                            ClearParamGrid('BillNoGrid');
+                            ShowAlert("error", response.Messsage);
+                            return;
+                        }
+                    },
+                    error: function () {
+                        ClearParamGrid('BillNoGrid');
+                        ShowAlert("error", "Server error! Please Contact Administrator");
+                        return;
+                    }
+                });
+            },
+            close: function (event, ui) {
+            },
+            show: {
+                effect: "blind",
+                duration: 500
+            }
+        });
+    }
+
+    databill = { location: 'local', sorting: 'local', paging: 'local', dataType: 'JSON' };
+    colbill = [
+         { title: "Bill No", dataIndx: "BillNo", width: 150, dataType: "string", editable: false },
+    ];
+
+    setbillNogrid = {
+        width: "auto", //auto width
+        height: "100%-30", //height in %age
+        sortable: false,
+        numberCell: { show: true },
+        selectionModel: { type: 'row' },
+        hoverMode: 'cell',
+        editor: { type: 'textbox' },
+        showTop: true,
+        resizable: true,
+        virtualX: true,
+        virtualY: true,
+        editModel: {
+            saveKey: $.ui.keyCode.ENTER
+        },
+        draggable: false,
+        colModel: colbill,
+        dataModel: databill,
+        pageModel: { type: "local", rPP: 50 },
+        rowClick: function (evt, ui) {
+            ClosePopupWindow("BillNoModal");
+               if (ui.rowData) {
+                var rowIndx = parseInt(ui.rowIndx);
+                var record = ui.rowData;
+                $("#GrossAmt").val(record.GrossAmt);
+                $("#StanderdDis").val(record.StanderdDis);
+                $("#RoundOffAmt").val(record.RoundOffAmt);
+                $("#NetAmt").val(record.NetAmt);
+                $("#Sgst").val(record.Sgst);
+                $("#Cgst").val(record.Cgst);
+                $("#Igst").val(record.Igst);
+                $("#Ugst").val(record.Ugst);
+                $("#BillNo").val(record.BillNo);
+                $("#BillDate").val(record.StrBillDate);
+                $.ajax({
+                    type: "GET",
+                    url: "/ClientBilling/GetClienBilldeatailById",
+                    data: { clientBillId: record.ClientBillId },
+                    datatype: "Json",
+                    async: true,
+                    success: function (response) {
+                        $billingitemgrid.pqGrid("option", "dataModel.data", response);
+                        $billingitemgrid.pqGrid("refreshDataAndView");
+
+                    }
+                });
+            }
+        }
+      
+    };
+    $billNogrid = $("#BillNoGrid").pqGrid(setbillNogrid);
+
+    var databillingitem = { location: 'local', sorting: 'local', paging: 'local', dataType: 'JSON' };
+    var colbillingitem = [
+       
+
+        {
+            title: "Order Date", dataIndx: "OrderDate", width: 90, editable: true, dataType: 'date', format: 'dd-MM-yy',
+            editor: { type: dateEditor },hidden: true, 
+            validations: [{ type: 'regexp', value: '[0-9]{2}/[0-9]{2}/[0-9]{4}', msg: 'Not in dd-MM-yy format' }]
+        },
+        { title: "", dataIndx: "ItemId", width: 10, dataType: "integer", hidden: true },
+        { title: "Service Name", dataIndx: "ItemName", width: 200, dataType: "string", editable: false },
+        { title: "Rate", dataIndx: "Rate", width: 100, dataType: "double", hidden: false },
+        { title: "Qty", dataIndx: "Qty", width: 80, hidden: false },
+        {
+            title: "Amount", dataIndx: "Amount", width: 100, dataType: "double", hidden: false,editable: false,
+            format: 'Rs ###############.00',
+            formula: function (ui) {
+                var rd = ui.rowData;
+                return rd["Rate"] * rd["Qty"];
+            }
+        },
+        { title: "Discount %", dataIndx: "DiscountPer", width: 100, dataType: "double", hidden: false },
+        {
+        title: "Discount", dataIndx: "Discount", width: 100, dataType: "double", hidden: false, editable: false,
+            formula: function (ui) {
+                var rd = ui.rowData;
+                var Amt = parseFloat(rd.Amount);
+                var Dcnt = parseFloat(rd.DiscountPer);
+                if (Dcnt === null || Dcnt === undefined || Dcnt === "") Dcnt = 0;
+                var disAmt = Amt * (Dcnt / 100);
+                return  disAmt;
+
+            }
+        },
+        {
+            title: "TaxableVal", dataIndx: "TaxableVal", editable: true, minWidth: 90, sortable: false, hidden: true,
+            formula: function (ui) {
+                var rd = ui.rowData;
+                var Amt = parseFloat(rd.Amount);
+                var Dcnt = parseFloat(rd.Discount);
+                if (Dcnt === null || Dcnt === undefined || Dcnt === "") Dcnt = 0;
+                return Amt - Dcnt;
+
+            }
+        },
+        { title: "Taxes", dataIndx: "Taxes", width: 90, dataType: "string", editable: true, hidden: true },
+        { title: "TaxRates", dataIndx: "TaxRates", editable: true, minWidth: 90, sortable: false, hidden: true },
+        {
+            title: "Tax", editable: false, minWidth: 80, sortable: false, listeners: [{ click: editRow }], render: function (ui) {
+                return "<button type='button' class='edit_btn'>Tax</button>";
+            },
+            postRender: function (ui) {
+                var rowIndx = ui.rowIndx,
+                    grid = this,
+                    $cell = grid.getCell(ui);
+
+                $cell.find(".edit_btn").button({ icons: { primary: 'ui-icon-pencil' } })
+                .bind("click", function (evt) {
+                    editRow(rowIndx, grid, true);
+                });
+            }
+        },
+          { title: "SGST", dataIndx: "SGST", width: 80, dataType: "double", align: "left", hidden: true },
+          { title: "CGST", dataIndx: "CGST", width: 80, dataType: "double", align: "left", hidden: true },
+          { title: "IGST", dataIndx: "IGST", width: 80, dataType: "double", align: "left", hidden: true },
+          { title: "UGST", dataIndx: "UGST", width: 90, dataType: "double", align: "left", hidden: true },
+          {
+              title: "SGST", dataIndx: "SGSTAmt", width: 80, dataType: "double", align: "left", format: '##,###.00',
+              formula: function (ui) {
+                  var rd = ui.rowData;
+                  var amount = rd.TaxableVal, sgstAmt = 0, sgstPer = rd.SGST;
+                  if (amount == undefined) amount = 0;
+                  if (sgstPer == undefined) sgstPer = 0;
+                  sgstAmt = amount * (sgstPer / 100);
+                  return sgstAmt;
+              }
+          },
+            {
+                title: "CGST", dataIndx: "CGSTAmt", width: 80, dataType: "double", align: "left", format: '##,###.00',
+                formula: function (ui) {
+                    var rd = ui.rowData;
+                    var amount = rd.TaxableVal, cgstAmt = 0, cgstPer = rd.CGST;
+                    if (amount == undefined) amount = 0;
+                    if (cgstPer == undefined) cgstPer = 0;
+                    cgstAmt = amount * (cgstPer / 100);
+                    return cgstAmt;
+                }
+            },
+            {
+                title: "IGST", dataIndx: "IGSTAmt", width: 80, dataType: "double", align: "left", format: '##,###.00',
+                formula: function (ui) {
+                    var rd = ui.rowData;
+                    var amount = rd.TaxableVal, igstAmt = 0, igstPer = rd.IGST;
+                    if (amount == undefined) amount = 0;
+                    if (igstPer == undefined) igstPer = 0;
+                    igstAmt = amount * (igstPer / 100);
+                    return igstAmt;
+                }
+            },
+                {
+                    title: "UGST", dataIndx: "UGSTAmt", width: 80, dataType: "double", align: "left", format: '##,###.00',
+                    formula: function (ui) {
+                        var rd = ui.rowData;
+                        var amount = rd.TaxableVal, ugstAmt = 0, ugstPer = rd.UGST;
+                        if (amount == undefined) amount = 0;
+                        if (ugstPer == undefined) ugstPer = 0;
+                        ugstAmt = amount * (ugstPer / 100);
+                        return ugstAmt;
+                    }
+                },
+        {
+            title: "Tax Amount", dataIndx: "TaxAmount", minWidth: 120, dataType: "float", align: "left",
+            format: '##,###.00',
+            editable: false,
+            formula: function (ui) {
+                var rd = ui.rowData;
+                var amount = rd.TaxableVal;
+                if (amount == undefined) amount = 0;
+                var taxper = rd.TaxRates;
+                if (taxper == undefined) taxper = 0;
+                return amount * taxper / 100;
+            }
+        },
+      
+      
+    ];
+    setbillingitemgrid = {
+        height: '300',
+        maxheight: '400',
+        sortable: false,
+        numberCell: { show: true },
+        selectionModel: { type: 'row' },
+        hoverMode: 'cell',
+        editor: { type: 'textbox' },
+        showTop: true,
+        resizable: true,
+        virtualX: true,
+        virtualY: true,
+        editModel: {
+            saveKey: $.ui.keyCode.ENTER
+        },
+        draggable: false,
+        colModel: colbillingitem,
+        dataModel: databillingitem,
+        pageModel: { type: "local", rPP: 50 },
+        cellSave: function (evt, ui) {
+            this.refreshRow(ui);
+            CalculateTotalAmount();
+        },
+        postRenderInterval: -1
+
+    };
+    $("#popup-dialog-crud").dialog({
+        width: 400, modal: true,
+        open: function () { $(".ui-dialog").position({ of: "#grid" }); },
+        autoOpen: false
+    });
+    $billingitemgrid = $("#ClientBillGrid").pqGrid(setbillingitemgrid);
+    /********---------tax function-----------******************/
+    function editRow(rowIndx, grid, edit, ctx) {
+        if (rowIndx != null) {
+            var row = $("#ClientBillGrid").pqGrid('getRowData', { rowIndx: rowIndx });
+            LoadTaxgrid();
+            //ShowTaxPoup();
+            $("#popup-dialog-crud").dialog({
+                height: 400,
+                width: 450,
+                modal: true,
+                title: "Get Tax For (" + (row.ItemName) + ")", buttons: {
+                Update: function () {
+                    var getData = $("#Taxgrid").pqGrid("option", "dataModel.data");
+                    var selectedItems = jLinq.from(getData).equals("state", true).select();
+                    var totalTax = 0;
+                    var TaxIds = [];
+                    $.each(selectedItems, function (key, value) {
+                        totalTax = totalTax + value.Tax_percentage;
+                        TaxIds.push(value.Taxid);
+                    });
+                    var sgst = 0, cgst = 0, igst = 0, ugst = 0;
+                    $.each(selectedItems, function (_, item) {
+                        if (item.Tax_name === 'SGST') {
+                            sgst += parseFloat(item.Tax_percentage);
+                        }
+                        if (item.Tax_name === 'CGST') {
+                            cgst += parseFloat(item.Tax_percentage);
+                        }
+                        if (item.Tax_name === 'IGST') {
+                            igst += parseFloat(item.Tax_percentage);
+                        }
+                        if (item.Tax_name === 'UGST') {
+                            ugst += parseFloat(item.Tax_percentage);
+                        }
+
+                    });
+                    $("#ClientBillGrid").pqGrid('updateRow', { rowIndx: rowIndx, newRow: { 'TaxRates': totalTax, 'Taxes': TaxIds, 'SGST': sgst, 'CGST': cgst, 'IGST': igst, 'UGST': ugst } });
+                    $("#ClientBillGrid").pqGrid("refreshRow", { rowIndx: rowIndx });
+                    $(this).dialog("destroy");
+                    CalculateTotalAmount();
+                },
+                Cancel: function () {
+                    $(this).dialog("destroy");
+                }
+          }
+            }).dialog("open");
+        }
+
+    }
+    /*------------------tax grid----------------*/
+    $(document).ready(function () {
+        var packsizes = ["", ""];
+        var dataTaxM = { location: "local", sorting: 'local' }
+        var colTaxM = [
+            {
+                dataIndx: "state", Width: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                editor: false, dataType: 'bool',
+                cb: { select: true, all: false, header: true }
+            },
+            { title: "", dataIndx: "Taxid", dataType: "integer", hidden: true },
+            { title: "Code", dataIndx: "Tax_Code", width: 50, editable: false },
+            { title: "Name", dataIndx: "Tax_name", width: 160, editable: false },
+            { title: "Tax Type", dataIndx: "Tax_Type", width: 50, hidden: true },
+            { title: "Percentage", dataIndx: "Tax_percentage", width: 120, editable: false },
+            { title: "Formula", dataIndx: "Formula", width: 350, editable: false },
+            { title: "Tax", dataIndx: "Tax_EncExc", width: 100, editable: false, hidden: true },
+            { title: "Taxes", dataIndx: "Taxes", hidden: true }
+   
+        ];
+        var taxM = {
+            width: 400,
+            height: 400,
+            sortable: false,
+            numberCell: { show: false },
+            hoverMode: 'cell',
+            showTop: false,
+            resizable: true,
+            scrollModel: { autoFit: true },
+            draggable: false,
+            wrap: false,
+            editable: true,
+            columnBorders: true,
+            selectionModel: { type: 'row' },
+            colModel: colTaxM,
+            dataModel: dataTaxM,
+            pageModel: { type: "local", rPP: 20 }
+        };
+         $Taxgrid = $("#Taxgrid").pqGrid(taxM);
+       // ShowTaxPoup();
+    });
+    $("#RoundOffAmt").keyup(function () {
+        CalculateTotalAmount();
+    });
+    function CalculateTotalAmount() {
+        var getData = $billingitemgrid.pqGrid("option", "dataModel.data");
+        var grossAmt = 0, stddiscount = 0, rndoffAmt, netAmt = 0, sgstAmt = 0, cgstAmt = 0, ugstAmt = 0, igstAmt = 0;
+        $.each(getData, function (_, item) {
+            if (!isNaN(item.TaxableVal) && item.TaxableVal != null)
+                grossAmt += parseFloat(item.TaxableVal);
+
+           if (!isNaN(item.Discount) && item.Discount != null)
+               stddiscount += parseFloat(item.Discount);
+
+           if (!isNaN(item.SGSTAmt) && item.SGSTAmt != null)
+               sgstAmt += parseFloat(item.SGSTAmt);
+            /**********************************************/
+           if (!isNaN(item.CGSTAmt) && item.CGSTAmt != null)
+               cgstAmt += parseFloat(item.CGSTAmt);
+
+           if (!isNaN(item.IGSTAmt) && item.IGSTAmt != null)
+               igstAmt += parseFloat(item.IGSTAmt);
+           if (!isNaN(item.UGSTAmt) && item.UGSTAmt != null)
+               ugstAmt += parseFloat(item.UGSTAmt);
+        });
+        $("#GrossAmt").val(grossAmt.toFixed(2));
+        $("#StanderdDis").val(stddiscount.toFixed(2));
+        
+        if (rndoffAmt == undefined) rndoffAmt = 0;
+        netAmt = grossAmt - rndoffAmt - stddiscount + sgstAmt + cgstAmt + igstAmt + ugstAmt;
+        $("#NetAmt").val(netAmt.toFixed(2));
+        $("#RoundOffAmt").val(netAmt.toFixed(0));
+
+        $("#Sgst").val(sgstAmt.toFixed(2));
+        $("#Cgst").val(cgstAmt.toFixed(2));
+        $("#Igst").val(igstAmt.toFixed(2));
+        $("#Ugst").val(ugstAmt.toFixed(2));
+    }
+    function ShowTaxAmount() {
+        var tax = $("#Taxgrid").pqGrid("option", "dataModel.data");
+        var selectedItems = jLinq.from(tax).equals("state", true).select();
+        var sgst = 0, cgst = 0, igst = 0, ugst = 0;
+        $.each(selectedItems, function (_, item) {
+            if (item.Tax_name === 'SGST') {
+                sgst += parseFloat(item.Tax_percentage);
+            }
+            if (item.Tax_name === 'CGST') {
+                cgst += parseFloat(item.Tax_percentage);
+            }
+            if (item.Tax_name === 'IGST') {
+                igst += parseFloat(item.Tax_percentage);
+            }
+            if (item.Tax_name === 'UGST') {
+                ugst += parseFloat(item.Tax_percentage);
+            }
+
+        });
+        $("#Sgst").val(sgst);
+        $("#Cgst").val(cgst);
+        $("#Igst").val(igst);
+        $("#Ugst").val(ugst);
+    }
+
+    function ClearForm() {
+        //$("#ScheduleId").val("");
+        $("#BillNo").val("");
+        $("#ClientBillId").val("");
+        ClearParamGrid("ClientBillGrid");
+        $("#GrossAmt").val("");
+        $("#StanderdDis").val("");
+        $("#RoundOffAmt").val("");
+        $("#NetAmt").val("");
+        $("#Sgst").val("");
+        $("#Cgst").val("");
+        $("#Igst").val("");
+        $("#Ugst").val("");
+        $("#ddlProject").val("");
+        $("#ddlConsignee").val("");
+        $("#ddlClient").val("");
+        $("#ClientPONo").val("");
+        $("#BillDate").datepicker().datepicker("setDate", new Date());
+
+
+    }
+
+    $("#btnReset")
+        .click(function () {
+            ClearForm();
+        });
+    //*-****************payment term area********************/
+   
+    $(document).ready(function () {
+        var dataPayM = { location: "local" }
+        var colPayM = [
+            {
+                dataIndx: "State", Width: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                editor: false, dataType: 'bool',
+                cb: { select: true, all: false, header: true }
+            },
+            { title: "", dataIndx: "TermID", dataType: "integer", hidden: true },
+            {
+                title: "Code", dataIndx: "PaymentTermCode", width: 150, editable: false,
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            },
+            {
+                title: "Name", dataIndx: "PaymentTermDesc", width: 450, editable: false,
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+
+            }
+        ];
+        var DelM = {
+            width: '100%',
+            height: 400,
+            sortable: false,
+            numberCell: { show: false },
+            hoverMode: 'cell',
+            showTop: false,
+            resizable: true,
+            scrollModel: { autoFit: true },
+            draggable: false,
+            wrap: false,
+            columnBorders: true,
+            filterModel: { on: true, mode: "AND", header: true },
+            selectionModel: { type: 'none', subtype: 'incr', cbHeader: true, cbAll: true },
+            colModel: colPayM,
+            dataModel: dataPayM,
+            pageModel: { type: "local", rPP: 20 },
+            virtualX: true,
+            virtualY: true,
+            cellSave: function (evt, ui) {
+                this.refreshRow(ui);
+            },
+            check: function (event, ui) {
+                getCheckPaymentTerm(ui, "SearchPaymentTermgrid");
+            }
+        };
+        $SearchPaymentTermgrid = $("#SearchPaymentTermgrid").pqGrid(DelM);
+
+        function getCheckPaymentTerm(ui, gridName) {
+            if (ui.rowData) {
+                var details = ui.rowData;
+                var dataMGrid = [];
+                $.ajax({
+                    type: "GET",
+                    url: "/PaymentTermMaster/GetPaymentTermSession",
+                    datatype: "Json",
+                    async: false,
+                    data: { paymenttemId: details.TermID, state: details.State },
+                    success: function (data) {
+                        $.each(data, function (key, value) {
+                            var grdData = {
+                                'State': value.State, 'TermID': value.TermID, 'PaymentTermCode': value.PaymentTermCode, 'PaymentTermDesc': value.PaymentTermDesc
+                            };
+                            dataMGrid.push(grdData);
+                        });
+                    }
+                });
+                var gr = $("#" + gridName);
+                gr.pqGrid("option", "dataModel.data", dataMGrid);
+                gr.pqGrid("refreshDataAndView");
+            }
+        }
+    });
+
+    $('#btnViewPayTerms').on('click', function () {
+        LoadSearchPaymentTermgrid();
+    });//btnAddPaymentTerm
+    $('#btnAddPaymentTerm').on('click', function () {
+        ClosePopupWindow("PaymentItemModal");
+    });
+    function LoadSearchPaymentTermgrid() {
+        $("#PaymentItemModal").dialog({
+            height: 500,
+            width: 700,
+            modal: true,
+            open: function (evt, ui) {
+                $.ajax({
+                    type: "GET",
+                    data: { paymenttemId: 0, state: false },
+                    url: "/PaymentTermMaster/GetPaymentTermSession",
+                    datatype: "Json",
+                    success: function (data) {
+                        $SearchPaymentTermgrid.pqGrid("option", "dataModel.data", data);
+                        $SearchPaymentTermgrid.pqGrid("refreshDataAndView");
+                    },
+                    error:function(jg)
+                    {
+                    }
+                });
+            }
+
+        });
+    }
+</script>

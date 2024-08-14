@@ -1,0 +1,123 @@
+﻿@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <fieldset>
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-groupingBoder">
+                    <div class="panel-heading">
+                        <div class="panel-title">
+                            Inspection Details
+                        </div>
+                    </div>
+                    <div class="panel-collapse collapse in" aria-expanded="true" id="SearchDetails">
+                        <div class="panel-body">
+                            <div class="container fill">
+                                <div id="grid"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+}
+
+<script type="text/javascript">
+    var grid;
+
+    $(document).ready(function () {
+        grid = $("#grid").jsGrid({
+            width: "100%",
+            height: "400px",
+           filtering: true, //will display top 1st row as filter
+            selecting: true,
+
+            inserting: true, // false will not allow inserting new entry
+            editing: true,// false will not allow exisiting data entry
+            sorting: true,
+            autoload: true, // this statement require to load data using ajax call
+            paging: true,
+            pageSize: 20,
+
+            controller: {
+                loadData: function (filter) {
+                    var d = $.Deferred();
+                    $.ajax({
+                        type: 'GET',
+                        @*url: '@Url.Action("AllOtherTerm", "OtherTermMaster")',*@
+                        url: "/OtherTermMaster/AllInspectionTerm",
+                        dataType: "json",
+                        data: { SearchName: filter.InspectionDesc, Searchcode: filter.InspectionCode },
+                        success: function (data) {
+                            if (data.success) {
+                                d.resolve(data.records);
+                            } else {
+                                ShowAlert("error", data.message);
+                                $(".jsgrid-load-panel").hide();
+                            }
+                        },
+                        error: function () {
+                            ShowAlert("error", "Server Error! Please Contact administrator!");
+                        }
+                    });
+                    return d.promise();
+                },
+                insertItem: function (item) {
+                    var d = $.Deferred();
+                    $.ajax(
+                    {
+                        type: "POST", //HTTP POST Method
+                        dataType: "json",
+                        url: '/OtherTermMaster/SaveInspectionmatser', // Controller/View
+                        data: item,
+                        success: function (msg) {
+                            if (msg.success) {
+                                ShowAlert("success", "Inspection Matser added successfully.");
+                                return;
+                            } else {
+                                ShowAlert("error", msg.Message);
+                                return;
+                            }
+                        }
+                    }).done(function (insertedItem) {
+                        d.resolve(insertedItem.data);
+                        $("#grid").jsGrid("loadData");
+                        });
+                    return d.promise();
+                },
+                updateItem: function (item) {
+                    var d = $.Deferred();
+                    $.ajax(
+                    {
+                        type: "POST", //HTTP POST Method
+                        dataType: "json",
+                        url: '/OtherTermMaster/SaveInspectionmatser', // Controller/View
+                        data: item,
+                        success: function (msg) {
+                            if (msg.success) {
+                                ShowAlert("success", "Inspection Matser updated successfully.");
+                            } else {
+                                ShowAlert("error", msg.Message);
+                            }
+                        }
+                    }).done(function (insertedItem) {
+                        d.resolve(insertedItem.data);
+                        $("#grid").jsGrid("loadData");
+                    });
+                    return d.promise();
+                }
+            },
+            fields: [
+                { name: "InspectionId", visible: false, width: 0 },
+                { name: "InspectionCode", title: "Code", type: "text", validate: { validator: "required", message: "code is missing! Please enter the code " }, width: 20 },
+                { name: "InspectionDesc", title: "Description", type: "textarea", validate: { validator: "required", message: "Description is missing! Please enter the Description " } },
+                { name: "Deactive", title: "Deactive", type: "checkbox", filtering: false, width: 10, inserting: false },
+                { type: "control", deleteButton: false, width: 10 }
+            ]
+
+
+        });
+    });
+
+</script>

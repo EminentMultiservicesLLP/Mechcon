@@ -1,0 +1,800 @@
+﻿@model BISERP.Areas.Asset.Models.AssetLocationModel
+@Scripts.Render("~/bundles/jquerymodels")
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        Entry Form
+                    </div>
+                </div>
+                <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <fieldset>
+                            <legend></legend>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                                    <a data-toggle="collapse" class="btn btn-success" id="btnAdd">Reset</a>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.BranchId, new { @class = "required" })
+                                        @Html.DropDownList("ddlBranch", new SelectList(string.Empty, "Value", "Text"), "-- Select from List --", new { @class = "form-control" })
+                                        @Html.HiddenFor(m => m.AssetLocationId)
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.AssetCode, new { @class = "required" })
+                                        @Html.TextBoxFor(m => m.AssetCode, "", new { @class = "form-control" })
+                                        @Html.HiddenFor(m => m.AssetId)
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.ItemName)
+                                        @Html.TextBoxFor(m => m.ItemName, "", new { @class = "form-control", @readonly = "true" })
+                                        @Html.Hidden("ItemId")
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.SerialNo)
+                                        @Html.TextBoxFor(m => m.SerialNo, "", new { @class = "form-control", @readonly = "true" })
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.ModelNo)
+                                        @Html.TextBoxFor(m => m.ModelNo, "", new { @class = "form-control", @readonly = "true" })
+                                    </div>
+                                </div>
+                                @*<div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.Manufacturer)
+                                        @Html.TextBoxFor(m => m.Manufacturer, "", new { @class = "form-control", @readonly = "true" })
+                                    </div>
+                                </div>*@                                
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.SupplierName)
+                                        @Html.TextBoxFor(m => m.SupplierName, "", new { @class = "form-control", @readonly = "true" })
+                                        @Html.Hidden("SupplierId")
+                                    </div>
+                                </div>    
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.AssetTypeId, new { @class = "required" })
+                                        @Html.DropDownList("ddlAssetType", new SelectList(string.Empty, "Value", "Text"), "-- Select from List --", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.AssetSubTypeId)
+                                        @Html.DropDownList("ddlAssetSubType", new SelectList(string.Empty, "Value", "Text"), "-- Select from List --", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.LocationId, new { @class = "required" })
+                                        @Html.DropDownList("ddlloc", new SelectList(string.Empty, "Value", "Text"), "-- Select from List --", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.FloorId, new { @class = "required" })
+                                        @Html.DropDownList("ddlFloor", new SelectList(string.Empty, "Value", "Text"), "-- Select from List --", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.RoomId, new { @class = "required" })
+                                        @Html.DropDownList("ddlRoom", new SelectList(string.Empty, "Value", "Text"), "-- Select from List --", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-6">
+                                        @Html.LabelFor(m => m.Description)
+                                        @Html.TextAreaFor(m => m.Description, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-2">
+                                        @Html.CheckBoxFor(m => m.PermanentDeactive)
+                                        &nbsp;&nbsp;
+                                        @Html.LabelFor(m => m.PermanentDeactive)
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <fieldset>
+                            <div class="row">                                
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.LegacyPONo)
+                                        @Html.TextBoxFor(m => m.LegacyPONo, "", new { @class = "form-control" })
+                                        @Html.Hidden("POId")
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.Label("PO Date")
+                                        @Html.TextBox("PODate", "", new { @class = "form-control", @readonly = "true" })
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">                        
+                        <fieldset>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-1">
+                                        @Html.CheckBoxFor(m => m.IsWarranty)
+                                        &nbsp;&nbsp;
+                                        @Html.LabelFor(m => m.IsWarranty)
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.WarrantyStart)
+                                        <div class='input-group date' id='WarrantyStart'>
+                                            <input type='text' class="form-control" />
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.WarrantyExpire)
+                                        <div class='input-group date' id='WarrantyExpire'>
+                                            <input type='text' class="form-control" />
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-1">
+                                        @Html.CheckBoxFor(m => m.IsFreeService)
+                                        @Html.LabelFor(m => m.IsFreeService)
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m =>m.FreeServiceStartDate)
+                                        <div class='input-group date' id='FreeServiceStartDate'>
+                                            <input type='text' class="form-control" />
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.FreeServiceEndDate)
+                                        <div class='input-group date' id='FreeServiceEndDate'>
+                                            <input type='text' class="form-control" />
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <fieldset>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    @Html.Label("Upload")
+                                    <div>
+                                        <input type='file' id="files" multiple="multiple" />
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <ul id="displayImages" class="attachment" style="max-height: 150px; overflow-y: scroll;"></ul>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div title="Select Items" id="ItemModal" style="display: none;">
+        <div id="Itemgrid"></div>
+    </div>
+    <div id="AssetModal" title="Select Asset" style="display: none;">
+        <div id="Assetgrid"></div>
+    </div>
+      <div id="PoModal" title="Select Items" style="display: none;">
+          <div id="Pogrid"></div>
+    </div>
+    <script type="text/javascript">
+        var appSetting = '@BISERP.Common.Constants.ScandocUrl';
+        $(function () {
+            $('#WarrantyStart').datetimepicker({
+                format: 'DD-MMM-YYYY',
+                extraFormats: ['DD-MM-YYYY', 'DD-MM-YY'],
+                defaultDate: new Date()
+            });
+            $('#WarrantyExpire').datetimepicker({
+                format: 'DD-MMM-YYYY',
+                extraFormats: ['DD-MM-YYYY', 'DD-MM-YY'],
+                defaultDate: new Date()
+            });
+            $('#FreeServiceStartDate').datetimepicker({
+                format: 'DD-MMM-YYYY',
+                extraFormats: ['DD-MM-YYYY', 'DD-MM-YY'],
+                defaultDate: new Date()
+            });
+            $('#FreeServiceEndDate').datetimepicker({
+                format: 'DD-MMM-YYYY',
+                extraFormats: ['DD-MM-YYYY', 'DD-MM-YY'],
+                defaultDate: new Date()
+            });
+        });
+        var $AssetDetailGrid;
+        var setIID, colIID, dataIID;
+        var colIL, dataIL, setIL;
+        function ClearForm() {
+            $("#ddlBranch").val("");
+            $("#AssetCode").val("");
+            $("#AssetId").val("");
+            $("#ItemName").val("");
+            $("#SerialNo").val("");
+            $("#ModelNo").val("");
+            $("#Manufacturer").val("");
+            $("#SupplierName").val("");
+            $("#ddlAssetType").val("");
+            $("#ddlAssetSubType").html("");
+            $("#ddlFloor").html("");
+            $("#ddlRoom").html("");
+            $("#ddlloc").html("");
+            $("#Description").val("");
+            $("#LegacyPONo").val("");
+            $("#PODate").val("");
+            $("#PermanentDeactive").prop('checked', false);
+            $("#IsWarranty").prop('checked', false);
+            $("#IsFreeService").prop('checked', false);
+
+            ResetDate("WarrantyStart");
+            ResetDate("WarrantyExpire");
+            ResetDate("FreeServiceStartDate");
+            ResetDate("FreeServiceEndDate");
+        }
+
+        function LoadAssetGrid() {
+            var branchId = $("#ddlBranch").val();
+            if (branchId == undefined || branchId === "") branchId = 0;
+            $("#AssetModal").dialog({
+                height: 500,
+                width: 700,
+                modal: true,
+                open: function () {
+                    $.ajax({
+                        url: "/Asset/Asset/GetBranchAsset",
+                        cache: false,
+                        async: true,
+                        method: "GET",
+                        dataType: "JSON",
+                        data: { BranchId: branchId },
+                        success: function (response) {
+                            $("#Assetgrid").pqGrid("option", "dataModel.data", response);
+                            $("#Assetgrid").pqGrid("refreshDataAndView");
+                        }
+                    });
+                },
+                close: function () {
+                },
+                show: {
+                    effect: "blind",
+                    duration: 500
+                }
+            });
+        }
+       
+        function LoadPONoGrid() {
+            
+            var itemId = $("#ItemId").val();
+            $("#PoModal").dialog({
+                height: 500,
+                width: 700,
+                modal: true,
+                open: function () {
+                    $.ajax({
+                        url: "/Asset/AssetLocation/GetPoNoAssetLo",
+                        cache: false,
+                        async: true,
+                        method: "GET",
+                        dataType: "JSON",
+                        data: { ItemId: itemId },
+                        success: function (response) {
+                            $("#Pogrid").pqGrid("option", "dataModel.data", response);
+                            $("#Pogrid").pqGrid("refreshDataAndView");
+                        }
+                    });
+                },
+                close: function () {
+                },
+                show: {
+                    effect: "blind",
+                    duration: 500
+                }
+            });
+        }
+        function FillRoomDropdown() {
+            var floorId = $("#ddlFloor").val();
+            if (floorId.length > 0)
+                $.ajax({
+                    type: "GET",
+                    url: "/RoomMaster/FloorwiseRoom",
+                    data: { FloorId: floorId },
+                    datatype: "Json",
+                    success: function (data) {
+                        $("#ddlRoom").html("");
+                        InsertDefaultSelect($('#ddlRoom'));
+                        $.each(data, function (index, value) {
+                            $('#ddlRoom').append('<option value="' + value.RoomId + '">' + value.RoomName + '</option>');
+                        });
+                    }
+                });
+        }
+        function FillFloorDropdown() {
+          
+            var locationId = $("#ddlloc").val();
+            if (locationId.length > 0)
+                $.ajax({
+                    type: "GET",
+                    url: "/FloorMaster/GetActiveLocationWiseFloor",
+                    data: { LocationId: locationId },
+                    datatype: "Json",
+                    success: function (data) {
+                        $("#ddlFloor").html("");
+                        InsertDefaultSelect($('#ddlFloor'));
+                        $.each(data, function (index, value) {
+                            $('#ddlFloor').append('<option value="' + value.FloorId + '">' + value.FloorName + '</option>');
+                        });
+                    }
+                });
+        }
+
+        function FillAssetSubTypeDropDown() {
+            var assetTypeId = $("#ddlAssetType").val();
+            if (assetTypeId.length > 0)
+                $.ajax({
+                    type: "GET",
+                    url: "/AssetSubType/AllAssetTypewiseSubtype",
+                    data: { AssetTypeId: assetTypeId },
+                    datatype: "Json",
+                    success: function (data) {
+                        $("#ddlAssetSubType").html("");
+                        InsertDefaultSelect($('#ddlAssetSubType'));
+                        $.each(data, function (index, value) {
+                            $('#ddlAssetSubType').append('<option value="' + value.SubTypeId + '">' + value.SubType + '</option>');
+                        });
+                    }
+                });
+        }
+
+        function DisplayUploadedImages(objectName, fileDetail) {
+            var newImageLi = '<li>';
+            newImageLi = newImageLi + '<a class="title" id="' + fileDetail.FileId + '" href= "' + appSetting + fileDetail.FilePath + '" target="_blank"> ' + fileDetail.FileNames + '</a>';
+            newImageLi = newImageLi + '<a href="javascript:void(0);" data-id="' + fileDetail.FileId + '"  class="deleteItem" onclick="Deletefile(' + fileDetail.FileId + ');return false;">X</a>';
+            newImageLi = newImageLi + "</li>";
+
+            $("#" + objectName).append(newImageLi);
+        }
+
+        function Deletefile(fileId) {
+            if (confirm('Do you really want to delete this file?')) {
+                var fileObject = $("#" + fileId);
+                if (fileObject != undefined)
+                    fileObject.parent().remove();
+            }
+        }
+
+        (function ($) {
+            $.ajax({
+                type: "GET",
+                url: "/Master/AllBranches",
+                datatype: "Json",
+                async: true,
+                success: function (data) {
+                    $.each(data, function (index, value) {
+                        $('#ddlBranch').append('<option value="' + value.BranchID + '">' + value.BranchName + '</option>');
+                    });
+                }
+            });
+       
+
+            $.ajax({
+                type: "GET",
+                url: "/AssetTypeMaster/AllActiveAssetType",
+                datatype: "Json",
+                async: true,
+                success: function (data) {
+                    $("#ddlAssetType").html("");
+                    InsertDefaultSelect($('#ddlAssetType'));
+                    $.each(data, function (index, value) {
+                        $('#ddlAssetType').append('<option value="' + value.AssetTypeId + '">' + value.AssetType + '</option>');
+                    });
+                }
+            });
+            $('select#ddlAssetType').change(function () {
+                $('#ddlAssetSubType').html("");
+               InsertDefaultSelect($('#ddlAssetSubType'));
+                FillAssetSubTypeDropDown();
+            });
+
+
+            $('select#ddlBranch')
+                .change(function() {
+                    var branchId = $("#ddlBranch").val();
+                    if (branchId.length > 0)
+                        $.ajax({
+                            type: "GET",
+                            url: "/Location/GetBranchLocation",
+                            datatype: "Json",
+                            async: true,
+                            data: { BranchId: branchId },
+                            success: function(data) {
+                                $("#ddlloc").html("");
+                                InsertDefaultSelect($('#ddlloc'));
+                                $.each(data,
+                                    function(index, value) {
+                                        $('#ddlloc')
+                                            .append('<option value="' +
+                                                value.LocationId +
+                                                '">' +
+                                                value.LocationName +
+                                                '</option>');
+                                    });
+                            }
+                        });
+                });
+            
+            $('select#ddlloc').change(function () {
+                FillFloorDropdown();
+            });
+
+            $('select#ddlFloor').change(function () {
+                FillRoomDropdown();
+            });
+
+            $('#AssetCode').on('click', function () {
+                if ($("#ddlBranch").val() === "" || $("#ddlBranch").val() == undefined) {
+                    ShowAlert("error", "Please Select Branch");
+                    return;
+                }
+                LoadAssetGrid();
+            });
+        })(jQuery);
+        //--pogrid---//
+        colIID = [
+               { title: "", dataIndx: "ID", width: 10, dataType: "integer", hidden: true },
+               { title: "PONO", dataIndx: "PONo", width: 300, dataType: "string", editable: false, align: "left" },
+               { title: "PODate", dataIndx: "strPODate", width: 300, dataType: "string", editable: false, align: "left" },
+               { dataIndx: "PODate", width: 300, dataType: "datetime", editable: false, align: "left", hidden: true }
+        ];
+        dataIID = {
+            location: 'local',
+            sorting: 'local',
+            paging: 'local',
+            dataType: 'JSON'
+        };
+
+        setIID = {
+            height: "100%-30",
+            maxheight: '400',
+            title: "Po List",
+            sortable: false,
+            numberCell: { show: false },
+            selectionModel: { type: 'row' },
+            hoverMode: 'cell',
+            editor: { type: 'textbox' },
+            showTop: true,
+            resizable: true,
+            editModel: {
+                saveKey: $.ui.keyCode.ENTER
+            },
+            draggable: false,
+            virtualX: true,
+            virtualY: true,
+            colModel: colIID,
+            dataModel: dataIID,
+            cellClick: function (evt, ui) {
+                if (ui.rowData) {
+                   // var rowIndx = parseInt(ui.rowIndx);
+                    var record = ui.rowData;
+                    $("#POId").val(record.ID);
+                    $("#LegacyPONo").val(record.PONo);
+                    $("#PODate").val(record.strPODate);
+                    ClosePopupWindow("PoModal");
+                }
+            },
+            pageModel: { type: "local", rPP: 50 }
+        };
+        $Pogrid = $("#Pogrid").pqGrid(setIID);
+        (function ($) {
+
+            /*************** Asset Grid  **********/
+            var dataList = { location: 'local',sorting: 'local',paging: 'local',dataType: 'JSON'};
+            var setAssetCol = [
+                { dataIndx: "AssetId", hidden: true },
+                {
+                    title: "AssetCode",
+                    dataIndx: "AssetCode",
+                    width: 100,
+                    dataType: "string",
+                    filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                },
+                {
+                    title: "Item Name",
+                    dataIndx: "ItemName",
+                    width: 200,
+                    dataType: "string",
+                    filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                },
+                { title: "Serial No", dataIndx: "SerialNo", width: 90 },
+                { title: "Model No", dataIndx: "ModelNo", width: 80 },
+                { title: "", dataIndx: "ItemId", hidden: true },
+                { title: "", dataIndx: "SupplierId", hidden: true },
+                { title: "", dataIndx: "SupplierName", hidden: true }
+            ];
+            var setAssetList = {
+                width: "auto", //auto width
+                height: "100%-30", //height in %age
+                selectionModel: { type: 'cell' },
+                autoSizeInterval: 0,
+                scrollModel: { autoFit: true },
+                dragColumns: { enabled: false },
+                hoverMode: 'cell',
+                editor: { type: 'textbox' },
+                filterModel: { on: true, mode: "AND", header: true },
+                showTop: false,
+                resizable: true,
+                virtualX: true,
+                colModel: setAssetCol,
+                dataModel: dataList,
+                toggle: function (evt, ui) {
+                    if (ui.state === 'max') {
+                        $(".ui-dialog,.ui-widget-overlay").css('position', 'static');
+                    }
+                    else {
+                        $(".ui-dialog,.ui-widget-overlay").css('position', 'absolute');
+                    }
+                },
+                cellClick: function (evt, ui) {
+                    if (ui.rowData) {
+                        //  var rowIndx = parseInt(ui.rowIndx);
+                        var record = ui.rowData;
+                        $("#AssetId").val(record.AssetId);
+                        $("#AssetCode").val(record.AssetCode);
+                        $("#ItemName").val(record.ItemName);
+                        $("#SerialNo").val(record.SerialNo);
+                        $("#ModelNo").val(record.ModelNo);
+                        $("#ItemId").val(record.ItemId);
+                        $("#SupplierId").val(record.SupplierId);
+                        $("#SupplierName").val(record.SupplierName);
+                        ClosePopupWindow("AssetModal");
+                        $("#AssetLocationId").val("");
+                        $("#displayImages").html('');
+                        $.ajax({
+                            type: "GET",
+                            url: "/AssetLocation/GetAssetLocations",
+                            datatype: "Json",
+                            async: true,
+                            data: { assetId: record.AssetId },
+                            success: function (data) {
+                                $("#AssetLocationId").val(data.AssetLocationId);
+                                $("#ddlAssetType").val(data.AssetTypeId);
+                                $("#ddlFloor").val(data.FloorId);
+                                $("#Description").val(data.Description);
+                                $("#LegacyPONo").val(data.LegacyPONo);
+
+                                if (data.strWarrantyStart !== "") {
+                                    $("#IsWarranty").prop('checked', true);
+                                    $('#WarrantyStart').data({ date: data.strWarrantyStart });
+                                    $('#WarrantyStart').datetimepicker('update');
+                                    $('#WarrantyStart').datetimepicker().children('input').val(data.strWarrantyStart);
+
+                                    $('#WarrantyExpire').data({ date: data.strWarrantyExpire });
+                                    $('#WarrantyExpire').datetimepicker('update');
+                                    $('#WarrantyExpire').datetimepicker().children('input').val(data.strWarrantyExpire);
+                                }
+                                if (data.strFreeServiceStartDate !== "") {
+                                    $("#IsFreeService").prop('checked', true);
+                                    $('#FreeServiceStartDate').data({ date: data.strFreeServiceStartDate });
+                                    $('#FreeServiceStartDate').datetimepicker('update');
+                                    $('#FreeServiceStartDate').datetimepicker().children('input').val(data.strFreeServiceStartDate);
+
+                                    $('#FreeServiceEndDate').data({ date: data.strFreeServiceEndDate });
+                                    $('#FreeServiceEndDate').datetimepicker('update');
+                                    $('#FreeServiceEndDate').datetimepicker().children('input').val(data.strFreeServiceEndDate);
+                                }
+                                FillRoomDropdown();
+                                FillAssetSubTypeDropDown();
+
+                                $("#ddlAssetSubType").val(data.AssetSubTypeId);
+                                $("#ddlRoom").val(data.RoomId);
+                               
+                                if (data.AssetLocationId > 0) {                                    
+                                    $.ajax({
+                                        type: "GET",
+                                        url: "/ScanDoc/ScanDoc/GetScanDocUrl",
+                                        data: { FileId: data.AssetLocationId, ScanDocSubTypeId: 7 },
+                                        datatype: "Json",
+                                        success: function (data) {
+                                            $.each(data, function (key, value) {
+                                                DisplayUploadedImages("displayImages", value);
+                                            });
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    }
+                },
+                pageModel: { type: "local", rPP: 20 }
+            };
+            $("#Assetgrid").pqGrid(setAssetList);
+            
+            $("#btnAdd").on("click", ClearForm);
+            $("#btnSave").click(function () {
+                if ($("#ddlBranch").val() === "") {
+                    ShowAlert("error", "Please Select Branch");
+                    return;
+                }
+                if ($("#AssetId").val() === "") {
+                    ShowAlert("error", "Please Select Asset Code");
+                    return;
+                }
+                if ($("#ddlAssetType").val() === "") {
+                    ShowAlert("error", "Please Select AssetType");
+                    return;
+                }
+                if ($("#ddlloc").val() === "") {
+                    ShowAlert("error", "Please Select Location");
+                    return;
+                }
+                if ($("#ddlFloor").val() === "") {
+                    ShowAlert("error", "Please Select Floor");
+                    return;
+                }
+                if ($("#ddlRoom").val() === "") {
+                    ShowAlert("error", "Please Select Room");
+                    return;
+                }
+                var model = JSON.stringify({ //Passing data 
+                    AssetLocationId: $("#AssetLocationId").val(),
+                    AssetId: $("#AssetId").val(),
+                    AssetTypeId: $("#ddlAssetType").val(),
+                    AssetSubTypeId: $("#ddlAssetSubType").val(),
+                    Description: $("#Description").val(),
+                    BranchId: $("#ddlBranch").val(),
+                    LocationId: $("#ddlloc").val(),
+                    FloorId: $("#ddlFloor").val(),
+                    RoomId: $("#ddlRoom").val(),
+                    LegacyPONo: $("#LegacyPONo").val(),
+                    IsWarranty: $("#IsWarranty").prop('checked'),
+                    IsFreeService: $("#IsFreeService").prop('checked'),
+                    WarrantyStart: $("#WarrantyStart").data('date'),
+                    WarrantyExpire: $("#WarrantyExpire").data('date'),
+                    FreeServiceStartDate: $("#FreeServiceStartDate").data('date'),
+                    FreeServiceEndDate: $("#FreeServiceEndDate").data('date'),
+                    PermanentDeactive: $("#PermanentDeactive").prop('checked')
+                });
+
+                $.ajax(
+                {
+                    type: "POST", //HTTP POST Method
+                    traditional: true,
+                    contentType: 'application/json; charset=utf-8',
+                    url: '/AssetLocation/SaveAssetLocation', // Controller/View
+                    data: model,
+                    success: function (msg) {
+                        if (msg.success) {
+                            SaveScandoc("files", msg.AssetLocationId, "Asset", "AssetLocation");
+                            ShowAlert("success", "Asset location saved successfully.");
+                            ClearForm();
+                            $("#files").val('');
+                        }
+                        else {
+                            ShowAlert("error", msg.Message);
+                        }
+                    },
+                    error: function () {
+                    }
+                });
+            });
+
+            //var SupplierM = {
+            //    height: 400,
+            //    autoSizeInterval: 0,
+            //    scrollModel: { autoFit: true },
+            //    dragColumns: { enabled: false },
+            //    hoverMode: 'cell',
+            //    editor: { type: 'textbox' },
+            //    filterModel: { on: true, mode: "AND", header: true },
+            //    showTop: false,
+            //    resizable: true,
+            //    virtualX: true,
+            //    colModel: colSupplierM,
+            //    dataModel: dataSupplierM,
+            //    pageModel: { type: "local", rPP: 20 },
+            //    toggle: function (evt, ui) {
+            //        if (ui.state == 'max') {
+            //            $(".ui-dialog,.ui-widget-overlay").css('position', 'static');
+            //        }
+            //        else {
+            //            $(".ui-dialog,.ui-widget-overlay").css('position', 'absolute');
+            //        }
+            //    },
+            //    cellClick: function (evt, ui) {
+            //        if (ui.rowData) {
+            //            var rowIndx = parseInt(ui.rowIndx);
+            //            var record = ui.rowData;
+            //            $("#SupplierId").val(record.ID);
+            //            $("#SupplierName").val(record.Name);
+            //            ClosePopupWindow("SupplierModal");
+            //        }
+            //    }
+            //};
+           
+
+            $('#LegacyPONo').on('click', function () {
+                LoadPONoGrid();
+            });
+        })(jQuery);
+
+    </script>
+}

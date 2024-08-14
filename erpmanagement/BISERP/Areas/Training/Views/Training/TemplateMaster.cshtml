@@ -1,0 +1,114 @@
+﻿@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <fieldset>
+        <div id="content">
+
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-groupingBoder">
+                        <div class="panel-heading">
+                            <div class="panel-title">
+                                Template Master
+                            </div>
+                        </div>
+                        <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @*<b>@Html.Label("Action")</b>*@
+                                            <select id="Prioritystr" class="wrapperdropdown-content form-control">
+                                                <option class="wrapperdropdown-content" value="MaterialIssueGuard">Guards</option>
+                                                <option class="wrapperdropdown-content" value="MaterialReturnGuard">Officer</option>
+                                                <option class="wrapperdropdown-content" value="MomentOrder">Area officer</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="collapse3" class="panel-collapse collapse in" aria-expanded="true">
+                            <div class="panel-body">
+                                <div class="panel-groupingBoder">
+                                    <div class="row">
+                                        <div id="content">
+                                            <div id="content-tab">
+                                                <ul id="tabs" class="nav nav-tabs" data-tabs="tabs">
+                                                    <li class="active">
+                                                        <a href="#tab1" data-toggle="tab">Day1</a>
+                                                    </li>
+                                                    <li><a href="#tab2" data-toggle="tab">Day2</a></li>
+                                                    <li><a href="#tab3" data-toggle="tab">Day3</a></li>
+                                                    <li><a href="#tab4" data-toggle="tab">Day4</a></li>
+                                                    <li><a href="#tab5" data-toggle="tab">Day5</a></li>
+                                                </ul>
+                                                <div id="my-tab-content" class="tab-content">
+                                                    <div class="tab-pane active" id="tab1">
+                                                        <br>
+                                                        @Html.Partial("~/Areas/Training/Views/Training/Day.cshtml")
+                                                    </div>
+                                                    <div class="tab-pane" id="tab2">
+                                                        <br>
+                                                        @Html.Partial("~/Areas/Training/Views/Training/Day.cshtml")
+                                                    </div>
+                                                    <div class="tab-pane" id="tab3">
+                                                        <br>
+                                                        @Html.Partial("~/Areas/Training/Views/Training/Day.cshtml")
+                                                    </div>
+                                                    <div class="tab-pane" id="tab4">
+                                                        <br>
+                                                        @Html.Partial("~/Areas/Training/Views/Training/Day.cshtml")
+                                                    </div>
+                                                    <div class="tab-pane" id="tab5">
+                                                        <br>
+                                                        @Html.Partial("~/Areas/Training/Views/Training/Day.cshtml")
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#FromTime1').timepicker();
+            $('#FromTime1').timepicker('setTime', new Date());
+            $('#FromTime2').timepicker();
+            $('#FromTime2').timepicker('setTime', new Date());
+            $('#FromTime3').timepicker();
+            $('#FromTime3').timepicker('setTime', new Date());
+            $('#FromTime4').timepicker();
+            $('#FromTime4').timepicker('setTime', new Date());
+            $('#FromTime5').timepicker();
+            $('#FromTime5').timepicker('setTime', new Date());
+            $('#FromTime6').timepicker();
+            $('#FromTime6').timepicker('setTime', new Date());
+
+            $('#ToTime1').timepicker();
+            $('#ToTime1').timepicker('setTime', new Date());
+            $('#ToTime2').timepicker();
+            $('#ToTime2').timepicker('setTime', new Date());
+            $('#ToTime3').timepicker();
+            $('#ToTime3').timepicker('setTime', new Date());
+            $('#ToTime4').timepicker();
+            $('#ToTime4').timepicker('setTime', new Date());
+            $('#ToTime5').timepicker();
+            $('#ToTime5').timepicker('setTime', new Date());
+            $('#ToTime6').timepicker();
+            $('#ToTime6').timepicker('setTime', new Date());
+        });
+     
+    </script>
+     
+   
+}
+

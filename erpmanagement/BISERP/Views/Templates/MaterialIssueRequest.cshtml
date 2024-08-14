@@ -1,0 +1,66 @@
+﻿@model BISERP.Areas.Store.Models.Store.MaterialIssueModel
+@{
+    Layout = null;
+}
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+    <div style="width: 95%; margin: 10px;">
+        <div align="center">
+            <h2 style="color: red;">BOMBAY INTELLIGENCE SECURITY(INDIA) LTD.</h2>
+            <h3>@Model.FromStore</h3>
+        </div>
+        <div>
+            <h4>To,</h4>
+            <h4><b>@Model.ToStore</b></h4>
+        </div>
+        <table style="padding: 2px;">
+            @*<tr>
+                <td style="text-align: left">Issue Date::@DateTime.Now.ToString("dd-MMM-yyyy")</td>
+            </tr>*@
+            <tr>
+                <td style="text-align: left">Issue NO:@Model.IssueNo</td>
+            </tr>
+            @*<tr>
+                <td style="align-content: stretch;">
+                    <u>Issue Requested by</u>: <b>@Model.FromStore</b> &emsp; &emsp; <u>Issue Requested to</u>:<b>@Model.ToStore</b>
+                </td>
+            </tr>*@
+            <tr style="height: 20px" />
+            <tr>
+                <td style="align-content: center">
+                    <table style="padding: 5px;" border="1">
+                        <tr>
+                            <th><b>Issue Date</b></th>
+                            <th>Item Name</th>
+                            <th>Issued Quantity</th>
+                            <th>Rate</th>
+                            <th>Amount</th>
+                            @*<th>Authorised Quantity</th>*@
+                            @*<th>Balance Indent Quantity</th>*@
+                        </tr>
+                        @foreach (var menu in Model.MaterialIssueDt)
+                        {
+                            <tr>
+                                <td>@DateTime.Now.ToString("dd-MMM-yyyy")</td>
+                                <td>@menu.ItemName</td>
+                                <td>@menu.IssuedQuantity</td>
+                                <td>@menu.MRP</td>
+                                <td>@((menu.IssuedQuantity * menu.MRP).ToString())</td>
+                                @*<td>@menu.AuthorisedQuantity</td>*@
+                                @*<td>@menu.BalIndentQtyForIssue</td>*@
+                            </tr>
+                        }
+                    </table>
+                </td>
+            </tr>
+        </table>
+        <div>
+            <br />
+            <u style="color: red;"><b>Note:</b></u> *** This is an automatically generated email, please do not reply ***
+        </div>
+    </div>
+</body>
+</html>

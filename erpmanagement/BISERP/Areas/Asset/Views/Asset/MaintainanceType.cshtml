@@ -1,0 +1,116 @@
+﻿@model BISERP.Areas.Asset.Models.MaintainanceTypeModel
+
+<script type="text/javascript">
+    var grid;
+
+    $(document).ready(function () {
+        grid = $("#grid").jsGrid({
+            width: "100%",
+            height: "400px",
+            filtering: true,
+            selecting: true,
+            inserting: true,
+            editing: true,
+            sorting: true,
+            autoload: true,
+            paging: true,
+            pageSize: 20,
+
+            controller: {
+
+                loadData: function (filter) {
+                    var d = $.Deferred();
+                    $.ajax({
+                        type: 'GET',
+                        url: '/MaintainanceType/AllMaintainanceType',
+                        dataType: "json",
+                        data: { SearchName: filter.MaintainanceType, SearchCode: filter.MaintainanceTypeCode },
+                        success: function (data) {
+                            d.resolve(data);
+                        },
+                        error: function (e) {
+                            ShowAlert("error", "Server Error! Please Contact administrator!");
+                        }
+                    });
+                    return d.promise();
+                },
+                insertItem: function (item) {
+                    var d = $.Deferred();
+                    $.ajax(
+                    {
+                        type: "POST",
+                        dataType: "json",
+                        url: '/MaintainanceType/SaveMaintainanceType', // Controller/View
+                        data: item,
+                        success: function (msg) {
+                            if (msg.success) {
+                                ShowAlert("success", "Maintainance Type Master added successfully to system.");
+                            } else {
+                                ShowAlert("error", msg.Message);
+                            }
+                        },
+                    }).done(function (item) {
+                        $("#grid").jsGrid("loadData");
+                    });
+
+                },
+                updateItem: function (item) {
+                    var d = $.Deferred();
+                    $.ajax(
+                    {
+                        type: "POST", //HTTP POST Method
+                        dataType: "json",
+                        url: '/MaintainanceType/UpdateMaintainanceType', // Controller/View
+                        data: item,
+                        success: function (msg) {
+                            if (msg.success) {
+                                ShowAlert("success", "Maintainance Type Master updated successfully to system.");
+                            } else {
+                                ShowAlert("error", msg.Message);
+                            }
+                        },
+                    }).done(function (insertedItem) {
+                        d.resolve(insertedItem.data);
+                        $("#grid").jsGrid("loadData");
+
+                    });
+                    return d.promise();
+                }
+            },
+            fields: [
+                { name: "MaintainanceTypeId", visible: false, width: 0 },
+                { name: "MaintainanceTypeCode", title: "Code", type: "text", validate: "required", autosearch: true, validate: { validator: "required", message: "Code is missing! Please enter the Code" }, },
+                { name: "MaintainanceType", title: "Maintainance Type", type: "text", validate: "required", autosearch: true, validate: { validator: "required", message: "Maintainance Type is missing! Please enter the Maintainance Type" }, },
+                { name: "Deactive", title: "Deactive", type: "checkbox", filtering: false, width: 10, inserting: false },
+                { type: "control", deleteButton: false, width: 10 }
+            ],
+        });
+    });
+
+</script>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <fieldset>
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-groupingBoder">
+                    <div class="panel-heading">
+                        <div class="panel-title">
+                            <h4>
+                                Maintenance Type
+                            </h4>
+                        </div>
+                    </div>
+                    <div class="panel-collapse collapse in" aria-expanded="true">
+                        <div class="panel-body">
+                            <div class="container fill">
+                                <div id="grid" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+}

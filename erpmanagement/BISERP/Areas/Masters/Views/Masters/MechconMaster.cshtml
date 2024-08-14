@@ -1,0 +1,150 @@
+﻿@model BISERP.Areas.Masters.Models.MechconMasterModel
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+
+    <h5 class="page-header orangeDottedBottomBorder">Mechcon Master</h5>
+
+    <fieldset>
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-groupingBoder">
+                    <div class="panel-heading">
+                        <div class="panel-title">
+                            Entry Form
+                        </div>
+                    </div>
+                    <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                        <div class="panel-body">
+                            <div class="fill">
+                                <div class="submit-row">
+                                    <button type="button" id="btnSave" class="btn btn-success">Save</button>                                
+                                </div>
+                                <fieldset class="fieldsetCustom">
+                                    <legend class="legendCustom">Create</legend>
+                                    <div class="row">
+
+                                        <div class="col-sm-4">
+                                            @Html.LabelFor(model => model.Name, new { @class = "required" })
+                                            @Html.TextBoxFor(model => model.Name, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.Name)
+
+                                        </div>
+
+                                        <div class="col-sm-4">
+                                            @Html.LabelFor(model => model.emailID, new { @class = "required" })
+                                            @Html.TextBoxFor(model => model.emailID, new { @class = "form-control" })
+
+                                        </div>
+                                        <div class="col-sm-2">
+                                            @Html.LabelFor(model => model.CINNumber, new { @class = "required" })
+                                            @Html.TextBoxFor(model => model.CINNumber, new { @class = "form-control" })
+
+                                        </div>
+                                        <div class="col-sm-2">
+                                            @Html.LabelFor(model => model.GSTNumber, new { @class = "required" })
+                                            @Html.TextBoxFor(model => model.GSTNumber, new { @class = "form-control" })
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-sm-2">
+                                                @Html.HiddenFor(model => model.Deactive)
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-7">
+                                            @Html.LabelFor(model => model.Address, new { @class = "required" })
+                                            @Html.TextAreaFor(model => model.Address, new { @class = "form-control", rows = "4" })
+                                            @Html.ValidationMessageFor(model => model.Address)
+
+                                        </div>
+                                    </div>
+
+                                </fieldset>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+}
+
+<script>
+    var ID = 0;
+    loadData();
+
+    $("#btnSave").on('click', function () {
+
+        if ($("#Name").val() == "") {
+            ShowAlert("error", "Name is missing! Please enter the Name");
+            return;
+        }
+        if ($("#emailID").val() == "") {
+            ShowAlert("error", "Email id is missing! Please enter the Email Id");
+            return;
+        }
+        if ($("#Address").val() == "") {
+            ShowAlert("error", "Address is missing! Please enter the Address");
+            return;
+        }
+        if ($("#CINNumber").val() == "") {
+            ShowAlert("error", "CIN number is missing! Please enter the CIN Number");
+            return;
+        }
+        if ($("#GSTNUmber").val() == "") {
+            ShowAlert("error", "GST number is missing! Please enter the GST Number");
+            return;
+        }
+        var data = {
+            Id: ID,
+            Name: $("#Name").val(),
+            Address: $("#Address").val(),
+            emailID: $("#emailID").val(),
+            CINNumber: $("#CINNumber").val(),
+            GSTNumber: $("#GSTNumber").val()  };
+        $.ajax({
+            type: "POST", //HTTP POST Method
+            traditional: true,
+            contentType: 'application/json; charset=utf-8',
+            url: '/MechconMaster/SaveMechconDetails/', // Controller/View
+            data: JSON.stringify(data),
+            datatype: "Json",
+            success: function (msg) {
+                if (msg.success) {
+                    ID > 0 ? ShowAlert("success", "Data updated successfully to system.") : ShowAlert("success", "Data added successfully to system.");
+                    loadData();
+                }
+                else {
+                    ShowAlert("error", "Failed to add Data");
+                }
+
+            }
+        });
+    });
+
+    function loadData() {
+        $.ajax({
+            type: "GET", //HTTP POST Method
+            url: '/MechconMaster/GetMechconData', // Controller/View
+            success: function (data) {
+                if (data != null) {
+                    ID = data.Id
+                    $("#Name").val(data.Name),
+                        $("#Address").val(data.Address),
+                        $("#emailID").val(data.emailID),
+                        $("#CINNumber").val(data.CINNumber),
+                        $("#GSTNumber").val(data.GSTNumber)
+                }
+                else {
+                    ShowAlert("error", "Failed to load Data");
+                }
+            }
+        });
+    }
+
+</script>

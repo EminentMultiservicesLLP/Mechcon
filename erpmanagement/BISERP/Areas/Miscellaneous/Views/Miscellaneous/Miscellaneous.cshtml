@@ -1,0 +1,61 @@
+﻿@model BISERP.Models.UserMangement.MenuUserRightsModel
+@{
+    ViewBag.Title = "Miscellaneous";
+    //Layout = "~/Views/Shared/_StoreLayout.cshtml";
+    Layout = "~/Areas/Miscellaneous/Views/Shared/_MiscellaneousLayout.cshtml";
+}
+
+
+@using (Html.BeginForm())
+{
+    var loadingFirstTime = true;
+    <div id="content">
+        <div id="content-tab">
+            <ul class="nav nav-tabs" id="tabs">
+
+                @foreach (var item in Model.Child)
+                {
+                    var activeClass = (loadingFirstTime ? "active" : "");
+                    <li class="@activeClass">
+                        <a class="tabs" href="#" id="@item.PageName">@item.MenuName</a>
+                    </li>
+                    loadingFirstTime = false;
+                }
+            </ul>
+        </div>
+        <div id="MasterPlaceHolder" style="display:none;">
+
+        </div>
+    </div>
+}
+<script type="text/javascript">
+
+    var $DetailsGrid;
+    function LoadFormData(selectedID) {
+        $.get('/Miscellaneous/Miscellaneous/' + selectedID, function (data) {
+            $('#MasterPlaceHolder').html(data);
+            $('#MasterPlaceHolder').fadeIn('fast');
+        });
+    }
+
+    function LoadDefaultTab() {
+        if ($('.tabs') != undefined && $('.tabs').length > 0) {
+            var curElement = $('.tabs')[0];
+            var selectedID = curElement.id;
+            LoadFormData(selectedID);
+        }
+    }
+
+    $(function () {
+        $('.tabs').click(function () {
+            var selectedID = this.id;
+            clearTabSelection($(this));
+            LoadFormData(selectedID);
+        });
+
+        LoadDefaultTab();
+    });
+
+
+
+</script>

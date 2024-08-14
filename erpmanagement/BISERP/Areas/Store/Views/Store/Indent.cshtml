@@ -1,0 +1,37 @@
+﻿@{
+    ViewBag.Title = "Indent";
+    Layout = "~/Views/Shared/_StoreLayout.cshtml";
+}
+
+<script type="text/javascript">
+    $(function () {
+        $('.tab').click(function () {
+            var selectedID = this.id;
+
+            $.get('/Store/' + selectedID, function (data) {
+                $('#MasterPlaceHolder').html(data);
+                $('#MasterPlaceHolder').fadeIn('fast');
+            });
+        });
+    });
+</script>
+<h2>Indent</h2>
+@using (Html.BeginForm())
+{
+    <div class="menu-tabs">
+        <ul class="menu-tabs-nav">
+            <li><a class="tab" href="#" id="UnitMaster">Unit</a></li>
+            <li><a class="tab" href="#" id="ItemTypeMaster">Item Type</a></li>
+            <li><a class="tab" href="#" id="ItemGroupMaster">Item Group</a></li>
+            <li><a class="tab" href="#" id="DeliveryTermMaster">Delivery Term</a></li>
+            <li><a class="tab" href="#" id="PaymentTermMaster">Payment Term</a></li>
+            <li><a class="tab" href="#" id="OtherTermMaster">Other Term</a></li>
+            <li><a class="tab" href="#" id="ManufacturerMaster">Manufacturer</a></li>
+            <li><a class="tab" href="#" id="SupplierMaster">Supplier</a></li>
+            <li><a class="tab" href="#" id="StoreMaster">Store</a></li>
+        </ul>
+    </div>
+    <div id="MasterPlaceHolder" style="display:none;">
+
+    </div>
+}

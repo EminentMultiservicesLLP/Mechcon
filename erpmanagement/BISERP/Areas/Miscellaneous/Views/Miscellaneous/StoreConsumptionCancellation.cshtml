@@ -1,0 +1,362 @@
+﻿
+@model BISERP.Areas.Store.Models.Store.StoreConsumptionCancellationModel
+<script>
+    $(function () {
+        $(".datepicker").datepicker({
+            showOn: "button",
+            buttonImage: "/Content/images/calendar.gif",
+            buttonImageOnly: true,
+            buttonText: "Select date",
+            'changeMonth': true,
+            'changeYear': true,
+            'yearRange': '2021:2030',
+            "format": "dd-M-yyyy",
+            todayBtn: "linked",
+            pickerPosition: "bottom-left",
+            "todayHighlight": true,
+            autoclose: true,
+        }).datepicker("setDate", new Date());
+        $("#anim").change(function () {
+            $(".datepicker").datepicker("option", "showAnim", "fadeIn");
+        });
+    });
+</script>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+
+    <h5 class="page-header orangeDottedBottomBorder"> STOCK CONSUMPTION AUTHENTICATION /CANCELLATION </h5>
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <a class="collapsediv" data-toggle="collapse" href="#collapse2" style="color:white">
+                            Entry Form
+                        </a>
+                    </div>
+                </div>
+                <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+
+                        <div class="submit-row">
+                            <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                            <button type="button" class="btn btn-primary" id="btnReset">Reset</button>
+                        </div>
+                        <fieldset class="fieldsetCustom">
+                            <legend class="legendCustom"> stock Consumption Auth/Canc Form</legend>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    @Html.Label("Consume No", new { @class = "required" })
+                                    @Html.TextBox("code", "", new Dictionary<string, object> { { "class", "form-control" }, { "readonly", "readonly" } })
+                                </div>
+
+                                <div class="col-sm-2">
+                                    @Html.Label("Cancellation Date")
+                                    @Html.TextBoxFor(model => model.Cancelledon, new { @class = "form-control datepicker", @readonly = "true" })
+                                    @Html.HiddenFor(model => model.ConCancelid)
+                                </div>
+
+                                <div class="col-sm-2">
+                                    @Html.Label("Project")
+                                    @Html.TextBox("Store", "", new Dictionary<string, object> { { "class", "form-control" }, { "readonly", "readonly" } })
+                                    @Html.HiddenFor(model => model.Storeid)
+
+                                </div>
+                                <div class="col-sm-2">
+                                    @Html.Label("ConsumptionDate")
+                                    @Html.TextBox("ConsumptionDate", "", new Dictionary<string, object> { { "class", "form-control" }, { "readonly", "readonly" } })
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <a class="collapsediv" data-toggle="collapse" href="#SearchItemDetails" style="color:white">
+                            Item Details Grid
+                        </a>
+                    </div>
+                </div>
+                <div id="SearchItemDetails" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <div id="grid"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <div title="Select " id="ConsumptionModal" style="display: none;">
+        <div id="SearchGrid"></div>
+    </div>
+}
+<script type="text/javascript">
+
+    function LoadSearchGrid() {
+        $("#ConsumptionModal").dialog({
+            height: 500,
+            width: 700,
+            modal: true,
+            open: function (evt, ui) {
+                // ClearParamGrid("SearchGrid");
+                $.ajax({
+                    type: "GET",
+                    url: "/StoreConsumption/GetConsumptionNO",
+                    datatype: "Json",
+                    beforeSend: function () {
+                        $SearchGrid.pqGrid("showLoading");
+                    },
+                    complete: function () {
+                        $SearchGrid.pqGrid("hideLoading");
+                    },
+                    success: function (data) {
+                        $SearchGrid.pqGrid("hideLoading");
+                        $SearchGrid.pqGrid("option", "dataModel.data", data);
+                        $SearchGrid.pqGrid("refreshDataAndView");
+                    },
+                    error: function (request, status, error) {
+                        $SearchGrid.pqGrid("hideLoading");
+                        ShowAlert("error", "Error while loading Itemlist");
+                        return;
+                    }
+                });
+            },
+            close: function (event, ui) {
+            },
+            show: {
+                effect: "blind",
+                duration: 500
+            }
+        });
+
+        //$.ajax({
+        //    url: "/StoreConsumption/GetConsumptionNO",
+        //    cache: false,
+        //    async: true,
+        //    method: "GET",
+        //    dataType: "JSON",
+        //    beforeSend: function () {
+        //        //$IndentSearchGrid = $("#Itemgrid").pqGrid(setIL);
+        //        $SearchGrid.pqGrid("showLoading");
+        //    },
+        //    complete: function () {
+        //        $SearchGrid.pqGrid("hideLoading");
+        //    },
+        //    success: function (result) {
+        //        $("#ConsumptionModal").modal('toggle');
+        //        $SearchGrid.pqGrid("hideLoading");
+        //        $SearchGrid.pqGrid("option", "dataModel.data", result);
+        //        $SearchGrid.pqGrid("refreshDataAndView");
+        //    },
+        //    error: function (request, status, error) {
+        //        //ClearParamGrid("Itemgrid");
+        //        $SearchGrid.pqGrid("hideLoading");
+        //        ShowAlert("error", "Error while loading list");
+        //    return;
+        //}
+        //});
+    }
+    $(document).ready(function () {
+
+        $('#code').on('click', function () {
+            LoadSearchGrid();
+        });
+    });
+    var $StockDetailsGrid;
+    var $SearchGrid;
+    $(document).ready(function () {
+        var colIL = [
+            { title: "", dataIndx: "ConCancelid", dataType: "integer", hidden: true },
+            { title: "", dataIndx: "ConsumptionDtlid", dataType: "integer", hidden: true },
+            { title: "", dataIndx: "Storeid", dataType: "integer", hidden: true },
+            { title: "", dataIndx: "Consumptionid", dataType: "integer", hidden: true },
+            { title: "", dataIndx: "code", dataType: "integer", hidden: true },
+            { title: "", dataIndx: "Batchid", dataType: "integer", hidden: true },
+            { title: "", dataIndx: "Itemid", dataType: "integer", hidden: true },
+            { title: "Item Name & Description", dataIndx: "ItemName", dataType: "string", width: 750, align: "center", editable: false },
+            { title: "Batch", dataIndx: "Batch", dataType: "string", width: 150, align: "center", editable: false },
+            { title: "BatchQty", dataIndx: "StockQty", dataType: "string", width: 120, align: "center", editable: false },
+            { title: "ConsumeQty", dataIndx: "ConsumeQty", dataType: "string", width: 120, align: "center", editable: false },
+            { title: "CancelQty", dataIndx: "Qty", dataType: "string", width: 120, align: "center" },
+            { title: "Unit", dataIndx: "Unit", dataType: "string", width: 120, align: "center", editable: false },
+            { title: "Remark", dataIndx: "Remark", dataType: "string", width: 150, align: "center" },
+        ];
+
+        var dataIL = {
+            location: 'local',
+            sorting: 'local',
+        };
+
+        var setIL = {
+            width: '100%',
+            height: '300',
+            maxheight: '400',
+            sortable: false,
+            colModel: colIL,
+            dataModel: dataIL,
+            numberCell: { show: false },
+            selectionModel: { type: 'row' },
+            hoverMode: 'cell',
+            editor: { type: 'textbox' },
+            showTop: false,
+            resizable: true,
+            editable: true,
+            //virtualX: true,
+            editModel: {
+                saveKey: $.ui.keyCode.ENTER
+            },
+            draggable: false,
+            wrap: false,
+            pageModel: { type: "local", rPP: 20 },
+        };
+
+        $StockDetailsGrid = $("#grid").pqGrid(setIL);
+    });
+    $(document).ready(function () {
+        var dataM = { location: "local", sorting: 'local' };
+        var colM = [
+            { title: "", dataIndx: "ConsumptionId", dataType: "integer", hidden: true },
+            { title: "", dataIndx: "store", dataType: "integer", hidden: true },
+            { title: "", dataIndx: "StoreId", dataType: "integer", hidden: true },
+            {
+                title: "ConsumptionCode", dataIndx: "ConsumptionCode", width: 330, dataType: "string",
+                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            },
+            {
+                title: "ConsumptionDate", dataIndx: "strConsumptionDate", width: 310, dataType: "string"
+            },
+
+        ];
+
+        var setM = {
+            width: '100%',
+            height: 400,
+            sortable: false,
+            numberCell: { show: false },
+            hoverMode: 'cell',
+            showTop: false,
+            resizable: false,
+            //scrollModel: { autoFit: true },
+            draggable: false,
+            wrap: false,
+            editable: false,
+            columnBorders: true,
+            filterModel: { on: true, mode: "AND", header: true },
+            colModel: colM,
+            dataModel: dataM,
+            pageModel: { type: "local", rPP: 20 },
+            rowClick: function (evt, ui) {
+                ClearParamGrid("grid");
+                ClosePopupWindow("ConsumptionModal");
+                //  $("#ConsumptionModal").modal('toggle');
+                if (ui.rowData) {
+                    var rowIndx = parseInt(ui.rowIndx);
+                    var record = ui.rowData;
+                    $("#Consumptionid").val(record.ConsumptionId);
+                    $("#code").val(record.ConsumptionCode);
+                    $("#ConsumptionDate").val(record.strConsumptionDate);
+                    $("#Storeid").val(record.StoreId);
+                    $("#Store").val(record.store);
+                    // $("#StoreId").val(record.Indent_FromStoreID);
+                    //$("#IndentType").val(data.Indent_Type);
+                    $.ajax({
+                        type: "GET",
+                        url: "/StoreConsumption/GetConsumptioncodedt/",
+                        data: { Id: record.ConsumptionId },
+                        datatype: "Json",
+                        beforeSend: function () {
+                            //$IndentSearchGrid = $("#Itemgrid").pqGrid(setIL);
+                            $("#grid").pqGrid("showLoading");
+                        },
+                        complete: function () {
+                            $("#grid").pqGrid("hideLoading");
+                        },
+                        success: function (data) {
+                            var dataMGrid = [];
+                            $.each(data, function (key, value) {
+                                var grdData = {
+                                    'ConsumptionDtlid': value.ConsumptionDtlid,
+                                    'Itemid': value.Itemid,
+                                    'ItemName': value.ItemName,
+                                    'StockQty': value.StockQty,
+                                    'Batchid': value.Batchid,
+                                    'Batch': value.Batch,
+                                    'ConsumeQty': value.ConsumeQty,
+                                    'Unit': value.Unit,
+                                    'Storeid': value.Storeid,
+                                    'Consumptionid': value.Consumptionid,
+                                    'code': value.code
+                                }
+                                dataMGrid.push(grdData);
+                            });
+                            $("#grid").pqGrid("hideLoading");
+                            $("#grid").pqGrid("option", "dataModel.data", dataMGrid);
+                            $("#grid").pqGrid("refreshDataAndView");
+                        },
+                        error: function (request, status, error) {
+                            //ClearParamGrid("Itemgrid");
+                            $("#grid").pqGrid("hideLoading");
+                            ShowAlert("error", "Error while loading list");
+                            return;
+                        }
+                    });
+
+                }
+            }
+        };
+        $SearchGrid = $("#SearchGrid").pqGrid(setM);
+
+    });
+
+    $("#btnSave").click(function () {
+
+        var items = $StockDetailsGrid.pqGrid("getData", { dataIndx: ['Storeid', 'Consumptionid', 'code', 'ConsumptionDtlid', 'Itemid', 'Qty', 'Remark', 'Batchid', 'ConsumeQty'] });
+        var griditems = JSON.stringify(items);
+      
+        $.ajax(
+            {
+                type: "POST", //HTTP POST Method
+                traditional: true,
+                contentType: 'application/json; charset=utf-8',
+                url: '/StoreConsumption/SaveConsumptioncel', // Controller/View
+                data: griditems,
+                success: function (msg) {
+                    if (msg.success) {
+                        ClearForm();
+                        ShowAlert("success", "Record saved successfully to system." + msg.Message);
+                    }
+                    else {
+                        ShowAlert("error", "Falied to Save!" + msg.Message);
+                    }
+                },
+                error: function (jqXHR, exception) {
+
+                }
+            });
+    });
+    function ClearForm() {
+
+        $("#Store").val("");
+        $("#code").val("");
+        $("#ConsumptionDate").val("");
+        ClearParamGrid("grid");
+    }
+    $("#btnAdd").on("click", ClearForm);
+
+    $("#btnReset").click(function () {
+        ClearForm();
+    })
+
+</script>

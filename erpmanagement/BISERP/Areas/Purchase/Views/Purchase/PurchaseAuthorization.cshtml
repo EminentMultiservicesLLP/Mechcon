@@ -1,0 +1,32 @@
+﻿@{
+    ViewBag.Title = "PurchaseAuthorization";
+    Layout = "~/Views/Shared/_PurchaseLayout.cshtml";
+}
+
+<script type="text/javascript">
+    $(function () {
+        $('.tab').click(function () {
+            var selectedID = this.id;
+
+            $.get('/Purchase/' + selectedID, function (data) {
+                $('#MasterPlaceHolder').html(data);
+                $('#MasterPlaceHolder').fadeIn('fast');
+            });
+        });
+    });
+</script>
+
+@using (Html.BeginForm())
+{
+    <div id="content">
+        <div id="content-tab">
+            <ul class="nav nav-tabs" id="tabs">
+                <li><a class="tab" href="#" id="PIAuthorization">Indent Authorization</a></li>
+                <li><a class="tab" href="#" id="POAuthorization">PO Authorization</a></li>
+            </ul>
+        </div>
+        <div id="MasterPlaceHolder" style="display:none;">
+
+        </div>
+    </div>
+}

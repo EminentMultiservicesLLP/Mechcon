@@ -1,0 +1,118 @@
+﻿@model BISERP.Models.LoginModel
+@{ Layout = null;
+    ViewBag.Title = "Log in"; }
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mechcon</title>
+    <link rel='shortcut icon' href='/Mechcon-Logo.png' type='image/x-icon' />
+    @Styles.Render("~/Content/Bootstrap")
+    <script src="~/Scripts/jquery-1.11.3.min.js"></script>
+    <link href="~/Content/Login.css" rel="stylesheet" />
+    <style>
+        alert {
+            background-color: steelblue;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="row">
+        <div class="col-md-12" style=" height: 0; ">
+            <section id="loginForm" style="background-image:url('../../Images/LoginBackground.png');background-size: cover;">
+                @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                {
+    @Html.AntiForgeryToken()
+
+                    <div class="limiter">
+                        <div class="container-login100">
+                            <div class="wrap-login100" style="background-image: url('../../Images/LoginMechconImage.png'); background-size: cover; box-shadow: 10px 10px 15px rgba(0, 0, 0, 0.7)">
+                                <div class="login100-pic js-tilt" data-tilt>
+                                </div>
+
+                                <div class="login100-form validate-form">
+                                    <span class="login100-form-title">
+                                        Employee Login
+                                    </span>
+
+                                    <div class="wrap-input100 validate-input" data-validate="Either Username or Email Address require">
+                                        <input class="input100" type="text" name="Username" id="Username" placeholder="Username or Email" autocomplete="off" value="">
+                                        <span class="focus-input100"></span>
+                                        <span class="symbol-input100">
+                                            <i class="fa fa-envelope" aria-hidden="true"></i>
+                                        </span>
+                                    </div>
+
+                                    <div class="wrap-input100 validate-input" data-validate="Password is required">
+                                        <input class="input100" type="password" name="Password" placeholder="Password" value="">
+                                        <span class="focus-input100"></span>
+                                        <span class="symbol-input100">
+                                            <i class="fa fa-lock" aria-hidden="true"></i>
+                                        </span>
+                                    </div>
+
+                                    <div class="wrap-input100">
+                                        <span style="padding-left:35px;">
+                                            @Html.CheckBoxFor(m => m.RememberMe)
+                                        </span>
+                                        <span style="padding-left:10px;">
+                                            @Html.LabelFor(m => m.RememberMe)
+                                        </span>
+                                    </div>
+
+                                    <div class="container-login100-form-btn">
+                                        <button class="login100-form-btn">
+                                            Login
+                                        </button>
+                                    </div>
+
+                                    @*<div class="text-center p-t-12">
+                                        <span class="txt1">
+                                            Forgot
+                                        </span>
+                                        <a class="txt2" onclick="Update()" href="#">
+                                            Password?
+                                        </a>
+                                    </div>*@
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>}
+            </section>
+        </div>
+    </div>
+    @if (@ViewBag.Message != null)
+    {
+<script type="text/javascript">
+                    $(function () {
+                        alert("@ViewBag.Message");
+                    });
+</script>
+}
+</body>
+</html>
+
+<script type="text/javascript">
+    function Update() {
+        var Username = $("#Username").val();
+        $.ajax({
+            type: "POST",
+            contentType: 'application/json; charset=utf-8',
+            traditional: true,
+            data: JSON.stringify({ Username: Username }),
+            url: "/Account/GetForgotPassword",
+            success: function (msg) {
+
+                if (msg.success) {
+                    alert(msg.message);
+                }
+                else {
+                    alert(msg.message);
+                }
+            },
+        });
+    }
+</script>

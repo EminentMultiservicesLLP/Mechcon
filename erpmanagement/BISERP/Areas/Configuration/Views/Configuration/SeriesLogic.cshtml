@@ -1,0 +1,90 @@
+﻿<h5 class="page-header orangeDottedBottomBorder">Series Logic</h5>
+<div class="panel-group">
+    <div class="panel panel-default">
+        <div class="panel-groupingBoder">
+            <div class="panel-heading">
+                <div class="panel-title">
+                    <a class="collapsediv" data-toggle="collapse" href="#SearchDetails">
+                        Logic Details
+                    </a>
+                </div>
+            </div>
+            <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                <div class="panel-body">
+                    <div class="fill">
+                        <div id="SeriesLogicGrid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var SeriesLogicDataModel = { location: 'local', };
+    var SeriesLogicColList = [
+        {
+            title: "Formula", dataIndx: "Formula", dataType: "string", width: '49%', editable: false,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "FormulaFor", dataIndx: "FormulaFor", dataType: "string", width: '49%', editable: false,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        }
+    ];
+    var setSeriesLogicGridObject = {
+        adjustGridWidth: false,
+        maxWidth: '100%',
+        height: 400,
+        width: 'auto',
+        minWidth: 800,
+        autofill: true,
+        numberCell: { show: true },
+        hoverMode: 'row',
+        showTop: true,
+        showTitle: true,
+        showBottom: true,
+        sortable: true,
+        resizable: true,
+        scrollModel: { autoFit: true },
+        draggable: false,
+        hwrap: false,
+        wrap: false,
+        editable: false,
+        columnBorders: true,
+        menuIcon: true,
+        filterModel: { on: true, mode: "AND", header: true },
+        selectionModel: { type: 'row', mode: 'single', cbHeader: false },
+        pageModel: { type: "local" },
+        colModel: SeriesLogicColList,
+        dataModel: SeriesLogicDataModel
+    }
+    var $SeriesLogicGrid = $("#SeriesLogicGrid").pqGrid(setSeriesLogicGridObject);
+
+    LoadSeriesLogicGrid();
+    function LoadSeriesLogicGrid() {
+        var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: "Get", //HTTP POST Method
+            url: "/SeriesLogic/GetSeriesLogic", // Controller/View
+            beforeSend: function () {
+                $SeriesLogicGrid.pqGrid("showLoading");
+            },
+            complete: function () {
+                $SeriesLogicGrid.pqGrid("hideLoading");
+            },
+            success: function (response) {
+                if (response.length > 0) {
+                    $("#SeriesLogicGrid").pqGrid("hideLoading");
+                    $("#SeriesLogicGrid").pqGrid("option", "dataModel.data", response);
+                    $("#SeriesLogicGrid").pqGrid("refreshDataAndView");
+                    PqGridRefreshClick($SeriesLogicGrid);
+                }
+                else
+                    ShowAlert("error", data.message);
+            }
+        });
+    }
+</script>

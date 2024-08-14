@@ -1,0 +1,151 @@
+﻿@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div class="row">
+        <div class="col-sm-12">
+            <button type="button" class="btn btn-success" id="btnSave">Save</button>
+            <a data-toggle="collapse" class="btn btn-success" id="btnAdd">Reset</a>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="form-group form-horizontal">
+            <div class="col-sm-2">
+                @Html.Label("Category1")
+                @Html.TextBox("Category1", "", new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group form-horizontal">
+            <div class="col-sm-1">
+                @Html.Label("From Time")
+                <div class='input-group date'>
+                    <input type='text' id='FromTime1' class="form-control" />
+                </div>
+            </div>
+        </div>
+        <div class="form-group form-horizontal">
+            <div class="col-sm-1">
+                @Html.Label("To Time")
+                <div class='input-group date'>
+                    <input type='text' id='ToTime1' class="form-control" />
+                </div>
+            </div>
+        </div>
+        <div class="form-group form-horizontal">
+            <div class="col-sm-2">
+                @Html.Label("Category2")
+                @Html.TextBox("Category1", "", new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group form-horizontal">
+            <div class="col-sm-1">
+                @Html.Label("From Time")
+                <div class='input-group date'>
+                    <input type='text' id='FromTime2' class="form-control" />
+                </div>
+            </div>
+        </div>
+        <div class="form-group form-horizontal">
+            <div class="col-sm-1">
+                @Html.Label("To Time")
+                <div class='input-group date'>
+                    <input type='text' id='ToTime2' class="form-control" />
+                </div>
+            </div>
+        </div>
+        <div class="form-group form-horizontal">
+            <div class="col-sm-2">
+                @Html.Label("Category3")
+                @Html.TextBox("Category1", "", new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group form-horizontal">
+            <div class="col-sm-1">
+                @Html.Label("From Time")
+                <div class='input-group date'>
+                    <input type='text' id='FromTime3' class="form-control" />
+                </div>
+            </div>
+        </div>
+        <div class="form-group form-horizontal">
+            <div class="col-sm-1">
+                @Html.Label("To Time")
+                <div class='input-group date'>
+                    <input type='text' id='ToTime3' class="form-control" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group form-horizontal">
+            <div class="col-sm-2">
+                @Html.Label("Category4")
+                @Html.TextBox("Category4", "", new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group form-horizontal">
+            <div class="col-sm-1">
+                @Html.Label("From Time")
+                <div class='input-group date'>
+                    <input type='text' id='FromTime4' class="form-control" />
+                </div>
+            </div>
+        </div>
+        <div class="form-group form-horizontal">
+            <div class="col-sm-1">
+                @Html.Label("To Time")
+                <div class='input-group date'>
+                    <input type='text' id='ToTime4' class="form-control" />
+                </div>
+            </div>
+        </div>
+        <div class="form-group form-horizontal">
+            <div class="col-sm-2">
+                @Html.Label("Category5")
+                @Html.TextBox("Category5", "", new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group form-horizontal">
+            <div class="col-sm-1">
+                @Html.Label("From Time")
+                <div class='input-group date'>
+                    <input type='text' id='FromTime5' class="form-control" />
+                </div>
+            </div>
+        </div>
+        <div class="form-group form-horizontal">
+            <div class="col-sm-1">
+                @Html.Label("To Time")
+                <div class='input-group date'>
+                    <input type='text' id='ToTime5' class="form-control" />
+                </div>
+            </div>
+        </div>
+        <div class="form-group form-horizontal">
+            <div class="col-sm-2">
+                @Html.Label("Category6")
+                @Html.TextBox("Category6", "", new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group form-horizontal">
+            <div class="col-sm-1">
+                @Html.Label("From Time")
+                <div class='input-group date'>
+                    <input type='text' id='FromTime6' class="form-control" />
+                </div>
+            </div>
+        </div>
+        <div class="form-group form-horizontal">
+            <div class="col-sm-1">
+                @Html.Label("To Time")
+                <div class='input-group date'>
+                    <input type='text' id='ToTime6' class="form-control" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+}
+

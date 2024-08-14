@@ -1,0 +1,193 @@
+﻿@model BISERP.Area.Purchase.Models.PurchaseIndentModel
+
+<h5 class="page-header orangeDottedBottomBorder"> PURCHASE REQUISITION REPORT</h5>
+
+<div id="SearchGridModal" class="modal fade" role="dialog" data-backdrop="false">
+    <div class="modal-dialog find-search-grid-modal">
+        <div class="modal-content gridmodal-content">
+            <div class="modal-header gridmodal-header">
+                <button type="button" class="close" onclick="closeModal()">&times;</button>
+                <h4 class="modal-title">Search Details</h4>
+            </div>
+            <div class="modal-body">
+                <div class="fill">
+                    <div id="searchgrid"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="panel-group">
+    <div class="panel panel-default">
+        <div class="panel-groupingBoder">
+            <div class="panel-heading">
+                <div class="panel-title">                 
+                </div>
+            </div>
+            <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                <div class="panel-body">
+                    <div class="submit-row">
+                        <div class="col-sm-12">
+                            <button type="button" class="btn btn-info" id="btnSearch">FIND</button>
+                            <button type="button" class="btn btn-primary" id="btnReset">RESET</button>
+                            @*<button type="button" class="btn btn-warning" id="btnReport">REPORT</button>*@
+                        </div>
+                    </div>
+                    <fieldset class="fieldsetCustom">
+                        <legend class="legendCustom">Purchase Request Report</legend>
+                        <div class="row">
+                            <div class="col-sm-5 col-lg-3">
+                                @Html.LabelFor(m => m.IndentNumber)
+                                @Html.TextBoxFor(m => m.IndentNumber, "", new { @readonly = "true", @class = "form-control" })
+                                @Html.HiddenFor(m => m.IndentId)
+                            </div>
+                            <div class="col-sm-5 col-lg-3">
+                                @Html.LabelFor(model => model.IndentDate)
+                                @Html.TextBoxFor(model => model.IndentDate, new { @readonly = "true", @class = "IndentDate form-control" })
+                            </div>
+                        </div>
+                    </fieldset>
+                        <div style="margin-top: 28px;">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <iframe id="iframeReportViewer" style="width: 100%; height: 800px"></iframe>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var $searchgrid;
+
+    $("#btnSearch").on('click', function () {
+        $("#SearchGridModal").modal('show');
+        LoadSearchgrid('authorised');
+    });
+
+    function LoadSearchgrid(status) {
+        //ClearParamGrid("searchgrid");
+        $.ajax({
+            type: "GET",
+            url: "/PurchaseIndent/PurchaseIndentforRpt/",
+            data: { storeId: 0 },
+            datatype: "Json",
+            beforeSend: function () {
+                $searchgrid.pqGrid("showLoading");
+            },
+            complete: function () {
+                $searchgrid.pqGrid("hideLoading");
+            },
+            success: function (data) {
+                if (data.mimodel) {
+                    
+                    var dataMGrid = data.mimodel;
+                    
+                    if (dataMGrid.length > 0) {
+                        $searchgrid.pqGrid("hideLoading");
+                        $searchgrid.pqGrid("option", "dataModel.data", dataMGrid);
+                    }
+                }
+                $searchgrid.pqGrid("refreshDataAndView");
+            }
+        });
+    }
+    $(document).ready(function () {
+        var dataM = { location: "local", sorting: 'local' }
+        var colM = [
+            { title: "", dataIndx: "IndentId", dataType: "integer", hidden: true },
+            { title: "", dataIndx: "IndentNature", dataType: "string", hidden: true },
+            {
+                title: "Indent No", dataIndx: "IndentNumber", width: '24%',
+                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            },
+            {
+                title: "Indent Date", dataIndx: "strIndentDate", width: '19%', dataType: "string"
+            },
+            {
+                title: "Project", dataIndx: "StoreName", width: '19%', dataType: "string"
+            },
+            { title: "", dataIndx: "Storeid", dataType: "string", hidden: true },
+            {
+                title: "Status", dataIndx: "Status", width: '19%', dataType: "string",
+                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            },
+            {
+                title: "Created By", dataIndx: "CreatedBy", width: '19%', dataType: "string",
+                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            },
+            { title: "", dataIndx: "ItemCategoryId", dataType: "string", hidden: true }
+        ];
+        var SetM = {
+            width: '100%',
+            height: 400,
+            sortable: false,
+            numberCell: { show: false },
+            hoverMode: 'cell',
+            showTop: false,
+            resizable: true,
+            scrollModel: { autoFit: true },
+            draggable: false,
+            wrap: false,
+            editable: false,
+            filterModel: { on: true, mode: "AND", header: true },
+            selectionModel: { type: 'row', mode: 'single' },
+            colModel: colM,
+            dataModel: dataM,
+            pageModel: { type: "local", rPP: 100 },
+            rowClick: function (evt, ui) {
+                $("#iframeReportViewer").attr('src', "");
+                /*var rowIndx = parseInt(ui.rowIndx);*/
+                var record = ui.rowData;
+                $("#IndentId").val(record.IndentId);
+                $("#IndentNumber").val(record.IndentNumber);
+                $("#IndentDate").val(record.strIndentDate);
+                closeModal();
+                let pIType;
+                if (record.Status === "Authorised") {
+                    pIType = "AUTHORISED";
+                }
+                else {
+                    pIType = "PROVISIONAL";
+                }
+                ReportValidationCheck(record.IndentId, pIType);
+            }
+        }
+        $searchgrid = $("#searchgrid").pqGrid(SetM);
+      
+    });
+
+
+   
+    function ReportValidationCheck(indentId, pIType) {
+        var url = "";
+        url = "../../Reports/ReportViewer.aspx?reportid=" + 237 + "&indentId=" + indentId + "&pIType=" + pIType;
+        var myframe = document.getElementById("iframeReportViewer");
+        if (myframe != null) {
+            if (myframe.src) {
+                myframe.src = url;
+            }
+            else if (myframe.contentWindow != null && myframe.contentWindow.location != null) {
+                myframe.contentWindow.location = url;
+            }
+            else {
+                myframe.setAttribute('src', url);
+            }
+            return false;
+        }
+    }
+
+    $("#btnReset").on('click', function () {
+        $("#iframeReportViewer").attr('src', "");
+        $("#IndentId").val("");
+        $("#IndentNumber").val("");
+        $("#IndentDate").val("");
+    })
+
+    function closeModal() {
+        $("#SearchGridModal").modal('hide');
+    }
+
+</script>

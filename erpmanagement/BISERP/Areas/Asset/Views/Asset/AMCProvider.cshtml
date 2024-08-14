@@ -1,0 +1,356 @@
+﻿@model BISERP.Areas.Asset.Models.AMCProviderModel
+<script type="text/javascript">
+    var grid;    
+    $(document).ready(function () {
+        grid = $("#grid").jsGrid({
+            width: "100%",
+            height: "320px",
+            filtering: true, //will display top 1st row as filter
+            selecting: true,
+
+            inserting: false, // false will not allow inserting new entry
+            editing: false,// false will not allow exisiting data entry
+            sorting: true,
+            autoload: true,
+            paging: true,
+            pageSize: 20,
+
+            controller: {
+                loadData: function (filter) {
+                    var d = $.Deferred();
+                    $.ajax({
+                        type: 'GET',
+                        url: '@Url.Action("AllAMCProvider", "AMCProvider")',
+                        dataType: "json",
+                        data: { SearchName: filter.Name, SearchCode: filter.Code },
+                        success: function (data) {
+                            d.resolve(data);
+                        },
+                        error: function (e) {
+                            ShowAlert("error", "No Record Found");
+                        }
+                    });
+                    return d.promise();
+                },
+            },
+
+            fields: [
+                { name: "Id", visible: false, width: 0 },
+                { name: "Code", title: "Code", type: "text", validate: "required", width: 20 },
+                { name: "Name", title: "Name", type: "text", validate: "required" },
+                { name: "Deactive", title: "Deactive", type: "checkbox", filtering: false, width: 10 },
+                { name: "Address1", visible: false, width: 0 },
+                { name: "Address2", visible: false, width: 0 },
+                { name: "CityId", visible: false, width: 0 },
+                { name: "StateId", visible: false, width: 0 },
+                { name: "CityName", visible: false, width: 0 },
+                { name: "Pincode", visible: false, width: 0 },
+                { name: "StateName", visible: false, width: 0 },
+                { name: "Telephone", visible: false, width: 0 },
+                { name: "Mobile", visible: false, width: 0 },
+                { name: "FaxNo", visible: false, width: 0 },
+                { name: "Email", visible: false, width: 0 },                
+                { name: "ContactPerson1", visible: false, width: 0 },
+                { name: "ContactPerEmail1", visible: false, width: 0 },
+                { name: "ContactPerDesignation1", visible: false, width: 0 },
+                { name: "ContactPerson2", visible: false, width: 0 },
+                { name: "ContactPerEmail2", visible: false, width: 0 },
+                { name: "ContactPerDesignation2", visible: false, width: 0 },
+                { type: "control", editButton: false, deleteButton: false, clearFilterButton: true, modeSwitchButton: true, width: 10 }
+
+            ],
+            /********** Row Selection Event you can use in suupplier***********/
+            rowClick: function (args) {
+                var data = args.item;
+                $("#Id").val(data.Id);
+                $("#Name").val(data.Name); $("#Code").val(data.Code); $("#Deactive").prop('checked', data.Deactive);
+                $("#Address1").val(data.Address1); $("#Address2").val(data.Address2); 
+                $("#ddlCity").val(data.CityId); $("#Pincode").val(data.Pincode); $("#ddlState").val(data.StateId); $("#Telephone").val(data.Telephone);
+                $("#Mobile").val(data.Mobile); $("#FaxNo").val(data.FaxNo); $("#Email").val(data.Email); $("#ContactPerson1").val(data.ContactPerson1);
+                $("#ContactPerEmail1").val(data.ContactPerEmail1); $("#ContactPerDesignation1").val(data.ContactPerDesignation1);
+                $("#ContactPerson2").val(data.ContactPerson2); $("#Email").val(data.ContactPerson2); $("#ContactPerEmail2").val(data.ContactPerEmail2);
+                $("#ContactPerEmail2").val(data.ContactPerEmail2); $("#ContactPerDesignation2").val(data.ContactPerDesignation2);
+                $("#Deactive").attr("disabled", false);
+            },
+        });
+
+    });
+
+    $(document).ready(function () {
+        $("#btnSave").click(function () {
+            if ($("#Code").val() == "") {
+                ShowAlert("error", "code is missing! Please enter the code");
+                return;
+            }
+            if ($("#Name").val() == "") {
+                ShowAlert("error", "Name is missing! Please enter the Name");
+                return;
+            }
+
+
+            $.ajax(
+            {
+                type: "POST", //HTTP POST Method
+                url: '/AMCProvider/SaveAMCProvider', // Controller/View
+                data: { //Passing data
+                    Id: $("#Id").val(),
+                    Name: $("#Name").val(),
+                    Code: $("#Code").val(),
+                    Address1: $("#Address1").val(),
+                    Address2: $("#Address2").val(),
+                    CityId: $("#ddlCity").val(),
+                    Pincode: $("#Pincode").val(),
+                    StateId: $("#ddlState").val(),
+                    Telephone: $("#Telephone").val(),
+                    Mobile: $("#Mobile").val(),
+                    FaxNo: $("#FaxNo").val(),
+                    Email: $("#Email").val(),
+                    ContactPerson1: $("#ContactPerson1").val(),
+                    ContactPerEmail1: $("#ContactPerEmail1").val(),
+                    ContactPerDesignation1: $("#ContactPerDesignation1").val(),
+                    ContactPerson2: $("#ContactPerson2").val(),
+                    ContactPerEmail2: $("#ContactPerEmail2").val(),
+                    ContactPerDesignation2: $("#ContactPerDesignation2").val(),
+                    Deactive: $("#Deactive").prop('checked')
+                },
+                success: function (msg) {
+                    if (msg.success) {
+                        if ($("#Id").val() == "")
+                            ShowAlert("success", "AMC Provider added successfully.");
+                        else
+                            ShowAlert("success", "AMC Provider updated successfully.");
+                        ClearForm();
+                            
+                        $("#grid").jsGrid("loadData");
+                        
+                    }
+                    else {
+                        ShowAlert("error", msg.Message);
+                    }
+                },
+
+            });
+        });
+    });
+    $.ajax({
+        type: "GET",
+        url: "/Master/AllCities",
+        datatype: "Json",
+        success: function (data) {
+            $.each(data, function (index, value) {
+                $('#ddlCity').append('<option value="' + value.ID + '">' + value.CityName + '</option>');
+            });
+        }
+    });
+        
+    $.ajax({
+        type: "GET",
+        url: "/Master/AllStates",
+        datatype: "Json",
+        success: function (data) {
+            $.each(data, function (index, value) {
+                $('#ddlState').append('<option value="' + value.ID + '">' + value.StateName + '</option>');
+            });
+        }
+    });
+    
+    function ClearForm() {
+        $("#Deactive").prop('checked', false);
+        $("#Id").val(""),
+        $("#Name").val(""),
+        $("#Code").val(""),
+        $("#Address1").val(""),
+        $("#Address2").val(""),
+        $("#ddlCity").val(""),
+        $("#Pincode").val(""),
+        $("#ddlState").val(""),
+        $("#Telephone").val(""),
+        $("#Mobile").val(""),
+        $("#FaxNo").val(""),
+        $("#Email").val(""),
+        $("#ContactPerson1").val(""),
+        $("#ContactPerEmail1").val(""),
+        $("#ContactPerDesignation1").val(""),
+        $("#ContactPerson2").val(""),
+        $("#ContactPerEmail2").val(""),
+        $("#ContactPerDesignation2").val(""),
+        $("#Deactive").prop('checked')
+    }
+
+    $(document).ready(function () {
+        $("#btnAdd").click(function () {
+            ClearForm();
+        });
+    });
+
+</script>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <fieldset>
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-groupingBoder">
+                    <div class="panel-heading">
+                        <div class="panel-title">
+                            <h4>
+                                <a class="collapsediv" data-toggle="collapse" href="#SearchDetails" style="color:white">
+                                    AMC Providers
+                                </a>
+                            </h4>
+                        </div>
+                    </div>
+                    <div class="panel-collapse collapse in" aria-expanded="true" id="SearchDetails">
+                        <div class="panel-body">
+                            <div class="container fill">
+                                <div id="grid" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <br>
+        <div class="panel-groupingBoder">
+            <div class="panel-heading">
+                <div class="panel-title">
+                    Entry Form
+                </div>
+            </div>
+            <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                <div class="panel-body">
+                    <fieldset>
+
+                        <div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <button type="button" id="btnSave" class="btn btn-success">Save</button>
+                                    <button type="button" id="btnAdd" class="btn btn-success">Reset</button>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(model => model.Code, new { @class = "required" })
+                                @Html.TextBoxFor(model => model.Code, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.Code)
+                                @Html.HiddenFor(model => model.Id)
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(model => model.Name, new { @class = "required" })
+                                @Html.TextBoxFor(model => model.Name, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.Name)
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-2">
+                                    @Html.LabelFor(model => model.Deactive)
+                                    @Html.CheckBoxFor(model => model.Deactive, new { @disabled = "disabled" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <b>Address</b>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(model => model.Address1)
+                                @Html.TextBoxFor(model => model.Address1, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.Address1)
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(model => model.Address2)
+                                @Html.TextBoxFor(model => model.Address2, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.Address2)
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(model => model.CityId)
+                                @Html.DropDownList("ddlCity", new SelectList(string.Empty, "Value", "Text"), "Select City", new { @class = "wrapperdropdown-content form-control" })
+                                @Html.ValidationMessageFor(model => model.CityId)
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(model => model.StateId)
+                                @Html.DropDownList("ddlState", new SelectList(string.Empty, "Value", "Text"), "Select State ", new { @class = "wrapperdropdown-content form-control" })
+                                @Html.ValidationMessageFor(model => model.StateId)
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(model => model.Pincode)
+                                @Html.TextBoxFor(model => model.Pincode, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.Pincode)
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(model => model.Telephone)
+                                @Html.TextBoxFor(model => model.Telephone, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.Telephone)
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(model => model.Mobile)
+                                @Html.TextBoxFor(model => model.Mobile, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.Mobile)
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(model => model.FaxNo)
+                                @Html.TextBoxFor(model => model.FaxNo, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.FaxNo)
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(model => model.Email)
+                                @Html.TextBoxFor(model => model.Email, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.Email)
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <b>Contact Person Details</b>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(model => model.ContactPerson1)
+                                @Html.TextBoxFor(model => model.ContactPerson1, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.ContactPerson1)
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(model => model.ContactPerEmail1)
+                                @Html.TextBoxFor(model => model.ContactPerEmail1, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.ContactPerEmail1)
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(model => model.ContactPerDesignation1)
+                                @Html.TextBoxFor(model => model.ContactPerDesignation1, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.ContactPerDesignation1)
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(model => model.ContactPerson2)
+                                @Html.TextBoxFor(model => model.ContactPerson2, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.ContactPerson2)
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(model => model.ContactPerEmail2)
+                                @Html.TextBoxFor(model => model.ContactPerEmail2, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.ContactPerEmail2)
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(model => model.ContactPerDesignation2)
+                                @Html.TextBoxFor(model => model.ContactPerDesignation2, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.ContactPerDesignation2)
+                            </div>
+                        </div>                       
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+}

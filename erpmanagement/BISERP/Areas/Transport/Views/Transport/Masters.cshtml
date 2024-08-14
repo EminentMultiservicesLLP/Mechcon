@@ -1,0 +1,60 @@
+﻿@model BISERP.Models.UserMangement.MenuUserRightsModel
+@{
+    ViewBag.Title = "Masters";
+    Layout = "~/Areas/Transport/Views/Shared/_TransportLayout.cshtml";
+}
+
+<div id="ContentPlaceHolder">
+    @using (Html.BeginForm())
+    {
+        var loadingFirstTime = true;
+        <div class="form-group">
+            <div class="col-sm-1">
+                <span class="panel-title"><b>Masters</b></span>
+            </div>
+            <div class="col-sm-2">
+                <select id="selMasters" class="wrapper-dropdown-content form-control">
+                    @*<option class="wrapperdropdown-content">Select</option>*@
+                    @foreach (var item in Model.Child)
+                    {
+                        var activeClass = (loadingFirstTime ? "active" : "");
+                        <option class="wrapperdropdown-content" value="@item.PageName">@item.MenuName</option>
+                        loadingFirstTime = false;
+                    }
+                </select>
+            </div>
+        </div>
+        <div id="MasterPlaceHolder" style="display:none;">
+
+        </div>
+    }
+</div>
+
+@Styles.Render("~/Content/css/MasterGrid")
+<script src="~/Scripts/grid/jsgrid.js"></script>
+<script type="text/javascript">
+
+    function LoadFormData(selectedID) {
+        $.get('/Transport/Transport/' + selectedID, function (data) {
+            $('#MasterPlaceHolder').html(data);
+            $('#MasterPlaceHolder').fadeIn('fast');
+        });
+    }
+
+    function LoadDefaultTab() {
+        if ($('#selMasters') != undefined && $('#selMasters').length > 0) {
+            var selectedID = $('#selMasters').val();
+            LoadFormData(selectedID);
+        }
+    }
+
+    $(function () {
+        $('#selMasters').change(function () {
+            var selectedID = $(this).val();
+            clearTabSelection($(this));
+            LoadFormData(selectedID);
+        });
+
+        LoadDefaultTab();
+    });
+</script>

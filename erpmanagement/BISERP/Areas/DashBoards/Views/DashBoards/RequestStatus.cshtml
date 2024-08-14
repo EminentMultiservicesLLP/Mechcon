@@ -1,0 +1,196 @@
+﻿@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        Entry Form
+                    </div>
+                </div>
+                <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <fieldset>
+                            <legend></legend>
+                            
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.Label("Project")
+                                        @Html.DropDownList("ddlStores", new SelectList(string.Empty, "Value", "Text"), "Select Project", new { @class = "wrapperdropdown-content form-control" })
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.Label("Indent No")
+                                        @Html.TextBox("IndentNo", "", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.Label("From Date")
+                                        <div class='input-group date' id='FromDate'>
+                                            <input type='text' class="form-control" />
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        @Html.Label("To Date")
+                                        <div class='input-group date' id='ToDate'>
+                                            <input type='text' class="form-control" />
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        <button class="btn btn-primary" type="button" id="btnShowRequest">Show Request</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <fieldset>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <div id="pogrid"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div title="Select Indent No" id="IndentModal" style="display: none;">
+        <div id="Indentgrid"></div>
+    </div>
+    <script type="text/javascript">
+        var grid;
+        function ShowRecords() {
+            //ClearParamGrid("pogrid");
+            var StoreId = $("#ddlStores").val();
+            if (StoreId == undefined || StoreId == "") StoreId = 0
+            var fromdate = $("#FromDate").data('date');
+            var todate = $("#ToDate").data('date');
+            
+            $.ajax({
+                type: "GET",
+                url: "/RequestStatus/GetRequestStatus",
+                datatype: "Json",
+                data: { StoreId: StoreId, fromdate: fromdate, todate: todate, IndentNo: $("#IndentNo").val() },
+                beforeSend: function () {
+                    $("#pogrid").pqGrid("showLoading");
+                },
+                complete: function () {
+                    $("#pogrid").pqGrid("hideLoading");
+                },
+                success: function (result) {
+                    $("#pogrid").pqGrid("hideLoading");
+                    $("#pogrid").pqGrid("option", "dataModel.data", result);
+                    $("#pogrid").pqGrid("refreshView");
+                    $("#pogrid").pqGrid("refresh");
+                },
+                error: function (request, status, error) {
+                    $("#pogrid").pqGrid("hideLoading");
+                    ShowAlert("error", "Error while loading list");
+                    return;
+                }
+            });
+        }
+        $(document).ready(function () {
+            $('#FromDate').datetimepicker({
+                format: 'DD-MMM-YYYY',
+                extraFormats: ['DD-MM-YYYY', 'DD-MM-YY'],
+                defaultDate: new Date()
+            });
+            $('#ToDate').datetimepicker({
+                format: 'DD-MMM-YYYY',
+                extraFormats: ['DD-MM-YYYY', 'DD-MM-YY'],
+                defaultDate: new Date()
+            });
+            $.ajax({
+                type: "GET",
+                url: "/Master/AllStores",
+                datatype: "Json",
+                success: function (data) {
+                    $.each(data, function (index, value) {
+                        $('#ddlStores').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                    });
+                }
+            });
+
+            $("#btnShowRequest").on('click', function () {
+                ShowRecords();
+            });
+            $("#btnReset").on('click', function () {
+                $("#ddlStores").val("");
+                //ClearParamGrid("pogrid");
+            });
+        });
+        
+        var $gridMain;
+        $(document).ready(function () {
+            var dataModel = {
+                location: "local", sorting: 'local'
+            };
+            var colModel= [
+                            { title: "", dataIndx: "ID", width: 10, dataType: "integer", hidden: true },
+                            { title: "RequestId", width: 60, dataIndx: "RequestId", hidden: true },
+                            {
+                                title: "Request No", dataIndx: "RequestNo", width: 200, dataType: "string",
+                                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+                            },
+                            { title: "Request Date", dataIndx: "strRequestDate", width: 120, dataType: "string" },
+                            { title: "Remark", dataIndx: "Remark", width: 100, dataType: "string" },
+                            { title: "Auth. Date", dataIndx: "strAuthorizedDate", width: 120, dataType: "string" },
+                            { title: "PI Date", dataIndx: "strPIDate", width: 100, dataType: "string" },
+                            { title: "PI Auth. Date", dataIndx: "strPIAuthorizedDate", width: 120, dataType: "string" },
+                            { title: "PI Remark", dataIndx: "PIRemark", width: 100, dataType: "string" },
+                            { title: "PO Date", dataIndx: "strPODate", width: 100, dataType: "string" },
+                            { title: "PO Auth. Date", dataIndx: "strPOAuthorizedDate", width: 120, dataType: "string" },
+                            { title: "PO Remark", dataIndx: "PORemark", width: 100, dataType: "string" },
+                            { title: "GRN Date", dataIndx: "strGRNDate", width: 100, dataType: "string" },
+                            { title: "GRN Auth. Date", dataIndx: "strGRNAuthorizedDate", width: 130, dataType: "string" },
+                            { title: "GRN Remark", dataIndx: "GRNRemark", width: 120, dataType: "string" },
+                            { title: "MI Date", dataIndx: "strMIDate", width: 100, dataType: "string" },
+                            { title: "MI Accept. Date", dataIndx: "strMIAcceptedDate", width: 140, dataType: "string" },
+                            { title: "MI Remark", dataIndx: "MIRemark", width: 100, dataType: "string" },
+                            { title: "MR Date", dataIndx: "strMRDate", width: 100, dataType: "string" },
+                            { title: "MR Auth. Date", dataIndx: "strMRAuthorizedDate", width: 120, dataType: "string" },
+                            { title: "MR Remark", dataIndx: "MRRemark", width: 100, dataType: "string" },
+            ];
+            var setSearchGrid = {
+                virtualX: true,
+                virtualY: true,
+                height: 500,
+                sortable: false,
+                numberCell: { show: false },
+                showTop: true,
+                resizable: true,
+                toolbar: exportToExcelToolbar,
+                scrollModel: { flexContent: true },
+                draggable: false,
+                wrap: false,
+                editable: false,
+                columnBorders: true,                
+                filterModel: { on: true, mode: "AND", header: true },
+                colModel: colModel,
+                dataModel: dataModel,
+                pageModel: { type: "local", rPP: 20 },                
+            }
+            $gridMain = $("#pogrid").pqGrid(setSearchGrid);
+        });
+
+    </script>
+}

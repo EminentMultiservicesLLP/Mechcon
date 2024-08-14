@@ -1,0 +1,223 @@
+﻿
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div style="height:100%">
+        <div class="row" style="width:98%;align-content:center;">
+            <div class="col-sm-12">
+                <canvas id="stockSummary"></canvas>
+            </div>
+        </div>
+        <div class="row" style="width:98%;align-content:center;">
+            <div class="col-sm-12">
+                <canvas id="guardIssueSummary"></canvas>
+            </div>
+        </div>
+    </div>
+    @*<div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        Management DashBoard
+                    </div>
+                </div>
+                <br />
+                <div class="panel-groupingBoder">
+                    <div class="row" style="max-height:350px;">
+                        <div class="col-sm-6">
+                            <canvas id="stockSummary"></canvas>
+                        </div>                        
+                        <div class="col-sm-6">
+                            <canvas id="guardIssueSummary"></canvas>
+                        </div>                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>*@
+    
+    <script src="~/Scripts/Chart/Chart.bundle.min.js"></script>
+    <script type="text/javascript">
+        
+        var color = Chart.helpers.color;
+        var colors = ["#E74C3C", "#8E44AD", "#58D68D", "#FF33F3", "#B2BABB","#F5B041"];
+        var colors_qty = ["#f990a7", "#aad2ed", "#9966FF", "#99e5e5", "#f7bd83", "#800000"];
+        var itemTypes = ["Accesorries", "HousseKeeping", "Stationary", "Uniform", "Linen", "Others"];
+        var barChartDataStck = {}, barChartDataQty = {};
+
+        var stockValueSummary;
+        var stockQtySummary;
+        function LoadStockValueSummeryData() {
+            LoadData(1);
+        }
+
+        function LoadStockQtySummeryData() {
+            LoadData(0);
+        }
+
+        function LoadData(isByValue) {
+            $.ajax({
+                type: "GET",
+                url: "/DashBoard/GetStockSummary/",
+                data: { byValue: isByValue },
+                datatype: "Json",
+                success: function (data) {
+                    
+                    if (data != null && data != undefined && data.result != null && data.result != undefined) {
+                        var dsLabel = [], accesorries = [], stationary = [], uniform = [], linen = [], housekeeping = [], others = [];
+                        $.each(data.result, function (index, jsonObject) {
+                            $.each(jsonObject, function (key, val) {
+                                switch (key.toLowerCase()) {
+                                    case "branch":
+                                        if (isByValue == 1)
+                                            barChartDataStck.labels.push(val);
+                                        else
+                                            barChartDataQty.labels.push(val);
+                                        break;
+                                    case "accesorries":
+                                        accesorries.push(parseFloat(val));
+                                        break;
+                                    case "houssekeeping":
+                                        housekeeping.push(parseFloat(val));
+                                        break;
+                                    case "stationary":
+                                        stationary.push(parseFloat(val));
+                                        break;
+                                    case "uniform":
+                                        uniform.push(parseFloat(val));
+                                        break;
+                                    case "linen":
+                                        linen.push(parseFloat(val));
+                                        break;
+                                    case "others":
+                                        others.push(parseFloat(val));
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            });
+                        });
+
+                        $.each(itemTypes, function (i, val) {
+                            var dsData; var lableName = val.toLowerCase();
+                            if (lableName == "accesorries")
+                                dsData = accesorries;
+                            if (lableName == "houssekeeping")
+                                dsData = housekeeping;
+                            if (lableName == "stationary")
+                                dsData = stationary;
+                            if (lableName == "uniform")
+                                dsData = uniform;
+                            if (lableName == "linen")
+                                dsData = linen;
+                            if (lableName == "others")
+                                dsData = others;
+
+                            if (isByValue == 1) {
+                                barChartDataStck.datasets.push({
+                                    label: val,
+                                    backgroundColor: colors[i].toString(),
+                                    borderWidth: 1,
+                                    data: dsData
+                                });
+                            }
+                            else {
+                                barChartDataQty.datasets.push({
+                                    label: val,
+                                    backgroundColor: colors_qty[i].toString(),
+                                    borderWidth: 1,
+                                    data: dsData
+                                });
+                            }
+                        });
+                        if (isByValue == 1)
+                            window.stckBar.update();
+                        else
+                            window.qtyBar.update();
+
+                        //window.stckBar.render(4000, lazy);
+                    }
+                },
+                error: function (jqXHR, exception) {
+                    
+                    var msg = '';
+                    if (jqXHR.status === 0) {
+                        msg = 'Not connect.\n Verify Network.'
+                    }
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            var stck = document.getElementById("stockSummary").getContext("2d");
+            var qty = document.getElementById("guardIssueSummary").getContext("2d");
+
+            LoadStockValueSummeryData();
+            LoadStockQtySummeryData();
+
+            window.stckBar = new Chart(stck, {
+                type: 'bar',
+                animationEasing: 'easeInOutBounce',
+                data: barChartDataStck,
+                options: {
+                    responsive: true,
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        fontSize: 20,
+                        fontStyle: 'bold',
+                        text: 'Current Stock Valuation in Rupees (Rs.)'
+                    },
+                    tooltips: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    scales: {
+                        xAxes: [{
+                            stacked: true,
+                        }],
+                        yAxes: [{
+                            stacked: true
+                        }]
+                    }
+                }
+            });
+
+            window.qtyBar = new Chart(qty, {
+                type: 'bar',
+                data: barChartDataQty,
+                options: {
+                    responsive: true,
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        fontSize: 20,
+                        fontStyle:'bold',
+                        text: 'Current Stock Quantity Available in each Branch'
+                    },
+                    tooltips: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    scales: {
+                        xAxes: [{
+                            stacked: true,
+                        }],
+                        yAxes: [{
+                            stacked: true
+                        }]
+                    }
+                }
+            });
+
+           
+
+        });
+    </script>
+}

@@ -1,0 +1,57 @@
+﻿@model BISERP.Areas.Store.Models.Store.GRNModel
+@{
+    Layout = null;
+}
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+    <div style="width: 95%; margin: 10px;">
+        <div align="center">
+            <h2>New GRN </h2>
+        </div>
+        <table style="padding: 2px;">
+            <tr>
+                <td style="text-align: left">GRN NO :@Model.GRNNo</td>
+            </tr>
+            <tr><td style="text-align: left">GRN Date :@DateTime.Now.ToString("dd-MMM-yyyy")</td> 
+            </tr>
+            <tr>
+                <td style="align-content: stretch;">
+                    <u>GRN Requested by</u>: <b>@Model.StoreName</b>
+                </td>
+            </tr>
+            <tr>
+                <td style="align-content: stretch;">
+                    <u>Supplier </u>: <b>@Model.SupplierName</b> &emsp; &emsp; <u>DCNo </u>:<b>@Model.DCNo</b>
+                </td>
+            </tr>
+            <tr style="height: 20px" />
+            <tr>
+                <td style="align-content: center">
+                    <table style="padding: 5px;" border="1">
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Quantity</th>
+                            <th>Rate</th>
+                        </tr>
+                        @foreach (var menu in Model.GRNDetails)
+                        {
+                            <tr>
+                                <td>@menu.ItemName</td>
+                                <td>@menu.Qty</td>
+                                <td>@menu.Rate</td>
+                            </tr>
+                        }
+                    </table>
+                </td>
+            </tr>
+        </table>
+        <div>
+            <br />
+            <u style="color: red;"><b>Note:</b></u> *** This is an automatically generated email, please do not reply ***
+        </div>
+    </div>
+</body>
+</html>

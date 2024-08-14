@@ -1,0 +1,99 @@
+﻿@model BISERP.Areas.Store.Models.Master.PrefixMaster
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <fieldset>    
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-groupingBoder">
+                    <div class="panel-heading">
+                        <div class="panel-title">
+                            <h4>                               
+                                Prefix Master Details                              
+                            </h4>
+                        </div>
+                    </div>                  
+                </div>
+                <div class="panel-groupingBoder">
+                   
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="col-sm-1">
+                                        @Html.LabelFor(model => model.Prefixfor)
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <select id="" class="wrapper-dropdown" style="width: 150px;">
+                                            <option class="wrapperdropdown-content">Material Indent</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="col-sm-1">
+                                        @Html.LabelFor(model => model.Format)
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <select id="" class="wrapper-dropdown" style="width: 150px;">
+                                            <option class="wrapperdropdown-content">YYYY</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-1">
+                                        <a href="" class="btn btn-primary" type="button">ADD >></a>
+                                    </div>
+                                    <div class="col-sm-1">
+                                        @Html.LabelFor(model => model.GeneratedCode)
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.TextBoxFor(model => model.GeneratedCode)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="col-sm-1">
+                                        @Html.LabelFor(model => model.StartFrom)
+                                    </div>
+                                    <div class="col-sm-3">
+                                        @Html.TextBoxFor(model => model.StartFrom)
+                                    </div>
+                                    <div class="col-sm-1">
+                                        @Html.LabelFor(model => model.Reset)
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <select id="" class="wrapper-dropdown" style="width: 150px;">
+                                            <option class="wrapperdropdown-content">Financial Year</option>
+                                        </select>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+
+    </fieldset>
+
+     <div >
+          
+            <button type="button" class="btn btn-success">Save</button>
+         <button type="button" class="btn btn-success">Reset</button>
+           
+        </div>
+ 
+  
+    
+ 
+}

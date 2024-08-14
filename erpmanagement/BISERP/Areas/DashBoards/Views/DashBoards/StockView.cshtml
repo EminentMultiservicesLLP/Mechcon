@@ -1,0 +1,215 @@
+﻿@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        Details
+                    </div>
+                </div>
+                <div class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <fieldset>
+                            <legend></legend>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.Label("Select Project")
+                                        @Html.DropDownList("ddlStores", new SelectList(string.Empty, "Value", "Text"), "Select Project", new { @class = "wrapperdropdown-content form-control" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.Label("Item Type")
+                                        @Html.DropDownList("ddlItemtype", new SelectList(string.Empty, "Value", "Text"), "Select Category", new { @class = "wrapperdropdown-content form-control" })
+                                    </div>
+                                   </div>
+                                    @*<div class="col-sm-2">
+                                            @Html.CheckBox("Show in Details")
+                                            @Html.Label("Show in Details")
+                                        </div>*@     
+                                     <div class="form-group form-horizontal">
+                                        <div class="col-sm-1">
+                                                <button type="button" id="btnDispRecords" class="btn btn-primary">Display Records</button>
+                                           
+                                            </div>
+                                    </div>
+                                </div>
+                        </fieldset>
+                        <fieldset>
+                            <legend></legend>
+
+                            <div class="row">
+                                <div class="container fill">
+                                    <div id="grid" />
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>        
+        <button type="button" class="btn btn-success" id="btnAdd">Reset</button>
+    </div>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $.ajax({
+                type: "GET",
+                url: "/Master/AllStores",
+                datatype: "Json",
+                success: function (data) {
+                    $.each(data, function (index, value) {
+                        $('#ddlStores').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                    });
+                }
+            });
+
+            $('select#ddlStores').change(function () {
+                var storeId = $(this).val();
+                $.ajax({
+                    type: "GET",
+                    url: "/Master/GetItemTypeByStoreId",
+                    data: { storeId: storeId },
+                    datatype: "Json",
+                    success: function (data) {
+                        $("#ddlItemtype").html("");
+                        $('#ddlItemtype').append('<option value="' + "0" + '">' + "All" + '</option>');
+                        $.each(data, function (index, value) {
+                            $('#ddlItemtype').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                        });
+                    }
+                });
+
+            });
+        });
+
+        $(document).ready(function () {
+            var colIL = [
+                    { title: "", dataIndx: "ID", dataType: "integer", hidden: true },
+                    {
+                        title: "Itemcode", dataIndx: "Itemcode", dataType: "string", width: 190, hidden:true,
+                        filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                    },
+                    {
+                        title: "ItemName", dataIndx: "ItemName", dataType: "string", width: 300,
+                        filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                    },
+                    {
+                        title: "Store", dataIndx: "StoreName", dataType: "string", width: 250, hidden: true,
+                        filter: {
+                            type: "select",
+                            condition: 'equal',
+                            prepend: { '': '--Select--' },
+                            valueIndx: "StoreName",
+                            labelIndx: "StoreName",
+                            listeners: ['change']
+                        }
+                    },
+                    {
+                        title: "Batch", dataIndx: "Batch", dataType: "string", width: 200,hidden: true ,
+                        filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                    },
+                    { title: "Expiry Date", dataIndx: "strExpiryDate", dataType: "string", width: 200, hidden: true },
+                    { title: "Qty", dataIndx: "Qty", dataType: "double", width: 200 },                    
+                    { title: "Supplier", dataIndx: "Supplier", dataType: "string", width: 250, align: "center", hidden: true },
+                    { title: "Manufacture", dataIndx: "Manufacture", dataType: "double", width: 200, hidden: true }
+            ];
+
+            var dataIL = {
+                location: 'local',
+                sorting: 'local',
+            };
+
+            var setIL = {
+                height: 370,
+                sortable: false,
+                colModel: colIL,
+                dataModel: dataIL,
+                numberCell: { show: false },
+                selectionModel: { type: 'none', subtype: 'incr', cbHeader: true, cbAll: true },
+                filterModel: { on: true, mode: "AND", header: true },
+                hoverMode: 'cell',
+                editor: { type: 'textbox' },
+                showTop: true,
+                showTitle: false,
+                toolbar: exportToExcelToolbar,
+                resizable: true,
+                editable: false,
+                virtualX: true,
+                virtualY: true,
+                editModel: {
+                    saveKey: $.ui.keyCode.ENTER
+                },
+                draggable: false,
+                wrap: false,
+                pageModel: { type: "local", rPP: 20 },
+            };
+
+            $ItemListGrid = $("#grid").pqGrid(setIL);
+        });
+        $('#btnDispRecords').on('click', function () {
+            //ClearParamGrid("grid");
+            var getData = $ItemListGrid.pqGrid("option", "dataModel.data");
+            $.each(getData, function (key, value) {
+                $ItemListGrid.pqGrid("deleteRow", { rowIndx: 0 });
+            });
+            
+            if ($("#ddlStores").val() == "") {
+                ShowAlert("error", "Please Select Store");
+                return;
+            }
+            if ($("#ddlItemtype").val() == "") {
+                ShowAlert("error", "Please  Select ItemType ");
+                return;
+            }
+            var storeId = $("#ddlStores").val();
+            var itemtypId = $("#ddlItemtype").val();
+
+            $.ajax({
+                type: "GET",
+                url: "/StockDetails/GetStoreWisestockData/",
+                data: { storeId: storeId, itemTypeId: itemtypId, BranchId: 1 },
+                datatype: "Json",
+                beforeSend: function () {
+                    $ItemListGrid.pqGrid("showLoading");
+                },
+                complete: function () {
+                    $ItemListGrid.pqGrid("hideLoading");
+                },
+                success: function (response) {
+                    $ItemListGrid.pqGrid("hideLoading");
+                    $ItemListGrid.pqGrid("option", "dataModel.data", response.records);
+                    var column = $ItemListGrid.pqGrid("getColumn", { dataIndx: "StoreName" });
+                    var filter = column.filter;
+                    filter.cache = null;
+                    filter.options = $ItemListGrid.pqGrid("getData", { dataIndx: ["StoreName"] });
+                    $ItemListGrid.pqGrid("refreshDataAndView");
+                },
+                error: function (request, status, error) {
+                    $ItemListGrid.pqGrid("hideLoading");
+                    ClearParamGridByObject($ItemListGrid);
+                    ShowAlert("error", "Error while loading Itemlist");
+                   return;
+            }
+            });
+
+
+        });
+        function ClearForm() {
+            $("#ddlStores").val("");
+            $("#ddlItemtype").html("");
+            var getData = $ItemListGrid.pqGrid("option", "dataModel.data");
+            $.each(getData, function (key, value) {
+                $ItemListGrid.pqGrid("deleteRow", { rowIndx: 0 });
+            });
+        }
+        $("#btnAdd").on("click", ClearForm);
+    </script>
+}

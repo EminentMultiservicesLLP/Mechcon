@@ -1,0 +1,239 @@
+﻿@model IEnumerable<BISERP.Models.UserMangement.ReportListModel>
+
+@using (Html.BeginForm())
+{
+    <h3>Reports</h3>
+    <fieldset>
+    <div id="MasterPlaceHolder" style="height: 100%">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-groupingBoder">
+                    <div class="panel-body">
+                       
+                        <div class="row">
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-3">
+                                        @Html.Label("Select Project", new { @class = "required" })
+                                        @Html.DropDownList("ddlProject", new SelectList(string.Empty, "Value", "Text"), "--Select Project--", new { @class = "form-control" })
+                                </div>
+                                <div class="col-sm-3">
+                                    @Html.Label("Bill No")
+                                    @Html.TextBox("BillNo", "", new {@class = "form-control"})
+                                    @Html.Hidden("ClientBillId", "")
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-3">
+                                    Report
+                                    <select id="selMasters" class="wrapper-dropdown-content form-control">
+                                        <option class="wrapperdropdown-content">Select</option>
+                                        @foreach (var item in Model)
+                                        {
+                                            <option class="wrapperdropdown-content" value="@item.ReportID">@item.ReportName</option>
+                                        }
+                                    </select>
+                                    <button type="button" class="btn btn-success" id="btnShowReport">Show Report</button>
+                                    <button type="button" class="btn btn-success" id="btnReset">Reset</button>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <iframe id="iframeReportViewer" style="width:100% ; min-height: 300px; max-height:600px"></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </fieldset>
+     <div title="Select Items" id="BillNoModal" style="display: none;">
+        <div id="BillNoGrid"></div>
+    </div>
+}
+
+<script>
+    var $billNogrid;
+    var url;
+    var TempClientBillId;
+
+
+    /***********************************/
+
+    $.ajax({
+        type: "GET",
+        url: "/Master/MainStores",
+        datatype: "Json",
+        async: true,
+        success: function (data) {
+            $.each(data,
+                function (index, value) {
+                    $('#ddlProject').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                });
+        }
+    });
+
+    $('#ddlProject')
+        .change(function () {
+            
+        });
+    /***********************************/
+    $('#BillNo').on('click', function () {
+        //ClearForm();
+        LoadBilNogrid();
+    });
+
+    function LoadBilNogrid() {
+        
+        var branchId = $("#ddlProject").val();
+        if (branchId == undefined || branchId === "") branchId = 0;
+        $("#BillNoModal").dialog({
+            height: 500,
+            width: 700,
+            modal: true,
+            open: function (evt, ui) {
+                $.ajax({
+                    url: "/ClientBilling/GetClienBillNo",
+                    cache: false,
+                    async: true,
+                    method: "GET",
+                    dataType: "JSON",
+                    data: { branchId: branchId },
+                    success: function (response) {
+                        
+                        if (response.success) {
+                            $("#BillNoGrid").pqGrid("option", "dataModel.data", response.records);
+                            $("#BillNoGrid").pqGrid("refreshDataAndView");
+                        } else {
+                            ClearParamGrid('BillNoGrid');
+                            ShowAlert("error", response.Messsage);
+                            return;
+                        }
+                    },
+                    error: function () {
+                        ClearParamGrid('BillNoGrid');
+                        ShowAlert("error", "Server error! Please Contact Administrator");
+                        return;
+                    }
+                });
+            },
+            close: function (event, ui) {
+            },
+            show: {
+                effect: "blind",
+                duration: 500
+            }
+        });
+    }
+    /***********************************/
+    databill = { location: 'local', sorting: 'local', paging: 'local', dataType: 'JSON' };
+    colbill = [
+         { title: "Bill No", dataIndx: "BillNo", width: 150, dataType: "string", editable: false },
+    ];
+
+    setbillNogrid = {
+        width: "auto", //auto width
+        height: "450", //height in %age
+        sortable: false,
+        numberCell: { show: true },
+        selectionModel: { type: 'row' },
+        hoverMode: 'cell',
+        editor: { type: 'textbox' },
+        showTop: true,
+        resizable: true,
+        virtualX: true,
+        virtualY: true,
+        editModel: {
+            saveKey: $.ui.keyCode.ENTER
+        },
+        draggable: false,
+        colModel: colbill,
+        dataModel: databill,
+        pageModel: { type: "local", rPP: 50 },
+        rowClick: function (evt, ui) {
+            ClosePopupWindow("BillNoModal");
+            if (ui.rowData) {
+                
+                var rowIndx = parseInt(ui.rowIndx);
+                var record = ui.rowData;
+                $("#BillNo").val(record.BillNo);
+                $("#ClientBillId").val(record.ClientBillId);
+                TempClientBillId = $("#ClientBillId").val();
+            }
+        }
+
+    };
+    $billNogrid = $("#BillNoGrid").pqGrid(setbillNogrid);
+
+    /***********************************/
+
+    $('#btnShowReport').on('click', function () {
+        if ($("#selMasters").val() === "231") {
+            if ($("#clientBillid").val() === "") {
+                ShowAlert("error", "Please select Bill No");
+                return;
+            }
+      }
+        ReportValidationCheck();
+    });
+    function ReportValidationCheck() {
+        
+        if ($("#selMasters").val() === "231") {
+            var clientBillid = TempClientBillId;
+            //var reportType = "Client Report";
+            
+            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#selMasters").val() + "&ClientBillid=" + clientBillid + "&ReportFor=" + 1;
+
+        }
+        else if ($("#selMasters").val() === "233") {
+            var clientBillid = TempClientBillId;
+            //var reportType = "Client Report";
+            
+            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#selMasters").val() + "&ClientBillid=" + clientBillid + "&ReportFor=" + 2;
+
+        }
+        else if ($("#selMasters").val() === "234") {
+            var clientBillid = TempClientBillId;
+            //var reportType = "Client Report";
+            
+            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#selMasters").val() + "&ClientBillid=" + clientBillid + "&ReportFor=" + 3;
+
+        }
+        else if ($("#selMasters").val() === "235") {
+            var clientBillid = TempClientBillId;
+            //var reportType = "Client Report";
+            
+            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#selMasters").val() + "&ClientBillid=" + clientBillid + "&ReportFor=" + 4;
+
+        }
+        else if ($("#selMasters").val() === "236") {
+            var clientBillid = TempClientBillId;
+            //var reportType = "Client Report";
+            
+            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#selMasters").val() + "&ClientBillid=" + clientBillid + "&ReportFor=" + 5;
+
+        }
+        else {
+            url = "";
+        }
+        console.log(url);
+        var myframe = document.getElementById("iframeReportViewer");
+        if (myframe != null) {
+            if (myframe.src) {
+                myframe.src = url;
+            }
+            else if (myframe.contentWindow != null && myframe.contentWindow.location != null) {
+                myframe.contentWindow.location = url;
+            }
+            else {
+                myframe.setAttribute('src', url);
+            }
+            return false;
+        }
+    }
+    /***********************************/
+</script>

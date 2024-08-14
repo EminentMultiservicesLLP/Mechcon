@@ -1,0 +1,298 @@
+﻿@model BISERP.Areas.Accounts.Models.VendorBillingModel
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <fieldset>
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-groupingBoder">
+                    <div class="panel-heading">
+                        <div class="panel-title">
+                            <a class="collapsediv" data-toggle="collapse" href="#collapse4" style="color: white">
+                                GRN Detail
+                            </a>
+                        </div>
+                    </div>
+                    <div id="collapse4" class="panel-collapse collapse in" aria-expanded="true">
+                        <div class="panel-body">
+                            <fieldset>
+                                <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                                    <div class="panel-body">
+                                        <div class="container fill">
+                                            <div id="GRNGrid"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-groupingBoder">
+                    <div class="panel-heading">
+                        <div class="panel-title">
+                            <a class="collapsediv" data-toggle="collapse" href="#collapse3" style="color: white">
+                                Bill Summary
+                            </a>
+                        </div>
+                    </div>
+                    <div id="collapse3" class="panel-collapse collapse in" aria-expanded="true">
+                        <div class="panel-body">
+                            <fieldset>
+                                <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                                    <div class="panel-body">
+                                        <div class="row">
+                                            <div class="container fill">
+                                                <div id="SummaryGrid"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div title="Question" id="ConfirmModal" style="display: none;">
+            <div>Bill will be Deleted!! Are you sure to cancel bill?</div>
+            <div style="margin-top: 5px;">
+                <button type="button" class="btn btn-primary" id="btnYes">Yes</button>
+                <button type="button" class="btn btn-primary" id="btnNo">No</button>
+            </div>
+        </div>
+    </fieldset>
+}
+<script>
+    var $Summarygrid;
+    var GRNId;
+    $(document).ready(function () {
+        getGRNbyVendorId();
+        //------------------Get All Grn For Suppliers--------------------------//
+        function getGRNbyVendorId() {
+        $.ajax({
+            type: "GET",
+            url: "/SupplierBilling/GetGRNbyVendorId",
+            data: { vendorId: 0 },
+            datatype: "Json",
+            async: true,
+            success: function (response) {
+                
+                $GRNgrid.pqGrid("option", "dataModel.data", response.records);
+                $GRNgrid.pqGrid("refreshDataAndView");
+
+            }
+        });
+
+}
+        //------------------Set GRN Grid--------------------------//
+
+        var datagrn = { location: "local", sorting: 'local' };
+        var colgrn = [
+
+                { title: "", dataIndx: "ID", dataType: "integer", hidden: true },
+                 { title: "", dataIndx: "GRNId", dataType: "integer", hidden: true },
+            {
+                title: "Vendor name", dataIndx: "VendorName", dataType: "string", hidden: false, minWidth: 130, editable: false,
+                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            },
+            {
+                title: "GRN No", dataIndx: "GRNNo", dataType: "string", hidden: false, minWidth: 130, editable: false,
+                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            },
+                { title: "GRN Date", dataIndx: "strGRNDate", width: 100, dataType: "date", editable: false },
+                { title: "Payable Amount", dataIndx: "TotalAmount", width: 80, editable: false },
+                { title: "Paid Amount", dataIndx: "PaidAmount", width: 80, editable: false },
+                {
+                    title: "OutStanding", dataIndx: "PendingAmount", width: 80, editable: false,
+                    formula: function (ui) {
+                        var rd = ui.rowData;
+                        return rd["TotalAmount"] - rd["PaidAmount"];
+                    }
+                }
+        ];
+        var setGrngrid = {
+            width: '100%',
+            height: 250,
+            sortable: false,
+            numberCell: { show: false },
+            hoverMode: 'cell',
+            showTop: false,
+            resizable: true,
+            scrollModel: { autoFit: true },
+            draggable: false,
+            wrap: false,
+            editable: true,
+            columnBorders: true,
+            selectionModel: { type: 'row', mode: 'single' },
+            colModel: colgrn,
+            dataModel: datagrn,
+            filterModel: { on: true, mode: "AND", header: true },
+            cellSave: function (evt, ui) {
+                this.refreshRow(ui);
+            },
+            pageModel: { type: "local", rPP: 20 },
+            rowClick: function (evt, ui) {
+                
+               
+                if (ui.rowData) {
+                    var rowIndx = parseInt(ui.rowIndx);
+                    var record = ui.rowData;
+                    GRNId = record.GRNId;
+                    loadCancelGrid(GRNId);
+                    ClearParamGrid("SummaryGrid");
+
+                }
+            }
+        }
+        $GRNgrid = $("#GRNGrid").pqGrid(setGrngrid);
+
+
+        //------------------Set Bill Summary Grid--------------------------//
+        function loadCancelGrid(GRNId) {
+
+        var dataSummary = { location: "local", sorting: 'local' };
+        var colSummary = [
+                { title: "", dataIndx: "GRNId", dataType: "integer", hidden: true },
+                { title: "", dataIndx: "VendorbillId", dataType: "integer", hidden: true },
+                {
+                    title: "Bill No", dataIndx: "VendorbillNo", width: 200,
+                    filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                },
+                { title: "Bill Date", dataIndx: "StrVendorBillDate", width: 100, dataType: "string" },
+                { title: "Paid Amount", dataIndx: "PayingAmount", width: 100, },
+                { title: "Discount Amount", dataIndx: "DiscountAmount", width: 100, },
+                 { title: "Payment Mode", dataIndx: "PaymentMode", width: 100, dataType: "string" },
+                  //{ title: "Payment Mode", dataIndx: "PaymentMode", width: 100, },
+                    { title: "Bank Name", dataIndx: "BankName", width: 100, },
+                      { title: "Cheque No", dataIndx: "ChequeNo", width: 100, },
+                                   {
+                                       title: "Cancel", editable: false, minWidth: 50, sortable: false,
+                                       listeners: [{ click: editRow }],
+                                       render: function (ui) {
+                                           return "<button type='button' class='edit_btn'style='color:red'>Cancel</button>";
+                                       },
+                                       postRender: function (ui) {
+                                           
+                                           var rowIndx = ui.rowIndx,
+                                               grid = this,
+                                               $cell = grid.getCell(ui);
+
+                                           $cell.find(".edit_btn").button({ icons: { primary: 'ui-icon-pencil' } })
+                                           .bind("click", function (evt) {
+                                               
+                                               var billingId = ui.rowData.VendorbillId;
+                                               editRow(rowIndx, grid, true, billingId);
+                                           });
+                                       }
+                                   }
+        ];
+        var setSummaryGrid = {
+            width: '100%',
+            height: 350,
+            sortable: false,
+            numberCell: { show: false },
+            hoverMode: 'cell',
+            showTop: false,
+            resizable: true,
+            scrollModel: { autoFit: true },
+            draggable: false,
+            wrap: false,
+            editable: false,
+            columnBorders: true,
+            selectionModel: { type: 'row', mode: 'single' },
+            colModel: colSummary,
+            dataModel: dataSummary,
+            pageModel: { type: "local", rPP: 20 },
+            postRenderInterval: -1,
+            filterModel: { on: true, mode: "AND", header: true }
+
+        }
+        $Summarygrid = $("#SummaryGrid").pqGrid(setSummaryGrid);
+
+        $.ajax({
+            type: "GET",
+            url: "/SupplierBilling/GetVendorSummarizedBill",
+            data: { GRNId: GRNId },
+            datatype: "Json",
+            async: true,
+            success: function (response) {
+
+                $("#SummaryGrid").pqGrid("option", "dataModel.data", response.records);
+                $("#SummaryGrid").pqGrid("refreshDataAndView");
+
+            }
+        });
+}
+
+
+   
+    function editRow(rowIndx, grid, edit, billingId) {
+        var abc = billingId;
+        validateBeforeCancel(abc);
+
+    }
+    function validateBeforeCancel(abc) {
+        var xyz = abc;
+        $("#ConfirmModal").dialog({
+            height: 117,
+            width: 423,
+            modal: true,
+            billingId: xyz,
+
+            open: function (evt, ui) {
+                $("#btnNo").focus();
+                $("#btnYes").val(xyz);
+                $("#btnYes").attr("billingId", xyz);
+            },
+            close: function (event, ui) {
+            },
+            show: {
+                effect: "blind",
+                duration: 500
+            }
+        });
+        return;
+
+    }
+    $('#btnNo').on('click', function () {
+        ShowAlert("success", "no button pressed");
+        ClosePopupWindow("ConfirmModal");
+    });
+
+    $("#btnYes").click(function (xyz) {
+        var valbillingid = $("#btnYes").attr("billingId");
+        //alert($("#btnYes").attr("billingId"));
+        //alert("a"+ $("#btnYes").val());
+        ClosePopupWindow("ConfirmModal");
+        $.ajax({
+            type: "POST",
+            url: "/SupplierBilling/CancelVendorBill",
+            datatype: "Json",
+            async: true,
+            data: { billingId: valbillingid },
+            success: function (data) {
+                if (success = true) {
+                    ShowAlert("success", "Bill Canceld successfully.");
+                    loadCancelGrid(GRNId);
+                    getGRNbyVendorId();
+                }
+                else {
+                    ShowAlert("error", "Something went Wrong");
+                }
+            },
+            error: function (xsa) {
+                ShowAlert("error", "Something went Wrong");
+                return;
+            }
+        });
+
+    });
+    });
+</script>

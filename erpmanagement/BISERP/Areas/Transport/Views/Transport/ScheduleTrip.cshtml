@@ -1,0 +1,851 @@
+﻿@model BISERP.Areas.Transport.Models.DriverScheduleModel
+<script>
+    $('#CompletedDate').datetimepicker({
+        format: 'DD-MMM-YYYY',
+        extraFormats: ['DD-MM-YYYY', 'DD-MM-YY'],
+        defaultDate: new Date()
+    });
+    $('#FromDate').datetimepicker({
+        format: 'DD-MMM-YYYY',
+        extraFormats: ['DD-MM-YYYY', 'DD-MM-YY'],
+        defaultDate: new Date()
+    });
+    $('#ToDate').datetimepicker({
+        format: 'DD-MMM-YYYY',
+        extraFormats: ['DD-MM-YYYY', 'DD-MM-YY'],
+        defaultDate: new Date()
+    });
+    $('#FromTime').timepicker();
+    $('#FromTime').timepicker('setTime', new Date());
+
+    $('#ToTime').timepicker();
+    $('#ToTime').timepicker('setTime', new Date());
+
+</script>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <a class="collapsediv" data-toggle="collapse" href="#SearchDetails" style="color: white">
+                            Search Details
+                        </a>
+                    </div>
+                </div>
+                <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <div class="container fill">
+                            <div id="searchgrid"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-groupingBoder">
+                    <div class="panel-heading">
+                        <div class="panel-title">
+                            Entry Form
+                        </div>
+                    </div>
+                    <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <button type="button" id="btnSave" class="btn btn-success">Save</button>
+                                    <button type="button" class="btn btn-success" id="btnAdd">Reset</button>
+                                </div>
+                            </div>
+                            <br />
+                            
+                                <div class="row">
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @Html.Label("Branch", new { @class = "required" })
+                                            @Html.DropDownList("ddlBranch", new SelectList(string.Empty, "Value", "Text"), "-- Select from List --", new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @Html.LabelFor(m => m.AssignTo, new { @class = "required" })
+                                            @Html.TextBoxFor(m => m.AssignTo, "", new Dictionary<string, object> { { "class", "form-control" } })
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @Html.LabelFor(m => m.DriverId, new { @class = "required" })
+                                            @Html.TextBoxFor(m => m.DriverName, "", new Dictionary<string, object> { { "class", "Popup form-control " } })
+                                            @Html.HiddenFor(m => m.DriverId)
+                                            @Html.HiddenFor(m => m.ScheduleId)
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @Html.LabelFor(m => m.VehicleId, new { @class = "required " })
+                                            @Html.TextBoxFor(m => m.VehicleNo, "", new { @class = "form-control Popup" })  
+                                            @*@Html.TextBoxFor(m => m.VehicleNo, "", new Dictionary<string, object> { { "class", "form-control Popup" } })*@
+                                            @Html.HiddenFor(m => m.VehicleId)
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-2">
+                                            @Html.LabelFor(m => m.FromDate, new { @class = "required" })
+                                            <div class='input-group date' id='FromDate'>
+                                                <input type='text' class="form-control" />
+                                                <span class="input-group-addon">
+                                                    <span class="glyphicon glyphicon-calendar"></span>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-1">
+                                            @Html.LabelFor(m => m.FromTime, new { @class = "required" })
+                                            <div class='input-group date'>
+                                                <input type='text' id='FromTime' class="form-control" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-2">
+                                            @Html.LabelFor(m => m.ToDate, new { @class = "required" })
+                                            <div class='input-group date' id='ToDate'>
+                                                <input type='text' class="form-control" />
+                                                <span class="input-group-addon">
+                                                    <span class="glyphicon glyphicon-calendar"></span>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-1">
+                                            @Html.LabelFor(m => m.ToTime, new { @class = "required" })
+                                            <div class='input-group date'>
+                                                <input type='text' id='ToTime' class="form-control" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @Html.LabelFor(m => m.FromPlace)
+                                            @Html.DropDownList("ddlFromBranch", new SelectList(string.Empty, "Value", "Text"), "-- Select from List --", new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @Html.LabelFor(m => m.ToPlace)
+                                            @Html.TextAreaFor(m => m.ToPlace, new { @class = "form-control " })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @Html.LabelFor(m => m.StartReading, new { @class = "required" })
+                                            @Html.TextBoxFor(m => m.StartReading, "", new { @class = "form-control " })
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @Html.LabelFor(m => m.Advance)
+                                            @Html.TextBoxFor(m => m.Advance, "", new { @class = "form-control " })
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @Html.LabelFor(m => m.ApprovedBy, new { @class = "required" })
+                                            @Html.TextBoxFor(m => m.ApprovedBy, "", new { @class = "form-control " })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @Html.LabelFor(m => m.fuelDetail.Completed)
+                                            @Html.CheckBoxFor(m => m.fuelDetail.Completed)
+                                            @*@Html.TextBoxFor(m => m.fuelDetail.CompletedDate, "", new { @disabled = "disabled" })*@
+                                            <div class='input-group date' id='CompletedDate'>
+                                                <input type='text' class="form-control" disabled />
+                                                <span class="input-group-addon">
+                                                    <span class="glyphicon glyphicon-calendar"></span>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @Html.LabelFor(m => m.fuelDetail.EndReading)
+                                            @Html.TextBoxFor(m => m.fuelDetail.EndReading, "", new { @class = "form-control " })
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @Html.LabelFor(m => m.fuelDetail.BalanceAmount)
+                                            @Html.TextBoxFor(m => m.fuelDetail.BalanceAmount, "", new { @class = "form-control ", @disabled = "disabled" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @Html.LabelFor(m => m.Remark)
+                                            @Html.TextBoxFor(m => m.Remark, "", new { @class = "form-control " })
+                                        </div>
+                                    </div>
+                                </div>
+
+                           
+                            <br>
+                      
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            <b>Trip Linking</b>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @Html.LabelFor(m => m.fuelDetail.FuelType)
+                                            <select id="FuelType" class="wrapperdropdown-content form-control">
+                                                <option class="wrapperdropdown-content" value="0">Petrol</option>
+                                                <option class="wrapperdropdown-content" value="1">Diesel</option>
+                                                <option class="wrapperdropdown-content" value="2">CNG</option>
+                                                <option class="wrapperdropdown-content" value="3">LPG</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @Html.LabelFor(m => m.fuelDetail.FuelPump)
+                                            <select id="FuelPump" class="wrapperdropdown-content form-control">
+                                                <option class="wrapperdropdown-content" value="0">HP</option>
+                                                <option class="wrapperdropdown-content" value="1">Indian Oil</option>
+                                                <option class="wrapperdropdown-content" value="2">Reliance</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="row">
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @Html.LabelFor(m => m.fuelDetail.FuelPrice)
+                                            @Html.TextBoxFor(m => m.fuelDetail.FuelPrice, "", new { @class = "form-control " })
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @Html.LabelFor(m => m.fuelDetail.FuelQuantity)
+                                            @Html.TextBoxFor(m => m.fuelDetail.FuelQuantity, "", new { @class = "form-control " })
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @Html.LabelFor(m => m.fuelDetail.FuelAmount)
+                                            @Html.TextBoxFor(m => m.fuelDetail.FuelAmount, "", new { @class = "form-control ", @disabled = "disabled" })
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="row">
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @Html.LabelFor(m => m.fuelDetail.Paymode)
+                                            <input type="radio" name="Paymode" value="0" checked> Cash
+                                            <input type="radio" name="Paymode" value="1"> Card
+
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @Html.LabelFor(m => m.fuelDetail.PayCardNo)
+                                            @Html.TextBoxFor(m => m.fuelDetail.PayCardNo, "", new { @class = "form-control ", @disabled = "disabled" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @Html.LabelFor(m => m.fuelDetail.OtherExpense)
+                                            @Html.TextBoxFor(m => m.fuelDetail.OtherExpense, "", new { @class = "form-control " })
+                                        </div>
+                                    </div>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+                @*<div class="panel-groupingBoder">
+                    <fieldset>
+                        <div class="container fill">
+                            <div class="row">
+                                <div id="grid"></div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>*@
+            </div>
+        </div>
+    </div>
+    <div id="DriverModal" title="Driver Name" style="display: none;">
+        <div id="Drivergrid"></div>
+    </div>
+    @*<div id="VehicleModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Vehicle List</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div id="Vehiclegrid"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>*@
+    <div id="VehicleModal" title="Vehicle List" style="display: none;">
+        <div id="Vehiclegrid"></div>
+    </div>
+    <script type="text/javascript">
+        $.ajax({
+            type: "GET",
+            url: "/Master/AllBranches",
+            datatype: "Json",
+            async: true,
+            success: function (data) {
+                $.each(data, function (index, value) {
+                    $('#ddlBranch').append('<option value="' + value.BranchID + '">' + value.BranchName + '</option>');
+                });
+            }
+        });
+
+        $.ajax({
+            type: "GET",
+            url: "/Master/AllACtiveBranches",
+            datatype: "Json",
+            async: true,
+            success: function (data) {
+                $.each(data, function (index, value) {
+                    $('#ddlFromBranch').append('<option value="' + value.BranchID + '">' + value.BranchName + '</option>');
+                });
+            }
+        });
+
+        function LoadSearchGrid() {
+            $.ajax({
+                url: "/ScheduleTrip/AllSchedule",
+                cache: false,
+                async: true,
+                method: "GET",
+                dataType: "JSON",
+                success: function (response) {
+                    $SearchGrid.pqGrid("option", "dataModel.data", response);
+                    $SearchGrid.pqGrid("refreshDataAndView");
+                }
+            });
+        }
+
+        function LoadDriverGrid() {
+            var branchId = $("#ddlBranch").val();
+            $("#DriverModal").dialog({
+                height: 500,
+                width: 700,
+                modal: true,
+                open: function (ui) {
+                    $.ajax({
+                        url: "/Transport/Transport/AllDriverschedule",
+                        data: { branchId: branchId },
+                        cache: false,
+                        async: true,
+                        method: "GET",
+                        dataType: "JSON",
+                        beforeSend: function () {
+                            $Drivergrid.pqGrid("showLoading");
+                        },
+                        complete: function () {
+                            $Drivergrid.pqGrid("hideLoading");
+                        },
+                        success: function (response) {
+                            $Drivergrid.pqGrid("hideLoading");
+                            $Drivergrid.pqGrid("option", "dataModel.data", response);
+                            $Drivergrid.pqGrid("refreshDataAndView");
+                        }
+                    });
+                },
+                close: function () {
+                },
+                show: {
+                    effect: "blind",
+                    duration: 500
+                }
+            });
+
+        }
+        function LoadVehicleGrid() {
+            var branchId = $("#ddlBranch").val();
+            $("#VehicleModal")
+                .dialog({
+                    height: 500,
+                    width: 700,
+                    modal: true,
+                    open: function () {
+
+                        $.ajax({
+                            url: "/VehicleInfo/AllVehicleSchedule",
+                            data: { branchId: branchId },
+                            cache: false,
+                            async: true,
+                            method: "GET",
+                            dataType: "JSON",
+                            beforeSend: function () {
+                                $Vehicle.pqGrid("showLoading");
+                            },
+                            complete: function () {
+                                $Vehicle.pqGrid("hideLoading");
+                            },
+                            success: function (response) {
+                                $Vehicle.pqGrid("hideLoading");
+                                $Vehicle.pqGrid("option", "dataModel.data", response);
+                                $Vehicle.pqGrid("refreshDataAndView");
+                            }
+                        });
+                    },
+                    close: function () {
+                    },
+                    show: {
+                        effect: "blind",
+                        duration: 500
+                    }
+                });
+        }
+        function CalculateBalanceAmount() {
+            var advance = $("#Advance").val();
+            var fuelprice = $("#fuelDetail_FuelPrice").val();
+            var fuelQuantity = $("#fuelDetail_FuelQuantity").val();
+            var otherExpense = $("#fuelDetail_OtherExpense").val();
+            var fuelamount = 0;
+            if (advance == null || advance == undefined) advance = 0;
+            if (fuelprice == null || fuelprice == undefined) fuelprice = 0;
+            if (fuelQuantity == null || fuelQuantity == undefined) fuelQuantity = 0;
+            fuelamount = fuelprice * fuelQuantity;
+            var balanceAmount = advance - fuelamount - otherExpense;
+            $("#fuelDetail_FuelAmount").val(fuelamount);
+            $("#fuelDetail_BalanceAmount").val(balanceAmount);
+        }
+        $("#btnAdd").on("click", ClearForm);
+        function ClearForm() {
+            $("#ddlBranch").val("");
+            $("#ddlFromBranch").val("");
+            $('#FromDate').data("DateTimePicker").enable();
+            $("#DriverId").val("");
+            $("#DriverName").val("");
+            $("#ScheduleId").val("");
+            $("#VehicleId").val("");
+            $("#VehicleNo").val("");
+            $("#ToPlace").val("");
+            $("#StartReading").val("");
+            $("#Advance").val("");
+            $("#Remark").val("");
+            $("#VehicleNo").prop('disabled', false);
+            $("#DriverName").prop('disabled', false);
+            $("#FromPlace").prop('disabled', false);
+            $("#ToPlace").prop('disabled', false);
+            $("#Advance").prop('disabled', false);
+            $("#StartReading").prop('disabled', false);
+            $('#ToDate').data("DateTimePicker").enable();
+
+            $('#CompletedDate').data("DateTimePicker").disable();
+            $("#fuelDetail_Completed").prop('checked', false);
+            $("#fuelDetail_EndReading").val("");
+            $("#fuelDetail_BalanceAmount").val("");
+            $("#FuelType").val("");
+            $("#FuelPump").val("");
+            $("#fuelDetail_FuelPrice").val("");
+            $("#fuelDetail_FuelQuantity").val("");
+            $("#fuelDetail_FuelAmount").val("");
+            $("#fuelDetail_OtherExpense").val("");
+            $("#fuelDetail_Paymode").val("");
+            $("#fuelDetail_PayCardNo").val("");
+            $('input:radio[name="Paymode"][value="0"]').prop('checked', true);
+
+
+            $("#FromTime").val("");
+            $("#ToTime").val("");
+            $('#FromTime').timepicker('setTime', new Date());
+            $('#ToTime').timepicker('setTime', new Date());
+            $("#ApprovedBy").val("");
+            $("#ddlBranch").prop('disabled', false);
+            $("#ApprovedBy").prop('disabled', false);
+            $("#FromTime").prop('disabled', false);
+            $("#ToTime").prop('disabled', false);
+            $("#AssignTo").prop('disabled', false);
+            $("#ddlFromBranch").prop('disabled', false);
+            ResetDate("FromDate");
+            ResetDate("ToDate");
+        }
+        $(document).ready(function () {
+            $("#DriverName").on("click", function () {
+                if ($("#ddlBranch").val() == "") {
+                    ShowAlert("error", "Please Select Branch");
+                } else {
+                    LoadDriverGrid();
+                }
+
+            });
+            $("#VehicleNo").on("click", function () {
+                if ($("#ddlBranch").val() == "") {
+                    ShowAlert("error", "Please Select Branch");
+                }
+                else {
+                    //$("#VehicleModal").modal('toggle');
+                    //$("#VehicleModal").attr("height", 500);
+                    //$("#VehicleModal").attr("width", 300);
+                    LoadVehicleGrid();
+                }
+            });
+        });
+
+        var dataSearchGrid = { location: "local", sorting: 'local' };
+        var colSearchGrid = [
+            { title: "", dataIndx: "DriverId", dataType: "integer", hidden: true },
+            { title: "", dataIndx: "VehicleId", dataType: "integer", hidden: true },
+            { title: "", dataIndx: "ScheduleId", dataType: "integer", hidden: true },
+            { title: "", dataIndx: "BranchId", dataType: "integer", hidden: true },
+            { title: "", dataIndx: "FromDate", dataType: "datetime", hidden: true },
+            { title: "", dataIndx: "FromPlace", dataType: "int", hidden: true },
+            { title: "", dataIndx: "ToPlace", dataType: "string", hidden: true },
+            { title: "", dataIndx: "AssignTo", dataType: "string", hidden: true },
+            { title: "", dataIndx: "Remark", dataType: "string", hidden: true },
+            { title: "", dataIndx: "Advance", dataType: "double", hidden: true },
+            { title: "", dataIndx: "StartReading", dataType: "double", hidden: true },
+            {
+                title: "DriverName", dataIndx: "DriverName", width: 400,
+                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            },
+            {
+                title: "VehicleNo", dataIndx: "VehicleNo", width: 200,
+                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+
+            },
+            {
+                title: "FromDate", dataIndx: "StrFromDate", width: 200., dataType: "String"
+            },
+            {
+                title: "FromDate", dataIndx: "StrFromDate", width: 200., dataType: "String"
+            },
+            {
+                title: "ToDate", dataIndx: "StrToDate", width: 200., dataType: "String", hidden: true
+            },
+            {
+                title: "FromTime", dataIndx: "StrFromTime", width: 200., dataType: "String", hidden: true
+            },
+            {
+                title: "ToTime", dataIndx: "StrToTime", width: 200., dataType: "String", hidden: true
+            },
+            {
+                title: "ApprovedBy", dataIndx: "ApprovedBy", width: 200., dataType: "String", hidden: true
+            },
+
+        ];
+        var setSearchGrid = {
+            width: '100%',
+            height: 250,
+            sortable: false,
+            numberCell: { show: false },
+            showTop: false,
+            resizable: true,
+            scrollModel: { autoFit: true },
+            draggable: false,
+            wrap: false,
+            editable: false,
+            columnBorders: true,
+            selectionModel: { type: 'row', subtype: 'incr', cbHeader: true, cbAll: true },
+            filterModel: { on: true, mode: "AND", header: true },
+            colModel: colSearchGrid,
+            dataModel: dataSearchGrid,
+            pageModel: { type: "local", rPP: 20 },
+            rowClick: function (evt, ui) {
+                // ClearParamGrid("grid");
+                if (ui.rowData) {
+                    
+                    var rowIndx = parseInt(ui.rowIndx);
+                    var record = ui.rowData;
+                    $("#VehicleId").val(record.VehicleId);
+                    $("#VehicleNo").val(record.VehicleNo);
+                    $("#DriverId").val(record.DriverId);
+                    $("#DriverName").val(record.DriverName);
+                    $("#ScheduleId").val(record.ScheduleId);
+                    $("#ddlFromBranch").val(record.FromPlace);
+                    $("#AssignTo").val(record.AssignTo);
+                    $("#ToPlace").val(record.ToPlace);
+                    $("#Advance").val(record.Advance);
+                    $("#Remark").val(record.Remark);
+                    $("#StartReading").val(record.StartReading);
+                    $('#FromDate').data({ date: record.StrFromDate });
+                    $('#FromDate').datetimepicker('update');
+                    $('#FromDate').datetimepicker().children('input').val(record.StrFromDate);
+                    $("#VehicleNo").prop('disabled', true);
+                    $("#DriverName").prop('disabled', true);
+                    $("#FromPlace").prop('disabled', true);
+                    $("#ToPlace").prop('disabled', true);
+                    $("#Advance").prop('disabled', true);
+                    $("#StartReading").prop('disabled', true);
+                    $('#FromDate').data("DateTimePicker").disable();
+                    $('#ToDate').data({ date: record.StrToDate });
+                    $('#ToDate').datetimepicker('update');
+                    $('#ToDate').datetimepicker().children('input').val(record.StrToDate);
+                    $("#ToTime").val(record.StrToTime);
+                    $("#FromTime").val(record.StrFromTime);
+                    $("#ApprovedBy").val(record.ApprovedBy);
+                    $("#ddlBranch").val(record.BranchId);
+                    $('#ToDate').data("DateTimePicker").disable();
+                    $("#FromTime").prop('disabled', true);
+                    $("#ToTime").prop('disabled', true);
+                    $("#AssignTo").prop('disabled', true);
+                    $("#ApprovedBy").prop('disabled', true);
+                    $("#ddlBranch").prop('disabled', true);
+                    $("#ddlFromBranch").prop('disabled', true);
+
+                }
+
+                $.ajax({
+                    type: "GET",
+                    url: "/ScheduleTrip/AllSchedulefuel",
+                    data: { ScheduleId: record.ScheduleId },
+                    datatype: "Json",
+                    success: function (data) {
+                        $.each(data, function (key, value) {
+                            $("#fuelDetail_BalanceAmount").val(value.BalanceAmount),
+                                $("#FuelType").val(value.FuelType),
+                                $("#FuelPump").val(value.FuelPump),
+                                $("#fuelDetail_FuelPrice").val(value.FuelPrice),
+                                $("#fuelDetail_FuelQuantity").val(value.FuelQuantity),
+                                $("#fuelDetail_FuelAmount").val(value.FuelAmount),
+                                $('input:radio[name="Paymode"][value="' + value.Paymode + '"]').prop('checked', true); $("[name='']").prop('checked', true),
+                                $("#fuelDetail_PayCardNo").val(value.PayCardNo),
+                                $("#fuelDetail_OtherExpense").val(value.OtherExpense),
+                                $("#fuelDetail_EndReading").val(value.EndReading)
+                        });
+                    }
+                });
+            }
+        }
+        $SearchGrid = $("#searchgrid").pqGrid(setSearchGrid);
+        LoadSearchGrid();
+
+
+        $(document).ready(function () {
+            var dataM = { location: "local", sorting: 'local' };
+            var colM = [
+                { title: "", dataIndx: "EmpId", dataType: "integer", hidden: true },
+                { title: "", dataIndx: "BranchId", dataType: "integer", hidden: true },
+                {
+                    title: "Ticket Code", dataIndx: "TicketCode", width: 400,
+                    filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }, width: 200
+                },
+                {
+                    title: "Driver Name", dataIndx: "EmpName", width: 150, dataType: "string",
+                    filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+                },
+            ];
+
+            var setM = {
+                height: 400,
+                sortable: false,
+                numberCell: { show: false },
+                hoverMode: 'cell',
+                showTop: false,
+                resizable: false,
+                draggable: false,
+                wrap: false,
+                editable: false,
+                columnBorders: true,
+                filterModel: { on: true, mode: "AND", header: true },
+                colModel: colM,
+                dataModel: dataM,
+                virtualX: true,
+                virtualY: true,
+                pageModel: { type: "local", rPP: 20 },
+                rowClick: function (evt, ui) {
+                    ClosePopupWindow("DriverModal");
+                    if (ui.rowData) {
+                        var rowIndx = parseInt(ui.rowIndx);
+                        var record = ui.rowData;
+                        $("#DriverId").val(record.EmpId);
+                        $("#DriverName").val(record.EmpName);
+                    }
+                }
+            };
+            $Drivergrid = $("#Drivergrid").pqGrid(setM);
+        });
+        $(document).ready(function () {
+            var dataM = { location: "local", sorting: 'local' };
+            var colM = [
+                { title: "", dataIndx: "VehicleId", dataType: "integer", hidden: true },
+                {
+                    title: "Vehicle No", dataIndx: "VehicleNo", width: 400,
+                    filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }, width: 200
+                }
+
+            ];
+
+            var setM = {
+                height: 400,
+                sortable: false,
+                numberCell: { show: false },
+                hoverMode: 'cell',
+                showTop: false,
+                resizable: false,
+                draggable: false,
+                wrap: false,
+                editable: false,
+                columnBorders: true,
+                filterModel: { on: true, mode: "AND", header: true },
+                colModel: colM,
+                dataModel: dataM,
+                virtualX: true,
+                virtualY: true,
+                pageModel: { type: "local", rPP: 20 },
+                rowClick: function (evt, ui) {
+                    ClosePopupWindow("VehicleModal");
+                    if (ui.rowData) {
+                        var rowIndx = parseInt(ui.rowIndx);
+                        var record = ui.rowData;
+                        $("#VehicleId").val(record.VehicleId);
+                        $("#VehicleNo").val(record.VehicleNo);
+                    }
+                }
+            };
+            $Vehicle = $("#Vehiclegrid").pqGrid(setM);
+        });
+        $('input[type=radio][name=Paymode]').change(function () {
+            if ($("[name='Paymode']:checked").val() == "0") {
+                $("#fuelDetail_PayCardNo").prop('disabled', true);
+
+            }
+            else {
+                $("#fuelDetail_PayCardNo").prop('disabled', false);
+            }
+        });
+        $('#fuelDetail_Completed').change(function () {
+            if ($(this).is(':checked')) {
+                $('#CompletedDate').data("DateTimePicker").enable();
+            } else {
+                $('#CompletedDate').data("DateTimePicker").disable();
+            }
+        });
+        $("#fuelDetail_FuelPrice").keyup(function () {
+            CalculateBalanceAmount();
+        });
+
+        $("#fuelDetail_FuelQuantity").keyup(function () {
+            CalculateBalanceAmount();
+        });
+        $("#Advance").keyup(function () {
+            CalculateBalanceAmount();
+        });
+        $("#fuelDetail_OtherExpense").keyup(function () {
+            CalculateBalanceAmount();
+        });
+        $("#fuelDetail_FuelAmount").keyup(function () {
+            CalculateBalanceAmount();
+        });
+        $("#fuelDetail_FuelAmount").keyup(function () {
+            CalculateBalanceAmount();
+        });
+        $("#btnSave").click(function () {
+            if ($("[name='Paymode']:checked").val() == "1")
+                Paymode = 1;
+            else
+                Paymode = 0;
+            if ($("#DriverId").val() == "") {
+                ShowAlert("error", "Please Select DriverName");
+                return;
+            }
+            if ($("#VehicleId").val() == "") {
+                ShowAlert("error", "Please Select VehicleNO");
+                return;
+            }
+            if ($("#FromDate").data('date') == "") {
+                ShowAlert("error", "Please Select FromDate");
+                return;
+            }
+            if ($("#StartReading").val() == "") {
+                ShowAlert("error", "Please Enter Reading on Start");
+                return;
+            }
+            if ($("#ApprovedBy").val() == "") {
+                ShowAlert("error", "Please Enter ApprovedBy");
+                return;
+            }
+            if ($("#AssignTo").val() == "") {
+                ShowAlert("error", "Please Enter AssignTo");
+                return;
+            }
+            var itemfuel = {
+
+                ScheduleId: $("#ScheduleId").val(),
+                FuelType: $("#FuelType").val(),
+                FuelPump: $("#FuelPump").val(), //Reading text box values using Jquery
+                FuelPrice: $("#fuelDetail_FuelPrice").val(),
+                FuelQuantity: $("#fuelDetail_FuelQuantity").val(),
+                FuelAmount: $("#fuelDetail_FuelAmount").val(),
+                Paymode: Paymode,
+                PayCardNo: $("#fuelDetail_PayCardNo").val(),
+                OtherExpense: $("#fuelDetail_OtherExpense").val(),
+                EndReading: $("#fuelDetail_EndReading").val(),
+                BalanceAmount: $("#fuelDetail_BalanceAmount").val(),
+                Completed: $("#fuelDetail_Completed").prop('checked'),
+                CompletedDate: $("#CompletedDate").data('date'),
+            };
+
+            
+            var items = JSON.stringify({
+                DriverId: $("#DriverId").val(),
+                ScheduleId: $("#ScheduleId").val(),
+                VehicleId: $("#VehicleId").val(), //Reading text box values using Jquery
+                FromPlace: $("#ddlFromBranch").val(),
+                ToPlace: $("#ToPlace").val(),
+                FromDate: $("#FromDate").data('date'),
+                ToDate: $("#ToDate").data('date'),
+                FromTime: $("#FromTime").val(),
+                ToTime: $("#ToTime").val(),
+                ApprovedBy: $("#ApprovedBy").val(),
+                // FromDate: $("#FromDate").val(),
+                StartReading: $("#StartReading").val(),
+                Remark: $("#Remark").val(),
+                Advance: $("#Advance").val(),
+                AssignTo: $("#AssignTo").val(),
+                fuelDetail: itemfuel
+            });
+            $.ajax(
+            {
+                type: "POST",
+                traditional: true,
+                contentType: 'application/json; charset=utf-8',
+                url: '/ScheduleTrip/SaveDriver',
+                data: items,
+                success: function (msg) {
+                    if (msg.success) {
+                        if ($("#ScheduleId").val() == "") {
+                            ShowAlert("success", "Driver Details saved successfully.");
+                        }
+                        else {
+                            ShowAlert("success", "Driver Details updated successfully");
+                        }
+                        ClearForm();
+                        LoadSearchGrid();
+                    }
+                    else {
+                        ShowAlert("error", msg.Message);
+                    }
+                },
+                error: function (jqXHR, exception) {
+                }
+            });
+        });
+    </script>
+}

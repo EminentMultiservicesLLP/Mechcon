@@ -1,0 +1,288 @@
+﻿@model BISERP.Areas.Transport.Models.GreenTaxModel
+<script>
+    $(function () {
+        $(".datepicker").datepicker({
+            showOn: "button",
+            buttonImage: "/Content/images/calendar.gif",
+            buttonImageOnly: true,
+            buttonText: "Select date",
+            dateFormat: "dd-MM-yy"
+        }).datepicker("setDate", new Date());
+        $("#anim").change(function () {
+            $(".datepicker").datepicker("option", "showAnim", "fadeIn");
+        });
+    });
+</script>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <a class="collapsediv" data-toggle="collapse" href="#SearchDetails" style="color:white">
+                            Search Details
+                        </a>
+                    </div>
+                </div>
+                <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <div class="container fill">
+                            <div id="searchgrid"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        Entry Form
+                    </div>
+                </div>
+
+                <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                                <a data-toggle="collapse" class="btn btn-success" id="btnAdd">Reset</a>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-3">
+                                    @Html.LabelFor(m => m.IssueDate)
+                                    @Html.TextBoxFor(model => model.IssueDate, new { @class = "form-control datepicker" })
+                                    @Html.HiddenFor(model => model.GreenTaxId)
+                                </div>
+                            </div>
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-3">
+                                    @Html.LabelFor(m => m.ExpiryDate)
+                                    @Html.TextBoxFor(model => model.ExpiryDate, new { @class = "form-control datepicker" })
+                                    @Html.HiddenFor(model => model.ExpiryDate)
+                                </div>
+                            </div>
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-3">
+                                    @Html.LabelFor(m => m.GreenTaxNo)
+                                    @Html.TextBoxFor(model => model.GreenTaxNo, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.GreenTaxNo)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-3">
+                                    @Html.LabelFor(m => m.Amount)
+                                    @Html.TextBoxFor(model => model.Amount, new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-3">
+                                    @Html.LabelFor(m => m.ReminderDays)
+                                    @Html.TextBoxFor(model => model.ReminderDays, new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-2">
+                                    @Html.LabelFor(model => model.Deactive)
+                                    @Html.CheckBoxFor(model => model.Deactive, new { @disabled = "disabled" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        var $IndentSearchGrid;
+        var setIID, colIID, dataIID;
+        var colIL, dataIL, setIL;
+        function ClearForm() {
+            $("#GreenTaxId").val("");
+            $("#IssueDate").datepicker().datepicker("setDate", new Date());
+            $("#ExpiryDate").datepicker().datepicker("setDate", new Date());
+            $("#GreenTaxNo").val("");
+            $("#Amount").val("");
+            $("#ReminderDays").val("");
+            $("#Deactive").prop('checked', false);
+        }
+        function LoadSearchGrid() {
+            $.ajax({
+                url: "/MaterialIndent/IndentForVerification",
+                cache: false,
+                async: true,
+                method: "GET",
+                dataType: "JSON",
+                success: function (response) {
+
+                    $IndentSearchGrid.pqGrid("option", "dataModel.data", response.mimodel);
+
+                    var column = $IndentSearchGrid.pqGrid("getColumn", { dataIndx: "Indent_FromStore" });
+                    var filter = column.filter;
+                    filter.cache = null;
+                    filter.options = $IndentSearchGrid.pqGrid("getData", { dataIndx: ["Indent_FromStore"] });
+
+                    var column = $IndentSearchGrid.pqGrid("getColumn", { dataIndx: "Indent_ToStore" });
+                    var filter = column.filter;
+                    filter.cache = null;
+                    filter.options = $IndentSearchGrid.pqGrid("getData", { dataIndx: ["Indent_ToStore"] });
+
+                    $IndentSearchGrid.pqGrid("refreshDataAndView");
+                }
+            });
+        }
+        (function ($) {
+
+            /********* Build Search Grid *********/
+            var dataSearchGrid = { location: "local", sorting: 'local' };
+            var colSearchGrid = [
+                    { title: "", dataIndx: "Indent_Id", dataType: "integer", hidden: true },
+                    { title: "", dataIndx: "Priority", dataType: "integer", hidden: true },
+                    { title: "", dataIndx: "Indent_FromStoreID", dataType: "integer", hidden: true },
+                    { title: "", dataIndx: "Indent_ToStoreID", dataType: "integer", hidden: true },
+                    {
+                        title: "Indent No", dataIndx: "IndentNo", width: 400,
+                        filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                    },
+                    {
+                        title: "Indent Date", dataIndx: "strIndentDate", width: 200, dataType: "date"
+                    },
+                    {
+                        title: "project", dataIndx: "Indent_FromStore", width: 200,
+                        filter: {
+                            type: "select",
+                            condition: 'equal',
+                            prepend: { '': '--Select--' },
+                            valueIndx: "Indent_FromStore",
+                            labelIndx: "Indent_FromStore",
+                            listeners: ['change']
+                        }
+                    },
+                    {
+                        title: "To Store", dataIndx: "Indent_ToStore", width: 200, filter: {
+                            type: "select",
+                            condition: 'equal',
+                            prepend: { '': '--Select--' },
+                            valueIndx: "Indent_ToStore",
+                            labelIndx: "Indent_ToStore",
+                            listeners: ['change']
+                        }
+                    },
+            ];
+            var setSearchGrid = {
+                width: '100%',
+                height: 250,
+                sortable: false,
+                numberCell: { show: false },
+                showTop: false,
+                resizable: true,
+                scrollModel: { autoFit: true },
+                draggable: false,
+                wrap: false,
+                editable: false,
+                columnBorders: true,
+                selectionModel: { type: 'row', subtype: 'incr', cbHeader: true, cbAll: true },
+                filterModel: { on: true, mode: "AND", header: true },
+                colModel: colSearchGrid,
+                dataModel: dataSearchGrid,
+                pageModel: { type: "local", rPP: 20 },
+                rowClick: function (evt, ui) {
+                    //$("#btnSave").hide();
+                    ClearParamGrid("grid");
+                    if (ui.rowData) {
+                        var rowIndx = parseInt(ui.rowIndx);
+                        var record = ui.rowData;
+                        $("#Indent_Id").val(record.Indent_Id);
+                        $("#IndentNo").val(record.IndentNo);
+                        $("#Prioritystr").val(record.Priority);
+                        $("#Indent_Date").val(record.strIndentDate);
+                        $("#ddlFromStore").val(record.Indent_FromStoreID);
+
+                        $.ajax({
+                            type: "GET",
+                            url: "/MaterialIndent/GetIndentToStore",
+                            data: { StoreId: record.Indent_FromStoreID },
+                            datatype: "Json",
+                            success: function (data) {
+                                $("#ddlToStore").html("");
+                                $.each(data, function (index, value) {
+                                    $('#ddlToStore').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                                });
+
+                                $("#ddlToStore").val(record.Indent_ToStoreID);
+                                $("#Remarks").val(record.Remarks);
+
+                                $.ajax({
+                                    type: "GET",
+                                    url: "/MaterialIndent/MaterialIndentItems/",
+                                    data: { Indent_Id: record.Indent_Id },
+                                    datatype: "Json",
+                                    async: true,
+                                    success: function (data) {
+                                        $IndentItemDetailsGrid.pqGrid("option", "dataModel.data", data);
+                                        $IndentItemDetailsGrid.pqGrid("refreshDataAndView");
+                                    }
+                                });
+                            }
+                        });
+                    }
+                }
+            }
+            $IndentSearchGrid = $("#searchgrid").pqGrid(setSearchGrid);
+            LoadSearchGrid();
+
+            $("#btnAdd").on("click", ClearForm);
+
+            $("#btnSave").click(function () {
+                if ($("#ddlFromStore").val() == $("#ddlToStore").val()) {
+                    ShowAlert("error", "project and To Store Cannot be Same");
+                    return;
+                }
+
+                var items = JSON.stringify({
+                    Indent_Id: $("#Indent_Id").val(),
+                    Indent_Date: $("#Indent_Date").val(), //Reading text box values using Jquery
+                    IndentNo: $("#IndentNo").val(),
+                    Priority: $("#Prioritystr").val(),
+                    Indent_FromStore: $("#ddlFromStore").val(),
+                    Indent_ToStore: $("#ddlToStore").val(),
+                    Remarks: $("#Remarks").val(),
+                    Deactive: $("#Deactive").prop('checked'),
+                    Materialindentdt: items
+                });
+
+                $.ajax(
+                {
+                    type: "POST", //HTTP POST Method
+                    traditional: true,
+                    contentType: 'application/json; charset=utf-8',
+                    url: '/MaterialIndent/SaveMaterialIndent', // Controller/View
+                    data: items,
+                    success: function (msg) {
+                        if (msg.success) {
+                            if ($("#Indent_Id").val() == "") {
+                                ShowAlert("success", "Indent No : " + msg.Message + " generated successfully.");
+                            }
+                            else {
+                                ShowAlert("success", "Indent updated successfully");
+                            }
+                            ClearForm();
+                            LoadSearchGrid();
+                        }
+                        else {
+                            ShowAlert("error", msg.Message);
+                        }
+                    },
+                    error: function (jqXHR, exception) {
+                    }
+                });
+            });
+        })(jQuery);
+    </script>
+}

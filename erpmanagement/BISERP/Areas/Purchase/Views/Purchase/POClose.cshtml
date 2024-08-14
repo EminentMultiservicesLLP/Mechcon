@@ -1,0 +1,467 @@
+﻿
+@Html.AntiForgeryToken()
+@Html.ValidationSummary(true)
+
+<h5 class="page-header orangeDottedBottomBorder"> PURCHASE ORDER CLOSE</h5>
+<div class="panel-group">
+    <div class="panel panel-default">
+        <div class="panel-groupingBoder">
+            <div class="panel-heading">
+                <div class="panel-title">
+                    <a class="collapsediv" data-toggle="collapse" href="#SearchDetails" style="color: white">
+                        Search Details
+                    </a>
+                </div>
+            </div>
+            <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                <div class="panel-body">
+                    <div id="searchgrid"></div>
+                </div>
+            </div>
+            <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                <div class="panel-body">
+                    <div class="row">
+                        <div id="pogrid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div title="Warning" id="ConfirmModal" style="display: none; background-color: lightpink;">
+    <div>Po will be Close!! Are you sure to Close this PO?</div>
+    <div style="margin-top: 5px;">
+        <button type="button" class="btn btn-danger" id="btnYes">Yes</button>
+        <button type="button" class="btn btn-primary" id="btnNo">No</button>
+    </div>
+</div>
+<div id="POdetailModal" style="display: none;">
+    <div id="POdetailGrid"></div>
+</div>
+<script type="text/javascript">
+    var $searchgrid;
+    $(document).ready(function () {
+        var dataM = { location: "local", sorting: 'local' };
+        var colM = [
+            { title: "", dataIndx: "ID", dataType: "integer", hidden: true },
+            { title: "", dataIndx: "SupplierID", dataType: "integer", hidden: true },
+            { title: "", dataIndx: "StoreId", dataType: "integer", hidden: true },
+            { title: "", dataIndx: "ItemTypeId", dataType: "integer", hidden: true },
+            { title: "", dataIndx: "Againstid", dataType: "integer", hidden: true },
+            { title: "", dataIndx: "PurchaseIndentId", dataType: "integer", hidden: true },
+            { title: "", dataIndx: "DeliveryAddress", dataType: "integer", hidden: true },
+            { title: "", dataIndx: "RefNo", dataType: "integer", hidden: true },
+            {
+                title: "Project", dataIndx: "StoreName", width: "15%", filter: {
+                    type: "select",
+                    condition: 'equal',
+                    prepend: { '': '--Select--' },
+                    valueIndx: "StoreName",
+                    labelIndx: "StoreName",
+                    listeners: ['change']
+                }
+            },
+            {
+                title: "PO No", dataIndx: "PONo", width: "15%",
+                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            },
+            {
+                title: "PO Date", dataIndx: "strPODate", width: "15%",
+                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            },
+            {
+                title: "Supplier", dataIndx: "SupplierName", width: "18%",
+                filter: {
+                    type: "select",
+                    condition: 'equal',
+                    prepend: { '': '--Select--' },
+                    valueIndx: "SupplierName",
+                    labelIndx: "SupplierName",
+                    listeners: ['change']
+                }
+            },
+            {
+                title: "PO Details", editable: false, minWidth: "16%", sortable: false,align:'center',
+                listeners: [{ click: fnPoDetails }],
+                render: function (ui) {
+                    return "<button type='button' class='edit_btn'style='color:green'>PO Details</button>";
+                },
+                postRender: function (ui) {
+                    var rowIndx = ui.rowIndx,
+                        grid = this,
+                        $cell = grid.getCell(ui);
+                    $cell.find(".edit_btn").button({ icons: { primary: 'ui-icon-pencil' } })
+                        .bind("click", function (evt) {
+                            var POId = ui.rowData.ID;
+                            fnPoDetails(rowIndx, grid, true, POId);
+                        });
+                }
+            },
+
+            {
+                title: "Close", editable: false, minWidth: "16%", sortable: false, align:'center',
+                listeners: [{ click: fnClosePo }],
+                render: function (ui) {
+                    return "<button type='button' class='edit_btn'style='color:red'>Close</button>";
+                },
+                postRender: function (ui) {
+                    var rowIndx = ui.rowIndx,
+                        grid = this,
+                        $cell = grid.getCell(ui);
+                    $cell.find(".edit_btn").button({ icons: { primary: 'ui-icon-pencil' } })
+                        .bind("click", function (evt) {
+                            var POId = ui.rowData.ID;
+                            fnClosePo(rowIndx, grid, true, POId);
+                        });
+                }
+            },
+
+        ];
+        var setM = {
+            width: '100%',
+            height: 430,
+            sortable: false,
+            numberCell: { show: false },
+            hoverMode: 'cell',
+            showTop: false,
+            resizable: true,
+            scrollModel: { autoFit: true },
+            draggable: false,
+            wrap: false,
+            editable: false,
+            columnBorders: true,
+            selectionModel: { type: 'row', mode: 'single' },
+            colModel: colM,
+            dataModel: dataM,
+            pageModel: { type: "local", rPP: 100 },
+            filterModel: { on: true, mode: "AND", header: true },
+            postRenderInterval: -1,
+        }
+        $searchgrid = $("#searchgrid").pqGrid(setM);
+        LoadSearchGrid();
+    });
+
+    function LoadSearchGrid() {
+        $.ajax({
+            url: "/PurchaseOrder/PurchaseOrderForGrn",
+            data: { storeId: 0 },
+            cache: false,
+            async: true,
+            method: "GET",
+            dataType: "JSON",
+            beforeSend: function () {
+                $searchgrid.pqGrid("showLoading");
+            },
+            complete: function () {
+                $searchgrid.pqGrid("hideLoading");
+            },
+            success: function (response) {
+                $searchgrid.pqGrid("hideLoading");
+                $searchgrid.pqGrid("option", "dataModel.data", response.records);
+
+                var column = $searchgrid.pqGrid("getColumn", { dataIndx: "SupplierName" });
+                var filter = column.filter;
+                filter.cache = null;
+                filter.options = $searchgrid.pqGrid("getData", { dataIndx: ["SupplierName"] });
+
+                column = $searchgrid.pqGrid("getColumn", { dataIndx: "StoreName" });
+                filter = column.filter;
+                filter.cache = null;
+                filter.options = $searchgrid.pqGrid("getData", { dataIndx: ["StoreName"] });
+
+                $searchgrid.pqGrid("refreshDataAndView");
+            }
+        });
+    }
+
+    /*************************cancel button clicked****************************/
+
+    function fnClosePo(rowIndx, grid, edit, PoId) {
+        var PoIdtoClose = PoId;
+        validateBeforeCancel(PoId);
+    }
+    function validateBeforeCancel(PoId) {
+        var xyz = PoId;
+        $("#ConfirmModal").dialog({
+            height: 117,
+            width: 423,
+            modal: true,
+            PoId: xyz,
+
+            open: function (evt, ui) {
+                $("#btnNo").focus();
+                $("#btnYes").val(xyz);
+                $("#btnYes").attr("PoId", xyz);
+            },
+            close: function (event, ui) {
+            },
+            show: {
+                effect: "blind",
+                duration: 500
+            }
+        });
+        return;
+
+    }
+
+    $('#btnNo').on('click', function () {
+        ClosePopupWindow("ConfirmModal");
+    });
+
+    $("#btnYes").click(function () {
+        var valPoId = $("#btnYes").attr("PoId");
+        ClosePopupWindow("ConfirmModal");
+        $.ajax({
+            type: "POST",
+            url: "/PurchaseOrder/PurchaseOrderClose",
+            datatype: "Json",
+            async: true,
+            data: { PoId: valPoId },
+            success: function (data) {
+                if (data.success) {
+                    LoadSearchGrid();
+                    ShowAlert("success", "PO Closed  successfully.");
+                }
+            },
+            error: function (xsa) {
+                ShowAlert("error", "Something Went Wrong");
+                return;
+            }
+        });
+    });
+
+    /*************detail button click of upper grid*********/
+    function fnPoDetails(rowIndx, grid, edit, poId) {
+
+        if (rowIndx != null) {
+            LoadPOdetailGrid(poId);
+            $("#POdetailModal").dialog({
+                height: 470,
+                width: '65%',
+                modal: true
+            }).dialog("open");
+        }
+    }
+    function LoadPOdetailGrid(poId) {
+        $.ajax({
+            type: "GET",
+            url: "/PurchaseOrder/PurchaseOrderdetails/",
+            data: { POId: poId },
+            datatype: "Json",
+            success: function (data) {
+
+                var dataMGrid = [];
+                $.each(data.PODetails, function (index, value) {
+
+                    var grdData = {
+                        'ID': value.ID, 'POIndDtlId': value.POIndDtlId, 'ItemID': value.ItemID, 'ItemName': value.ItemName, 'TaxRate': value.TaxRate,'Qty': value.Qty, 'PackSize': value.PackSize, 'Rate': value.Rate, 'MRP': value.MRP,
+                        'OrderingUnit': value.OrderingUnit, 'FreeQty': value.FreeQty, 'Amount': value.Amount, 'TaxIds': value.TaxIds, 'Tax': value.Tax, 'TaxAmount': value.TaxAmount, 'TransC': value.TransC, 'OctroiC': value.OctroiC,
+                        'OtherC': value.OtherC, 'LoadUnloadC': value.LoadUnloadC, 'DiscountPer': value.discountper, 'Discount': value.Discount, 'NetAmount': value.NetAmount,
+                        'SupplierName': value.SupplierName, 'DescriptiveName': value.DescriptiveName, 'SGST': value.SGST, 'CGST': value.CGST, 'IGST': value.IGST, 'UGST': value.UGST, 'HSNCode': value.HSNCode
+                    }
+                    dataMGrid.push(grdData);
+                    $pogrid.pqGrid("option", "dataModel.data", dataMGrid);
+                    $pogrid.pqGrid("refreshDataAndView");
+                });
+            },
+            error: function () {
+                ClearParamGrid('POdetailGrid');
+                ShowAlert("error", "Something went Wrong");
+                return;
+            }
+        });
+    }
+
+
+    var dataModel = { location: 'local', sorting: 'local', paging: 'local', dataType: 'JSON' };
+    var setIID = {
+        width: '100%',
+        height: 400,
+        maxheight: '400',
+        title: "Item Details",
+        sortable: false,
+        numberCell: { show: false },
+        scrollModel: { flexContent: true },
+        selectionModel: { type: 'row', mode: 'single' },
+        hoverMode: 'cell',
+        editable: false,
+        showTop: true,
+        resizable: true,
+        wrap: false,
+        cellSave: function (evt, ui) {
+            this.refreshRow(ui);
+        },
+        editModel: {
+            saveKey: "",
+            keyUpDown: false
+        },
+        draggable: false,
+        colModel: [
+            { title: "", dataIndx: "ID", width: 10, dataType: "integer", hidden: true },
+            { title: "", dataIndx: "POIndDtlId", width: 10, dataType: "integer", hidden: true },
+
+            { title: "", dataIndx: "ItemID", width: 10, dataType: "integer", hidden: true },
+            { title: "Item Name", dataIndx: "ItemName", width: 200, dataType: "string", editable: false },
+            { title: "HSNCode", dataIndx: "HSNCode", width: 150, resizable: false, dataType: "string", editable: false },
+            {
+                title: "Description", dataIndx: "DescriptiveName", width: 200, dataType: "string", editable: true,
+                editor: { type: "textarea", attr: "rows=5" }
+            },
+            { title: "Item TaxRate", dataIndx: "TaxRate", width: 100, dataType: "string", editable: false },
+            { title: "Unit", dataIndx: "OrderingUnit", width: 100, dataType: "string", editable: false },
+            { title: "Qty", dataIndx: "Qty", width: 70, dataType: "float", align: "left" },
+            { title: "Free Qty", dataIndx: "FreeQty", width: 90, dataType: "float", align: "left", hidden: true},
+
+            {
+                title: "Rate", dataIndx: "Rate", width: 70, dataType: "float"
+            },
+            {
+                title: "MRP", dataIndx: "MRP", width: 90, dataType: "float", hidden: true,
+                formula: function (ui) {
+                    var rd = ui.rowData;
+                    if (isNaN(rd.MRP))
+                        return rd.Rate;
+                    else
+                        return rd.MRP;
+                }
+            },
+            {
+                title: "Amount", dataIndx: "Amount", width: 90, dataType: "float",
+                editable: false,
+                formula: function (ui) {
+                    var rd = ui.rowData;
+                    return (rd.Qty * rd.Rate);
+                }
+            },
+            {
+                title: "Discount %", dataIndx: "DiscountPer", width: 100, dataType: "float", resizable: false, align: "left",
+                format: '##,###.00',
+                editable: true,
+
+            },
+            {
+                title: "Discount", dataIndx: "Discount", width: 100, dataType: "float", resizable: false, align: "left",
+                format: '##,###.00',
+                editable: true,
+                formula: function (ui) {
+                    var rd = ui.rowData;
+                    var amount = rd.Amount;
+                    if (amount == undefined) amount = 0;
+                    var discper = rd.DiscountPer;
+                    if (discper == undefined) discper = 0;
+                    var discamt = rd.Discount;
+                    if (discamt == undefined) discamt = 0;
+                    if (discper > 0) {
+                        discamt = amount * discper / 100;
+                    }
+                    return discamt;
+                }
+            },
+            {
+                title: "", dataIndx: "TaxableValue", width: 100, dataType: "float", resizable: false, align: "left", hidden: true,
+                formula: function (ui) {
+                    var rd = ui.rowData;
+                    var amount = rd.Qty * rd.Rate;;
+                    var disc = rd.Discount;
+                    if (disc == undefined) disc = 0;
+
+                    return amount - disc;
+                }
+            },
+
+            { title: "TaxIds", dataIndx: "TaxIds", width: 90, dataType: "string", editable: true, hidden: true },
+
+            { title: "Tax", dataIndx: "Tax", width: 90, dataType: "float", editable: true, hidden: true },
+            {
+                title: "Tax Amount", dataIndx: "TaxAmount", width: 100, dataType: "float", resizable: false,
+                format: '##,###.00',
+                editable: false,
+                formula: function (ui) {
+                    var rd = ui.rowData;
+                    var amount = rd.TaxableValue;
+                    if (amount == undefined) amount = 0;
+                    var taxper = rd.Tax;
+                    if (taxper == undefined) taxper = 0;
+                    return amount * taxper / 100;
+                }
+            },
+            { title: "SGST", dataIndx: "SGST", width: 90, dataType: "double", align: "left", hidden: true },
+            { title: "CGST", dataIndx: "CGST", width: 90, dataType: "double", align: "left", hidden: true },
+            { title: "IGST", dataIndx: "IGST", width: 90, dataType: "double", align: "left", hidden: true },
+            { title: "UGST", dataIndx: "UGST", width: 90, dataType: "double", align: "left", hidden: true },
+            {
+                title: "SGSTAmt", dataIndx: "SGSTAmt", width: 90, dataType: "double", align: "left", format: '##,###.00',
+                formula: function (ui) {
+                    var rd = ui.rowData;
+                    var amount = rd.TaxableValue, sgstAmt = 0, sgstPer = rd.SGST;
+                    if (amount == undefined) amount = 0;
+                    if (sgstPer == undefined) sgstPer = 0;
+                    sgstAmt = amount * (sgstPer / 100);
+                    return sgstAmt;
+                }
+            },
+            {
+                title: "CGSTAmt", dataIndx: "CGSTAmt", width: 90, dataType: "double", align: "left", format: '##,###.00',
+                formula: function (ui) {
+                    var rd = ui.rowData;
+                    var amount = rd.TaxableValue, cgstAmt = 0, cgstPer = rd.CGST;
+
+                    cgstAmt = amount * (cgstPer / 100);
+                    return cgstAmt;
+                }
+            },
+            {
+                title: "IGSTAmt", dataIndx: "IGSTAmt", width: 90, dataType: "double", align: "left", format: '##,###.00',
+                formula: function (ui) {
+                    var rd = ui.rowData;
+                    var amount = rd.TaxableValue, igstAmt = 0, igstPer = rd.IGST;
+                    igstAmt = amount * (igstPer / 100);
+                    return igstAmt;
+                }
+            },
+            {
+                title: "UGSTAmt", dataIndx: "UGSTAmt", width: 90, dataType: "double", align: "left", format: '##,###.00',
+                formula: function (ui) {
+                    var rd = ui.rowData;
+                    var amount = rd.TaxableValue, ugstAmt = 0, ugstPer = rd.UGST;
+                    if (amount == undefined) amount = 0;
+                    if (ugstPer == undefined) ugstPer = 0;
+                    ugstAmt = amount * (ugstPer / 100);
+                    return ugstAmt;
+                }
+            },
+            { title: "Trans. Charges", dataIndx: "TransC", width: 100, dataType: "float", resizable: false, hidden: true, align: "left" },
+            { title: "Freight Amount", dataIndx: "OctroiC", width: 100, dataType: "float", resizable: false, hidden: true, align: "left" },
+            { title: "Other Charges", dataIndx: "OtherC", width: 100, dataType: "float", resizable: false, hidden: true, align: "left" },
+            { title: "Handling Chanrges", dataIndx: "LoadUnloadC", width: 100, dataType: "float", resizable: false, hidden: true, align: "left" },
+
+            {
+                title: "NetAmount", dataIndx: "NetAmount", width: 120, dataType: "float", resizable: false, align: "left", editable: false,
+                format: '##,###.00',
+                formula: function (ui) {
+                    var rd = ui.rowData;
+                    var amount = rd.TaxableValue, taxamount = rd.TaxAmount, discamt = rd.Discount;
+                    var transc = rd.TransC, octroic = rd.OctroiC, otherc = rd.OtherC, handlec = rd.LoadUnloadC;
+                    if (amount == undefined) amount = 0;
+                    if (taxamount == undefined) taxamount = 0;
+                    if (discamt == undefined) discamt = 0;
+
+                    if (transc == undefined) transc = 0;
+                    if (octroic == undefined) octroic = 0;
+                    if (otherc == undefined) otherc = 0;
+                    if (handlec == undefined) handlec = 0;
+                    var tempnet = parseFloat(amount) + parseFloat(taxamount) + parseFloat(transc) + parseFloat(octroic) + parseFloat(otherc) + parseFloat(handlec);
+                    var netAmount = parseFloat(tempnet);
+                    return netAmount;
+                }
+            }
+
+        ],
+        dataModel: dataModel,
+        pageModel: { type: "local", rPP: 50 },
+        postRenderInterval: -1
+    };
+    $pogrid = $("#POdetailGrid").pqGrid(setIID);
+
+
+</script>

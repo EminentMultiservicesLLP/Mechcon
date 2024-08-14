@@ -1,0 +1,260 @@
+﻿<script>
+    $(function () {
+        $(".datepicker").datepicker({
+            showOn: "button",
+            buttonImage: "/Content/images/calendar.gif",
+            buttonImageOnly: true,
+            buttonText: "Select date",
+            dateFormat: "dd-MM-yy"
+        }).datepicker("setDate", new Date());
+        $("#anim").change(function () {
+            $(".datepicker").datepicker("option", "showAnim", "fadeIn");
+        });
+    });
+</script>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    @*<div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        Details
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <button type="button" class="btn btn-success">Filter</button>
+                        <button type="button" class="btn btn-success">Export To Excel</button>
+                        <button type="button" class="btn btn-success">Row Summary</button>
+                        <button type="button" class="btn btn-success">Card View</button>
+                        <button type="button" class="btn btn-success">Reset</button>
+                        </div>
+                    </div> 
+                </div>
+                <div class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <fieldset>
+                            <legend></legend>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-sm-2">
+                                        @Html.Label("From Date")
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.Label("To Date")
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-sm-2">
+                                        <input type="text" class="datepicker">
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <input type="text" class="datepicker">
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <a href="" class="btn btn-primary" type="button">
+                                            Find
+                                            <span class="glyphicon glyphicon-search"></span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <fieldset>
+                            <legend></legend>
+                            <div class="row">
+                                <div class="container fill">
+                                    <div id="grid"></div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>*@
+  <div class="panel-group">        
+            <div class="panel-heading">
+                <div class="panel-title">
+                    Entry Form
+                </div>
+            </div>
+            <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                <div class="panel-body">
+                    <fieldset>
+                        <legend></legend>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                @*<a data-toggle="collapse" class="btn btn-success" href="#collapse1">Search</a>*@
+                                <button type="button" class="btn btn-success">Filter</button>
+                                <button type="button" class="btn btn-success">Export To Excel</button>
+                                <button type="button" class="btn btn-success">Row Summary</button>
+                                <button type="button" class="btn btn-success">Card View</button>
+                                <button type="button" class="btn btn-success">Reset</button>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-sm-2">
+                                    @Html.Label("From Date")
+                                </div>
+                                <div class="col-sm-2">
+                                    @Html.Label("To Date")
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-sm-2">
+                                    <input type="text" class="datepicker">
+                                </div>
+                                <div class="col-sm-2">
+                                    <input type="text" class="datepicker">
+                                </div>
+                                <div class="col-sm-2">
+                                    <a href="" class="btn btn-primary" type="button">
+                                        Find
+                                        <span class="glyphicon glyphicon-search"></span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                  @*<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ItemModal">Add Item</button>*@
+                                    <button type="button" class="btn btn-success" id="btnRemove">Remove Item</button>
+
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <fieldset>
+                        <legend></legend>
+                        <div class="row">
+                            <div class="container fill">
+                                <div id="grid" ></div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+   
+
+    
+    <script type="text/javascript">
+        var grid;
+
+        function Search() {
+            grid.reload({ searchString: $("#search").val() });
+        }
+
+        //$(document).ready(function () {
+        //    grid = $("#grid").grid({
+        //        dataKey: "ID",
+        //        uiLibrary: "bootstrap",
+        //        columns: [
+        //            { field: "ID", width: 10, sortable: false, hidden: true },
+        //            { field: "StoreName", width: 30, title: "StoreName", sortable: true, priority: 1 },
+        //            { field: "GrnNo", width: 20, title: "Indent Date", sortable: true, priority: 2 },
+        //            { field: "GrnDate", width: 20, title: "Indent Date", sortable: true, priority: 3 },
+        //            { field: "SuppName", width: 20, title: "Supp Name", sortable: true, priority: 4 },
+        //            { field: "Amount", width: 20, title: "Amount", sortable: true, priority: 5 },
+        //            { field: "PoNo", width: 10, title: "PoNo", sortable: true, priority: 6 },
+        //            { field: "PoDate", width: 20, title: "Po Date", sortable: true, priority: 7 },
+
+        //        ],
+        //        pager: { enable: true, limit: 5, sizes: [2, 5, 10, 20] }
+        //    });
+        //    $("#btnSearch").on("click", Search);
+        //});
+        colIID = [
+               {
+                   title: "", dataIndx: "state", width: 10, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', resizable: false, sortable: false,
+                   editor: false, dataType: 'bool',
+                   title: "<input type='checkbox' />",
+                   cb: {
+                       select: true,
+                       all: false, //checkbox selection in the header affect current page only.
+                       header: true //show checkbox in header.
+                   }
+               },
+              { title: "", dataIndx: "ID", width: 10, dataType: "integer", editable: false, resizable: false, hidden: true },
+            //  { title: "", dataIndx: "Item_Id", width: 10, dataType: "integer", editable: false, resizable: false, hidden: true },
+              { title: "StoreName", dataIndx: "StoreName", width: 170, dataType: "string", resizable: false, editable: false },
+              { title: "GrnNo", dataIndx: "GrnNo", width: 160, dataType: "string", resizable: false, editable: false },
+              { title: "GrnDate", dataIndx: "GrnDate", width: 150, resizable: false, dataType: "string", editable: false },
+              { title: "SuppName", dataIndx: "SuppName", width: 150, dataType: "float", resizable: false },
+              { title: "Amount", dataIndx: "Amount", width: 150, dataType: "string", resizable: false, editable: false },
+              { title: "PoNo", dataIndx: "PoNo", width: 140, resizable: false, dataType: "string", editable: false },
+              { title: "PoDate", dataIndx: "PoDate", width: 140, dataType: "float", resizable: false },
+        ];
+        dataIID = {
+            location: 'local',
+            sorting: 'local',
+            paging: 'local',
+            dataType: 'JSON'
+        };
+
+        setIID = {
+            virtualX: true,
+            virtualY: true,
+            height: '300',
+            maxheight: '400',
+            // title: "Material Indent Item Details",
+            sortable: false,
+            numberCell: { show: false },
+            selectionModel: { type: 'row' },
+            hoverMode: 'cell',
+            editor: { type: 'textbox' },
+            showTop: true,
+            resizable: true,
+            editModel: {
+                saveKey: $.ui.keyCode.ENTER
+            },
+            draggable: false,
+            colModel: colIID,
+            dataModel: dataIID,
+            pageModel: { type: "local", rPP: 20 },
+        };
+        $ReportGrid = $("#grid").pqGrid(setIID);
+    </script>
+     @*<script type="text/javascript">
+                var grid;
+
+                function Search() {
+                    grid.reload({ searchString: $("#search").val() });
+                }
+
+                $(document).ready(function () {
+                    grid = $("#grid").grid({
+                        dataKey: "ID",
+                        uiLibrary: "bootstrap",
+                        columns: [
+                            { field: "ID", width: 10, sortable: false, hidden: true },
+                            { field: "Selected", width: 10, title: "Selected", sortable: true, priority: 1 ,type:"checkbox"},
+                            { field: "ItemName", width: 20, title: "Item Name", sortable: true, priority: 2 },
+                            { field: "UnitName", width: 20, title: "Unit Name", sortable: true, priority: 3 },
+                            { field: "PackSize", width: 20, title: "Pack Size", sortable: true, priority: 4 },
+                            { field: "Stock", width: 20, title: "Stock", sortable: true, priority: 5 },
+                            { field: "PendingQty", width: 30, title: "Pending Qty", sortable: true, priority: 6 },
+                            { field: "Min.Qty", width: 20, title: "Min. Qty", sortable: true, priority: 7 },
+                            { field: "Max.Qty", width: 20, title: "Max. Qty", sortable: true, priority: 8 },
+                            { field: "Reorder", width: 20, title: "Reorder", sortable: true, priority: 9 },
+                            { field: "IndentQty", width: 20, title: "Indent Qty", sortable: true, priority: 10 },
+                           
+                        ],
+                        pager: { enable: true, limit: 5, sizes: [2, 5, 10, 20] }
+                    });
+                    $("#btnSearch").on("click", Search);
+                });
+              
+                </script>*@
+}

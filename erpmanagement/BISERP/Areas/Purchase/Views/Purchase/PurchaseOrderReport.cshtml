@@ -1,0 +1,773 @@
+﻿@model BISERP.Area.Purchase.Models.PurchaseOrderModel
+@Scripts.Render("~/bundles/jquerymodels")
+<script>
+    $(function () {
+        $(".datepicker").datepicker({
+            showOn: "button",
+            buttonImage: "",
+            buttonImageOnly: true,
+            buttonText: "",
+            dateFormat: "dd-MM-yy"
+        }).datepicker("setDate", new Date());
+        $("#anim").change(function () {
+            $(".datepicker").datepicker("option", "showAnim", "fadeIn");
+        });
+    });
+</script>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div class="panel-group">
+    <div class="panel panel-default">
+    <div class="panel-groupingBoder">
+        <div class="panel-heading">
+            <div class="panel-title">
+                <a class="collapsediv" data-toggle="collapse" href="#SearchDetails" style="color: white">
+                    Search Details
+                </a>
+            </div>
+        </div>
+        <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+            <div class="panel-body">
+                <div class="container fill">
+                    <div id="searchgrid"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel-groupingBoder">
+        <div class="panel-heading">
+            <div class="panel-title">
+                Purchase Order Detail
+            </div>
+        </div>
+        <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <a data-toggle="collapse" class="btn btn-success" href="#SearchDetails">Show/Hide top Search Panel</a>
+                        <button type="button" id="btnPrint" class="btn btn-success">Report</button>
+                    </div>
+                </div>
+                <br>
+                <div class="row ">
+                    <div class="form-group form-horizontal">
+                        <div class="col-sm-3">
+                            @Html.LabelFor(model => model.PODate)
+                            @Html.TextBoxFor(model => model.PODate, new {@class = "form-control datepicker", @readonly = "true"})
+                        </div>
+                    </div>
+                    <div class="form-group form-horizontal">
+                        <div class="col-sm-3">
+                            @Html.LabelFor(model => model.PONo)
+                            @Html.TextBoxFor(model => model.PONo, new Dictionary<string, object> {{"readonly", "readonly"}, {"Value", "Auto"}, {"class", "form-control"}})
+                            @Html.HiddenFor(model => model.ID)
+                        </div>
+                    </div>
+
+                    <div class="form-group form-horizontal">
+                        <div class="col-sm-3">
+                            @Html.LabelFor(model => model.RefNo)
+                            @Html.TextBoxFor(model => model.RefNo, new {@class = "form-control", @readonly = "readonly"})
+                        </div>
+                    </div>
+                    <div class="form-group form-horizontal">
+                        <div class="col-sm-3">
+                            @*@Html.LabelFor(model => model.Status)*@
+                            @Html.LabelFor(model => model.SupplierName)
+                            @Html.TextBoxFor(model => model.SupplierName, new Dictionary<string, object> {{"class", "form-control"}, {"readonly", "readonly"}})
+                            @Html.HiddenFor(model => model.SupplierID)
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group form-horizontal">
+                        <div class="col-sm-3">
+                            @Html.LabelFor(model => model.StoreId, "Project Name")
+                            @Html.TextBoxFor(model => model.StoreId, new {@class = "form-control", @readonly = "readonly"})
+                        </div>
+                    </div>
+                    <div class="form-group form-horizontal">
+                        <div class="col-sm-3">
+                            @Html.LabelFor(model => model.Against)
+                            @Html.TextBoxFor(model => model.Against, new {id = "txtAgainst", Value = "Indent", @class = "form-control", @readonly = "readonly"})
+                        </div>
+                    </div>
+                    <div class="form-group form-horizontal">
+                        <div class="col-sm-3">
+                            @Html.LabelFor(model => model.RFQNo)
+                            @Html.TextBoxFor(model => model.RFQNo, "", new {@class = "form-control", @readonly = "readonly"})
+                            @Html.HiddenFor(model => model.RFQId)
+                        </div>
+                    </div>
+                    <div class="form-group form-horizontal">
+                        <div class="col-sm-3">
+
+                        </div>
+                    </div>
+                </div>
+                <div class="row ">
+                    <div class="form-group form-horizontal">
+                        <div class="col-sm-6">
+                            @Html.LabelFor(model => model.DeliveryAddress)
+                            @Html.TextAreaFor(model => model.DeliveryAddress, new {@class = "form-control", @readonly = "readonly"})
+                        </div>
+                        <div class="form-group form-horizontal">
+
+                            <div class="col-sm-1">
+                                <br>
+                                @Html.Label("Balance:")
+                            </div>
+                            <div class="col-sm-2">
+                                <br>
+                                @Html.TextBox("BalanceDue")
+                            </div>
+                            <div class="col-sm-0" style="display: none">
+                                @Html.TextBox("BudgetCost")
+                            </div>
+                            <div class="col-sm-0" style="display: none">
+                                @Html.TextBox("UtilizedBudget")
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="panel-groupingBoder">
+        <div class="row">
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <div id="pogrid"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel-groupingBoder">
+        <div class="row">
+            <div id="content">
+                <div id="content-tab">
+                    <ul id="tabs" class="nav nav-tabs" data-tabs="tabs">
+                        <li class="active">
+                            <a href="#tab1" data-toggle="tab">Total</a>
+                        </li>
+                        <li><a href="#tab2" data-toggle="tab">Delivery Terms</a></li>
+                        <li><a href="#tab3" data-toggle="tab">Payment Terms</a></li>
+                        <li><a href="#tab4" data-toggle="tab">Other Terms</a></li>
+                        <li><a href="#tab5" data-toggle="tab">Details</a></li>
+                    </ul>
+
+                    <div id="my-tab-content" class="tab-content">
+                        <div class="tab-pane  active" id="tab1">
+                            <table align="right">
+                                <tr>
+                                    <td>@Html.LabelFor(model => model.Amount)</td>
+                                    <td>
+                                        @Html.TextBoxFor(model => model.Amount, new {@class = "form-control", @readonly = "readonly"})
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.LabelFor(model => model.Tax)</td>
+                                    <td>
+                                        @Html.TextBoxFor(model => model.Tax, new {@class = "form-control", @readonly = "readonly"})
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.LabelFor(model => model.OtherCharges)</td>
+                                    <td>
+                                        @Html.TextBoxFor(model => model.OtherCharges, new {@class = "form-control", @readonly = "readonly"})
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.LabelFor(model => model.Discount)</td>
+                                    <td>
+                                        @Html.TextBoxFor(model => model.Discount, new {@class = "form-control", @readonly = "readonly"})
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.LabelFor(model => model.GrandTotal)</td>
+                                    <td>
+                                        @Html.TextBoxFor(model => model.GrandTotal, new {@class = "form-control", @readonly = "readonly"})
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="tab-pane" id="tab2">
+                            <div class="col-sm-12">
+                                <br>
+                                @*<div class="form-group" align="left">
+                                            <button type="button" class="btn btn-primary" id="btnViewDelTerms">Add Term</button>
+                                            <button type="button" class="btn btn-primary" id="btnRemoveDelTerms">Remove Term</button>
+                                        </div>*@
+                            </div>
+                            <div class="col-sm-12">
+                                <div id="DeliveryTermgrid"></div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="tab3">
+                            <div class="col-sm-12">
+                                <br>
+                                @*<div class="form-group" align="left">
+                                            <button type="button" class="btn btn-primary" id="btnViewPayTerms">Add Term</button>
+                                            <button type="button" class="btn btn-primary" id="btnRemovePayTerms">Remove Term</button>
+                                        </div>*@
+                            </div>
+                            <div class="col-sm-12">
+                                <div id="PaymentTermgrid"></div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="tab4">
+                            <div class="col-sm-12">
+                                <br>
+                                @*<div class="form-group" align="left">
+                                            <button type="button" class="btn btn-primary" id="btnViewOtherTerms">Add Term</button>
+                                            <button type="button" class="btn btn-primary" id="btnRemoveOtherTerms">Remove Term</button>
+                                        </div>*@
+                            </div>
+                            <div class="col-sm-12">
+                                <div id="OtherTermgrid"></div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="tab5">
+                            <br>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="col-sm-1">
+                                        @Html.LabelFor(model => model.Details)
+                                    </div>
+                                    <div class="col-sm-4">
+                                        @Html.TextAreaFor(model => model.Details, new {@class = "form-control", @readonly = "readonly"})
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    
+    </div>
+    
+    <div title="Report Document" id="popupbox" style="display: none;"> </div>
+        <div title="View Attachments" id="ViewModal" style="display: none;">
+            <div class="col-sm-10">
+                <ul id="displayImages" class="attachment" style='margin:5px; overflow-y: scroll;' />
+            </div>
+        </div>
+        <script type="text/javascript">
+            var appSetting = '@BISERP.Common.Constants.ScandocUrl';
+            var $pogrid, $searchgrid;
+            var $DeliveryTermgrid, $PaymentTermgrid, $OtherTermgrid;
+            $("#BalanceDue").prop('disabled', true);
+            function LoadSearchGrid() {
+                
+                $.ajax({
+                    url: "/PurchaseOrder/AuthorizedPurchaseOrder",
+                    cache: false,
+                    async: true,
+                    method: "GET",
+                    dataType: "JSON",
+                    data: { StoreId: 0 },
+                    success: function (response) {
+                        
+                        $searchgrid.pqGrid("option", "dataModel.data", response.records);
+                        var column = $searchgrid.pqGrid("getColumn", { dataIndx: "SupplierName" });
+                        var filter = column.filter;
+                        filter.cache = null;
+                        filter.options = $searchgrid.pqGrid("getData", { dataIndx: ["SupplierName"] });
+                        column = $searchgrid.pqGrid("getColumn", { dataIndx: "StoreName" });
+                        filter = column.filter;
+                        filter.cache = null;
+                        filter.options = $searchgrid.pqGrid("getData", { dataIndx: ["StoreName"] });
+                        column = $searchgrid.pqGrid("getColumn", { dataIndx: "Status" });
+                        filter = column.filter;
+                        $searchgrid.pqGrid("refreshDataAndView");
+                    }
+                });
+            }
+
+            function ClearForm() {
+                $("#PONo").val(""); $("#PODate").datepicker().datepicker("setDate", new Date()); $("#RefNo").val(""); $("#RFQNo").val(""); $("#RFQId").val("");
+                $("#SupplierName").val(""); $("#SupplierId").val(""); $("#DeliveryAddress").val(""); $("#ddlStores").val("0");
+                $("#Amount").val(""); $("#Tax").val(""); $("#OtherCharges").val(""); $("#Discount").val(""); $("#GrandTotal").val("");
+
+                ClearParamGrid("pogrid");
+                ClearParamGrid("DeliveryTermgrid");
+                ClearParamGrid("PaymentTermgrid");
+                ClearParamGrid("OtherTermgrid");
+                $("#SupplierName").prop('disabled', false);
+            }
+
+            $(document).ready(function () {
+                $("#btnShowItems").hide();
+                $('#Against').change(function () {
+                    if ($('#Against').val() === "0") {
+                        $("#btnShowItems").hide();
+                        ClearParamGrid("pogrid");
+                        $("#RFQNo").val("");
+                        $("#RFQId").val("");
+                        $("#RFQNo").prop("disabled", false);
+                    }
+                    else {
+                        $("#btnShowItems").show();
+                        $("#RFQNo").val("");
+                        $("#RFQId").val("");
+                        $("#RFQNo").prop("disabled", true);
+                        ClearParamGrid("pogrid");
+                    }
+                });
+            });
+
+            /********* PO Grid Functions*********/
+            //function editRow(rowIndx, grid, edit) {
+            //    //var rowIndx = getRowIndx();
+            //    if (rowIndx != null) {
+            //        var row = $pogrid.pqGrid('getRowData', { rowIndx: rowIndx });
+
+            //        $("#popup-dialog-crud").dialog({
+            //            title: "Edit Record (" + (rowIndx + 1) + ")", buttons: {
+            //                Update: function () {
+            //                    var getData = $("#Taxgrid").pqGrid("option", "dataModel.data");
+            //                    var selectedItems = jLinq.from(getData).equals("state", true).select();
+            //                    var totalTax = 0;
+            //                    var TaxIds = [];
+            //                    $.each(selectedItems, function (key, value) {
+            //                        totalTax = totalTax + value.Tax_percentage;
+            //                        TaxIds.push(value.Taxid);
+            //                    });
+            //                    $("#pogrid").pqGrid('updateRow', { rowIndx: rowIndx, newRow: { 'Tax': totalTax, 'TaxIds': TaxIds } });
+            //                    $("#pogrid").pqGrid("refreshRow", { rowIndx: rowIndx });
+            //                    $(this).dialog("destroy");
+            //                    CalculateTotalAmount();
+            //                },
+            //                Cancel: function () {
+            //                    $(this).dialog("destroy");
+            //                }
+            //            }
+            //        }).dialog("open");
+            //    }
+            //}
+            //function CalculateTotalAmount() {
+            //    var getData = $pogrid.pqGrid("option", "dataModel.data");
+
+            //    var totalAmount = 0, totalTaxAmount = 0, totalOtherCharges = 0, totalDiscount = 0, totalNetAmt = 0;
+            //    $.each(getData, function (_, item) {
+            //        var TransC = item.TransC, OtherC = item.OtherC, LoadUnloadC = item.LoadUnloadC, OctroiC = item.OctroiC;
+            //        var Amount = item.Amount, TaxAmount = item.TaxAmount, Discount = item.Discount, NetAmt = item.NetAmount;
+            //        var otherCharges = 0;
+            //        if (TransC == undefined || TransC == null) TransC = 0;
+            //        if (OtherC == undefined || OtherC == null) OtherC = 0;
+            //        if (LoadUnloadC == undefined || LoadUnloadC == null) LoadUnloadC = 0;
+            //        if (OctroiC == undefined || OctroiC == null) OctroiC = 0;
+
+            //        if (Amount == undefined || Amount == null) Amount = 0;
+            //        if (TaxAmount == undefined || TaxAmount == null) TaxAmount = 0;
+            //        if (Discount == undefined || Discount == null) Discount = 0;
+            //        if (NetAmt == undefined || NetAmt == null) NetAmt = 0;
+
+            //        otherCharges = parseFloat(TransC) + parseFloat(OtherC) + parseFloat(LoadUnloadC) + parseFloat(OctroiC);
+            //        totalAmount = totalAmount + parseFloat(Amount);
+            //        totalTaxAmount = totalTaxAmount + parseFloat(TaxAmount);
+            //        totalOtherCharges = totalOtherCharges + parseFloat(otherCharges);
+            //        totalDiscount = totalDiscount + parseFloat(Discount);
+            //        totalNetAmt = totalNetAmt + parseFloat(NetAmt);
+            //    });
+            //    $("#Amount").val(totalAmount);
+            //    $("#Tax").val(Math.round(totalTaxAmount));
+            //    $("#OtherCharges").val(totalOtherCharges);
+            //    $("#Discount").val(totalDiscount);
+            //    $("#GrandTotal").val(Math.round(totalNetAmt));
+            //}
+            /********* PO Grid *********/
+            $(document).ready(function () {
+                var dataModel = { location: 'remote', sorting: 'local', paging: 'local', dataType: 'JSON' };
+
+                var setIID = {
+                    width: '100%',
+                    height: 260,
+                    maxheight: '400',
+                    title: "Item Details",
+                    sortable: false,
+                    numberCell: { show: false },
+                    scrollModel: { flexContent: true },
+                    selectionModel: { type: 'row', mode: 'single' },
+                    hoverMode: 'cell',
+                    editor: { type: 'textbox' },
+                    showTop: true,
+                    resizable: true,
+                    cellSave: function (evt, ui) {
+                        this.refreshRow(ui);
+                        // CalculateTotalAmount();
+                    },
+                    editModel: {
+                        saveKey: $.ui.keyCode.ENTER,
+                        keyUpDown: false
+                    },
+                    draggable: false,
+                    colModel: [//{ title: "", dataIndx: "state", width: 10, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', resizable: false, sortable: false },
+                        { title: "", dataIndx: "ID", width: 10, dataType: "integer", hidden: true },
+                        { title: "", dataIndx: "POIndDtlId", width: 10, dataType: "integer", hidden: true },
+                        { title: "Supplier", dataIndx: "SupplierName", width: 200, dataType: "string", editable: false, hidden: true },
+                        { title: "", dataIndx: "ItemID", width: 10, dataType: "integer", hidden: true },
+                        { title: "Item Name", dataIndx: "ItemName", width: 200, dataType: "string", editable: false },
+                        { title: "Description", dataIndx: "DescriptiveName", width: 200, dataType: "string", editable: false },
+                        { title: "Unit", dataIndx: "OrderingUnit", width: 100, dataType: "string", editable: false },
+                        { title: "Qty", dataIndx: "Qty", width: 70, dataType: "double", align: "left", editable: false },
+                        { title: "Free Qty", dataIndx: "FreeQty", width: 90, dataType: "double", align: "left", editable: false },
+                        { title: "Pack Size", dataIndx: "PackSize", width: 120, dataType: "string", editable: false },
+                        { title: "Rate", dataIndx: "Rate", width: 70, dataType: "float", editable: false },
+                        { title: "MRP", dataIndx: "MRP", width: 90, dataType: "float", editable: false },
+                        { title: "Amount", dataIndx: "Amount", width: 90, dataType: "float", format: '##,###.00', editable: false },
+                        { title: "Tax Amount", dataIndx: "TaxAmount", width: 100, dataType: "float", resizable: false, format: '##,###.00', editable: false },
+                        { title: "Trans. Charges", dataIndx: "TransC", width: 100, dataType: "float", resizable: false, align: "left", editable: false },
+                        { title: "Freight Amount", dataIndx: "OctroiC", width: 100, dataType: "float", resizable: false, align: "left", editable: false },
+                        { title: "Other Charges", dataIndx: "OtherC", width: 100, dataType: "float", resizable: false, align: "left", editable: false },
+                        { title: "Handling Chanrges", dataIndx: "LoadUnloadC", width: 100, dataType: "float", resizable: false, align: "left", editable: false },
+                        { title: "DiscountPer", dataIndx: "DiscountPer", width: 100, dataType: "float", resizable: false, align: "left", format: '##,###.00', editable: false },
+                        { title: "Discount", dataIndx: "Discount", width: 100, dataType: "float", resizable: false, align: "left", format: '##,###.00', editable: false },
+                        { title: "NetAmount", dataIndx: "NetAmount", width: 120, dataType: "float", resizable: false, align: "left", editable: false, format: '##,###.00' }
+                    ],
+                    dataModel: dataModel,
+                    pageModel: { type: "local", rPP: 50 },
+                    postRenderInterval: -1
+                };
+                $pogrid = $("#pogrid").pqGrid(setIID);
+                //$("#popup-dialog-crud").dialog({
+                //    width: 400, modal: true,
+                //    open: function () { $(".ui-dialog").position({ of: "#pogrid" }); },
+                //    autoOpen: false
+                //});
+            });
+            /********* Search Grid *********/
+            var suplierid;
+            $(document).ready(function () {
+                var itemcategoryid = 0;
+                var budgetbalanc = 0;
+                var dataM = { location: "local", sorting: 'local' };
+                var colM = [
+                        { title: "", dataIndx: "ID", dataType: "integer", hidden: true },
+                        { title: "", dataIndx: "SupplierID", dataType: "integer", hidden: true },
+                        { title: "", dataIndx: "StoreId", dataType: "integer", hidden: true },
+                        { title: "", dataIndx: "Againstid", dataType: "integer", hidden: true },
+                        { title: "", dataIndx: "RFQId", dataType: "integer", hidden: true },
+                        { title: "", dataIndx: "DeliveryAddress", dataType: "integer", hidden: true },
+                        { title: "", dataIndx: "RefNo", dataType: "integer", hidden: true },
+                        {
+                            title: "PO No", dataIndx: "PONo", width: 200,
+                            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                        },
+                        {
+                            title: "PO Date", dataIndx: "strPODate", width: 100, dataType: "date"
+                        },
+                        {
+                            title: "Supplier", dataIndx: "SupplierName", width: 100,
+                            filter: {
+                                type: "select",
+                                condition: 'equal',
+                                prepend: { '': '--Select--' },
+                                valueIndx: "SupplierName",
+                                labelIndx: "SupplierName",
+                                listeners: ['change']
+                            }
+                        },
+                        {
+                            title: "Project", dataIndx: "StoreName", width: 100, filter: {
+                                type: "select",
+                                condition: 'equal',
+                                prepend: { '': '--Select--' },
+                                valueIndx: "StoreName",
+                                labelIndx: "StoreName",
+                                listeners: ['change']
+                            }
+                        },
+                        { title: "Indent No", dataIndx: "RFQNo", width: 200 },
+                        { title: "Status", dataIndx: "Status", width: 100 }
+                ];
+
+                var setM = {
+                    width: '100%',
+                    height: 250,
+                    sortable: false,
+                    numberCell: { show: false },
+                    hoverMode: 'cell',
+                    showTop: false,
+                    resizable: true,
+                    scrollModel: { autoFit: true },
+                    draggable: false,
+                    wrap: false,
+                    editable: false,
+                    columnBorders: true,
+                    filterModel: { on: true, mode: "AND", header: true },
+                    selectionModel: { type: 'row', mode: 'single' },
+                    colModel: colM,
+                    dataModel: dataM,
+                    pageModel: { type: "local", rPP: 20 },
+                    rowClick: function (evt, ui) {
+                        ClearForm();
+                        if (ui.rowData) {
+                            
+                            var rowIndx = parseInt(ui.rowIndx);
+                            var record = ui.rowData;
+                            
+                            suplierid = record.SupplierID;
+                            $("#ID").val(record.ID);
+                            $("#SupplierId").val(record.SupplierID);
+                            $("#PONo").val(record.PONo);
+                            $("#Againstid").val(record.Againstid);
+                            $("#RFQId").val(record.RFQId);
+                            $("#RFQNo").val(record.RFQNo);
+                            $("#DeliveryAddress").val(record.DeliveryAddress);
+                            $("#RefNo").val(record.RefNo);
+                            $("#PODate").val(record.strPODate);
+                            $("#RefNo").val(record.RefNo);
+                            $("#SupplierName").val(record.SupplierName);
+                            $("#StoreId").val(record.StoreName);
+                            $("#Against").val(record.Againstid);
+                            if ($('#Against').val() === "0") {
+                                $("#btnShowItems").hide();
+                                $("#RFQNo").prop("disabled", false);
+                            }
+                            else {
+                                $("#btnShowItems").show();
+                                $("#RFQNo").prop("disabled", true);
+                            }
+                            $("#DeliveryAddress").val(record.DeliveryAddress);
+                            $("#Details").val(record.Details);
+                            $("#Tax").val(record.Tax);
+                            $("#Amount").val(record.Amount);
+                            $("#Discount").val(record.Discount);
+                            $("#OtherCharges").val(record.OtherCharges);
+                            $("#GrandTotal").val(record.GrandTotal);
+                            $("#Details").val(record.Details);
+                            
+                            console.log(record.Details);
+                           
+                            $.ajax({
+                                type: "GET",
+                                url: "/PurchaseOrder/PurchaseOrderdetails/",
+                                data: { POId: record.ID },
+                                datatype: "Json",
+
+                                success: function (data) {
+                                    
+                                    itemcategoryid = data.ItemTypeId;
+                                    var storeID = data.StoreId;
+                                    $.ajax({
+                                        type: "GET",
+                                        url: "/StoreMaster/GetProjectBudget",
+                                        data: { storeId: storeID, ID: itemcategoryid },
+                                        datatype: "Json",
+                                        success: function (data) {
+                                            var budget = data.records[0].BudgetCost;
+                                            var utilize = data.records[0].UtilizedBudget;
+                                            budgetbalanc = budget - utilize;
+                                            $('#BalanceDue').val(budgetbalanc);
+                                        }
+                                    });
+                                  
+                                    var dataMGrid = [];
+                                    $.each(data.PODetails, function (index, value) {
+                                        var grdData = {
+                                            'ID': value.ID, 'POIndDtlId': value.POIndDtlId, 'ItemID': value.ItemID, 'ItemName': value.ItemName, 'Qty': value.Qty, 'PackSize': value.PackSize, 'Rate': value.Rate, 'MRP': value.MRP,
+                                            'OrderingUnit': value.OrderingUnit, 'FreeQty': value.FreeQty, 'Amount': value.Amount, 'TaxIds': value.TaxIds, 'Tax': value.Tax, 'TaxAmount': value.TaxAmount, 'TransC': value.TransC, 'OctroiC': value.OctroiC,
+                                            'OtherC': value.OtherC, 'LoadUnloadC': value.LoadUnloadC, 'DiscountPer': value.discountper, 'Discount': value.Discount, 'NetAmount': value.NetAmount,
+                                            'SupplierName': value.SupplierName, 'DescriptiveName': value.DescriptiveName
+                                        }
+                                        dataMGrid.push(grdData);
+                                    });
+                                    $pogrid.pqGrid("option", "dataModel.data", dataMGrid);
+                                    $pogrid.pqGrid("refreshDataAndView");
+
+                                    var dataTerms = [];
+                                    $.each(data.PODeliveryTerms, function (index, value) {
+                                        var grdData = { 'DelTermID': value.DelTermID, 'DeliveryTermCode': value.DeliveryTermCode, 'DeliveryTermDesc': value.DeliveryTermDesc, 'state': true }
+                                        dataTerms.push(grdData);
+                                    });
+                                    $DeliveryTermgrid.pqGrid("option", "dataModel.data", dataTerms);
+                                    $DeliveryTermgrid.pqGrid("refreshDataAndView");
+
+                                    dataTerms = [];
+                                    $.each(data.POPaymenterms, function (index, value) {
+                                        var grdData = { 'PayTermID': value.PayTermID, 'PaymentTermCode': value.PaymentTermCode, 'PaymentTermDesc': value.PaymentTermDesc, 'state': true }
+                                        dataTerms.push(grdData);
+                                    });
+                                    $PaymentTermgrid.pqGrid("option", "dataModel.data", dataTerms);
+                                    $PaymentTermgrid.pqGrid("refreshDataAndView");
+
+                                    dataTerms = [];
+                                    $.each(data.POOtherTerms, function (index, value) {
+                                        var grdData = { 'OtherTermID': value.OtherTermID, 'OthersTermCode': value.OthersTermCode, 'OthersTermDesc': value.OthersTermDesc, 'state': true }
+                                        dataTerms.push(grdData);
+                                    });
+                                    $OtherTermgrid.pqGrid("option", "dataModel.data", dataTerms);
+                                    $OtherTermgrid.pqGrid("refreshDataAndView");
+                           
+
+                                }
+                            });
+                        }
+                    }
+                };
+                $searchgrid = $("#searchgrid").pqGrid(setM);
+                LoadSearchGrid();
+            });
+
+            $("#btnShowAttachments").click(function () {
+                $("#displayImages").html("");
+                ViewAttachments();
+            });
+
+            /********* Delivery Term Grid *********/
+            $(document).ready(function () {
+                var dataDelM = { location: "local", sorting: 'local' }
+                var colDelM = [
+                    {
+                        dataIndx: "state", Width: 5, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                        editor: false, dataType: 'bool',
+                        title: "<input type='checkbox' />",
+                        cb: { select: true, all: false, header: true }
+                    },
+                    { title: "", dataIndx: "DelTermID", dataType: "integer", hidden: true },
+                    { title: "Code", dataIndx: "DeliveryTermCode", width: 100, editable: false },
+                    { title: "Name", dataIndx: "DeliveryTermDesc", width: 1000, editable: false }
+                ];
+                var DelM = {
+                    width: '100%',
+                    height: 250,
+                    sortable: false,
+                    numberCell: { show: false },
+                    hoverMode: 'cell',
+                    showTop: false,
+                    resizable: true,
+                    scrollModel: { autoFit: true },
+                    draggable: false,
+                    wrap: false,
+                    columnBorders: true,
+                    selectionModel: { type: 'row' },
+                    colModel: colDelM,
+                    dataModel: dataDelM,
+                    pageModel: { type: "local", rPP: 20 }
+                };
+                $DeliveryTermgrid = $("#DeliveryTermgrid").pqGrid(DelM);
+            });
+            /********* Payment Term Grid *********/
+            $(document).ready(function () {
+                var dataDelM = { location: "local", sorting: 'local' }
+                var colDelM = [
+                    {
+                        dataIndx: "state", Width: 5, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                        editor: false, dataType: 'bool',
+                        title: "<input type='checkbox' />",
+                        cb: { select: true, all: false, header: true }
+                    },
+                    { title: "", dataIndx: "PayTermID", dataType: "integer", hidden: true },
+                    {
+                        title: "Code", dataIndx: "PaymentTermCode", width: 100, editable: false
+
+                    },
+                    {
+                        title: "Name", dataIndx: "PaymentTermDesc", width: 1000, editable: false
+
+                    }
+                ];
+                var DelM = {
+                    width: '100%',
+                    height: 400,
+                    sortable: false,
+                    numberCell: { show: false },
+                    hoverMode: 'cell',
+                    showTop: false,
+                    resizable: true,
+                    scrollModel: { autoFit: true },
+                    draggable: false,
+                    wrap: false,
+                    columnBorders: true,
+                    selectionModel: { type: 'row' },
+                    colModel: colDelM,
+                    dataModel: dataDelM,
+                    filterModel: { on: true, mode: "AND", header: true },
+                    pageModel: { type: "local", rPP: 20 }
+                };
+                $PaymentTermgrid = $("#PaymentTermgrid").pqGrid(DelM);
+            });
+            /********* Other Term Grid *********/
+            $(document).ready(function () {
+                var dataOtherM = { location: "local" }
+                var colOtherM = [
+                    {
+                        dataIndx: "state", Width: 5, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                        editor: false, dataType: 'bool',
+                        title: "<input type='checkbox' />",
+                        cb: { select: true, all: false, header: true }
+                    },
+                    { title: "", dataIndx: "OtherTermID", dataType: "integer", hidden: true },
+                    { title: "Code", dataIndx: "OthersTermCode", width: 100, editable: false },
+                    { title: "Name", dataIndx: "OthersTermDesc", width: 1000, editable: false }
+                ];
+                var DelM = {
+                    width: '100%',
+                    height: 400,
+                    sortable: false,
+                    numberCell: { show: false },
+                    hoverMode: 'cell',
+                    showTop: false,
+                    resizable: true,
+                    scrollModel: { autoFit: true },
+                    draggable: false,
+                    wrap: false,
+                    columnBorders: true,
+                    selectionModel: { type: 'row' },
+                    colModel: colOtherM,
+                    dataModel: dataOtherM,
+                    pageModel: { type: "local", rPP: 20 },
+                    virtualX: true,
+                    virtualY: true,
+                };
+                $OtherTermgrid = $("#OtherTermgrid").pqGrid(DelM);
+            });
+
+
+            function ViewAttachments() {
+                var RFQId = $("#IndentId").val();
+                $("#ViewModal").dialog({
+                    height: 400,
+                    width: 700,
+                    modal: true,
+                    open: function (evt, ui) {
+                        $.ajax({
+                            type: "GET",
+                            url: "/ScanDoc/ScanDoc/GetScanDocUrl",
+                            data: { FileId: RFQId, ScanDocSubTypeId: 9 },
+                            datatype: "Json",
+                            success: function (data) {
+
+                                $.each(data, function (key, value) {
+                                    DisplayUploadedFiles("displayImages", value, appSetting);
+                                });
+                            }
+                        });
+                    },
+                    close: function (event, ui) {
+                    },
+                    show: {
+                        effect: "blind",
+                        duration: 500
+                    }
+                });
+            }
+            $('#btnPrint').on('click', function () {
+                if ($("#ID").val() === "" || $("#ID").val() === 0) {
+                    ShowAlert("error", "Please Select PO");
+                    return;
+                }
+                var potype = "Purchase Order";
+                window.location.href = '/PurchaseOrder/ExportPO?poid=' + $("#ID").val() + "&poType=" + potype;
+                
+            });
+
+        </script>
+        }

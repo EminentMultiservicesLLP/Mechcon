@@ -1,0 +1,1028 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="BISERPDataLayer.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="INV_MST_DeliveryTerms">
+          <Key>
+            <PropertyRef Name="TermID" />
+          </Key>
+          <Property Name="TermID" Type="int" Nullable="false" />
+          <Property Name="DeliveryTermDesc" Type="varchar" MaxLength="500" />
+          <Property Name="DeliveryTermCode" Type="varchar" MaxLength="50" />
+          <Property Name="UpdatedMacName" Type="nvarchar" MaxLength="100" />
+          <Property Name="UpdatedMacID" Type="varchar" MaxLength="50" />
+          <Property Name="UpdatedIPAddress" Type="varchar" MaxLength="50" />
+          <Property Name="UpdatedBy" Type="int" />
+          <Property Name="UpdatedOn" Type="datetime" />
+          <Property Name="InsertedBy" Type="int" />
+          <Property Name="InsertedON" Type="datetime" />
+          <Property Name="InsertedMacName" Type="nvarchar" MaxLength="100" />
+          <Property Name="InsertedMacID" Type="varchar" MaxLength="50" />
+          <Property Name="InsertedIPAddress" Type="varchar" MaxLength="50" />
+          <Property Name="Deactive" Type="bit" />
+        </EntityType>
+        <EntityType Name="INV_MST_ITEM">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="Code" Type="nvarchar" MaxLength="100" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" />
+          <Property Name="DescriptiveName" Type="varchar" MaxLength="500" />
+          <Property Name="ItemTypeID" Type="int" />
+          <Property Name="PackSizeID" Type="int" />
+          <Property Name="VatOn" Type="nvarchar" MaxLength="1" />
+          <Property Name="SalesTax" Type="float" />
+          <Property Name="SalesPrice" Type="float" />
+          <Property Name="StandardRate" Type="float" />
+          <Property Name="SealingRate" Type="float" />
+          <Property Name="OwnStock" Type="bit" />
+          <Property Name="NoMrp" Type="bit" />
+          <Property Name="AutoConsumed" Type="bit" />
+          <Property Name="Asset" Type="bit" />
+          <Property Name="OPBalance" Type="float" />
+          <Property Name="MaxLevel" Type="float" />
+          <Property Name="MinLevel" Type="float" />
+          <Property Name="BrandId" Type="int" />
+          <Property Name="notes" Type="nvarchar" MaxLength="250" />
+          <Property Name="IsLocalPurchaseItem" Type="bit" />
+          <Property Name="IsRoutineItem" Type="bit" />
+          <Property Name="SalesTaxID" Type="int" />
+          <Property Name="OrderUnitID" Type="int" />
+          <Property Name="ReOrderLevel" Type="float" />
+          <Property Name="CurrentQty" Type="float" />
+          <Property Name="UnitID" Type="int" />
+          <Property Name="LocationID" Type="int" />
+          <Property Name="StockTypeID" Type="int" />
+          <Property Name="BatchRequired" Type="bit" />
+          <Property Name="ExpiryDtRequired" Type="bit" />
+          <Property Name="PurchaseFrequency" Type="nvarchar" MaxLength="50" />
+          <Property Name="ItemChangeID" Type="int" />
+          <Property Name="Taxid" Type="int" />
+          <Property Name="ChkLooseSelling" Type="bit" />
+          <Property Name="chkQualityCtrl" Type="bit" />
+          <Property Name="IsNonChargable" Type="int" />
+          <Property Name="MarkupPercentage" Type="int" />
+          <Property Name="ConsigneeFlag" Type="bit" />
+          <Property Name="ConsigneeId" Type="int" />
+          <Property Name="HighValueFlag" Type="bit" />
+          <Property Name="scheduledItem" Type="bit" />
+          <Property Name="isNoBarcode" Type="bit" />
+          <Property Name="ScheduledIVItemId" Type="int" />
+          <Property Name="UpdatedMacName" Type="nvarchar" MaxLength="100" />
+          <Property Name="UpdatedMacID" Type="varchar" MaxLength="50" />
+          <Property Name="UpdatedIPAddress" Type="varchar" MaxLength="50" />
+          <Property Name="UpdatedBy" Type="int" />
+          <Property Name="UpdatedOn" Type="datetime" />
+          <Property Name="InsertedBy" Type="int" />
+          <Property Name="InsertedON" Type="datetime" />
+          <Property Name="InsertedMacName" Type="nvarchar" MaxLength="100" />
+          <Property Name="InsertedMacID" Type="varchar" MaxLength="50" />
+          <Property Name="InsertedIPAddress" Type="varchar" MaxLength="50" />
+          <Property Name="Deactive" Type="bit" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'BIS-ERP.dbo.INV_MST_itempacksize' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="INV_MST_itempacksize">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="Code" Type="nvarchar" MaxLength="50" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" />
+          <Property Name="UpdatedMacName" Type="nvarchar" MaxLength="100" />
+          <Property Name="UpdatedMacID" Type="varchar" MaxLength="50" />
+          <Property Name="UpdatedIPAddress" Type="varchar" MaxLength="50" />
+          <Property Name="UpdatedBy" Type="int" />
+          <Property Name="UpdatedOn" Type="datetime" />
+          <Property Name="InsertedBy" Type="int" />
+          <Property Name="InsertedON" Type="datetime" />
+          <Property Name="InsertedMacName" Type="nvarchar" MaxLength="100" />
+          <Property Name="InsertedMacID" Type="varchar" MaxLength="50" />
+          <Property Name="InsertedIPAddress" Type="varchar" MaxLength="50" />
+          <Property Name="Deactive" Type="bit" />
+        </EntityType>
+        <EntityType Name="INV_MST_ItemType">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="Code" Type="nvarchar" MaxLength="50" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" />
+          <Property Name="IsManufactRequired" Type="bit" />
+          <Property Name="POException" Type="float" />
+          <Property Name="UpdatedMacName" Type="nvarchar" MaxLength="100" />
+          <Property Name="UpdatedMacID" Type="varchar" MaxLength="50" />
+          <Property Name="UpdatedIPAddress" Type="varchar" MaxLength="50" />
+          <Property Name="UpdatedBy" Type="int" />
+          <Property Name="UpdatedOn" Type="datetime" />
+          <Property Name="InsertedBy" Type="int" />
+          <Property Name="InsertedON" Type="datetime" />
+          <Property Name="InsertedMacName" Type="nvarchar" MaxLength="100" />
+          <Property Name="InsertedMacID" Type="varchar" MaxLength="50" />
+          <Property Name="InsertedIPAddress" Type="varchar" MaxLength="50" />
+          <Property Name="Deactive" Type="bit" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'BIS-ERP.dbo.INV_MST_Manufacturer' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="INV_MST_Manufacturer">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="Code" Type="char" MaxLength="10" />
+          <Property Name="Name" Type="varchar" MaxLength="150" />
+          <Property Name="Address" Type="varchar" MaxLength="250" />
+          <Property Name="City" Type="varchar" MaxLength="50" />
+          <Property Name="State" Type="varchar" MaxLength="50" />
+          <Property Name="Country" Type="int" />
+          <Property Name="Pin" Type="varchar" MaxLength="25" />
+          <Property Name="ContactPerson" Type="varchar" MaxLength="50" />
+          <Property Name="ContactDesignation" Type="varchar" MaxLength="50" />
+          <Property Name="Phone1" Type="varchar" MaxLength="30" />
+          <Property Name="Phone2" Type="varchar" MaxLength="30" />
+          <Property Name="CellPhone" Type="varchar" MaxLength="30" />
+          <Property Name="Web" Type="varchar" MaxLength="50" />
+          <Property Name="Email" Type="varchar" MaxLength="30" />
+          <Property Name="BankName" Type="varchar" MaxLength="50" />
+          <Property Name="BankAcNo" Type="varchar" MaxLength="30" />
+          <Property Name="BankBranch" Type="varchar" MaxLength="50" />
+          <Property Name="Note" Type="varchar" MaxLength="250" />
+          <Property Name="Society" Type="nvarchar" MaxLength="100" />
+          <Property Name="Landmark" Type="nvarchar" MaxLength="100" />
+          <Property Name="Village" Type="int" />
+          <Property Name="UpdatedMacName" Type="nvarchar" MaxLength="100" />
+          <Property Name="UpdatedMacID" Type="varchar" MaxLength="50" />
+          <Property Name="UpdatedIPAddress" Type="varchar" MaxLength="50" />
+          <Property Name="UpdatedBy" Type="int" />
+          <Property Name="UpdatedOn" Type="datetime" />
+          <Property Name="InsertedBy" Type="int" />
+          <Property Name="InsertedON" Type="datetime" />
+          <Property Name="InsertedMacName" Type="nvarchar" MaxLength="100" />
+          <Property Name="InsertedMacID" Type="varchar" MaxLength="50" />
+          <Property Name="InsertedIPAddress" Type="varchar" MaxLength="50" />
+          <Property Name="Deactive" Type="bit" />
+        </EntityType>
+        <EntityType Name="INV_MST_OthersTerms">
+          <Key>
+            <PropertyRef Name="TermID" />
+          </Key>
+          <Property Name="TermID" Type="int" Nullable="false" />
+          <Property Name="OthersTermDesc" Type="varchar" MaxLength="500" />
+          <Property Name="OthersTermCode" Type="varchar" MaxLength="50" />
+          <Property Name="UpdatedMacName" Type="nvarchar" MaxLength="100" />
+          <Property Name="UpdatedMacID" Type="varchar" MaxLength="50" />
+          <Property Name="UpdatedIPAddress" Type="varchar" MaxLength="50" />
+          <Property Name="UpdatedBy" Type="int" />
+          <Property Name="UpdatedOn" Type="datetime" />
+          <Property Name="InsertedBy" Type="int" />
+          <Property Name="InsertedON" Type="datetime" />
+          <Property Name="InsertedMacName" Type="nvarchar" MaxLength="100" />
+          <Property Name="InsertedMacID" Type="varchar" MaxLength="50" />
+          <Property Name="InsertedIPAddress" Type="varchar" MaxLength="50" />
+          <Property Name="Deactive" Type="bit" />
+        </EntityType>
+        <EntityType Name="INV_MST_PaymentTerms">
+          <Key>
+            <PropertyRef Name="TermID" />
+          </Key>
+          <Property Name="TermID" Type="int" Nullable="false" />
+          <Property Name="PaymentTermDesc" Type="varchar" MaxLength="500" />
+          <Property Name="PaymentTermCode" Type="varchar" MaxLength="50" />
+          <Property Name="UpdatedMacName" Type="nvarchar" MaxLength="100" />
+          <Property Name="UpdatedMacID" Type="varchar" MaxLength="50" />
+          <Property Name="UpdatedIPAddress" Type="varchar" MaxLength="50" />
+          <Property Name="UpdatedBy" Type="int" />
+          <Property Name="UpdatedOn" Type="datetime" />
+          <Property Name="InsertedBy" Type="int" />
+          <Property Name="InsertedON" Type="datetime" />
+          <Property Name="InsertedMacName" Type="nvarchar" MaxLength="100" />
+          <Property Name="InsertedMacID" Type="varchar" MaxLength="50" />
+          <Property Name="InsertedIPAddress" Type="varchar" MaxLength="50" />
+          <Property Name="Deactive" Type="bit" />
+        </EntityType>
+        <EntityType Name="INV_MST_Supplier">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="Code" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Address" Type="nvarchar" MaxLength="200" />
+          <Property Name="City" Type="int" />
+          <Property Name="State" Type="int" />
+          <Property Name="Pin" Type="nvarchar" MaxLength="10" />
+          <Property Name="ContactPerson" Type="nvarchar" MaxLength="50" />
+          <Property Name="ContactDesignation" Type="nvarchar" MaxLength="50" />
+          <Property Name="GroupID" Type="int" />
+          <Property Name="CreditPeriod" Type="int" />
+          <Property Name="DateOfAssociation" Type="datetime" />
+          <Property Name="Fax" Type="nvarchar" MaxLength="50" />
+          <Property Name="Phone1" Type="nvarchar" MaxLength="50" />
+          <Property Name="Phone2" Type="nvarchar" MaxLength="50" />
+          <Property Name="CellPhone" Type="nvarchar" MaxLength="50" />
+          <Property Name="Email" Type="nvarchar" MaxLength="30" />
+          <Property Name="Web" Type="nvarchar" MaxLength="50" />
+          <Property Name="CST" Type="nvarchar" MaxLength="50" />
+          <Property Name="MST" Type="nvarchar" MaxLength="50" />
+          <Property Name="TDS" Type="nvarchar" MaxLength="50" />
+          <Property Name="ExciseCode" Type="nvarchar" MaxLength="50" />
+          <Property Name="ExportCode" Type="nvarchar" MaxLength="50" />
+          <Property Name="LedgerID" Type="int" />
+          <Property Name="EligableForAdv" Type="bit" />
+          <Property Name="BankName" Type="nvarchar" MaxLength="50" />
+          <Property Name="BankBranch" Type="nvarchar" MaxLength="50" />
+          <Property Name="BankAcNo" Type="nvarchar" MaxLength="30" />
+          <Property Name="MCIRNo" Type="nvarchar" MaxLength="30" />
+          <Property Name="Note" Type="nvarchar" MaxLength="100" />
+          <Property Name="Proposed" Type="char" MaxLength="10" />
+          <Property Name="IncomeTaxNo" Type="nvarchar" MaxLength="50" />
+          <Property Name="SuppType" Type="varchar" MaxLength="50" />
+          <Property Name="Society" Type="nvarchar" MaxLength="100" />
+          <Property Name="landmark" Type="nvarchar" MaxLength="100" />
+          <Property Name="AccountId" Type="int" />
+          <Property Name="Village" Type="int" />
+          <Property Name="Paytermsid" Type="int" />
+          <Property Name="RTGSCODE" Type="nvarchar" MaxLength="50" />
+          <Property Name="SupplierCategory" Type="int" />
+          <Property Name="SupplierType" Type="int" />
+          <Property Name="Country" Type="int" />
+          <Property Name="UpdatedMacName" Type="nvarchar" MaxLength="100" />
+          <Property Name="UpdatedMacID" Type="varchar" MaxLength="50" />
+          <Property Name="UpdatedIPAddress" Type="varchar" MaxLength="50" />
+          <Property Name="UpdatedBy" Type="int" />
+          <Property Name="UpdatedOn" Type="datetime" />
+          <Property Name="InsertedBy" Type="int" />
+          <Property Name="InsertedON" Type="datetime" />
+          <Property Name="InsertedMacName" Type="nvarchar" MaxLength="100" />
+          <Property Name="InsertedMacID" Type="varchar" MaxLength="50" />
+          <Property Name="InsertedIPAddress" Type="varchar" MaxLength="50" />
+          <Property Name="Deactive" Type="bit" />
+        </EntityType>
+        <EntityType Name="INV_MST_Unit">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="Code" Type="nvarchar" MaxLength="10" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" />
+          <Property Name="UpdatedMacName" Type="nvarchar" MaxLength="100" />
+          <Property Name="UpdatedMacID" Type="varchar" MaxLength="50" />
+          <Property Name="UpdatedIPAddress" Type="varchar" MaxLength="50" />
+          <Property Name="UpdatedBy" Type="int" />
+          <Property Name="UpdatedOn" Type="datetime" />
+          <Property Name="InsertedBy" Type="int" />
+          <Property Name="InsertedON" Type="datetime" />
+          <Property Name="InsertedMacName" Type="nvarchar" MaxLength="100" />
+          <Property Name="InsertedMacID" Type="varchar" MaxLength="50" />
+          <Property Name="InsertedIPAddress" Type="varchar" MaxLength="50" />
+          <Property Name="Deactive" Type="bit" />
+        </EntityType>
+        <EntityType Name="Store">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" />
+          <Property Name="StoreTypeID" Type="int" />
+          <Property Name="Code" Type="char" MaxLength="10" />
+          <Property Name="LocationID" Type="int" />
+          <Property Name="UpdatedMacName" Type="nvarchar" MaxLength="100" />
+          <Property Name="UpdatedMacID" Type="varchar" MaxLength="50" />
+          <Property Name="UpdatedIPAddress" Type="varchar" MaxLength="50" />
+          <Property Name="UpdatedBy" Type="int" />
+          <Property Name="UpdatedOn" Type="datetime" />
+          <Property Name="InsertedBy" Type="int" />
+          <Property Name="InsertedON" Type="datetime" />
+          <Property Name="InsertedMacName" Type="nvarchar" MaxLength="100" />
+          <Property Name="InsertedMacID" Type="varchar" MaxLength="50" />
+          <Property Name="InsertedIPAddress" Type="varchar" MaxLength="50" />
+          <Property Name="Deactive" Type="bit" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6013: The table/view 'BIS-ERP.dbo.storeitype_mapping' does not have a primary key defined and no valid primary key could be inferred. This table/view has been excluded. To use the entity, you will need to review your schema, add the correct keys, and uncomment it.
+        <EntityType Name="storeitype_mapping">
+          <Property Name="storeID" Type="int" />
+          <Property Name="ItypeID" Type="int" />
+          <Property Name="UpdatedMacName" Type="nvarchar" MaxLength="100" />
+          <Property Name="UpdatedMacID" Type="varchar" MaxLength="50" />
+          <Property Name="UpdatedIPAddress" Type="varchar" MaxLength="50" />
+          <Property Name="UpdatedBy" Type="int" />
+          <Property Name="UpdatedOn" Type="datetime" />
+          <Property Name="InsertedBy" Type="int" />
+          <Property Name="InsertedON" Type="datetime" />
+          <Property Name="InsertedMacName" Type="nvarchar" MaxLength="100" />
+          <Property Name="InsertedMacID" Type="varchar" MaxLength="50" />
+          <Property Name="InsertedIPAddress" Type="varchar" MaxLength="50" />
+          <Property Name="Deactive" Type="bit" />
+        </EntityType>-->
+        <EntityContainer Name="BISERPDataLayerStoreContainer">
+          <EntitySet Name="INV_MST_DeliveryTerms" EntityType="Self.INV_MST_DeliveryTerms" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="INV_MST_ITEM" EntityType="Self.INV_MST_ITEM" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="INV_MST_ItemType" EntityType="Self.INV_MST_ItemType" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="INV_MST_OthersTerms" EntityType="Self.INV_MST_OthersTerms" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="INV_MST_PaymentTerms" EntityType="Self.INV_MST_PaymentTerms" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="INV_MST_Supplier" EntityType="Self.INV_MST_Supplier" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="INV_MST_Unit" EntityType="Self.INV_MST_Unit" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Store" EntityType="Self.Store" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="INV_MST_itempacksize" EntityType="Self.INV_MST_itempacksize" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [INV_MST_itempacksize].[ID] AS [ID], 
+    [INV_MST_itempacksize].[Code] AS [Code], 
+    [INV_MST_itempacksize].[Name] AS [Name], 
+    [INV_MST_itempacksize].[UpdatedMacName] AS [UpdatedMacName], 
+    [INV_MST_itempacksize].[UpdatedMacID] AS [UpdatedMacID], 
+    [INV_MST_itempacksize].[UpdatedIPAddress] AS [UpdatedIPAddress], 
+    [INV_MST_itempacksize].[UpdatedBy] AS [UpdatedBy], 
+    [INV_MST_itempacksize].[UpdatedOn] AS [UpdatedOn], 
+    [INV_MST_itempacksize].[InsertedBy] AS [InsertedBy], 
+    [INV_MST_itempacksize].[InsertedON] AS [InsertedON], 
+    [INV_MST_itempacksize].[InsertedMacName] AS [InsertedMacName], 
+    [INV_MST_itempacksize].[InsertedMacID] AS [InsertedMacID], 
+    [INV_MST_itempacksize].[InsertedIPAddress] AS [InsertedIPAddress], 
+    [INV_MST_itempacksize].[Deactive] AS [Deactive]
+    FROM [dbo].[INV_MST_itempacksize] AS [INV_MST_itempacksize]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="INV_MST_Manufacturer" EntityType="Self.INV_MST_Manufacturer" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [INV_MST_Manufacturer].[ID] AS [ID], 
+    [INV_MST_Manufacturer].[Code] AS [Code], 
+    [INV_MST_Manufacturer].[Name] AS [Name], 
+    [INV_MST_Manufacturer].[Address] AS [Address], 
+    [INV_MST_Manufacturer].[City] AS [City], 
+    [INV_MST_Manufacturer].[State] AS [State], 
+    [INV_MST_Manufacturer].[Country] AS [Country], 
+    [INV_MST_Manufacturer].[Pin] AS [Pin], 
+    [INV_MST_Manufacturer].[ContactPerson] AS [ContactPerson], 
+    [INV_MST_Manufacturer].[ContactDesignation] AS [ContactDesignation], 
+    [INV_MST_Manufacturer].[Phone1] AS [Phone1], 
+    [INV_MST_Manufacturer].[Phone2] AS [Phone2], 
+    [INV_MST_Manufacturer].[CellPhone] AS [CellPhone], 
+    [INV_MST_Manufacturer].[Web] AS [Web], 
+    [INV_MST_Manufacturer].[Email] AS [Email], 
+    [INV_MST_Manufacturer].[BankName] AS [BankName], 
+    [INV_MST_Manufacturer].[BankAcNo] AS [BankAcNo], 
+    [INV_MST_Manufacturer].[BankBranch] AS [BankBranch], 
+    [INV_MST_Manufacturer].[Note] AS [Note], 
+    [INV_MST_Manufacturer].[Society] AS [Society], 
+    [INV_MST_Manufacturer].[Landmark] AS [Landmark], 
+    [INV_MST_Manufacturer].[Village] AS [Village], 
+    [INV_MST_Manufacturer].[UpdatedMacName] AS [UpdatedMacName], 
+    [INV_MST_Manufacturer].[UpdatedMacID] AS [UpdatedMacID], 
+    [INV_MST_Manufacturer].[UpdatedIPAddress] AS [UpdatedIPAddress], 
+    [INV_MST_Manufacturer].[UpdatedBy] AS [UpdatedBy], 
+    [INV_MST_Manufacturer].[UpdatedOn] AS [UpdatedOn], 
+    [INV_MST_Manufacturer].[InsertedBy] AS [InsertedBy], 
+    [INV_MST_Manufacturer].[InsertedON] AS [InsertedON], 
+    [INV_MST_Manufacturer].[InsertedMacName] AS [InsertedMacName], 
+    [INV_MST_Manufacturer].[InsertedMacID] AS [InsertedMacID], 
+    [INV_MST_Manufacturer].[InsertedIPAddress] AS [InsertedIPAddress], 
+    [INV_MST_Manufacturer].[Deactive] AS [Deactive]
+    FROM [dbo].[INV_MST_Manufacturer] AS [INV_MST_Manufacturer]</DefiningQuery>
+          </EntitySet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="BISERPDataLayer" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="DefaultDBConnection" annotation:LazyLoadingEnabled="true" >
+          <EntitySet Name="INV_MST_DeliveryTerms" EntityType="BISERPDataLayer.INV_MST_DeliveryTerms" />
+          <EntitySet Name="INV_MST_ITEM" EntityType="BISERPDataLayer.INV_MST_ITEM" />
+          <EntitySet Name="INV_MST_ItemType" EntityType="BISERPDataLayer.INV_MST_ItemType" />
+          <EntitySet Name="INV_MST_OthersTerms" EntityType="BISERPDataLayer.INV_MST_OthersTerms" />
+          <EntitySet Name="INV_MST_PaymentTerms" EntityType="BISERPDataLayer.INV_MST_PaymentTerms" />
+          <EntitySet Name="INV_MST_Supplier" EntityType="BISERPDataLayer.INV_MST_Supplier" />
+          <EntitySet Name="INV_MST_Unit" EntityType="BISERPDataLayer.INV_MST_Unit" />
+          <EntitySet Name="Stores" EntityType="BISERPDataLayer.Store" />
+          <EntitySet Name="INV_MST_itempacksize" EntityType="BISERPDataLayer.INV_MST_itempacksize" />
+          <EntitySet Name="INV_MST_Manufacturer" EntityType="BISERPDataLayer.INV_MST_Manufacturer" />
+        </EntityContainer>
+        <EntityType Name="INV_MST_DeliveryTerms">
+          <Key>
+            <PropertyRef Name="TermID" />
+          </Key>
+          <Property Name="TermID" Type="Int32" Nullable="false" />
+          <Property Name="DeliveryTermDesc" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="DeliveryTermCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="UpdatedMacName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="UpdatedMacID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="UpdatedIPAddress" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="UpdatedBy" Type="Int32" />
+          <Property Name="UpdatedOn" Type="DateTime" Precision="3" />
+          <Property Name="InsertedBy" Type="Int32" />
+          <Property Name="InsertedON" Type="DateTime" Precision="3" />
+          <Property Name="InsertedMacName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="InsertedMacID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="InsertedIPAddress" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Deactive" Type="Boolean" />
+        </EntityType>
+        <EntityType Name="INV_MST_ITEM">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="Code" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="DescriptiveName" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="ItemTypeID" Type="Int32" />
+          <Property Name="PackSizeID" Type="Int32" />
+          <Property Name="VatOn" Type="String" MaxLength="1" FixedLength="false" Unicode="true" />
+          <Property Name="SalesTax" Type="Double" />
+          <Property Name="SalesPrice" Type="Double" />
+          <Property Name="StandardRate" Type="Double" />
+          <Property Name="SealingRate" Type="Double" />
+          <Property Name="OwnStock" Type="Boolean" />
+          <Property Name="NoMrp" Type="Boolean" />
+          <Property Name="AutoConsumed" Type="Boolean" />
+          <Property Name="Asset" Type="Boolean" />
+          <Property Name="OPBalance" Type="Double" />
+          <Property Name="MaxLevel" Type="Double" />
+          <Property Name="MinLevel" Type="Double" />
+          <Property Name="BrandId" Type="Int32" />
+          <Property Name="notes" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="IsLocalPurchaseItem" Type="Boolean" />
+          <Property Name="IsRoutineItem" Type="Boolean" />
+          <Property Name="SalesTaxID" Type="Int32" />
+          <Property Name="OrderUnitID" Type="Int32" />
+          <Property Name="ReOrderLevel" Type="Double" />
+          <Property Name="CurrentQty" Type="Double" />
+          <Property Name="UnitID" Type="Int32" />
+          <Property Name="LocationID" Type="Int32" />
+          <Property Name="StockTypeID" Type="Int32" />
+          <Property Name="BatchRequired" Type="Boolean" />
+          <Property Name="ExpiryDtRequired" Type="Boolean" />
+          <Property Name="PurchaseFrequency" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ItemChangeID" Type="Int32" />
+          <Property Name="Taxid" Type="Int32" />
+          <Property Name="ChkLooseSelling" Type="Boolean" />
+          <Property Name="chkQualityCtrl" Type="Boolean" />
+          <Property Name="IsNonChargable" Type="Int32" />
+          <Property Name="MarkupPercentage" Type="Int32" />
+          <Property Name="ConsigneeFlag" Type="Boolean" />
+          <Property Name="ConsigneeId" Type="Int32" />
+          <Property Name="HighValueFlag" Type="Boolean" />
+          <Property Name="scheduledItem" Type="Boolean" />
+          <Property Name="isNoBarcode" Type="Boolean" />
+          <Property Name="ScheduledIVItemId" Type="Int32" />
+          <Property Name="UpdatedMacName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="UpdatedMacID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="UpdatedIPAddress" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="UpdatedBy" Type="Int32" />
+          <Property Name="UpdatedOn" Type="DateTime" Precision="3" />
+          <Property Name="InsertedBy" Type="Int32" />
+          <Property Name="InsertedON" Type="DateTime" Precision="3" />
+          <Property Name="InsertedMacName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="InsertedMacID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="InsertedIPAddress" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Deactive" Type="Boolean" />
+        </EntityType>
+        <EntityType Name="INV_MST_ItemType">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="Code" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="IsManufactRequired" Type="Boolean" />
+          <Property Name="POException" Type="Double" />
+          <Property Name="UpdatedMacName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="UpdatedMacID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="UpdatedIPAddress" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="UpdatedBy" Type="Int32" />
+          <Property Name="UpdatedOn" Type="DateTime" Precision="3" />
+          <Property Name="InsertedBy" Type="Int32" />
+          <Property Name="InsertedON" Type="DateTime" Precision="3" />
+          <Property Name="InsertedMacName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="InsertedMacID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="InsertedIPAddress" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Deactive" Type="Boolean" />
+        </EntityType>
+        <EntityType Name="INV_MST_OthersTerms">
+          <Key>
+            <PropertyRef Name="TermID" />
+          </Key>
+          <Property Name="TermID" Type="Int32" Nullable="false" />
+          <Property Name="OthersTermDesc" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="OthersTermCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="UpdatedMacName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="UpdatedMacID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="UpdatedIPAddress" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="UpdatedBy" Type="Int32" />
+          <Property Name="UpdatedOn" Type="DateTime" Precision="3" />
+          <Property Name="InsertedBy" Type="Int32" />
+          <Property Name="InsertedON" Type="DateTime" Precision="3" />
+          <Property Name="InsertedMacName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="InsertedMacID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="InsertedIPAddress" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Deactive" Type="Boolean" />
+        </EntityType>
+        <EntityType Name="INV_MST_PaymentTerms">
+          <Key>
+            <PropertyRef Name="TermID" />
+          </Key>
+          <Property Name="TermID" Type="Int32" Nullable="false" />
+          <Property Name="PaymentTermDesc" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="PaymentTermCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="UpdatedMacName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="UpdatedMacID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="UpdatedIPAddress" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="UpdatedBy" Type="Int32" />
+          <Property Name="UpdatedOn" Type="DateTime" Precision="3" />
+          <Property Name="InsertedBy" Type="Int32" />
+          <Property Name="InsertedON" Type="DateTime" Precision="3" />
+          <Property Name="InsertedMacName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="InsertedMacID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="InsertedIPAddress" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Deactive" Type="Boolean" />
+        </EntityType>
+        <EntityType Name="INV_MST_Supplier">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="Code" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Address" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="City" Type="Int32" />
+          <Property Name="State" Type="Int32" />
+          <Property Name="Pin" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="ContactPerson" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ContactDesignation" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="GroupID" Type="Int32" />
+          <Property Name="CreditPeriod" Type="Int32" />
+          <Property Name="DateOfAssociation" Type="DateTime" Precision="3" />
+          <Property Name="Fax" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Phone1" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Phone2" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="CellPhone" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="Web" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="CST" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="MST" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="TDS" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ExciseCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ExportCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="LedgerID" Type="Int32" />
+          <Property Name="EligableForAdv" Type="Boolean" />
+          <Property Name="BankName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="BankBranch" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="BankAcNo" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="MCIRNo" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="Note" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Proposed" Type="String" MaxLength="10" FixedLength="true" Unicode="false" />
+          <Property Name="IncomeTaxNo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="SuppType" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Society" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="landmark" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="AccountId" Type="Int32" />
+          <Property Name="Village" Type="Int32" />
+          <Property Name="Paytermsid" Type="Int32" />
+          <Property Name="RTGSCODE" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="SupplierCategory" Type="Int32" />
+          <Property Name="SupplierType" Type="Int32" />
+          <Property Name="Country" Type="Int32" />
+          <Property Name="UpdatedMacName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="UpdatedMacID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="UpdatedIPAddress" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="UpdatedBy" Type="Int32" />
+          <Property Name="UpdatedOn" Type="DateTime" Precision="3" />
+          <Property Name="InsertedBy" Type="Int32" />
+          <Property Name="InsertedON" Type="DateTime" Precision="3" />
+          <Property Name="InsertedMacName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="InsertedMacID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="InsertedIPAddress" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Deactive" Type="Boolean" />
+        </EntityType>
+        <EntityType Name="INV_MST_Unit">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="Code" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="UpdatedMacName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="UpdatedMacID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="UpdatedIPAddress" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="UpdatedBy" Type="Int32" />
+          <Property Name="UpdatedOn" Type="DateTime" Precision="3" />
+          <Property Name="InsertedBy" Type="Int32" />
+          <Property Name="InsertedON" Type="DateTime" Precision="3" />
+          <Property Name="InsertedMacName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="InsertedMacID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="InsertedIPAddress" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Deactive" Type="Boolean" />
+        </EntityType>
+        <EntityType Name="Store">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="StoreTypeID" Type="Int32" />
+          <Property Name="Code" Type="String" MaxLength="10" FixedLength="true" Unicode="false" />
+          <Property Name="LocationID" Type="Int32" />
+          <Property Name="UpdatedMacName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="UpdatedMacID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="UpdatedIPAddress" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="UpdatedBy" Type="Int32" />
+          <Property Name="UpdatedOn" Type="DateTime" Precision="3" />
+          <Property Name="InsertedBy" Type="Int32" />
+          <Property Name="InsertedON" Type="DateTime" Precision="3" />
+          <Property Name="InsertedMacName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="InsertedMacID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="InsertedIPAddress" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Deactive" Type="Boolean" />
+        </EntityType>
+        <EntityType Name="INV_MST_itempacksize">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="Code" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="UpdatedMacName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="UpdatedMacID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="UpdatedIPAddress" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="UpdatedBy" Type="Int32" />
+          <Property Name="UpdatedOn" Type="DateTime" Precision="3" />
+          <Property Name="InsertedBy" Type="Int32" />
+          <Property Name="InsertedON" Type="DateTime" Precision="3" />
+          <Property Name="InsertedMacName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="InsertedMacID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="InsertedIPAddress" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Deactive" Type="Boolean" />
+        </EntityType>
+        <EntityType Name="INV_MST_Manufacturer">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="Code" Type="String" MaxLength="10" FixedLength="true" Unicode="false" />
+          <Property Name="Name" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="Address" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="City" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="State" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Country" Type="Int32" />
+          <Property Name="Pin" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Name="ContactPerson" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ContactDesignation" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Phone1" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="Phone2" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="CellPhone" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="Web" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Email" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="BankName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="BankAcNo" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="BankBranch" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Note" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Society" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Landmark" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Village" Type="Int32" />
+          <Property Name="UpdatedMacName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="UpdatedMacID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="UpdatedIPAddress" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="UpdatedBy" Type="Int32" />
+          <Property Name="UpdatedOn" Type="DateTime" Precision="3" />
+          <Property Name="InsertedBy" Type="Int32" />
+          <Property Name="InsertedON" Type="DateTime" Precision="3" />
+          <Property Name="InsertedMacName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="InsertedMacID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="InsertedIPAddress" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Deactive" Type="Boolean" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="BISERPDataLayerStoreContainer" CdmEntityContainer="DefaultDBConnection" >
+          <EntitySetMapping Name="INV_MST_DeliveryTerms">
+            <EntityTypeMapping TypeName="BISERPDataLayer.INV_MST_DeliveryTerms">
+              <MappingFragment StoreEntitySet="INV_MST_DeliveryTerms">
+                <ScalarProperty Name="Deactive" ColumnName="Deactive" />
+                <ScalarProperty Name="InsertedIPAddress" ColumnName="InsertedIPAddress" />
+                <ScalarProperty Name="InsertedMacID" ColumnName="InsertedMacID" />
+                <ScalarProperty Name="InsertedMacName" ColumnName="InsertedMacName" />
+                <ScalarProperty Name="InsertedON" ColumnName="InsertedON" />
+                <ScalarProperty Name="InsertedBy" ColumnName="InsertedBy" />
+                <ScalarProperty Name="UpdatedOn" ColumnName="UpdatedOn" />
+                <ScalarProperty Name="UpdatedBy" ColumnName="UpdatedBy" />
+                <ScalarProperty Name="UpdatedIPAddress" ColumnName="UpdatedIPAddress" />
+                <ScalarProperty Name="UpdatedMacID" ColumnName="UpdatedMacID" />
+                <ScalarProperty Name="UpdatedMacName" ColumnName="UpdatedMacName" />
+                <ScalarProperty Name="DeliveryTermCode" ColumnName="DeliveryTermCode" />
+                <ScalarProperty Name="DeliveryTermDesc" ColumnName="DeliveryTermDesc" />
+                <ScalarProperty Name="TermID" ColumnName="TermID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="INV_MST_ITEM">
+            <EntityTypeMapping TypeName="BISERPDataLayer.INV_MST_ITEM">
+              <MappingFragment StoreEntitySet="INV_MST_ITEM">
+                <ScalarProperty Name="Deactive" ColumnName="Deactive" />
+                <ScalarProperty Name="InsertedIPAddress" ColumnName="InsertedIPAddress" />
+                <ScalarProperty Name="InsertedMacID" ColumnName="InsertedMacID" />
+                <ScalarProperty Name="InsertedMacName" ColumnName="InsertedMacName" />
+                <ScalarProperty Name="InsertedON" ColumnName="InsertedON" />
+                <ScalarProperty Name="InsertedBy" ColumnName="InsertedBy" />
+                <ScalarProperty Name="UpdatedOn" ColumnName="UpdatedOn" />
+                <ScalarProperty Name="UpdatedBy" ColumnName="UpdatedBy" />
+                <ScalarProperty Name="UpdatedIPAddress" ColumnName="UpdatedIPAddress" />
+                <ScalarProperty Name="UpdatedMacID" ColumnName="UpdatedMacID" />
+                <ScalarProperty Name="UpdatedMacName" ColumnName="UpdatedMacName" />
+                <ScalarProperty Name="ScheduledIVItemId" ColumnName="ScheduledIVItemId" />
+                <ScalarProperty Name="isNoBarcode" ColumnName="isNoBarcode" />
+                <ScalarProperty Name="scheduledItem" ColumnName="scheduledItem" />
+                <ScalarProperty Name="HighValueFlag" ColumnName="HighValueFlag" />
+                <ScalarProperty Name="ConsigneeId" ColumnName="ConsigneeId" />
+                <ScalarProperty Name="ConsigneeFlag" ColumnName="ConsigneeFlag" />
+                <ScalarProperty Name="MarkupPercentage" ColumnName="MarkupPercentage" />
+                <ScalarProperty Name="IsNonChargable" ColumnName="IsNonChargable" />
+                <ScalarProperty Name="chkQualityCtrl" ColumnName="chkQualityCtrl" />
+                <ScalarProperty Name="ChkLooseSelling" ColumnName="ChkLooseSelling" />
+                <ScalarProperty Name="Taxid" ColumnName="Taxid" />
+                <ScalarProperty Name="ItemChangeID" ColumnName="ItemChangeID" />
+                <ScalarProperty Name="PurchaseFrequency" ColumnName="PurchaseFrequency" />
+                <ScalarProperty Name="ExpiryDtRequired" ColumnName="ExpiryDtRequired" />
+                <ScalarProperty Name="BatchRequired" ColumnName="BatchRequired" />
+                <ScalarProperty Name="StockTypeID" ColumnName="StockTypeID" />
+                <ScalarProperty Name="LocationID" ColumnName="LocationID" />
+                <ScalarProperty Name="UnitID" ColumnName="UnitID" />
+                <ScalarProperty Name="CurrentQty" ColumnName="CurrentQty" />
+                <ScalarProperty Name="ReOrderLevel" ColumnName="ReOrderLevel" />
+                <ScalarProperty Name="OrderUnitID" ColumnName="OrderUnitID" />
+                <ScalarProperty Name="SalesTaxID" ColumnName="SalesTaxID" />
+                <ScalarProperty Name="IsRoutineItem" ColumnName="IsRoutineItem" />
+                <ScalarProperty Name="IsLocalPurchaseItem" ColumnName="IsLocalPurchaseItem" />
+                <ScalarProperty Name="notes" ColumnName="notes" />
+                <ScalarProperty Name="BrandId" ColumnName="BrandId" />
+                <ScalarProperty Name="MinLevel" ColumnName="MinLevel" />
+                <ScalarProperty Name="MaxLevel" ColumnName="MaxLevel" />
+                <ScalarProperty Name="OPBalance" ColumnName="OPBalance" />
+                <ScalarProperty Name="Asset" ColumnName="Asset" />
+                <ScalarProperty Name="AutoConsumed" ColumnName="AutoConsumed" />
+                <ScalarProperty Name="NoMrp" ColumnName="NoMrp" />
+                <ScalarProperty Name="OwnStock" ColumnName="OwnStock" />
+                <ScalarProperty Name="SealingRate" ColumnName="SealingRate" />
+                <ScalarProperty Name="StandardRate" ColumnName="StandardRate" />
+                <ScalarProperty Name="SalesPrice" ColumnName="SalesPrice" />
+                <ScalarProperty Name="SalesTax" ColumnName="SalesTax" />
+                <ScalarProperty Name="VatOn" ColumnName="VatOn" />
+                <ScalarProperty Name="PackSizeID" ColumnName="PackSizeID" />
+                <ScalarProperty Name="ItemTypeID" ColumnName="ItemTypeID" />
+                <ScalarProperty Name="DescriptiveName" ColumnName="DescriptiveName" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="INV_MST_ItemType">
+            <EntityTypeMapping TypeName="BISERPDataLayer.INV_MST_ItemType">
+              <MappingFragment StoreEntitySet="INV_MST_ItemType">
+                <ScalarProperty Name="Deactive" ColumnName="Deactive" />
+                <ScalarProperty Name="InsertedIPAddress" ColumnName="InsertedIPAddress" />
+                <ScalarProperty Name="InsertedMacID" ColumnName="InsertedMacID" />
+                <ScalarProperty Name="InsertedMacName" ColumnName="InsertedMacName" />
+                <ScalarProperty Name="InsertedON" ColumnName="InsertedON" />
+                <ScalarProperty Name="InsertedBy" ColumnName="InsertedBy" />
+                <ScalarProperty Name="UpdatedOn" ColumnName="UpdatedOn" />
+                <ScalarProperty Name="UpdatedBy" ColumnName="UpdatedBy" />
+                <ScalarProperty Name="UpdatedIPAddress" ColumnName="UpdatedIPAddress" />
+                <ScalarProperty Name="UpdatedMacID" ColumnName="UpdatedMacID" />
+                <ScalarProperty Name="UpdatedMacName" ColumnName="UpdatedMacName" />
+                <ScalarProperty Name="POException" ColumnName="POException" />
+                <ScalarProperty Name="IsManufactRequired" ColumnName="IsManufactRequired" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="INV_MST_OthersTerms">
+            <EntityTypeMapping TypeName="BISERPDataLayer.INV_MST_OthersTerms">
+              <MappingFragment StoreEntitySet="INV_MST_OthersTerms">
+                <ScalarProperty Name="Deactive" ColumnName="Deactive" />
+                <ScalarProperty Name="InsertedIPAddress" ColumnName="InsertedIPAddress" />
+                <ScalarProperty Name="InsertedMacID" ColumnName="InsertedMacID" />
+                <ScalarProperty Name="InsertedMacName" ColumnName="InsertedMacName" />
+                <ScalarProperty Name="InsertedON" ColumnName="InsertedON" />
+                <ScalarProperty Name="InsertedBy" ColumnName="InsertedBy" />
+                <ScalarProperty Name="UpdatedOn" ColumnName="UpdatedOn" />
+                <ScalarProperty Name="UpdatedBy" ColumnName="UpdatedBy" />
+                <ScalarProperty Name="UpdatedIPAddress" ColumnName="UpdatedIPAddress" />
+                <ScalarProperty Name="UpdatedMacID" ColumnName="UpdatedMacID" />
+                <ScalarProperty Name="UpdatedMacName" ColumnName="UpdatedMacName" />
+                <ScalarProperty Name="OthersTermCode" ColumnName="OthersTermCode" />
+                <ScalarProperty Name="OthersTermDesc" ColumnName="OthersTermDesc" />
+                <ScalarProperty Name="TermID" ColumnName="TermID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="INV_MST_PaymentTerms">
+            <EntityTypeMapping TypeName="BISERPDataLayer.INV_MST_PaymentTerms">
+              <MappingFragment StoreEntitySet="INV_MST_PaymentTerms">
+                <ScalarProperty Name="Deactive" ColumnName="Deactive" />
+                <ScalarProperty Name="InsertedIPAddress" ColumnName="InsertedIPAddress" />
+                <ScalarProperty Name="InsertedMacID" ColumnName="InsertedMacID" />
+                <ScalarProperty Name="InsertedMacName" ColumnName="InsertedMacName" />
+                <ScalarProperty Name="InsertedON" ColumnName="InsertedON" />
+                <ScalarProperty Name="InsertedBy" ColumnName="InsertedBy" />
+                <ScalarProperty Name="UpdatedOn" ColumnName="UpdatedOn" />
+                <ScalarProperty Name="UpdatedBy" ColumnName="UpdatedBy" />
+                <ScalarProperty Name="UpdatedIPAddress" ColumnName="UpdatedIPAddress" />
+                <ScalarProperty Name="UpdatedMacID" ColumnName="UpdatedMacID" />
+                <ScalarProperty Name="UpdatedMacName" ColumnName="UpdatedMacName" />
+                <ScalarProperty Name="PaymentTermCode" ColumnName="PaymentTermCode" />
+                <ScalarProperty Name="PaymentTermDesc" ColumnName="PaymentTermDesc" />
+                <ScalarProperty Name="TermID" ColumnName="TermID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="INV_MST_Supplier">
+            <EntityTypeMapping TypeName="BISERPDataLayer.INV_MST_Supplier">
+              <MappingFragment StoreEntitySet="INV_MST_Supplier">
+                <ScalarProperty Name="Deactive" ColumnName="Deactive" />
+                <ScalarProperty Name="InsertedIPAddress" ColumnName="InsertedIPAddress" />
+                <ScalarProperty Name="InsertedMacID" ColumnName="InsertedMacID" />
+                <ScalarProperty Name="InsertedMacName" ColumnName="InsertedMacName" />
+                <ScalarProperty Name="InsertedON" ColumnName="InsertedON" />
+                <ScalarProperty Name="InsertedBy" ColumnName="InsertedBy" />
+                <ScalarProperty Name="UpdatedOn" ColumnName="UpdatedOn" />
+                <ScalarProperty Name="UpdatedBy" ColumnName="UpdatedBy" />
+                <ScalarProperty Name="UpdatedIPAddress" ColumnName="UpdatedIPAddress" />
+                <ScalarProperty Name="UpdatedMacID" ColumnName="UpdatedMacID" />
+                <ScalarProperty Name="UpdatedMacName" ColumnName="UpdatedMacName" />
+                <ScalarProperty Name="Country" ColumnName="Country" />
+                <ScalarProperty Name="SupplierType" ColumnName="SupplierType" />
+                <ScalarProperty Name="SupplierCategory" ColumnName="SupplierCategory" />
+                <ScalarProperty Name="RTGSCODE" ColumnName="RTGSCODE" />
+                <ScalarProperty Name="Paytermsid" ColumnName="Paytermsid" />
+                <ScalarProperty Name="Village" ColumnName="Village" />
+                <ScalarProperty Name="AccountId" ColumnName="AccountId" />
+                <ScalarProperty Name="landmark" ColumnName="landmark" />
+                <ScalarProperty Name="Society" ColumnName="Society" />
+                <ScalarProperty Name="SuppType" ColumnName="SuppType" />
+                <ScalarProperty Name="IncomeTaxNo" ColumnName="IncomeTaxNo" />
+                <ScalarProperty Name="Proposed" ColumnName="Proposed" />
+                <ScalarProperty Name="Note" ColumnName="Note" />
+                <ScalarProperty Name="MCIRNo" ColumnName="MCIRNo" />
+                <ScalarProperty Name="BankAcNo" ColumnName="BankAcNo" />
+                <ScalarProperty Name="BankBranch" ColumnName="BankBranch" />
+                <ScalarProperty Name="BankName" ColumnName="BankName" />
+                <ScalarProperty Name="EligableForAdv" ColumnName="EligableForAdv" />
+                <ScalarProperty Name="LedgerID" ColumnName="LedgerID" />
+                <ScalarProperty Name="ExportCode" ColumnName="ExportCode" />
+                <ScalarProperty Name="ExciseCode" ColumnName="ExciseCode" />
+                <ScalarProperty Name="TDS" ColumnName="TDS" />
+                <ScalarProperty Name="MST" ColumnName="MST" />
+                <ScalarProperty Name="CST" ColumnName="CST" />
+                <ScalarProperty Name="Web" ColumnName="Web" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="CellPhone" ColumnName="CellPhone" />
+                <ScalarProperty Name="Phone2" ColumnName="Phone2" />
+                <ScalarProperty Name="Phone1" ColumnName="Phone1" />
+                <ScalarProperty Name="Fax" ColumnName="Fax" />
+                <ScalarProperty Name="DateOfAssociation" ColumnName="DateOfAssociation" />
+                <ScalarProperty Name="CreditPeriod" ColumnName="CreditPeriod" />
+                <ScalarProperty Name="GroupID" ColumnName="GroupID" />
+                <ScalarProperty Name="ContactDesignation" ColumnName="ContactDesignation" />
+                <ScalarProperty Name="ContactPerson" ColumnName="ContactPerson" />
+                <ScalarProperty Name="Pin" ColumnName="Pin" />
+                <ScalarProperty Name="State" ColumnName="State" />
+                <ScalarProperty Name="City" ColumnName="City" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="INV_MST_Unit">
+            <EntityTypeMapping TypeName="BISERPDataLayer.INV_MST_Unit">
+              <MappingFragment StoreEntitySet="INV_MST_Unit">
+                <ScalarProperty Name="Deactive" ColumnName="Deactive" />
+                <ScalarProperty Name="InsertedIPAddress" ColumnName="InsertedIPAddress" />
+                <ScalarProperty Name="InsertedMacID" ColumnName="InsertedMacID" />
+                <ScalarProperty Name="InsertedMacName" ColumnName="InsertedMacName" />
+                <ScalarProperty Name="InsertedON" ColumnName="InsertedON" />
+                <ScalarProperty Name="InsertedBy" ColumnName="InsertedBy" />
+                <ScalarProperty Name="UpdatedOn" ColumnName="UpdatedOn" />
+                <ScalarProperty Name="UpdatedBy" ColumnName="UpdatedBy" />
+                <ScalarProperty Name="UpdatedIPAddress" ColumnName="UpdatedIPAddress" />
+                <ScalarProperty Name="UpdatedMacID" ColumnName="UpdatedMacID" />
+                <ScalarProperty Name="UpdatedMacName" ColumnName="UpdatedMacName" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Stores">
+            <EntityTypeMapping TypeName="BISERPDataLayer.Store">
+              <MappingFragment StoreEntitySet="Store">
+                <ScalarProperty Name="Deactive" ColumnName="Deactive" />
+                <ScalarProperty Name="InsertedIPAddress" ColumnName="InsertedIPAddress" />
+                <ScalarProperty Name="InsertedMacID" ColumnName="InsertedMacID" />
+                <ScalarProperty Name="InsertedMacName" ColumnName="InsertedMacName" />
+                <ScalarProperty Name="InsertedON" ColumnName="InsertedON" />
+                <ScalarProperty Name="InsertedBy" ColumnName="InsertedBy" />
+                <ScalarProperty Name="UpdatedOn" ColumnName="UpdatedOn" />
+                <ScalarProperty Name="UpdatedBy" ColumnName="UpdatedBy" />
+                <ScalarProperty Name="UpdatedIPAddress" ColumnName="UpdatedIPAddress" />
+                <ScalarProperty Name="UpdatedMacID" ColumnName="UpdatedMacID" />
+                <ScalarProperty Name="UpdatedMacName" ColumnName="UpdatedMacName" />
+                <ScalarProperty Name="LocationID" ColumnName="LocationID" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="StoreTypeID" ColumnName="StoreTypeID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="INV_MST_itempacksize">
+            <EntityTypeMapping TypeName="BISERPDataLayer.INV_MST_itempacksize">
+              <MappingFragment StoreEntitySet="INV_MST_itempacksize">
+                <ScalarProperty Name="Deactive" ColumnName="Deactive" />
+                <ScalarProperty Name="InsertedIPAddress" ColumnName="InsertedIPAddress" />
+                <ScalarProperty Name="InsertedMacID" ColumnName="InsertedMacID" />
+                <ScalarProperty Name="InsertedMacName" ColumnName="InsertedMacName" />
+                <ScalarProperty Name="InsertedON" ColumnName="InsertedON" />
+                <ScalarProperty Name="InsertedBy" ColumnName="InsertedBy" />
+                <ScalarProperty Name="UpdatedOn" ColumnName="UpdatedOn" />
+                <ScalarProperty Name="UpdatedBy" ColumnName="UpdatedBy" />
+                <ScalarProperty Name="UpdatedIPAddress" ColumnName="UpdatedIPAddress" />
+                <ScalarProperty Name="UpdatedMacID" ColumnName="UpdatedMacID" />
+                <ScalarProperty Name="UpdatedMacName" ColumnName="UpdatedMacName" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="INV_MST_Manufacturer">
+            <EntityTypeMapping TypeName="BISERPDataLayer.INV_MST_Manufacturer">
+              <MappingFragment StoreEntitySet="INV_MST_Manufacturer">
+                <ScalarProperty Name="Deactive" ColumnName="Deactive" />
+                <ScalarProperty Name="InsertedIPAddress" ColumnName="InsertedIPAddress" />
+                <ScalarProperty Name="InsertedMacID" ColumnName="InsertedMacID" />
+                <ScalarProperty Name="InsertedMacName" ColumnName="InsertedMacName" />
+                <ScalarProperty Name="InsertedON" ColumnName="InsertedON" />
+                <ScalarProperty Name="InsertedBy" ColumnName="InsertedBy" />
+                <ScalarProperty Name="UpdatedOn" ColumnName="UpdatedOn" />
+                <ScalarProperty Name="UpdatedBy" ColumnName="UpdatedBy" />
+                <ScalarProperty Name="UpdatedIPAddress" ColumnName="UpdatedIPAddress" />
+                <ScalarProperty Name="UpdatedMacID" ColumnName="UpdatedMacID" />
+                <ScalarProperty Name="UpdatedMacName" ColumnName="UpdatedMacName" />
+                <ScalarProperty Name="Village" ColumnName="Village" />
+                <ScalarProperty Name="Landmark" ColumnName="Landmark" />
+                <ScalarProperty Name="Society" ColumnName="Society" />
+                <ScalarProperty Name="Note" ColumnName="Note" />
+                <ScalarProperty Name="BankBranch" ColumnName="BankBranch" />
+                <ScalarProperty Name="BankAcNo" ColumnName="BankAcNo" />
+                <ScalarProperty Name="BankName" ColumnName="BankName" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Web" ColumnName="Web" />
+                <ScalarProperty Name="CellPhone" ColumnName="CellPhone" />
+                <ScalarProperty Name="Phone2" ColumnName="Phone2" />
+                <ScalarProperty Name="Phone1" ColumnName="Phone1" />
+                <ScalarProperty Name="ContactDesignation" ColumnName="ContactDesignation" />
+                <ScalarProperty Name="ContactPerson" ColumnName="ContactPerson" />
+                <ScalarProperty Name="Pin" ColumnName="Pin" />
+                <ScalarProperty Name="Country" ColumnName="Country" />
+                <ScalarProperty Name="State" ColumnName="State" />
+                <ScalarProperty Name="City" ColumnName="City" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

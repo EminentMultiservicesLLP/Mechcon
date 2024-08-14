@@ -1,0 +1,227 @@
+﻿
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    
+    <fieldset>
+        <div id="content">
+
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-groupingBoder">
+                        <div class="panel-heading">
+                            <div class="panel-title">
+                                Guard List Form 
+                            </div>
+                        </div>
+                        <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                            <div class="panel-body">                                
+                                <div class="row">
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @*<b>@Html.Label("Action")</b>*@
+                                            <select id="Prioritystr" class="wrapperdropdown-content form-control">
+                                                <option class="wrapperdropdown-content" value="MaterialIssueGuard">Guard Issue</option>
+                                                <option class="wrapperdropdown-content" value="MaterialReturnGuard">Guard Return</option>
+                                                <option class="wrapperdropdown-content" value="MomentOrder">Moment Order</option>
+                                                <option class="wrapperdropdown-content" value="GuardRecruitedDetails">Guard Recruited Details</option>
+
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <button type="button" class="btn btn-primary" id="btnGo">Go For</button>
+                                            <button type="button" style="margin-left:2px;" class="btn btn-primary" id="btnRefresh">Refresh</button>
+                                        </div>
+                                    </div>
+                                </div>   
+                                <div class="row">
+                                    <div class="container fill">
+                                        <div id="grid"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</fieldset>
+    
+}
+<script type="text/javascript">
+    var $SearchGrid;
+    function LoadSearchGrid() {
+        
+        $.ajax({
+            url: "/Branch/Branch/AllGuardList",
+            
+            method: "GET",
+            dataType: "JSON",
+            beforeSend: function () {
+                $SearchGrid.pqGrid("showLoading");
+            },
+            complete: function () {
+                
+                $SearchGrid.pqGrid("hideLoading");
+            },
+            success: function (response) {
+                
+                $SearchGrid.pqGrid("hideLoading");
+                $SearchGrid.pqGrid("reset", { filter: true });
+
+                $SearchGrid.pqGrid("option", "dataModel.data", response);
+
+                var column = $SearchGrid.pqGrid("getColumn", { dataIndx: "BranchName" });
+                var filter = column.filter;
+                filter.cache = null;
+                filter.options = $SearchGrid.pqGrid("getData", { dataIndx: ["BranchName"] });
+
+                var column = $SearchGrid.pqGrid("getColumn", { dataIndx: "Designation" });
+                var filter = column.filter;
+                filter.cache = null;
+                filter.options = $SearchGrid.pqGrid("getData", { dataIndx: ["Designation"] });
+
+                $SearchGrid.pqGrid("refreshDataAndView");
+            },
+            error: function (request, status, error) {
+                
+            }
+        });
+    }
+
+    function RefreshGuardList() {
+
+        $.ajax({
+            url: "/Branch/Branch/RefreshGuardList",
+            cache: false,
+            async: true,
+            method: "GET",
+            dataType: "JSON",
+            beforeSend: function () {
+                $SearchGrid.pqGrid("showLoading");
+            },
+            complete: function () {
+                $SearchGrid.pqGrid("hideLoading");
+            },
+            success: function (response) {
+                $SearchGrid.pqGrid("hideLoading");
+                $SearchGrid.pqGrid("reset", { filter: true });
+
+                $SearchGrid.pqGrid("option", "dataModel.data", response);
+
+                var column = $SearchGrid.pqGrid("getColumn", { dataIndx: "BranchName" });
+                var filter = column.filter;
+                filter.cache = null;
+                filter.options = $SearchGrid.pqGrid("getData", { dataIndx: ["BranchName"] });
+
+                var column = $SearchGrid.pqGrid("getColumn", { dataIndx: "Designation" });
+                var filter = column.filter;
+                filter.cache = null;
+                filter.options = $SearchGrid.pqGrid("getData", { dataIndx: ["Designation"] });
+
+                $SearchGrid.pqGrid("refreshDataAndView");
+            }
+        });
+    }
+    $(document).ready(function () {
+        $('#btnRefresh').on('click', function () {
+            RefreshGuardList();
+        });
+
+
+        $('#btnGo').on('click', function () {
+            if ($("#Prioritystr").val() == "" || $("#Prioritystr").val() == undefined) {
+                ShowAlert("error", "Please Select Action");
+                return;
+            }
+            var rowIndx = getRowIndx();
+            if (rowIndx == null) {
+                return;
+            }
+            var rowData = $SearchGrid.pqGrid("getRowData", { rowIndxPage: rowIndx });
+            var empId = rowData.EmpId;
+            var brId = rowData.BranchId;
+            var EmpName = rowData.EmployeeName;
+            var url = "@Url.Content("~/Branch/Branch/pagename/")"; 
+            url = url + "?EmpId=" + empId + "&brId=" + brId;
+            url = url.replace('pagename', $("#Prioritystr").val())
+            window.location.href = url;
+        });
+
+        var dataSearchGrid = { location: "local", sorting: 'local' };
+        var colSearchGrid = [
+                { title: "", dataIndx: "EmpId", dataType: "integer", hidden: true },
+                { title: "", dataIndx: "BranchId", dataType: "integer", hidden: true },
+                { title: "", dataIndx: "IsOfficeStaff", dataType: "integer", hidden: true },                
+                {
+                    title: "Branch", dataIndx: "BranchName", width: 120,
+                    filter: {
+                        type: "select",
+                        condition: 'equal',
+                        prepend: { '': '--Select--' },
+                        valueIndx: "BranchName",
+                        labelIndx: "BranchName",
+                        listeners: ['change']
+                    }
+                },
+                {
+                    title: "TicketCode", dataIndx: "TicketCode", width: 70,
+                    filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                },
+                {
+                    title: "Employee", dataIndx: "EmployeeName", width: 250, dataType: "string",
+                    filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                },
+                { title: "Gender", dataIndx: "Gender", width: 50, dataType: "string" },
+                { title: "Age", dataIndx: "Age", width: 30, dataType: "string" },
+                {
+                    title: "Designation", dataIndx: "Designation", width: 100, dataType: "string",
+                    filter: {
+                        type: "select",
+                        condition: 'equal',
+                        prepend: { '': '--Select--' },
+                        valueIndx: "Designation",
+                        labelIndx: "Designation",
+                        listeners: ['change']
+                    }
+                },
+                { title: "Status", dataIndx: "Status", width: 70, dataType: "string" },                
+                { title: "WorkedMonths", dataIndx: "WorkedMonth", width: 70, dataType: "string", hidden:true },
+        ];
+        var setSearchGrid = {
+            width: '100%',
+            height: 550,
+            sortable: false,
+            numberCell: { show: false },
+            showTop: true,
+            resizable: true,
+            scrollModel: { autoFit: true },
+            draggable: false,
+            wrap: false,
+            editable: false,
+            columnBorders: true,
+            selectionModel: { type: 'row' },
+            filterModel: { on: true, mode: "AND", header: true },
+            colModel: colSearchGrid,
+            dataModel: dataSearchGrid,
+            title: "Guard List",
+        }
+        $SearchGrid = $("#grid").pqGrid(setSearchGrid);
+        LoadSearchGrid();
+    });
+    
+    function getRowIndx() {
+        var arr = $SearchGrid.pqGrid('selection', { type: 'row', method: 'getSelection' });
+        if (arr && arr.length > 0) {
+            return arr[0].rowIndx;
+        }
+        else {
+            ShowAlert("error","Select Employee From List.");
+            return null;
+        }
+    }
+</script>

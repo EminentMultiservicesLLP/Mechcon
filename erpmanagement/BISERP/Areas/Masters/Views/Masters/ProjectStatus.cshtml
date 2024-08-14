@@ -1,0 +1,640 @@
+﻿@model BISERP.Areas.Masters.Models.StoreMasterModel
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <h5 class="page-header orangeDottedBottomBorder">Project Status</h5>
+
+    <div id="content">
+        <div id="content-tab">
+            <ul id="tabs" class="nav nav-tabs" data-tabs="tabs" style="padding: 1px; background: silver;">
+                <li class="active tab"><a href="#tab1" data-toggle="tab" style="margin: 0;">Budget Status</a></li>
+                <li><a href="#tab2" data-toggle="tab" style="margin: 0;">Project Status</a></li>
+            </ul>
+            <fieldset class="fieldsetCustom">
+                <div id="my-tab-content" class="tab-content" style="border:none">
+                    <div class="tab-pane active" id="tab1">
+                        <br>
+                        <div class="panel-group">
+                            <div class="panel panel-default">
+                                <div class="panel-groupingBoder">
+                                    <div class="panel-heading">
+                                        <div class="panel-title">
+                                            <a class="collapsediv" data-toggle="collapse" href="#SearchDetails">
+                                                Budget Status
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                                        <div class="panel-body">
+                                            <div class="fill">
+                                                <div id="BudgetStatusGrid"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="tab2">
+                        <br>
+
+                        <div class="panel-group">
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <div class="fill">
+                                        <div class="submit-row">
+                                            <div class="col-sm-2">
+                                                @Html.Label("Select Project", new { @class = "required" })
+                                                @Html.DropDownList("StoreId", new SelectList(string.Empty, "Value", "Text"), "", new { @class = "form-control wrapperdropdown-content" })
+                                            </div>
+                                            <div class="col-sm-2" style="text-align:center">
+                                                <br />
+                                                <button type="button" class="btn btn-primary" id="btnreset" onclick="clearFormData()">Reset</button>
+                                            </div>
+                                        </div>
+                                        <div class="divider"></div>
+
+                                        <fieldset class="fieldsetCustom">
+                                            <legend class="legendCustom">Project Details</legend>
+                                            <div class="row mb-3">
+                                                <div class="col-sm-2">
+                                                    @Html.LabelFor(model => model.Code, new { @class = "" })
+                                                    @Html.TextBoxFor(model => model.Code, new { @class = "form-control", @disabled = "disabled" })
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    @Html.LabelFor(model => model.Name, new { @class = "" })
+                                                    @Html.TextBoxFor(model => model.Name, new { @class = "form-control", @disabled = "disabled" })
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    @Html.Label("Client Name")
+                                                    @Html.DropDownList("ddlClient", new SelectList(string.Empty, "Value", "Text"), "", new { @class = "form-control wrapperdropdown-content", @disabled = "disabled" })
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    @Html.LabelFor(model => model.StartDate)
+                                                    @Html.TextBoxFor(model => model.StartDate, new { @class = "form-control datepicker", @disabled = "disabled" })
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    @Html.LabelFor(model => model.DueDate)
+                                                    @Html.TextBoxFor(model => model.DueDate, new { @class = "form-control datepicker", @disabled = "disabled" })
+                                                </div>
+                                            </div>
+                                        </fieldset>
+
+                                        <fieldset class="fieldsetCustom">
+                                            <legend class="legendCustom">Budget Details</legend>
+                                            <div class="row mb-3">
+                                                <div class="col-sm-2">
+                                                    @Html.LabelFor(model => model.ProjectBudget, new { @class = "" })
+                                                    @Html.TextBoxFor(model => model.ProjectBudget, new { @class = "form-control", @disabled = "disabled" })
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    @Html.LabelFor(model => model.Utlized, new { @class = "" })
+                                                    @Html.TextBoxFor(model => model.Utlized, new { @class = "form-control", @disabled = "disabled" })
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    @Html.LabelFor(model => model.Balance, new { @class = "" })
+                                                    @Html.TextBoxFor(model => model.Balance, new { @class = "form-control", @disabled = "disabled" })
+                                                </div>
+                                            </div>
+                                        </fieldset>
+
+                                        <div class="divider"></div>
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <div class="panel-heading">
+                                                    <div class="panel-title">
+                                                        Approval Details
+                                                    </div>
+                                                </div>
+                                                <div id="ApprovalDetailGrid"></div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <div class="panel-heading">
+                                                    <div class="panel-title">
+                                                        Category Wise Budget Details
+                                                    </div>
+                                                </div>
+                                                <div id="CategoryWiseBudgetGrid"></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="divider"></div>
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <div class="panel-heading">
+                                                    <div class="panel-title">
+                                                        Transaction Record Details
+                                                    </div>
+                                                </div>
+                                                <div id="TransactionRecordsGrid"></div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <div class="panel-heading">
+                                                    <div class="panel-title">
+                                                        Deliverables Details
+                                                    </div>
+                                                </div>
+                                                <div id="DeliverablesGrid"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+}
+<script>
+    //---------------------------------------------------------------------------------- Budget Status ------------------------------------------------------------------------------------------//
+
+    var BudgetStatusDataModel = { location: 'local', };
+    var BudgetStatusColList = [
+
+        {
+            title: "Project Name", dataIndx: "ProjectName", dataType: "string", width: '16%', editable: false,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Client Name", dataIndx: "ClientName", dataType: "string", width: '15%', editable: false,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Budget", dataIndx: "Budget", dataType: "float", width: '11%', editable: false,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Utilized", dataIndx: "Utilized", dataType: "float", width: '11%', editable: false,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Balance", dataIndx: "Balance", dataType: "float", width: '11%', editable: false,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Delivered", dataIndx: "Delivered", dataType: "string", width: '12%', editable: false,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Start Date", dataIndx: "StartDate", dataType: "string", width: '12%', editable: false,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Due Date", dataIndx: "DueDate", dataType: "string", width: '12%', editable: false,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+    ];
+    var setBudgetStatusGridObject = {
+        adjustGridWidth: false,
+        maxWidth: '100%',
+        height: 600,
+        width: 'auto',
+        minWidth: 800,
+        autofill: true,
+        numberCell: { show: true },
+        hoverMode: 'row',
+        showTop: true,
+        showTitle: true,
+        showBottom: true,
+        sortable: true,
+        resizable: true,
+        //scrollModel: { autoFit: true },
+        draggable: false,
+        hwrap: false,
+        wrap: false,
+        editable: false,
+        columnBorders: true,
+        menuIcon: true,
+        filterModel: { on: true, mode: "AND", header: true },
+        selectionModel: { type: 'row', mode: 'single', cbHeader: false },
+        //pageModel: { type: "local" },
+        colModel: BudgetStatusColList,
+        dataModel: BudgetStatusDataModel
+    }
+    var $BudgetStatusGrid = $("#BudgetStatusGrid").pqGrid(setBudgetStatusGridObject);
+
+    LoadBudgetStatusGrid();
+    function LoadBudgetStatusGrid() {
+        var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: "Get", //HTTP POST Method
+            url: "/StoreMaster/GetBudgetStatus", // Controller/View
+            beforeSend: function () {
+                $BudgetStatusGrid.pqGrid("showLoading");
+            },
+            complete: function () {
+                $BudgetStatusGrid.pqGrid("hideLoading");
+            },
+            success: function (response) {
+                if (response.success === true) {
+                    $("#BudgetStatusGrid").pqGrid("hideLoading");
+                    $("#BudgetStatusGrid").pqGrid("option", "dataModel.data", response.records);
+                    $("#BudgetStatusGrid").pqGrid("refreshDataAndView");
+                    PqGridRefreshClick($BudgetStatusGrid);
+                }
+                else
+                    ShowAlert("error", data.message);
+            }
+        });
+    }
+
+
+    //---------------------------------------------------------------------------------- Project Status ------------------------------------------------------------------------------------------//
+    var storeDetails = [];
+
+    $.ajax({
+        type: "GET",
+        url: "/ClientMaster/AllClient",
+        datatype: "Json",
+        success: function (data) {
+            $.each(data.records, function (index, value) {
+                $('#ddlClient').append('<option value="' + value.ClientId + '">' + value.Name + '</option>');
+            });
+        }
+    });
+
+    function loadStores() {
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("AllStoreMasters", "StoreMaster")',
+            datatype: "Json",
+            success: function (data) {
+                storeDetails = data.records;
+                $('#StoreId').empty();
+                $('#StoreId').append('<option value="">' + "Select Project" + '</option>');
+                $.each(data.records, function (index, value) {
+                    $('#StoreId').append(`<option value="${value.ID}">${value.Code}</option>`);
+                });
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                console.error("Error loading stores:", errorThrown);
+            }
+        });
+    }
+    loadStores();
+    $('#StoreId').change(() => {
+        let storeId = $('#StoreId').val();
+        const storeData = storeDetails.find(obj => obj.ID == storeId);
+        $("#Code").val(storeData.Code);
+        $("#Name").val(storeData.Name);
+        $("#ddlClient").val(storeData.ClientId);
+        $("#ProjectBudget").val(storeData.ProjectBudget);
+        $("#Utlized").val(storeData.Utlized);
+        $("#Balance").val(storeData.Balance);
+        $("#StartDate").val(storeData.strStartDate);
+        $("#DueDate").val(storeData.strDueDate);
+
+        loadApprovalDetailGrid(storeId);
+        loadCategoryWiseBudgetGrid(storeId);
+        loadTransactionRecordsGrid(storeId);
+        loadDeliverablesGrid(storeId);
+    });
+
+    //-----------------------------------ApprovalDetailGrid (Starts here)-----------------------------------//
+    var ApprovalDetailGrid_GDM = { location: "local" };
+    var ApprovalDetailGrid_GCM = [
+        {
+            title: "Department", dataIndx: "Department", width: '40%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "StartDate", dataIndx: "StartDate", width: '30%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "ApprovalDate", dataIndx: "ApprovalDate", width: '29%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        }
+    ];
+    var setApprovalDetailGrid = {
+        height: 300,
+        width: 'auto',
+        maxWidth: '100%',
+        minWidth: 800,
+        sortable: true,
+        autofill: true,
+        numberCell: { show: false },
+        hoverMode: 'row',
+        showTop: true,
+        showTitle: true,
+        showBottom: false,
+        resizable: true,
+        scrollModel: { autoFit: true },
+        //filterModel: { on: true, mode: "AND", header: true },
+        draggable: false,
+        hwrap: false,
+        wrap: false,
+        editable: false,
+        columnBorders: true,
+        menuIcon: true,
+        selectionModel: { type: 'row', mode: 'single', cbHeader: false },
+        colModel: ApprovalDetailGrid_GCM,
+        dataModel: ApprovalDetailGrid_GDM,
+        //pageModel: { type: "local" }
+    }
+
+    var $ApprovalDetailGrid = $("#ApprovalDetailGrid").pqGrid(setApprovalDetailGrid);
+
+    function loadApprovalDetailGrid(storeId) {
+        const storeData = storeDetails.find(obj => obj.ID == storeId);
+
+        if (!storeData) {
+            console.error('No store found with the given ID:', storeId);
+            return;
+        }
+
+        const departments = [
+            { Department: 'Design', StartDate: storeData.strDesignStartDate, ApprovalDate: storeData.strDesignApprovalDate },
+            { Department: 'ElectricalDesign', StartDate: storeData.strElectricalDesignStartDate, ApprovalDate: storeData.strElectricalDesignApprovalDate },
+            { Department: 'Marketing', StartDate: storeData.strMarketingStartDate, ApprovalDate: storeData.strMarketingApprovalDate },
+            { Department: 'Projects', StartDate: storeData.strProjectsStartDate, ApprovalDate: storeData.strProjectsApprovalDate }
+        ];
+
+        $("#ApprovalDetailGrid").pqGrid("option", "dataModel.data", departments);
+        $("#ApprovalDetailGrid").pqGrid("refreshDataAndView");
+        PqGridRefreshClick($("#ApprovalDetailGrid"));
+    }
+    //-----------------------------------ApprovalDetailGrid (Ends here)-----------------------------------//
+
+    //-----------------------------------CategoryWiseBudgetGrid (Starts here)-----------------------------------//
+    var CategoryWiseBudgetGrid_GDM = { location: "local" };
+    var CategoryWiseBudgetGrid_GCM = [
+        {
+            title: "Item Category", dataIndx: "Name", width: '39%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Allocated", dataIndx: "BudgetCost", width: '20%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Utilized", dataIndx: "UtilizedBudget", width: '20%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Balance", dataIndx: "BalanceDue", width: '20%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        }];
+    var setCategoryWiseBudgetGrid = {
+        height: 300,
+        width: 'auto',
+        maxWidth: '100%',
+        minWidth: 800,
+        sortable: true,
+        autofill: true,
+        numberCell: { show: false },
+        hoverMode: 'row',
+        showTop: true,
+        showTitle: true,
+        showBottom: false,
+        resizable: true,
+        scrollModel: { autoFit: true },
+        //filterModel: { on: true, mode: "AND", header: true },
+        draggable: false,
+        hwrap: false,
+        wrap: false,
+        editable: false,
+        columnBorders: true,
+        menuIcon: true,
+        selectionModel: { type: 'row', mode: 'single', cbHeader: false },
+        colModel: CategoryWiseBudgetGrid_GCM,
+        dataModel: CategoryWiseBudgetGrid_GDM,
+        //pageModel: { type: "local" }
+    }
+
+    var $CategoryWiseBudgetGrid = $("#CategoryWiseBudgetGrid").pqGrid(setCategoryWiseBudgetGrid);
+
+    function loadCategoryWiseBudgetGrid(storeId) {
+        var antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            url: "/StoreMaster/GetStoreBudgetdtl",
+            data: { storeId: storeId },
+            dataType: "json",
+
+            beforeSend: function () {
+                $("#CategoryWiseBudgetGrid").pqGrid("showLoading");
+            },
+
+            complete: function () {
+                $("#CategoryWiseBudgetGrid").pqGrid("hideLoading");
+            },
+
+            success: function (response) {
+                if (response.success === true) {
+                    $("#CategoryWiseBudgetGrid").pqGrid("option", "dataModel.data", response.records);
+                    $("#CategoryWiseBudgetGrid").pqGrid("refreshDataAndView");
+                    PqGridRefreshClick($("#CategoryWiseBudgetGrid"));
+                } else {
+                    $("#CategoryWiseBudgetGrid").pqGrid("option", "dataModel.data", []);
+                    $("#CategoryWiseBudgetGrid").pqGrid("refreshDataAndView");
+                    PqGridRefreshClick($("#CategoryWiseBudgetGrid"));
+                }
+            },
+
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Error loading packing list grid: " + textStatus, errorThrown);
+                $("#CategoryWiseBudgetGrid").pqGrid("hideLoading");
+            }
+        });
+    }
+    //-----------------------------------CategoryWiseBudgetGrid (Ends here)-----------------------------------//
+
+    //-----------------------------------TransactionRecordsGrid (Starts here)-----------------------------------//
+    var TransactionRecordsGrid_GDM = { location: "local" };
+    var TransactionRecordsGrid_GCM = [
+        {
+            title: "Type", dataIndx: "Type", width: '35%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Number", dataIndx: "Number", width: '35%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Date", dataIndx: "Date", width: '29%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        }
+    ];
+    var setTransactionRecordsGrid = {
+        height: 300,
+        width: 'auto',
+        maxWidth: '100%',
+        minWidth: 800,
+        sortable: true,
+        autofill: true,
+        numberCell: { show: false },
+        hoverMode: 'row',
+        showTop: true,
+        showTitle: true,
+        showBottom: false,
+        resizable: true,
+        scrollModel: { autoFit: true },
+        //filterModel: { on: true, mode: "AND", header: true },
+        draggable: false,
+        hwrap: false,
+        wrap: false,
+        editable: false,
+        columnBorders: true,
+        menuIcon: true,
+        selectionModel: { type: 'row', mode: 'single', cbHeader: false },
+        colModel: TransactionRecordsGrid_GCM,
+        dataModel: TransactionRecordsGrid_GDM,
+        //pageModel: { type: "local" }
+        rowInit: function (ui) {
+            if (ui.rowData.Type == "" && ui.rowData.Number == "" && ui.rowData.Date == "" ) {
+                return {
+                    style: "background:#ABB2B9;"
+                };
+            }
+        },
+    }
+
+    var $TransactionRecordsGrid = $("#TransactionRecordsGrid").pqGrid(setTransactionRecordsGrid);
+
+    function loadTransactionRecordsGrid(storeId) {
+        var antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            url: "/StoreMaster/GetProjectTransactionRecord",
+            data: { StoreId: storeId },
+            dataType: "json",
+
+            beforeSend: function () {
+                $("#TransactionRecordsGrid").pqGrid("showLoading");
+            },
+
+            complete: function () {
+                $("#TransactionRecordsGrid").pqGrid("hideLoading");
+            },
+
+            success: function (response) {
+                if (response.success === true) {
+                    $("#TransactionRecordsGrid").pqGrid("option", "dataModel.data", response.records);
+                    $("#TransactionRecordsGrid").pqGrid("refreshDataAndView");
+                    PqGridRefreshClick($("#TransactionRecordsGrid"));
+                } else {
+                    $("#TransactionRecordsGrid").pqGrid("option", "dataModel.data", []);
+                    $("#TransactionRecordsGrid").pqGrid("refreshDataAndView");
+                    PqGridRefreshClick($("#TransactionRecordsGrid"));
+                }
+            },
+
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Error loading TransactionRecordsGrid : " + textStatus, errorThrown);
+                $("#TransactionRecordsGrid").pqGrid("hideLoading");
+            }
+        });
+    }
+    //-----------------------------------TransactionRecordsGrid (Ends here)-----------------------------------//
+
+    //-----------------------------------DeliverablesGrid (Starts here)-----------------------------------//
+    var DeliverablesGrid_GDM = { location: "local" };
+    var DeliverablesGrid_GCM = [
+        {
+            title: "Type", dataIndx: "Type", width: '60%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Status", dataIndx: "Status", width: '39%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        }
+    ];
+    var setDeliverablesGrid = {
+        height: 300,
+        width: 'auto',
+        maxWidth: '100%',
+        minWidth: 800,
+        sortable: true,
+        autofill: true,
+        numberCell: { show: false },
+        hoverMode: 'row',
+        showTop: true,
+        showTitle: true,
+        showBottom: false,
+        resizable: true,
+        scrollModel: { autoFit: true },
+        //filterModel: { on: true, mode: "AND", header: true },
+        draggable: false,
+        hwrap: false,
+        wrap: false,
+        editable: false,
+        columnBorders: true,
+        menuIcon: true,
+        selectionModel: { type: 'row', mode: 'single', cbHeader: false },
+        colModel: DeliverablesGrid_GCM,
+        dataModel: DeliverablesGrid_GDM,
+        //pageModel: { type: "local" }
+    }
+
+    var $DeliverablesGrid = $("#DeliverablesGrid").pqGrid(setDeliverablesGrid);
+
+    function loadDeliverablesGrid(storeId) {
+        var antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            url: "/StoreMaster/GetDeliverablesDetail",
+            data: { StoreId: storeId },
+            dataType: "json",
+
+            beforeSend: function () {
+                $("#DeliverablesGrid").pqGrid("showLoading");
+            },
+
+            complete: function () {
+                $("#DeliverablesGrid").pqGrid("hideLoading");
+            },
+
+            success: function (response) {
+                if (response.success === true) {
+                    $("#DeliverablesGrid").pqGrid("option", "dataModel.data", response.records);
+                    $("#DeliverablesGrid").pqGrid("refreshDataAndView");
+                    PqGridRefreshClick($("#DeliverablesGrid"));
+                } else {
+                    $("#DeliverablesGrid").pqGrid("option", "dataModel.data", []);
+                    $("#DeliverablesGrid").pqGrid("refreshDataAndView");
+                    PqGridRefreshClick($("#DeliverablesGrid"));
+                }
+            },
+
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Error loading packing list grid: " + textStatus, errorThrown);
+                $("#DeliverablesGrid").pqGrid("hideLoading");
+            }
+        });
+    }
+ //-----------------------------------DeliverablesGrid (Ends here)-----------------------------------//
+
+    function clearFormData() {
+        $("#Code").val('');
+        $("#Name").val('');
+        $("#ddlClient").val('');
+        $("#ProjectBudget").val('');
+        $("#Utlized").val('');
+        $("#Balance").val('');
+        $("#StartDate").val('');
+        $("#DueDate").val('');
+
+        ClearParamGrid('ApprovalDetailGrid');
+        ClearParamGrid('CategoryWiseBudgetGrid');
+        ClearParamGrid('TransactionRecordsGrid');
+        ClearParamGrid('DeliverablesGrid');
+    }
+</script>

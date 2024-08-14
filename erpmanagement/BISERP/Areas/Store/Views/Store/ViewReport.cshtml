@@ -1,0 +1,20 @@
+﻿@model BISERP.Models.ReportingServicesReportViewModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Report</title>
+</head>
+<body>
+    <div style="display: table; width: 100%;">
+        @{
+            @Html.Partial("ReportViewer", Model)
+        }
+    </div>
+</body>
+</html>

@@ -1,0 +1,336 @@
+﻿@model BISERP.Areas.VendorProcess.Models.GRNVendorModel
+
+<script>
+    $(function () {
+        $(function () {
+            $(".nonEditdatepicker").datepicker({
+                showOn: "button",
+                buttonImage: "",
+                buttonImageOnly: true,
+                buttonText: "",
+                dateFormat: "dd-MM-yy"
+            }).datepicker("setDate", new Date());
+        });
+        $(".datepicker").datepicker({
+            showOn: "button",
+            buttonImage: "/Content/images/calendar.gif",
+            buttonImageOnly: true,
+            buttonText: "Select date",
+            dateFormat: "dd-MM-yy"
+        }).datepicker("setDate", new Date());
+        $("#anim").change(function () {
+            $(".datepicker").datepicker("option", "showAnim", "fadeIn");
+            $(".nonEditdatepicker").datepicker("option", "showAnim", "fadeIn");
+        });
+    });
+</script>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <div class="panel-group">
+    <div class="panel panel-default">
+        <div class="panel-groupingBoder">
+            <div class="panel-heading">
+                <div class="panel-title">
+                    <a class="collapsediv" data-toggle="collapse" href="#SearchDetails" style="color:white">
+                        Search Details
+                    </a>
+                </div>
+            </div>
+            <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                <div class="panel-body">
+                    <div class="container fill">
+                        <div id="searchgrid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <div class="panel-groupingBoder">
+        <div class="panel-heading">
+            <div class="panel-title">
+                Entry Form
+            </div>
+        </div>
+        <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+            <div class="panel-body">
+                <div class="panel-groupingBoder">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <a data-toggle="collapse" class="btn btn-success" id="btnAddGRN">Reset</a>
+                            <button type="button" class="btn btn-success" id="btnSaveGRN">Save</button>
+                            <button type="button" class="btn btn-success">Report</button>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-sm-3">
+                                @Html.LabelFor(m => m.GRNNo)
+                                @Html.TextBoxFor(m => m.GRNNo, new {@class = "form-control"})
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-3">
+                                @Html.LabelFor(m => m.GRNDate)
+                                @Html.TextBoxFor(m => m.GRNDate, new {@class = "form-control nonEditdatepicker"})
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-3">
+                                @Html.LabelFor(m => m.DCNo, new {@class = "required"})
+                                @Html.TextBoxFor(m => m.DCNo, new {@class = "form-control"})
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-3">
+                                @Html.LabelFor(m => m.DCDate, new {@class = "required"})
+                                @Html.TextBoxFor(m => m.DCDate, new {@class = "form-control datepicker"})
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-sm-3">
+                                @Html.LabelFor(m => m.GrnTypeID, new {@class = "required"})
+                                <select id="GrnTypeID" class="form-control wrapper-dropdown">
+                                    <option class=" wrapperdropdown-content" value="1">Against Vendor</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-3">
+                                @Html.Label("IssueNo")
+                                @Html.TextBox("IssueNo", "", new Dictionary<string, object> {{"class", "form-control"}})
+                                @Html.HiddenFor(model => model.IssueId)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-3">
+                                @Html.LabelFor(m => m.InwardNo, new {@class = "required"})
+                                @Html.TextBoxFor(m => m.InwardNo, new {@class = "form-control"})
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-3">
+                                @Html.LabelFor(m => m.InwardDate, new {@class = "required"})
+                                @Html.TextBoxFor(m => m.InwardDate, new {@class = "form-control datepicker"})
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-sm-3">
+                                @Html.LabelFor(m => m.StoreId, new {@class = "required"})
+                                @Html.DropDownList("ddlStores", new SelectList(string.Empty, "Value", "Text"), new {@class = "wrapperdropdown-content form-control"})
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-3">
+                                @Html.LabelFor(m => m.PODate)
+                                @Html.TextBoxFor(m => m.PODate, new {@class = "form-control"})
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-3">
+                                @Html.LabelFor(m => m.InvoiceNo)
+                                @Html.TextBoxFor(m => m.InvoiceNo, new {@class = "form-control"})
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-3">
+                                @Html.LabelFor(m => m.InvoiceDate)
+                                @Html.TextBoxFor(m => m.InvoiceDate, new {@class = "form-control datepicker"})
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-sm-3">
+                                @Html.Label("Manufacturer", new {@class = "required"})
+                                @Html.TextBox("VendorName", "", new Dictionary<string, object> {{"data-toggle", "modal"}, {"data-target", "#SupplierModal"}, {"class", "form-control"}})
+                                @Html.HiddenFor(m => m.VendorID)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-3">
+                                @Html.LabelFor(m => m.VehicleNo)
+                                @Html.TextBoxFor(m => m.VehicleNo, new {@class = "form-control"})
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-3">
+                                @Html.LabelFor(m => m.Transporter)
+                                @Html.TextBoxFor(m => m.Transporter, new {@class = "form-control"})
+                            </div>
+                        </div>
+                    </div>
+                    @*<div class="panel-groupingBoder">
+                                <div class="row">
+                                    <div class="container fill">
+                                        <div id="vendorgrid"></div>
+                                    </div>
+                                </div>
+                            </div>*@
+                    <br>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <button type="button" class="btn btn-primary" id="btnShowItems">Get Items</button>
+                                <button class="btn btn-primary" type="button" id="btnRemoveItem">Remove Item</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel-groupingBoder">
+        <div class="row">
+            <div class="container fill">
+                <div id="grid"></div>
+            </div>
+        </div>
+    </div>
+    <div class="panel-groupingBoder">
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-sm-8">
+                    <div class="row">
+                        <div class="col-sm-2">
+                            @Html.LabelFor(m => m.Preparedby)
+                        </div>
+                        <div class="col-sm-2">
+                            <strong>@Html.Encode(User.Identity.Name)</strong>
+                            @*@Html.TextBoxFor(m => m.Preparedby, new { @class = "form-control" })*@
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-2">
+                            @Html.LabelFor(m => m.Notes)
+                        </div>
+                        <div class="col-sm-2">
+                            @Html.TextAreaFor(m => m.Notes, new {@class = "form-control"})
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-2">
+                            @Html.LabelFor(m => m.GrnPaymentType)
+                        </div>
+                        <div class="col-sm-2">
+                            @Html.RadioButton("PaymentMode", "Cash") Cash
+                            @Html.RadioButton("PaymentMode", "Credit") Credit
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <table align="right">
+                        <tr>
+                            <td>Gross Amount</td>
+                            <td>
+                                @Html.TextBoxFor(m => m.Amount, new Dictionary<string, object> {{"Id", "GrossAmount"}, {"readonly", "true"}, {"class", "form-control"}})
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Tax</td>
+                            <td>
+                                @Html.TextBoxFor(m => m.TotalTaxamt, new Dictionary<string, object> {{"Id", "TaxAmount"}, {"readonly", "true"}, {"class", "form-control"}})
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Other Charges</td>
+                            <td>
+                                @Html.TextBoxFor(m => m.TotalOtherAmt, new Dictionary<string, object> {{"Id", "OtherCharges"}, {"readonly", "true"}, {"class", "form-control"}})
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Discount</td>
+                            <td>
+                                @Html.TextBoxFor(m => m.TotalDisc, new Dictionary<string, object> {{"Id", "Discount"}, {"readonly", "true"}, {"class", "form-control"}})
+                            </td>
+                        </tr>
+                        @*<tr>
+                                        <td>CR Note Amount</td>
+                                        <td>
+                                            @Html.TextBoxFor(m => m.CrNoteAmt, new Dictionary<string, object> { { "Id", "CR_Note_Amount" }, { "readonly", "true" }, { "class", "form-control" } })
+                                        </td>
+                                    </tr>*@
+                        <tr>
+                            <td>Grand Total</td>
+                            <td>
+                                @Html.TextBoxFor(m => m.TotalAmount, new Dictionary<string, object> {{"Id", "GrandTotal"}, {"readonly", "true"}, {"class", "form-control"}})
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Rounding Off</td>
+                            <td>
+                                @Html.TextBoxFor(m => m.TotalAmount, new Dictionary<string, object> {{"Id", "Rounding_Off"}, {"readonly", "true"}, {"class", "form-control"}})
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    </div>
+    <div id="ItemModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Select Item</h4>
+                </div>
+                <div class="modal-body">
+                    <div id="Itemgrid"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="btnAddItem">Add</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="ALOModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Select PO No</h4>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+    <div title="Select Issue No" id="VendorIssueNoModel" style="display: none;">
+                    <div id="POgrid"></div>
+                    <div style="margin-top:5px;">
+                    </div>
+                </div>
+    <div id="SupplierModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Select Supplier</h4>
+                </div>
+                <div class="modal-body">
+                    <div id="Suppliergrid"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="popup-dialog-crud" style="display:none;">
+        <form id="crud-form">
+            <div id="Taxgrid"></div>
+        </form>
+    </div>
+    <script type="text/javascript">
+      
+        
+          
+    </script>
+}

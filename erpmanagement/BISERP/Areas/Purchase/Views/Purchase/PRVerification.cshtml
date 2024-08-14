@@ -1,0 +1,586 @@
+﻿@model BISERP.Area.Purchase.Models.PurchaseIndentModel
+@{
+    Layout = null;
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <h5 class="page-header orangeDottedBottomBorder"> PURCHASE REQUISITION VERIFICATION/CANCEL</h5>
+    @* new addition 2024 *@
+    <div id="SearchGridModal" class="modal fade" role="dialog" data-backdrop="false">
+        <div class="modal-dialog find-search-grid-modal">
+            <div class="modal-content gridmodal-content">
+                <div class="modal-header gridmodal-header">
+                    <button type="button" class="close" onclick="closeModal()">&times;</button>
+                    <h4 class="modal-title">Search Details</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="fill">
+                        <div id="searchgrid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        Entry Form
+                    </div>
+                </div>
+                <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <div class="submit-row">
+                            <div class="col-sm-6" style="text-align:start">
+                                @*<a data-toggle="collapse" class="btn btn-info" href="#SearchDetails">Show/Hide top Search Panel</a>*@
+                                <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                                <button type="button" class="btn btn-primary" id="btnReset">Reset</button>
+                                <button type="button" class="btn btn-danger" id="btnUnverified">Un-Verified</button>
+                            </div>
+                            <div class="col-sm-6" style="text-align:end">
+                                <button type="button" class="btn btn-info" id="btnSearch">Verified</button>
+                            </div>
+                        </div>
+                        <fieldset class="fieldsetCustom">
+                            <legend class="legendCustom">Purchase Requisition Auth/Canc Form</legend>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    @Html.LabelFor(m => m.IndentNumber)
+                                    @Html.TextBoxFor(m => m.IndentNumber, "", new { @readonly = "true", @class = "form-control" })
+                                    @Html.HiddenFor(m => m.IndentId)
+                                </div>
+                                <div class="col-sm-2">
+                                    @Html.LabelFor(model => model.IndentDate)
+                                    @Html.TextBoxFor(model => model.IndentDate, new { @readonly = "true", @class = "IndentDate form-control" })
+                                </div>
+                                <div class="col-sm-2">
+                                    @Html.LabelFor(model => model.IndentNature)
+                                    @Html.TextBoxFor(model => model.IndentNature, new { @readonly = "true", @class = "form-control" })
+                                </div>
+                                <div class="col-sm-3">
+                                    @Html.LabelFor(m => m.Remarks)
+                                    @Html.TextAreaFor(model => model.Remarks, new { @readonly = "true", @class = "form-control" })
+                                </div>
+                                <div class="col-sm-3">
+                                    <fieldset class="fieldsetCustom">
+                                        <p>Status :</p>
+                                        <input type="radio" id="Verified" name="AuthStatus" value="1" checked="checked">
+                                        <label for="Verified">Verified</label>&nbsp;&nbsp;
+                                        <input type="radio" id="Cancel" name="AuthStatus" value="3">
+                                        <label for="Cancel">Cancel</label>
+                                    </fieldset>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <fieldset class="fieldsetCustom">
+                                        @Html.Label("Authorization Remark")
+                                        @Html.TextAreaFor(model => model.AuthorisedRemarks, new { @class = "form-control"@*, @disabled = "disabled"*@ })
+                                    </fieldset>
+                                </div>
+                                <div class="col-sm-8" style="margin-top: -10px;">
+                                    <fieldset class="fieldsetCustom">
+                                        <legend class="legendCustom">Project Budget Details</legend>
+                                        <div class="row">
+                                            <div class="col-sm-4">
+                                                @Html.Label("Proposed:")
+                                                @Html.TextBox("BudgetCost", null, new { @class = "form-control" })
+                                            </div>
+                                            <div class="col-sm-4">
+                                                @Html.Label("Utilized:")
+                                                @Html.TextBox("UtilizedBudget", null, new { @class = "form-control" })
+                                            </div>
+                                            <div class="col-sm-4">
+
+                                                @Html.Label("Balance:")
+                                                @Html.TextBox("BalanceDue", null, new { @class = "form-control" })
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                </div>
+                            </div>
+                            <div class="submit-row">
+                                <button type="button" class="btn btn-primary" id="btnShowAttachments">View Files</button>
+                                @*<button type="button" class="btn btn-info" id="btnDownloadAttachment">Download Files</button>*@
+                            </div>
+
+                            <div id="grid"></div>
+
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @*The Modal*@
+    <div id="ViewModal" class="modal slideModal">
+        @*Modal content*@
+        <div class="modal-content slideContent">
+            <span class="close slideClose" onclick="closeImageModal()"> &#x2715 </span>
+            <div id="slideshow-container">
+                <!--Slidshow-->
+            </div>
+            <div>
+                <a class="prev slide-prev" onclick="plusSlides(-1)">❮</a>
+                <a class="next slide-next" onclick="plusSlides(1)">❯</a>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    $("#BudgetCost").prop('disabled', true); $("#BalanceDue").prop('disabled', true); $("#UtilizedBudget").prop('disabled', true);
+    var $searchgrid, $grid;
+    var appSetting = '@BISERP.Common.Constants.ScandocUrl';
+
+    function LoadSearchgrid(status) {
+        //ClearParamGrid("searchgrid");
+        $.ajax({
+            type: "GET",
+            url: "/PurchaseIndent/PurchaseIndentForVerification/",
+            data: { storeId: 0 },
+            datatype: "Json",
+            beforeSend: function () {
+                $searchgrid.pqGrid("showLoading");
+            },
+            complete: function () {
+                $searchgrid.pqGrid("hideLoading");
+            },
+            success: function (data) {
+                let unverified = data.filter(req => req.Status === 'Request');
+                let verified = data.filter(req => req.Status === 'Verified');
+
+                var dataMGrid = [];
+
+                if (status == 'unverified') {
+                    $.each(unverified, function (index, value) {
+                        var grdData = {
+                            'IndentId': value.IndentId, 'IndentNumber': value.IndentNumber, 'strIndentDate': value.strIndentDate, 'StoreName': value.StoreName,
+                            'IndentNature': value.IndentNature, 'Remarks': value.Remarks, 'Status': value.Status, 'CreatedBy': value.CreatedBy, 'ItemCategoryId': value.ItemCategoryId, 'ItemCategory': value.ItemCategory,'Storeid': value.Storeid,
+                            'strIndentNature': value.strIndentNature, 'InsertedByName': value.InsertedByName, 'VerifiedByName': value.VerifiedByName, 'AuthorisedRemarks': value.AuthorisedRemarks
+                        };
+                        dataMGrid.push(grdData);
+                    });
+                } else {
+                    $.each(verified, function (index, value) {
+                        var grdData = {
+                            'IndentId': value.IndentId, 'IndentNumber': value.IndentNumber, 'strIndentDate': value.strIndentDate, 'StoreName': value.StoreName,
+                            'IndentNature': value.IndentNature, 'Remarks': value.Remarks, 'Status': value.Status, 'CreatedBy': value.CreatedBy, 'ItemCategoryId': value.ItemCategoryId, 'ItemCategory': value.ItemCategory, 'Storeid': value.Storeid,
+                            'strIndentNature': value.strIndentNature, 'InsertedByName': value.InsertedByName, 'VerifiedByName': value.VerifiedByName, 'AuthorisedRemarks': value.AuthorisedRemarks
+                        };
+                        dataMGrid.push(grdData);
+                    });
+                }
+                $searchgrid.pqGrid("hideLoading");
+                $searchgrid.pqGrid("option", "dataModel.data", dataMGrid);
+                $searchgrid.pqGrid("refreshDataAndView");
+
+            }
+        });
+    }
+    function Clearform() {
+        $("#IndentId").val("");
+        $("#IndentNumber").val("");
+        $("#IndentDate").val("");
+        $("#AuthorisedRemarks").val("");
+        $("#IndentNature").val("");
+        $("#BudgetCost").val("");
+        $("#UtilizedBudget").val("");
+        $("#BalanceDue").val("");
+        $('#Authorized').prop('checked', true);
+        ClearParamGrid("grid");
+    }
+
+    $('#btnReset').on('click', function () {
+        Clearform();
+    });
+
+    $('input[type=radio][name=AuthStatus]').change(function () {
+        //$("[name='AuthStatus']:checked").val() == "1" ? $("#AuthorisedRemarks").prop('disabled', true) : $("#AuthorisedRemarks").prop('disabled', false)
+        var gridData = $("#grid").pqGrid("getData", { dataIndx: ['state'] });
+        if ($("[name='AuthStatus']:checked").val() == "1")
+            gridData.state = false;
+    });
+
+
+    $('#btnSave').on('click', function () {
+        // Get grid data for specific columns
+        const gridData = $("#grid").pqGrid("getData", {
+            dataIndx: [
+                'ItemId', 'IndentDetailId', 'PackSize', 'packsizeid', 'CurrentQty', 'OrderingUnit',
+                'AuthorisedQty', 'state', 'ItemQty', 'DescriptiveName', 'ItemsRequiredDate', 'IndentRemark'
+            ]
+        });
+
+        // Filter selected items with state true
+        const selectedItemsMainGrid = jLinq.from(gridData).equals("state", true).select();
+
+        // Validate if ItemQty is less than AuthorisedQty
+        const invalidQtyCount = selectedItemsMainGrid.filter(item => item.ItemQty < item.AuthorisedQty).length;
+        if (invalidQtyCount > 0) {
+            alert('Authorized Quantity Cannot be More Than Indent Quantity');
+            return;
+        }
+
+        // Check if AuthorizationStatusId is not 3
+        if ($("[name='AuthStatus']:checked").val() != 3) {
+            // Validate if AuthorisedQty is greater than zero
+            const invalidAuthorisedQtyCount = selectedItemsMainGrid.filter(item => !item.AuthorisedQty || item.AuthorisedQty <= 0).length;
+            if (invalidAuthorisedQtyCount > 0) {
+                ShowAlert("warning", "Authorized Quantity should be greater than Zero!");
+                return;
+            }
+        }
+
+        // Prepare data to be sent in the AJAX request
+        const indents = JSON.stringify({
+            IndentId: $("#IndentId").val(),
+            IndentDate: $("#IndentDate").val(),
+            IndentNature: $("#IndentNature").val(),
+            AuthorizationStatusId: $("[name='AuthStatus']:checked").val(),
+            AuthorisedRemarks: $("#AuthorisedRemarks").val(),
+            IndentDetails: selectedItemsMainGrid
+        });
+
+        // Send AJAX request
+        $.ajax({
+            type: "POST",
+            traditional: true,
+            contentType: 'application/json; charset=utf-8',
+            url: '/PurchaseIndent/AuthCancelPurchaseIndent',
+            data: indents,
+            success: function (msg) {
+                const authStatus = $("[name='AuthStatus']:checked").val();
+                const message = authStatus == "1" ? "Request verified successfully." : "Request cancelled successfully.";
+                ShowAlert("success", message);
+                Clearform();
+            },
+            error: function (jqXHR, exception) {
+                ShowAlert("error", "Failed to verify/cancel");
+            }
+        });
+    });
+
+
+    var dateEditor = function (ui) {
+        var $cell = ui.$cell,
+            rowData = ui.rowData,
+            dataIndx = ui.dataIndx,
+            cls = ui.cls,
+            dc = $.trim(rowData[dataIndx]);
+        $cell.css('padding', '0');
+
+        var $inp = $("<input type='text' name='" + dataIndx + "' class='" + cls + " pq-date-editor' />")
+            .appendTo($cell)
+            .val(dc).datepicker({
+                changeMonth: true,
+                changeYear: true,
+                changeDate: true,
+                //onClose: function () {
+                //    $inp.focus();
+                //   // $.datepicker._hideDatepicker;
+                //}
+            })
+            .on('changeDate', function (e) {
+                $(this).focus();
+                return $.datepicker.formatDate('dd-M-yy', e.date);
+                this.hidePopover
+            })
+    }
+
+    var dataM = { location: "local", sorting: 'local' }
+    var colM = [
+        {
+            dataIndx: "state", maxWidth: 25, minWidth: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', resizable: false, sortable: false,
+            editor: false, dataType: 'bool', title: "<input type='checkbox' />",
+            cb: {
+                select: true,
+                all: false, //checkbox selection in the header affect current page only.
+                header: true //show checkbox in header.
+            }
+        },
+        { title: "", dataIndx: "IndentDetailId", width: 10, dataType: "integer", editable: false, resizable: false, hidden: true },
+        { title: "", dataIndx: "ItemId", width: 10, dataType: "integer", editable: false, resizable: false, hidden: true },
+        { title: "ItemCode", dataIndx: "ItemCode", width: 100, dataType: "string", hidden: true },
+        {
+            title: "Item Name & Description", dataIndx: "ItemName", width: '40%', dataType: "string", resizable: false, editable: false
+        },
+        { title: "", dataIndx: "ItemRate", width: 10, dataType: "double", hidden: true },
+        {
+            title: "HSN/SAC Code", dataIndx: "HSNCode", minWidth: '5%', editable: false
+        },
+        {
+            title: "Description", dataIndx: "DescriptiveName", width: '20%', dataType: "string", resizable: false, editable: true, editor: { type: "textarea", attr: "rows=5" }, hidden: true
+        },
+        {
+            title: "UnitName", dataIndx: "UnitName", width: '5%', dataType: "string", resizable: false, editable: false
+        },
+        {
+            title: "Qty", dataIndx: "ItemQty", width: '5%', dataType: "float", resizable: false, editable: false, align: "left"
+        },
+        {
+            title: "Auth-Qty", dataIndx: "AuthorisedQty", width: '5%', dataType: "float", resizable: false, editable: true, align: "left"
+        },
+        {
+            title: "RequiredDate", dataIndx: "ItemsRequiredDate", width: 90, editable: false, dataType: 'string', format: 'dd-M-yy',
+            editor: { type: dateEditor }, hidden: false,
+            render: function (ui) {
+                return ui.formatVal;
+            },
+            validations: [{ type: 'regexp', value: '[0-9]{2}/[0-9]{2}/[0-9]{4}', msg: 'Not in dd-MM-yy format' }]
+        },
+        { title: "Indent Remark", dataIndx: "IndentRemark", width: '38%', dataType: "string", resizable: false, editable: true },
+        { title: "OrderingUnit", dataIndx: "OrderingUnit", width: 150, dataType: "float", hidden: true },
+        { title: "", dataIndx: "packsizeid", width: 10, dataType: "integer", hidden: true },
+        { title: "PackSize", dataIndx: "PackSize", width: 90, dataType: "string", editable: false, hidden: true },
+        { title: "Current Stock", dataIndx: "CurrentQty", minWidth: 90, dataType: "float", editable: true, hidden: true }
+    ];
+    var Setgrid = {
+        height: '300',
+        maxheight: '400',
+        title: "Purchase Indent Item Details",
+        sortable: false,
+        numberCell: { show: false },
+        selectionModel: { type: 'row' },
+        hoverMode: 'cell',
+        editor: { type: 'textbox' },
+        showTop: true,
+        resizable: true,
+        virtualX: true,
+        virtualY: true,
+        editModel: {
+            saveKey: "",
+            keyUpDown: false
+        },
+        draggable: false,
+        colModel: colM,
+        dataModel: dataM,
+        pageModel: { type: "local", rPP: 50 },
+        wrap: false
+    };
+    $grid = $("#grid").pqGrid(Setgrid);
+
+    var dataM = { location: "local", sorting: 'local' }
+    var colM = [
+        { title: "", dataIndx: "IndentId", dataType: "integer", hidden: true },
+        { title: "", dataIndx: "IndentNature", dataType: "string", hidden: true },
+        { title: "", dataIndx: "Storeid", dataType: "string", hidden: true },
+        {
+            title: "PR No", dataIndx: "IndentNumber", width: "15%",
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "PR Date", dataIndx: "strIndentDate", width: "14%",
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Project Code", dataIndx: "StoreName", width: "14%", dataType: "string",
+            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+        },
+        {
+            title: "Item Type", dataIndx: "ItemCategory", width: "15%",
+            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+        },
+        {
+            title: "PR-Nature", dataIndx: "strIndentNature", width: "14%", dataType: "string",
+            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+        },
+        {
+            title: "Created-By", dataIndx: "InsertedByName", width: "14%", dataType: "string",
+            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+        },
+        {
+            title: "Verified-By", dataIndx: "VerifiedByName", width: "14%", dataType: "string",
+            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+        },
+        { title: "", dataIndx: "ItemCategoryId", dataType: "string", hidden: true }
+    ];
+    var SetM = {
+        width: '100%',
+        height: 400,
+        sortable: false,
+        numberCell: { show: false },
+        hoverMode: 'cell',
+        showTop: false,
+        resizable: true,
+        scrollModel: { autoFit: true },
+        draggable: false,
+        wrap: false,
+        editable: false,
+        filterModel: { on: true, mode: "AND", header: true },
+        selectionModel: { type: 'row', mode: 'single' },
+        colModel: colM,
+        dataModel: dataM,
+        pageModel: { type: "local", rPP: 100 },
+        rowClick: function (evt, ui) {
+            ClearParamGrid("grid");
+            var rowIndx = parseInt(ui.rowIndx);
+            var record = ui.rowData;
+            $("#IndentId").val(record.IndentId);
+            $("#IndentNumber").val(record.IndentNumber);
+            $("#IndentDate").val(record.strIndentDate);
+            $("#Remarks").val(record.Remarks);
+            $("#AuthorisedRemarks").val(record.AuthorisedRemarks);
+            if (record.IndentNature == 0) {
+                $("#IndentNature").val("Normal");
+            }
+            else {
+                $("#IndentNature").val("Against MI");
+            }
+            var itemtype = record.ItemCategoryId
+            var storeid = record.Storeid
+            $("#BudgetCost").val(0);
+            $("#UtilizedBudget").val(0);
+            $("#BalanceDue").val(0);
+            $.ajax({
+                type: "GET",
+                url: "/StoreMaster/GetProjectBudget",
+                data: { storeId: storeid, ID: itemtype },
+                datatype: "Json",
+                success: function (data) {
+                    $('#BudgetCost').val(data.records[0].BudgetCost);
+                    $('#UtilizedBudget').val(data.records[0].UtilizedBudget);
+                    calculateBalnce();
+                }
+            });
+            function calculateBalnce() {
+
+                var balance = 0, utilzed = $('#UtilizedBudget').val(), budgetCost = $('#BudgetCost').val();
+                if ($('#UtilizedBudget').val() === "" || $('#UtilizedBudget').val() === undefined) {
+                    utilzed = 0;
+                }
+                balance = budgetCost - utilzed;
+                $('#BalanceDue').val(balance);
+            }
+            $.ajax({
+                type: "GET",
+                url: "/PurchaseIndent/PurchaseIndentItems/",
+                data: { IndentId: record.IndentId },
+                datatype: "Json",
+                beforeSend: function () {
+                    $grid.pqGrid("showLoading");
+                },
+                complete: function () {
+                    $grid.pqGrid("hideLoading");
+                },
+                success: function (data) {
+
+                    //var dataMGrid = [];
+                    //$.each(data, function (index, value) {
+                    //    var grdData = {
+                    //        'IndentDetailId': value.IndentDetailId,'ItemId': value.ItemId,'ItemCode': value.ItemCode,'ItemName': value.ItemName,
+                    //        'UnitName': value.UnitName, 'Quantity': value.ItemQty, 'AuthorisedQty': value.ItemQty, 'OrderingUnit': value.PackSize, 'state': true,
+                    //        'DescriptiveName': value.DescriptiveName, 'HSNCode': value.HSNCode,'IndentRemark':value.IndentRemark
+                    //    };
+                    //    dataMGrid.push(grdData);
+                    //});
+                    $grid.pqGrid("hideLoading");
+                    $grid.pqGrid("option", "dataModel.data", data);
+                    $grid.pqGrid("refreshDataAndView");
+                },
+                error: function (request, status, error) {
+                    $grid.pqGrid("hideLoading");
+                    ShowAlert("error", "Error while loading list");
+                    return;
+                }
+            });
+            closeModal();
+        }
+    };
+    $searchgrid = $("#searchgrid").pqGrid(SetM);
+
+    //*******************Image View********************//
+    $("#btnShowAttachments").click(function () {
+        var PurchaseIndentId = $("#IndentId").val();
+        if (PurchaseIndentId === "" || PurchaseIndentId === 0) {
+            ShowAlert("error", "Please Select Request");
+            return;
+        }
+        $.ajax({
+            type: "GET",
+            url: "/ScanDoc/ScanDoc/GetScanDocUrl",
+            data: { FileId: PurchaseIndentId, ScanDocSubTypeId: 9 },
+            datatype: "Json",
+            success: function (data) {
+                if (data != '') {
+                    ViewSlideShow(data, 'slideshow-container', appSetting);
+                }
+                else {
+                    ShowAlert("error", "No Documents Found")
+                }
+            }
+        });
+    })
+     /////*********Image Slide Show in Modal**********************//
+    let ImgIndex = 1;
+
+    function plusSlides(n) {
+            showGallary(ImgIndex += n);
+        }
+    function showGallary(n) {
+        let i;
+        let ImgSlides = document.getElementsByClassName("imgSlide");
+        let video = document.getElementById("video");
+        if (n > ImgSlides.length) { ImgIndex = 1 }
+        if (n < 1) { ImgIndex = ImgSlides.length }
+        for (i = 0; i < ImgSlides.length; i++) {
+            ImgSlides[i].style.display = "none";
+        }
+        ImgSlides[ImgIndex - 1].style.display = "block";
+        if (video) {
+            video.play();
+        }
+    }
+
+    function closeImageModal() {
+            $("#slideshow-container").empty();
+            $("#ViewModal").css('display', 'none');
+    }
+    //***********Close SlideShow Modal*********************////
+
+
+    // ***********Download Image in Folder********************//
+    $(document).on("click", "#btnDownloadAttachment", function (e) {
+        var PurchaseIndentId = $("#IndentId").val();
+        let PRIndentNo = $("#IndentNumber").val();
+        if (PurchaseIndentId === "" || PurchaseIndentId === 0) {
+            ShowAlert("error", "Please Select Request");
+            return;
+        }
+        let folderName = "PR Verification" + PRIndentNo;
+        $.ajax({
+            type: "GET",
+            url: "/ScanDoc/ScanDoc/GetScanDocUrl",
+            data: { FileId: PurchaseIndentId, ScanDocSubTypeId: 9 },
+            datatype: "Json",
+            success: function (data) {
+                if (data != '') {
+                    DownloadFiles(data, e, appSetting, folderName)
+                }
+                else {
+                    ShowAlert("error", "No Documents Found")
+                }
+            }
+        });
+    });
+
+
+
+    $("#btnUnverified").on('click', function () {
+        $("#SearchGridModal").modal('show');
+        LoadSearchgrid('unverified');
+    });
+    $("#btnSearch").on('click', function () {
+        $("#SearchGridModal").modal('show');
+        LoadSearchgrid('verified');
+    });
+    function closeModal() {
+        $("#SearchGridModal").modal('hide');
+    }
+</script>

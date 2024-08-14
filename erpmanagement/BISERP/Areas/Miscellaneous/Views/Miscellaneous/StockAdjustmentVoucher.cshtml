@@ -1,0 +1,340 @@
+﻿
+<script>
+    $(function () {
+        $(".datepicker").datepicker({
+            showOn: "button",
+            buttonImage: "/Content/images/calendar.gif",
+            buttonImageOnly: true,
+            buttonText: "Select date",
+            'changeMonth': true,
+            'changeYear': true,
+            'yearRange': '2021:2030',
+            "format": "dd-M-yyyy",
+            todayBtn: "linked",
+            pickerPosition: "bottom-left",
+            "todayHighlight": true,
+            autoclose: true,
+        }).datepicker("setDate", new Date());
+        $("#anim").change(function () {
+            $(".datepicker").datepicker("option", "showAnim", "fadeIn");
+        });
+    });
+</script>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <h5 class="page-header orangeDottedBottomBorder"> STOCK ADJUSTMENT VOUCHER </h5>
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <a class="collapsediv" data-toggle="collapse" href="#collapse2" style="color:white">
+                            Entry Form
+                        </a>
+                    </div>
+                </div>
+                <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+
+                        <div class="submit-row">
+                            <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                            <button type="button" class="btn btn-primary" id="btnReset">Reset</button>
+                        </div>
+                        <fieldset class="fieldsetCustom">
+                            <legend class="legendCustom"> Stock Adjustment Form</legend>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    @Html.Label("Voucher Date")
+                                    @Html.TextBox("VoucherDate", "", new { @class = "form-control datepicker", @readonly = "true" })
+                                </div>
+                                <div class="col-sm-2">
+                                    @Html.Label("Discrepancy No", new { @class = "required" })
+                                    @Html.TextBox("DiscrepancyNo", "", new { @class = "form-control", @readonly = "true" })
+                                    @Html.Hidden("DiscrepancyId")
+                                    @Html.Hidden("StoreId")
+                                </div>
+                                <div class="col-sm-2">
+                                    @Html.Label("Project")
+                                    @Html.TextBox("StoreName", "", new { @class = "form-control", @readonly = "true" })
+                                </div>
+                                <div class="col-sm-3">
+                                    @Html.Label("Discrepancy Remark")
+                                    @Html.TextArea("DiscrepancyRemark", "", new { @class = "form-control", @readonly = "true" })
+                                </div>
+                                <div class="col-sm-3">
+                                    @Html.Label("Remark", new { @class = "required" })
+                                    @Html.TextArea("Remark", "", new { @class = "form-control" })
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <a class="collapsediv" data-toggle="collapse" href="#SearchItemDetails" style="color:white">
+                            Item Details Grid
+                        </a>
+                    </div>
+                </div>
+                <div id="SearchItemDetails" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <div id="grid"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    
+
+    <div id="DiscrepancyModal" title="Select Item" style="display: none;">
+        <div id="Discrepancygrid"></div>
+    </div>
+      
+    <script type="text/javascript">
+        var $ReportGrid;
+        var $DiscrepancyGrid;
+
+        $(document).ready(function () {
+            colIID = [
+                
+                {
+                    title: "", dataIndx: "DiscrepancyDetailId", width: 10, dataType: "integer", editable: false, hidden: true
+                },
+                { title: "", dataIndx: "ItemID", width: 10, dataType: "integer", editable: false, hidden: true },
+                { title: "", dataIndx: "BatchID", width: 10, dataType: "integer", editable: false, hidden: true },
+                { title: "Item Name & Description", dataIndx: "ItemName", width: 650, dataType: "string", editable: false },
+                { title: "Batch", dataIndx: "BatchName", width: 160, dataType: "string", editable: false },
+                { title: "Batch Qty", dataIndx: "Quantity", width: 150, dataType: "string", editable: false },
+                { title: "Physical Stock", dataIndx: "PhysicalQty", width: 150, dataType: "float", editable: false },
+                { title: "Short Qty", dataIndx: "ShortQuantity", width: 150, dataType: "float", resizable: false, editable: false },
+                { title: "SurPlus Qty", dataIndx: "SurPlusQuantity", width: 140, resizable: false, dataType: "float", editable: false },
+                { title: "Reason", dataIndx: "Reason", width: 140, dataType: "string", resizable: false, editable: false }
+            ];
+            dataIID = {
+                location: 'local',
+                sorting: 'local',
+                paging: 'local',
+                dataType: 'JSON'
+            };
+
+            setIID = {
+                virtualX: true,
+                virtualY: true,
+                height: '300',
+                maxheight: '400',
+                // title: "Material Indent Item Details",
+                sortable: false,
+                numberCell: { show: false },
+                selectionModel: { type: 'row' },
+                hoverMode: 'cell',
+                editor: { type: 'textbox' },
+                showTop: true,
+                resizable: true,
+                editModel: {
+                    saveKey: $.ui.keyCode.ENTER
+                },
+                draggable: false,
+                colModel: colIID,
+                dataModel: dataIID,
+                pageModel: { type: "local", rPP: 20 },
+            };
+            $ReportGrid = $("#grid").pqGrid(setIID);
+        });
+        $(document).ready(function () {
+            var colM = [
+                { title: "", dataIndx: "DiscrepancyId", width: 10, dataType: "integer", editable: false, hidden: true },
+                { title: "Discrepancy No", dataIndx: "DiscrepancyNo", width: '100%', dataType: "string", editable: false, filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } },
+                { title: "StoreName", dataIndx: "StoreName", width: 170, dataType: "string", hidden: true },
+                { title: "Remarks", dataIndx: "Remarks", width: 170, dataType: "string", hidden: true },
+            ];
+            var dataM = {
+                location: 'local',
+                sorting: 'local',
+                paging: 'local',
+                dataType: 'JSON'
+            };
+
+            var setM = {
+                virtualX: true,
+                virtualY: true,
+                width: '100%',
+                height: 400,
+                sortable: false,
+                numberCell: { show: true },
+                selectionModel: { type: 'row' },
+                hoverMode: 'cell',
+                editor: { type: 'textbox' },
+                showTop: true,
+                resizable: true,
+                editModel: {
+                    saveKey: $.ui.keyCode.ENTER
+                },
+                draggable: false,
+                colModel: colM,
+                dataModel: dataM,
+                filterModel: { on: true, mode: "AND", header: true },
+                pageModel: { type: "local", rPP: 20 },
+                rowClick: function (evt, ui) {
+                    ClearParamGrid("grid");
+                    ClosePopupWindow("DiscrepancyModal");
+                    if (ui.rowData) {
+                        var rowIndx = parseInt(ui.rowIndx);
+                        var record = ui.rowData;
+                        $("#DiscrepancyId").val(record.DiscrepancyId);
+                        $("#DiscrepancyNo").val(record.DiscrepancyNo);
+                        $("#StoreName").val(record.StoreName);
+                        $("#StoreId").val(record.StoreId);
+                        $("#DiscrepancyRemark").val(record.Remarks);
+                        //  $("#DiscrepancyModal").modal('toggle');
+                        $.ajax({
+                            type: "GET",
+                            url: "/Discrepancy/DiscrepancyDetails/",
+                            data: { DiscrepancyId: record.DiscrepancyId },
+                            datatype: "Json",
+                            beforeSend: function () {
+                                $ReportGrid.pqGrid("showLoading");
+                            },
+                            complete: function () {
+                                $ReportGrid.pqGrid("hideLoading");
+                            },
+                            success: function (data) {
+                                var dataMGrid = [];
+                                $.each(data, function (index, value) {
+                                    var grdData = {
+                                        'ItemID': value.ItemID, 'BatchID': value.BatchID, 'DiscrepancyDetailId': value.DiscrepancyDetailId, 'ItemName': value.ItemName, 'BatchName': value.BatchName,
+                                        'Quantity': value.Quantity, 'PhysicalQty': value.PhysicalQty, 'ShortQuantity': value.ShortQuantity, 'SurPlusQuantity': value.SurPlusQuantity,
+                                        'Reason': value.Reason
+                                    }
+                                    dataMGrid.push(grdData);
+                                });
+                                $ReportGrid.pqGrid("hideLoading");
+                                $ReportGrid.pqGrid("option", "dataModel.data", dataMGrid);
+                                $ReportGrid.pqGrid("refreshDataAndView");
+                            },
+                            error: function (request, status, error) {
+                                //ClearParamGrid("Itemgrid");
+                                $ReportGrid.pqGrid("hideLoading");
+                                ShowAlert("error", "Error while loading list");
+                                return;
+                            }
+                        });
+                    }
+                }
+            };
+            $DiscrepancyGrid = $("#Discrepancygrid").pqGrid(setM);
+
+            $('#DiscrepancyNo').on('click', function () {
+                ClearForm();
+                LoadDiscrepancygrid();
+            });
+        });
+
+        function LoadDiscrepancygrid() {
+            $("#DiscrepancyModal").dialog({
+                height: 500,
+                width: 700,
+                modal: true,
+                open: function (evt, ui) {
+                    $.ajax({
+                        type: "GET",
+                        url: "/Discrepancy/DiscrepancyList",
+                        datatype: "Json",
+                        beforeSend: function () {
+                            $DiscrepancyGrid.pqGrid("showLoading");
+                        },
+                        complete: function () {
+                            $DiscrepancyGrid.pqGrid("hideLoading");
+                        },
+                        success: function (data) {
+                            
+                            $DiscrepancyGrid.pqGrid("hideLoading");
+                            $DiscrepancyGrid.pqGrid("option", "dataModel.data", data);
+                            $DiscrepancyGrid.pqGrid("refreshDataAndView");
+                        },
+                        error: function (request, status, error) {
+                            $DiscrepancyGrid.pqGrid("hideLoading");
+                            ShowAlert("error", "Error while loading list");
+                            return;
+                        }
+                    });
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            $("#btnReset").click(function () {
+                ClearForm();
+            });
+            $("#btnSave").click(function () {
+                if ($("#ddlStores").val() == "") {
+                    ShowAlert("error", 'Please Select Store');
+                    return;
+                }
+                if ($("#Remark").val() == "") {
+                    ShowAlert("error", 'Please Enter Remark');
+                    return;
+                }
+                DisableClick("btnSave");
+                var selectedItems = $ReportGrid.pqGrid("option", "dataModel.data");
+                /*var selectedMainGrid = jLinq.from(selectedItems).equals("state", true).select();*/
+
+                var Authorized;
+                if (selectedItems.length > 0) {
+                    Authorized = true;
+                } else {
+                    Authorized = false;
+                }
+                //  var items = $ReportGrid.pqGrid("getData", { dataIndx: ['DiscrepancyDetailId', 'ItemID', 'BatchID', 'Quantity', 'PhysicalQty', 'ShortQuantity', 'SurPlusQuantity', 'Reason', 'state'] });
+                // var selectedItems = jLinq.from(items).equals("state", true).select();
+                var grn = JSON.stringify({ //Passing data
+                    DiscrepancyId: $("#DiscrepancyId").val(),
+                    StoreId: $("#StoreId").val(),
+                    VoucherDate: $("#VoucherDate").val(),
+                    Remarks: $("#Remark").val(),
+                    Authorized: Authorized,
+                    Voucherdetails: selectedItems
+                });
+                $.ajax({
+                    type: "POST", //HTTP POST Method
+                    traditional: true,
+                    contentType: 'application/json; charset=utf-8',
+                    url: '/StockAdjustment/SaveStockAdjustment', // Controller/View
+                    data: grn,
+                    success: function (msg) {
+                        if (msg.success) {
+                            ClearForm();
+                            ShowAlert("success", msg.Message);
+                        }
+                        else {
+                            ShowAlert("error", "Falied to Save! " + msg.Message);
+                        }
+                    },
+                    error: function (jqXHR, exception) {
+                        Notify("Falied to Save", "error", "Error while saving Adjustment Voucher.");
+                    }
+                });
+            });
+        });
+
+        function ClearForm() {
+            $("#DiscrepancyId").val("");
+            $("#StoreId").val("");
+            $("#StoreName").val("");
+            $("#DiscrepancyNo").val("");
+            //  $("#VoucherDate").val("");
+            $("#Remark").val("");
+            $("#DiscrepancyRemark").val("");
+            ClearParamGrid("grid");
+        }
+    </script>
+}

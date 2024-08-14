@@ -1,0 +1,442 @@
+﻿@model BISERP.Areas.Masters.Models.ClearanceNoteModel
+
+<style>
+    .hidden {
+        display: none;
+    }
+
+    .deleteItem {
+        display: flow;
+        /*direction: rtl;*/
+        font-size: x-large;
+    }
+    .text {
+        font-weight: bold;
+        font-size: large;
+    }
+</style>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <h5 class="page-header orangeDottedBottomBorder">Clearance Notes</h5>
+
+    <div id="SearchGridModal" class="modal fade" role="dialog" data-backdrop="false">
+        <div class="modal-dialog find-search-grid-modal">
+            <div class="modal-content gridmodal-content">
+                <div class="modal-header gridmodal-header">
+                    <button type="button" class="close" onclick="closeModal()">&times;</button>
+                    <h4 class="modal-title">Clearance Details</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="fill">
+                        <div id="ClearanceNoteGrid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="fill">
+                    <div class="submit-row">
+                        <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                        <button type="button" class="btn btn-primary" id="btnreset" onclick="ClearForm()">Reset</button>
+                        <button type="button" class="btn btn-info" id="btnSearch">Find</button>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <div class="row">
+                        <div class="col-sm-2">
+                            @Html.LabelFor(model => model.StoreId)
+                            @Html.DropDownList("ddlStores", new SelectList(string.Empty, "Value", "Text"), "Select Project", new { @class = "wrapperdropdown-content form-control" })
+                        </div>
+                        <div class="col-sm-2">
+                            @Html.LabelFor(model => model.DispatchType)
+                            <select id="ddlDispatchType" name="ddlDispatchType" class="wrapperdropdown-content form-control">
+                                <option value="0">Normal Dispatch</option>
+                                <option value="1">SEZ-Zone Dispatch</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <fieldset class="fieldsetCustom">
+                        <legend class="legendCustom">Attachments</legend>
+                        <div class="row">
+                            <div class="col-sm-3 DispatchType0">
+                                <label for="eInvoice" class="required">E-Invoice</label>
+                                <input type='file' id="eInvoice" accept=".jpg,.jpeg,.png,.pdf" class="form-control btn-primary file fileType0" />
+                            </div>
+                            <div class="col-sm-3 DispatchType0">
+                                <label for="lrCopy" class="required">LR-Copy</label>
+                                <input type='file' id="lrCopy" accept=".jpg,.jpeg,.png,.pdf" class="form-control btn-primary file fileType0" />
+                            </div>
+                            <div class="col-sm-3 DispatchType0">
+                                <label for="packingList" class="required">Packing-List</label>
+                                <input type='file' id="packingList" accept=".jpg,.jpeg,.png,.pdf" class="form-control btn-primary file fileType0" />
+                            </div>
+                            <div class="col-sm-3 DispatchType0">
+                                <label for="eWayBill" class="required">E-Way Bill</label>
+                                <input type='file' id="eWayBill" accept=".jpg,.jpeg,.png,.pdf" class="form-control btn-primary file fileType0" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3 DispatchType1">
+                                <label for="sezDTAProcurement" class="required">SEZ - DTA Procurement</label>
+                                <input type='file' id="sezDTAProcurement" accept=".jpg,.jpeg,.png,.pdf" class="form-control btn-primary file fileType1" />
+                            </div>
+                            <div class="col-sm-3 DispatchType1">
+                                <label for="iGSTDetails" class="required">IGST Details</label>
+                                <input type='file' id="iGSTDetails" accept=".jpg,.jpeg,.png,.pdf" class="form-control btn-primary file fileType1" />
+                            </div>
+                            <div class="col-sm-3 DispatchType1">
+                                <label for="ACKForLUT" class="required">Acknowledgement for LUT</label>
+                                <input type='file' id="ACKForLUT" accept=".jpg,.jpeg,.png,.pdf" class="form-control btn-primary file fileType1" />
+                            </div>
+                            <div class="col-sm-3">
+                                <label for="others" class="">Others</label>
+                                <input type='file' id="others" accept=".jpg,.jpeg,.png,.pdf" class="form-control btn-primary" />
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <div class="submit-row">
+                        <button type="button" class="btn btn-primary" id="btnShowAttachments">View upload</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="ViewModal" class="modal slideModal">
+        <div class="modal-content slideContent">
+            <span class="close slideClose" onclick="closeImageModal()"> &#x2715 </span>
+            <div id="slideshow-container"></div>
+            <div>
+                <a class="prev slide-prev" onclick="plusSlides(-1)">❮</a>
+                <a class="next slide-next" onclick="plusSlides(1)">❯</a>
+            </div>
+        </div>
+    </div>
+}
+
+
+<script>
+    var appSetting = '@BISERP.Common.Constants.ScandocUrl';
+    var tempClearanceNoteId = 0;
+
+    // Load stores into the dropdown
+    $.ajax({
+        type: "GET",
+        url: "/Master/AllStores",
+        datatype: "Json",
+        success: function (data) {
+            $.each(data, function (index, value) {
+                $('#ddlStores').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+            });
+        }
+    });
+
+    // Dispatch Type change event
+    $("#ddlDispatchType").change(function () {
+        if ($("#ddlDispatchType").val() == '0') {
+            $('.DispatchType1').addClass('hidden');
+        } else {
+            $('.DispatchType1').removeClass('hidden');
+        }
+    });
+
+    // Trigger change event to set initial state
+    $("#ddlDispatchType").change();
+
+    // Grid Configuration
+    var dataClearanceNoteGrid = { location: "local" };
+    var colsClearanceNoteGrid = [
+        {
+            title: "Project",
+            dataIndx: "StoreName",
+            width: '35%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Dispatch Type",
+            dataIndx: "DispatchTypeName",
+            width: '35%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Created-By",
+            dataIndx: "InsertedByName",
+            width: '30%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        }
+    ];
+
+    var setClearanceNoteGrid = {
+        width: 'auto',
+        height: '360',
+        maxWidth: '100%',
+        minWidth: 800,
+        sortable: true,
+        autofill: true,
+        numberCell: { show: true },
+        hoverMode: 'row',
+        showTop: false,
+        showTitle: true,
+        showBottom: true,
+        resizable: true,
+        scrollModel: { autoFit: true },
+        filterModel: { on: true, mode: "AND", header: true },
+        draggable: false,
+        hwrap: false,
+        wrap: false,
+        editable: false,
+        columnBorders: true,
+        menuIcon: true,
+        selectionModel: { type: 'row', mode: 'single', cbHeader: false },
+        colModel: colsClearanceNoteGrid,
+        dataModel: dataClearanceNoteGrid,
+        pageModel: { type: "local" },
+        rowClick: function (evt, ui) {
+            if (ui.rowData) {
+                tempClearanceNoteId = ui.rowData.ClearanceNoteId;
+                $("#ddlStores").val(ui.rowData.StoreId);
+                $("#ddlDispatchType").val(ui.rowData.DispatchType);
+                closeModal();
+            }
+        }
+    };
+
+    var $ClearanceNoteGrid = $("#ClearanceNoteGrid").pqGrid(setClearanceNoteGrid);
+
+    function loadClearanceNote() {
+        $.ajax({
+            type: "GET",
+            url: "/ClearanceNote/GetClearanceNote/",
+            data: { StoreId: 0 },
+            dataType: "json",
+            beforeSend: function () {
+                $ClearanceNoteGrid.pqGrid("showLoading");
+            },
+            complete: function () {
+                $ClearanceNoteGrid.pqGrid("hideLoading");
+            },
+            success: function (data) {
+                if (data.success) {
+                    $ClearanceNoteGrid.pqGrid("option", "dataModel.data", data.records);
+                    $ClearanceNoteGrid.pqGrid("refreshDataAndView");
+                } else {
+                    ShowAlert("error", data.Message);
+                }
+            },
+            error: function () {
+                $ClearanceNoteGrid.pqGrid("hideLoading");
+                ShowAlert("error", "Server error! Please Contact Administrator");
+            }
+        });
+    }
+
+    $("#btnSave").click((event) => {
+        event.preventDefault();
+
+        if ($("#ddlStores").val() === "") {
+            ShowAlert("error", "Please select Project first!");
+            return;
+        }
+
+        let allFilled = true;
+        const dispatchType = $("#ddlDispatchType").val();
+
+        if (dispatchType === '0' && tempClearanceNoteId === 0) {
+            $('.fileType0').each(function () {
+                if (!$(this).val()) {
+                    allFilled = false;
+                    return false; // break the loop
+                }
+            });
+        } else if (dispatchType === '1' && tempClearanceNoteId === 0) {
+            $('.file').each(function () {
+                if (!$(this).val()) {
+                    allFilled = false;
+                    return false; // break the loop
+                }
+            });
+        }
+
+        if (!allFilled) {
+            ShowAlert("warning", "Please select a file for all required file inputs!");
+            return;
+        }
+
+        const details = JSON.stringify({
+            ClearanceNoteId: tempClearanceNoteId,
+            StoreId: $("#ddlStores").val(),
+            DispatchType: dispatchType
+        });
+
+        $.ajax({
+            type: "POST",
+            traditional: true,
+            contentType: 'application/json; charset=utf-8',
+            url: '/ClearanceNote/SaveClearanceNote',
+            data: details,
+            success: (response) => {
+                if (response.success) {
+                    const clearanceNoteId = response.Data?.ClearanceNoteId ?? tempClearanceNoteId;
+                    saveAttachments(clearanceNoteId, dispatchType);
+
+                    if (tempClearanceNoteId === 0) {
+                        ShowAlert("success", "Clearance note saved successfully.");
+                    } else {
+                        ShowAlert("success", "Clearance note updated successfully.");
+                    }
+                    ClearForm();
+                } else {
+                    ShowAlert("error", response.Message);
+                }
+            },
+            error: (xhr, status, error) => {
+                ShowAlert("error", "An error occurred while saving the clearance note.");
+                console.error(`Error: ${status}, ${error}`);
+            }
+        });
+    });
+
+    function saveAttachments(clearanceNoteId, dispatchType) {
+        SaveScandoc("eInvoice", clearanceNoteId, "Master", "ClearanceNote");
+        SaveScandoc("lrCopy", clearanceNoteId, "Master", "ClearanceNote");
+        SaveScandoc("packingList", clearanceNoteId, "Master", "ClearanceNote");
+        SaveScandoc("eWayBill", clearanceNoteId, "Master", "ClearanceNote");
+        SaveScandoc("others", clearanceNoteId, "Master", "ClearanceNote");
+        if (dispatchType == "1") {
+            SaveScandoc("sezDTAProcurement", clearanceNoteId, "Master", "ClearanceNote");
+            SaveScandoc("iGSTDetails", clearanceNoteId, "Master", "ClearanceNote");
+            SaveScandoc("ACKForLUT", clearanceNoteId, "Master", "ClearanceNote");
+        }
+    }
+
+    $("#btnSearch").on('click', function () {
+        $("#SearchGridModal").modal('show');
+        loadClearanceNote();
+    });
+
+    function closeModal() {
+        $("#SearchGridModal").modal('hide');
+    }
+
+    function ClearForm() {
+        $("#ddlStores").val('');
+        $("#ddlDispatchType").val(0);
+        $('input[type="file"]').val(null);
+        tempClearanceNoteId = 0;
+    }
+
+    //---------------------------------------------------------------------Show Attachments-----------------------------------------------------------------//
+
+    $("#btnShowAttachments").click(function () {
+        if (tempClearanceNoteId === 0) {
+            ShowAlert("error", "Please select 'Clearance Note' from the grid.");
+            return;
+        }
+        $.ajax({
+            type: "GET",
+            url: "/ScanDoc/ScanDoc/GetScanDocUrl",
+            data: { FileId: tempClearanceNoteId, ScanDocSubTypeId: 21 },
+            dataType: "json",
+            success: function (data) {
+                if (data && data.length) {
+                    closeImageModal();
+                    ViewSlideShow(data, 'slideshow-container', appSetting);
+                } else {
+                    ShowAlert("error", "No Documents Found");
+                }
+            }
+        });
+    });
+
+    function ViewSlideShow(ImageGallery, container, appSetting) {
+        $("#" + container).empty();
+        for (let i = 0; i < ImageGallery.length; i++) {
+            let file = ImageGallery[i].FilePath;
+            let fileNameWithExtension = file.split('\\').pop();
+            let extension = fileNameWithExtension.split('.').pop().toLowerCase();
+            let name = fileNameWithExtension.split('.')[0];
+            let src = appSetting + file;
+
+            let deleteItemHtml = '<a href="javascript:void(0);" data-id="' + ImageGallery[i].FileId + '" class="deleteItem fa fa-trash" onclick="Deletefile(' + ImageGallery[i].FileId + ',' + ImageGallery[i].ScanDocId + ');return true;"></a>';
+            let downloadHtml = '<a class="fa fa-download downloadFiles" href="' + src + '" download></a>';
+            let nameHtml = '<span class="text">' + name + '</span>';
+            let contentHtml;
+
+            if (extension === 'pdf') {
+                contentHtml = '<object data="' + src + '#toolbar=0&navpanes=0&scrollbar=0" type="application/pdf" width="100%" height="500px"></object>';
+            } else if (['jpeg', 'jpg', 'png'].includes(extension)) {
+                contentHtml = '<img src="' + src + '" style="width:800px;height:500px;">';
+            } else {
+                continue; // Skip unsupported file types
+            }
+
+            let slideHtml = '<div class="imgSlide">' + contentHtml + '<div class="divider"></div><div class="row"><div class="col-sm-2">' + deleteItemHtml + '</div><div class="col-sm-8" style="text-align: center;">' + nameHtml + '</div><div class="col-sm-2">' + downloadHtml + '</div></div></div>';
+            $("#" + container).append(slideHtml);
+        }
+
+        $("#ViewModal").css('display', 'block');
+        showGallery(1);
+    }
+
+
+    let ImgIndex = 1;
+
+    function plusSlides(n) {
+        showGallery(ImgIndex += n);
+    }
+
+    function showGallery(n) {
+        let i;
+        let ImgSlides = document.getElementsByClassName("imgSlide");
+        let video = document.getElementById("video");
+        if (n > ImgSlides.length) { ImgIndex = 1; }
+        if (n < 1) { ImgIndex = ImgSlides.length; }
+        for (i = 0; i < ImgSlides.length; i++) {
+            ImgSlides[i].style.display = "none";
+        }
+        ImgSlides[ImgIndex - 1].style.display = "block";
+        if (video) {
+            video.play();
+        }
+    }
+
+    function Deletefile(fId, sId) {
+        $.ajax({
+            type: "POST",
+            url: "/ScanDoc/ScanDoc/DeleteScanDocfile",
+            data: {
+                fileId: fId,
+                scanDocId: sId
+            },
+            success: function () {
+                $("#" + fId).parent().remove();
+                $("#appendImg").empty();
+                ShowAlert("success", "File Removed successfully");
+                closeImageModal();
+            },
+            error: function () {
+                ShowAlert("error", "Error deleting the file.");
+            }
+        });
+        return false;
+    }
+
+    function closeImageModal() {
+        $("#slideshow-container").empty();
+        $("#ViewModal").css('display', 'none');
+    }
+</script>
+

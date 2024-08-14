@@ -1,0 +1,59 @@
+﻿@model BISERP.Areas.Store.Models.Store.MaterialReturnModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+    <div style="width: 95%; margin: 10px;">
+        <div align="center">
+            <h2>New Material Return </h2>
+        </div>
+        <table style="padding: 2px;">
+            <tr>
+                <td style="text-align: left">Return No:@Model.ReturnNo</td>
+            </tr>
+            <tr>
+                <td style="text-align: left">Return Date:@DateTime.Now.ToString("dd-MMM-yyyy")</td>
+            </tr>
+            <tr>
+                <td style="align-content: stretch;">
+                    <u>Return Requested by</u>: <b>@Model.StrReturnFrom</b> &emsp; &emsp; <u>Return Requested to</u>:<b>@Model.StrReturnTo</b>
+                </td>
+            </tr>
+            <tr style="height: 20px" />
+            <tr>
+                <td style="align-content: center">
+                    <table style="padding: 5px;" border="1">
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Stock Quantity</th>
+                            <th>Return Quantity</th>
+                            <th>Reason</th>
+                        </tr>
+                        @foreach (var menu in Model.MaterialReturnDt)
+                        {
+                            <tr>
+                                <td>@menu.ItemName</td>
+                                <td>@menu.StockQty</td>
+                                <td>@menu.Quantity</td>
+                                <td>@menu.Reason</td>
+                            </tr>
+                        }
+                    </table>
+                </td>
+            </tr>
+        </table>
+        <div style="align-content:flex-end">
+            <br />
+            <br />
+            <u style="color: red;"><b>Note:</b></u> *** This is an automatically generated email, please do not reply ***
+        </div>
+    </div>
+</body>
+</html>

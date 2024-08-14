@@ -1,0 +1,970 @@
+﻿@model BISERP.Areas.Masters.Models.StoreMasterModel
+<script>
+    $(function () {
+        $(".datepicker").datepicker({
+            showOn: "button",
+            buttonImage: "/Content/images/calendar.gif",
+            buttonImageOnly: true,
+            buttonText: "Select date",
+            'changeMonth': true,
+            'changeYear': true,
+            'yearRange': '2021:2030',
+            "format": "dd-M-yyyy",
+            todayBtn: "linked",
+            pickerPosition: "bottom-left",
+            "todayHighlight": true,
+            autoclose: true,
+        }).datepicker("setDate", new Date());
+        $("#anim").change(function () {
+            $(".datepicker").datepicker("option", "showAnim", "fadeIn");
+        });
+    });
+</script>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <h5 class="page-header orangeDottedBottomBorder">Store Master</h5>
+    @* new addition 2024 *@
+    <div id="SearchGridModal" class="modal fade" role="dialog" data-backdrop="false">
+        <div class="modal-dialog find-search-grid-modal">
+            <div class="modal-content gridmodal-content">
+                <div class="modal-header gridmodal-header">
+                    <button type="button" class="close" onclick="closeModal()">&times;</button>
+                    <h4 class="modal-title">Project Master Details</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="fill">
+                        <div id="grid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="fill">
+                    <div class="submit-row">
+                        <button type="button" class="btn btn-warning" id="btnAdd">Add Project</button>
+                        <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                        <button type="button" class="btn btn-primary" id="btnreset">Reset</button>
+                        <button type="button" class="btn btn-info" id="btnSearch">Find</button>
+                    </div>
+                    <fieldset class="fieldsetCustom">
+                        <legend class="legendCustom">Create</legend>
+                        <div class="row">
+                            <div class="col-sm-2">
+                                @Html.LabelFor(model => model.Code, new { @class = "required" })
+                                @Html.TextBoxFor(model => model.Code, new { @class = "form-control" })
+
+                            </div>
+                            <div class="col-sm-2">
+                                @Html.LabelFor(model => model.Name, new { @class = "required" })
+                                @Html.TextBoxFor(model => model.Name, new { @class = "form-control" })
+                                @Html.HiddenFor(m => m.ID)
+                            </div>
+
+                            <div class="col-sm-2">
+                                @Html.LabelFor(model => model.ProjectBudget, new { @class = "required" })
+                                @Html.TextBoxFor(model => model.ProjectBudget, new { @class = "form-control" })
+                            </div>
+                            <div class="col-sm-2">
+                                @Html.Label("ClientName", new { @class = "required" })
+                                @Html.DropDownList("ddlClient", new SelectList(string.Empty, "Value", "Text"), "Select Client ", new { @class = "wrapperdropdown-content form-control" })
+                            </div>
+                            <div class="col-sm-2">
+                                @Html.Label("Remark")
+                                @Html.TextBoxFor(model => model.Description, new { @class = "form-control" })
+                            </div>
+                            <div class="col-sm-2">
+                                @Html.LabelFor(model => model.ClientPoNo, new { @class = "required" })
+                                @Html.TextBoxFor(model => model.ClientPoNo, new { @class = "form-control" })
+                            </div>
+                            <div class="col-sm-2">
+                                @Html.LabelFor(m => m.StartDate)
+                                @Html.TextBoxFor(model => model.StartDate, new { @class = "form-control datepicker" })
+                            </div>
+                            <div class="col-sm-2">
+                                @Html.LabelFor(m => m.DueDate)
+                                @Html.TextBoxFor(model => model.DueDate, new { @class = "form-control datepicker" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-2 col-md-4 col-sm-3">
+                                @Html.Label("Upload")
+                                <input type='file' id="files" multiple accept=".jpg,.jpeg,.png,.pdf" class="form-control btn-primary uploadup" />
+                            </div>
+                            <div class="col-lg-2 col-md-4 col-sm-8"><ul class="list" id="appendImg"> </ul></div>
+                            <div class="col-lg-2 col-md-4 col-sm-8"><ul class="list" id="preApproveImg"> </ul></div>
+                        </div>
+                        <div class="divider"></div>
+                        <div class="submit-row">
+                            <button type="button" class="btn btn-primary" id="btnAddItem">Add Item</button>
+                            <button type="button" class="btn btn-danger" id="btnRemoveItem">Remove Item</button>
+                            <button type="button" class="btn btn-info" id="btnAddProjectTC">Add T & C</button>
+                            <button type="button" class="btn btn-primary" id="btnShowAttachments">View Upload</button>
+                        </div><br />
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="panel-heading">
+                                    <div class="panel-title">
+                                        Enter Category Wise Budegt
+                                    </div>
+                                </div>
+                                <div id="CategoryGrid">
+                                </div>
+                            </div>
+                            <div class="col-sm-8">
+                                <div class="panel-heading">
+                                    <div class="panel-title">
+                                        Enter Selling Item
+                                    </div>
+                                </div>
+                                <div id="servicegrid">
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div title="Select Items" id="ItemModal" style="display: none;">
+        <div id="Itemgrid"></div>
+        <div style="margin-top: 5px;">
+            <button type="button" class="btn btn-primary" id="btnAddItems">Add</button>
+            <button type="button" class="btn btn-primary" id="btnCloseItem">Close</button>
+        </div>
+    </div>
+    <div title="Select Project Term & Conditions" id="ProjectTCModal" style="display: none;">
+        <div id="projectTCGrid"></div>
+    </div>
+    @*The Modal*@
+    <div id="ViewModal" class="modal slideModal">
+        @*Modal content*@
+        <div class="modal-content slideContent">
+            <span class="close slideClose" onclick="closeImageModal()"> &#x2715 </span>
+            <div id="slideshow-container">
+                <!--Slidshow-->
+            </div>
+            <div>
+                <a class="prev slide-prev" onclick="plusSlides(-1)">❮</a>
+                <a class="next slide-next" onclick="plusSlides(1)">❯</a>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    var appSetting = '@BISERP.Common.Constants.ScandocUrl';
+
+    var grid;
+    var $Serviceitemgrid;
+    var Branchlist = [];
+    $("#btnAdd").click(function () {
+        getMasterCode();
+        ClearForm();
+        desableFields(false);
+        $("#btnAdd").prop('disabled', true);
+    });
+    function getMasterCode() {
+        $('#Code').empty().html("");
+        $.ajax({
+            type: "GET",
+            url: "/StoreMaster/GetMasterCode",
+            data: { masterId: 1 },
+            datatype: "Json",
+            async: true,
+            success: function (data) {
+                $("#Code").val(data.records[0].MasterCode);
+                $("#Name").val(data.records[0].MasterCode);
+            }
+        });
+    }
+
+    validateFiles('files', 'preApproveImg');
+
+    $("#btnSave").click(function () {
+
+        if ($("#Code").val() === "") {
+            ShowAlert("error", "Please Provide Code");
+            return;
+        }
+        if ($("#Name").val() === "") {
+            ShowAlert("error", "Please Provide Project Name");
+            return;
+        }
+        if ($("#ddlClient").val() === "") {
+            ShowAlert("error", "Please Select Client ");
+            return;
+        }
+
+        var gridData = $Serviceitemgrid.pqGrid("option", "dataModel.data");
+        if (gridData != undefined) {
+            if (gridData.length > 0) {
+                var chekReciepts = 0;
+                $.each(gridData, function (key, value) {
+                    if (value.ItemQty === "" || value.ItemQty == undefined) chekReciepts++;
+                });
+                if (chekReciepts > 0) {
+                    ShowAlert("warning", "Enter Enter Qty for selected Item");
+                    return;
+                }
+            } else {
+                ShowAlert("error", "Kindly include the Selling item first.");
+                return
+            }
+
+        }
+        var gridData1 = $CategoryGrid.pqGrid("option", "dataModel.data");
+
+        var totalBudget = $("#ProjectBudget").val(), gridbudget = 0;
+
+        $.each(gridData1, function (_, item) {
+            if (!isNaN(item.BudgetCost))
+                gridbudget += parseFloat(item.BudgetCost);
+        });
+        if (gridbudget > totalBudget) {
+            ShowAlert("error", "Category Budget exceeds Total Project Budget");
+            return;
+        }
+
+        let projectTCGridData = $("#projectTCGrid").pqGrid("option", "dataModel.data");
+        let selectedProjectTC = jLinq.from(projectTCGridData).equals("Select", true).select();
+
+        var store = JSON.stringify({
+            ID: $("#ID").val(),
+            Code: $("#Code").val(),
+            Name: $("#Name").val(),
+            ClientId: $("#ddlClient").val(),
+            Description: $("#Description").val(),
+            ProjectBudget: $("#ProjectBudget").val(),
+            ClientPoNo: $("#ClientPoNo").val(),
+            StartDate: $("#StartDate").val(),
+            DueDate: $("#DueDate").val(),
+            Storedt: gridData,
+            Budgetdt: gridData1,
+            ProjectTCdt: selectedProjectTC
+            //Deactive: $("#Deactive").prop('checked')
+
+        });
+        $.ajax(
+            {
+                type: "POST", //HTTP POST Method
+                traditional: true,
+                contentType: 'application/json; charset=utf-8',
+                url: '/StoreMaster/SaveStoreMaster', // Controller/View
+                data: store,
+                success: function (msg) {
+                    if (msg.success) {
+                        $("#ID").val() == 0 || $("#ID").val() == "" ? SaveItemTypeMapping(msg.StoreID) : SaveItemTypeMapping($("#ID").val());
+                    }
+                    else {
+                        if (msg.Message == "Code Already Exist") {
+                            ShowAlert("warning","Project code has been Modefied. Take a look and save!");
+                            getMasterCode();
+                        } else {
+                            ShowAlert("error", msg.Message);
+                        }
+                    }
+                }
+            });
+    });
+    var Branchlist = [];
+    loadData();
+    function loadData() {
+
+
+        getallitemType();
+
+
+        function getallitemType() {
+            $.ajax({
+                type: "GET",
+                url: "/Master/AllItemType",
+                datatype: "Json",
+                success: function (data) {
+
+                    $CategoryGrid.pqGrid("option", "dataModel.data", data);
+                    $.each(data, function (index, value) {
+                        value.BudgetCost = 0;
+                    });
+                    $CategoryGrid.pqGrid("refreshDataAndView");
+                }
+            });
+        }
+
+        $.ajax({
+            type: "GET",
+            url: "/Master/AllBranches",
+        }).done(function (data) {
+            Branchlist = data;
+
+            $.ajax({
+                type: "GET",
+                url: "/Master/AllStoreType",
+            }).done(function (data) {
+                Storelist = data;
+
+                grid = $("#grid").jsGrid({
+                    width: "100%",
+                    height: "453px",
+                    filtering: true, //will display top 1st row as filter
+                    selecting: true,
+                    sorting: true,
+                    autoload: true, // this statement require to load data using ajax call
+                    paging: true,
+                    pageSize: 10,
+                    controller: {
+                        loadData: function (filter) {
+                            var d = $.Deferred();
+
+                            $.ajax({
+                                type: 'GET',
+                                url: '@Url.Action("AllStoreMasters", "StoreMaster")',
+                                dataType: "json",
+                                data: { SearchName: filter.Name, SearchCode: filter.Code },
+                                success: function (data) {
+                                    // d.resolve(data.records);
+                                    if (data.success) {
+                                        d.resolve(data.records);
+                                    } else {
+                                        ShowAlert("error", data.Massage);
+                                        $(".jsgrid-load-panel").hide();
+                                    }
+                                },
+                                error: function (e) {
+                                    ShowAlert("error", "No Record Found");
+                                }
+                            });
+                            return d.promise();
+                        },
+
+                    },
+                    fields: [
+                        { name: "ID", visible: false, width: 0 },
+                        { name: "Code", title: "Code", type: "text", validate: { validator: "required", message: "code is missing! Please enter the code." }, width: 20 },
+                        { name: "Name", title: "Name", type: "text", validate: { validator: "required", message: "name is missing! Please enter the name " }, width: 50 },
+                        { name: "Description", title: "Description", type: "text", validate: { validator: "required", message: "name is missing! Please enter the name " }, width: 50 },
+                    ],
+                    rowClick: function (args) {
+                        var data = args.item;
+                        $("#ID").val(data.ID);
+                        $("#Code").val(data.Code);
+                        $("#Name").val(data.Name);
+                        $("#ddlClient").val(data.ClientId);
+                        $("#ProjectBudget").val(data.ProjectBudget);
+                        $("#Description").val(data.Description);
+                        $("#ClientPoNo").val(data.ClientPoNo);
+                        $("#StartDate").datepicker().datepicker("setDate", data.strStartDate);
+                        $("#DueDate").datepicker().datepicker("setDate", data.strDueDate);
+                        ClearParamGrid('servicegrid');
+                        $.ajax({
+                            type: "GET",
+                            url: "/StoreMaster/GetStoredtl",
+                            data: { storeId: data.ID },
+                            datatype: "Json",
+                            async: true,
+                            success: function (response) {
+                                if (response.records) {
+                                    $Serviceitemgrid.pqGrid("option", "dataModel.data", response.records);
+                                    $Serviceitemgrid.pqGrid("refreshDataAndView");
+                                }
+                            }
+                        });
+                        $.ajax({
+                            type: "GET",
+                            url: "/StoreMaster/GetStoreBudgetdtl",
+                            data: { storeId: data.ID },
+                            datatype: "Json",
+                            async: true,
+                            success: function (response) {
+                                if (response.success) {
+                                    $CategoryGrid.pqGrid("option", "dataModel.data", response.records);
+                                    $CategoryGrid.pqGrid("refreshDataAndView");
+                                }
+                                else {
+                                    getallitemType();
+                                }
+                            }
+                        });
+                        loadProjectTCGridData(data.ID);
+                        viewAttachments(data.ID);
+                        closeModal();
+                        desableFields(false);
+                    }
+                });
+            });
+        });
+    }
+
+    $(document).ready(function () {
+
+        $.ajax({
+            type: "GET",
+            url: "/ClientMaster/AllClient",
+            datatype: "Json",
+            success: function (data) {
+                $.each(data.records, function (index, value) {
+                    $('#ddlClient').append('<option value="' + value.ClientId + '">' + value.Name + '</option>');
+                });
+            }
+        });
+
+
+
+        $.ajax({
+            type: "GET",
+            url: "/Master/AllStoreType",
+            datatype: "Json",
+            success: function (data) {
+                $.each(data, function (index, value) {
+                    $('#ddlStoretype').append('<option value="' + value.ID + '">' + value.Description + '</option>');
+                });
+            }
+        });
+    });
+    $(document).ready(function () {
+        $('#btnAddItem').on('click', function () {
+            $("#ItemModal")
+                .dialog({
+                    height: 500,
+                    width: 700,
+                    modal: true,
+                    open: function (evt, ui) {
+                        $.ajax({
+                            type: "GET",
+                            url: "/ItemMaster/GetSellingItemMaster/",
+                            data: { StoreId: 0 },
+                            datatype: "Json",
+                            beforeSend: function () {
+                                $ItemListGrid.pqGrid("showLoading");
+                            },
+                            complete: function () {
+                                $ItemListGrid.pqGrid("hideLoading");
+                            },
+                            success: function (data) {
+                                if (data.success) {
+                                    $ItemListGrid.pqGrid("hideLoading");
+                                    $ItemListGrid.pqGrid("option", "dataModel.data", data.items);
+                                    $ItemListGrid.pqGrid("refreshDataAndView");
+                                } else {
+                                    ClearParamGrid('Itemgrid');
+                                    ShowAlert("error", data.Messsage);
+                                    return;
+                                }
+                            },
+                            error: function (request, status, error) {
+                                ClearParamGrid('Itemgrid');
+                                $ItemListGrid.pqGrid("hideLoading");
+                                ShowAlert("error", "Server error! Please Contact Administrator");
+                                return;
+                            }
+                        });
+                    },
+                    close: function (event, ui) {
+                    },
+                    show: {
+                        effect: "blind",
+                        duration: 500
+                    }
+                });
+
+        });
+        colItemList = [
+            {
+                dataIndx: "state",
+                minWidth: 25,
+                maxWidth: 25,
+                align: "center",
+                type: 'checkBoxSelection',
+                cls: 'ui-state-default',
+                sortable: false,
+                editor: false,
+                dataType: 'bool',
+                title: "<input type='checkbox' />",
+                cb: { select: true, all: false, header: true }
+            },
+            { title: "Code", dataIndx: "ID", hidden: true },
+          
+            {
+                title: "Code",
+                dataIndx: "Code",
+                width: 100,
+                dataType: "string",
+                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] },
+                hidden: true
+            },
+            {
+                title: "Item Name",
+                dataIndx: "Name",
+                width: 200,
+                dataType: "string",
+                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            },
+            { title: "Item Type", dataIndx: "itemtypename", width: 90, filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }  },
+          
+        ];
+        dataMItemList = {
+            location: 'local',
+            sorting: 'local',
+            paging: 'local',
+            dataType: 'JSON'
+        };
+        setItemList = {
+            width: "auto", //auto width
+            height: "100%-30", //height in %age
+            selectionModel: { type: 'cell' },
+            autoSizeInterval: 0,
+            scrollModel: { autoFit: true },
+            dragColumns: { enabled: false },
+            hoverMode: 'cell',
+            editor: { type: 'textbox' },
+            filterModel: { on: true, mode: "AND", header: true },
+            showTop: false,
+            resizable: true,
+            virtualX: true,
+            colModel: colItemList,
+            dataModel: dataMItemList,
+            toggle: function (evt, ui) {
+                if (ui.state == 'max') {
+                    $(".ui-dialog,.ui-widget-overlay").css('position', 'static');
+                } else {
+                    $(".ui-dialog,.ui-widget-overlay").css('position', 'absolute');
+                }
+            },
+            pageModel: { type: "local", rPP: 100 }
+        };
+        $ItemListGrid = $("#Itemgrid").pqGrid(setItemList);
+
+        $(document)
+            .ready(function () {
+                var selectedRowIndx = null;
+                var colsItemList = [
+                    {
+                        title: "Item Type", dataIndx: "Name", dataType: "string", width: '60%'
+
+                    },
+                    {
+                        dataIndx: "ID", width: 10, dataType: "integer", editable: false, resizable: false, hidden: true
+                    },
+
+                    {
+                        title: "Budget", dataIndx: "BudgetCost", dataType: "float", hidden: false, align: 'left', width: '36%'
+                    }
+                ];
+                var datatemList = {
+                    location: 'local',
+                    sorting: 'local',
+                    paging: 'local',
+                    dataType: 'JSON'
+                };
+                var setserviceList = {
+                    width: "auto", //auto width
+                    height: 300, //height in %age
+                    selectionModel: { type: 'row' },
+                    autoSizeInterval: 0,
+                    scrollModel: { autoFit: true },
+                    numberCell: { show: false },
+                    dragColumns: { enabled: false },
+                    hoverMode: 'cell',
+                    editor: { type: 'textbox' },
+                    showTop: false,
+                    resizable: true,
+                    virtualX: true,
+                    wrap: false,
+                    colModel: colsItemList,
+                    dataModel: datatemList,
+                };
+                $CategoryGrid = $("#CategoryGrid").pqGrid(setserviceList);
+
+                colsItemList = [
+                    { title: "Id", dataIndx: "ItemId", hidden: true },
+                    {
+                        title: "Code",
+                        dataIndx: "Code",
+                        width: 100,
+                        dataType: "string", editable: false,
+                        filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] },
+                        hidden: true
+                    },
+                    {
+                        title: "Item Name & Description",
+                        dataIndx: "ItemName",
+                        width: 500,
+                        dataType: "string", editable: false,
+                        filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                    },
+                    {
+                        title: "Description",
+                        dataIndx: "ItemDescription",
+                        width: 200,
+                        dataType: "string",
+                        editor: { type: "textarea", attr: "rows=5" },
+                        hidden: true
+                    },
+                    { title: "Qty", dataIndx: "ItemQty", hidden: false },
+                ];
+                datatemList = {
+                    location: 'local',
+                    sorting: 'local',
+                    paging: 'local',
+                    dataType: 'JSON'
+                };
+
+                setserviceList = {
+                    width: "auto", //auto width
+                    height: 300, //height in %age
+                    selectionModel: { type: 'row' },
+                    autoSizeInterval: 0,
+                    scrollModel: { autoFit: true },
+                    dragColumns: { enabled: false },
+                    hoverMode: 'cell',
+                    editor: { type: 'textbox' },
+                    filterModel: { on: true, mode: "AND", header: true },
+                    showTop: false,
+                    resizable: true,
+                    virtualX: true,
+                    wrap: false,
+                    colModel: colsItemList,
+                    dataModel: datatemList,
+                    toggle: function (evt, ui) {
+                        if (ui.state == 'max') {
+                            $(".ui-dialog,.ui-widget-overlay").css('position', 'static');
+                        } else {
+                            $(".ui-dialog,.ui-widget-overlay").css('position', 'absolute');
+                        }
+                    },
+                    pageModel: { type: "local", rPP: 20 },
+                    rowClick: function (evt, ui) {
+                        if (ui.rowData) {
+                            selectedRowIndx = ui.rowIndx;
+                        }
+                    }
+                };
+                $Serviceitemgrid = $("#servicegrid").pqGrid(setserviceList);
+
+                $('#btnRemoveItem').on('click', function () {
+                    if (selectedRowIndx == null) {
+                        return;
+                    }
+                    $("#servicegrid").pqGrid("deleteRow", { rowIndx: selectedRowIndx });
+                    selectedRowIndx = null;
+                });
+
+                $('#btnAddItems').on('click',
+                    function () {
+
+                        ClosePopupWindow("ItemModal");
+                        $("#Itemgrid").pqGrid("reset", { filter: true });
+                        var getData = $("#Itemgrid").pqGrid("option", "dataModel.data");
+                        var selectedItems = jLinq.from(getData).equals("state", true).select();
+                        var dataMGrid = [];
+                        var getMainGridData = $Serviceitemgrid.pqGrid("option", "dataModel.data");
+                        if (getMainGridData != null) {
+                            $.each(getMainGridData, function (key, value) {
+                                var grdData = {
+                                    'ItemId': value.ItemId,
+                                    'ItemName': value.ItemName,
+                                    'Code': value.Code,
+                                    'ItemDescription': value.ItemDescription,
+                                    'ItemQty': value.ItemQty
+                                };
+                                dataMGrid.push(grdData);
+                            });
+                        }
+
+
+                        $.each(selectedItems,
+                            function (key, value) {
+                                var grdData = {
+                                    'ItemId': value.ID,
+                                    'ItemName': value.Name,
+                                    'Code': value.Code,
+                                    'ItemDescription': value.DescriptiveName
+                                };
+                                dataMGrid.push(grdData);
+                            });
+                        $Serviceitemgrid.pqGrid("option", "dataModel.data", dataMGrid);
+                        $Serviceitemgrid.pqGrid("refreshDataAndView");
+                    });
+            });
+
+    });
+    function SaveItemTypeMapping(StoreID) {
+        let categoryGrid = $CategoryGrid.pqGrid("option", "dataModel.data");
+        let selectedItems = [];
+        for (let i = 0; i < categoryGrid.length; i++) {
+            let obj = { ItemTypeID: categoryGrid[i].ID, StoreID: StoreID };
+            categoryGrid[i].BudgetCost > 0 ? obj.Select = true : obj.Select = false;
+            selectedItems.push(obj);
+        }
+        var griditems = JSON.stringify(selectedItems);
+        $.ajax(
+            {
+                type: "POST", //HTTP POST Method
+                traditional: true,
+                contentType: 'application/json; charset=utf-8',
+                url: '/StorewiseItemTypeMapping/SaveStorewiseItemType', // Controller/View
+                data: griditems,
+                success: function (msg) {
+                    if (msg.success) {
+                        var fileSaveMsg = "";
+                        try {
+                            SaveScandoc("files", StoreID, "Master", "StoreMaster");
+                        } catch (err) {
+                            fileSaveMsg = "But failed to save attached files."
+                        }
+                        finally {
+                            ShowAlert("success", "Record Saved successfully.\n" + fileSaveMsg);
+                        }
+                        ClearForm();
+                    }
+                    else {
+                        ShowAlert("error", msg.Message);
+                    }
+                    ClearForm();
+                },
+                error: function (jqXHR, exception) {
+                    ShowAlert("error", "No Record Found");
+                }
+            });
+    }
+    function closeModal() {
+        $("#SearchGridModal").modal('hide');
+    }
+
+    $(document).ready(function () {
+        colProjectTCGRid = [
+            {
+                dataIndx: "Select", maxWidth: 25,
+                minWidth: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                editor: false, dataType: 'bool',
+                title: "<input type='checkbox' />",
+                cb: { select: true, all: false, header: true }
+            },
+            { dataIndx: "ProjectTCID", dataType: "integer", editable: false, hidden: true },
+            {
+                title: "Code", dataIndx: "ProjectTCCode", width: '37%', dataType: "string", editable: false,
+                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            },
+            {
+                title: "Desc", dataIndx: "ProjectTCDesc", width: '60%', dataType: "string", editable: false,
+                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            },
+        ];
+
+        dataProjectTCGRid = {
+            location: 'local',
+            sorting: 'local',
+            paging: 'local',
+            dataType: 'JSON'
+        };
+
+        setProjectTCGRid = {
+            width: '100%',
+            height: "100%-30",
+            sortable: false,
+            numberCell: { show: false },
+            filterModel: { on: true, mode: "AND", header: true },
+            scrollModel: { autoFit: true },
+            selectionModel: { type: 'row' },
+            hoverMode: 'cell',
+            editor: { type: 'textbox' },
+            showTop: false,
+            resizable: true,
+            editModel: {
+                saveKey: $.ui.keyCode.ENTER
+            },
+            draggable: false,
+            wrap: false,
+            colModel: colProjectTCGRid,
+            dataModel: dataProjectTCGRid,
+        };
+
+        $ProjectTCGrid = $("#projectTCGrid").pqGrid(setProjectTCGRid);
+    });
+    $('#btnAddProjectTC').on('click', function () {
+        $("#ProjectTCModal")
+            .dialog({
+                height: 500,
+                width: 700,
+                modal: true,
+                open: function (evt, ui) {
+                    let data = $("#projectTCGrid").pqGrid("option", "dataModel.data");
+                    // Sort the data using the custom sorting function
+                    data.sort(sortDataByState);
+                    $ProjectTCGrid.pqGrid("option", "dataModel.data", data);
+                    $ProjectTCGrid.pqGrid("refreshDataAndView");
+                },
+                close: function (event, ui) {
+                },
+                show: {
+                    effect: "blind",
+                    duration: 500
+                }
+            });
+
+    });
+    function sortDataByState(a, b) {
+        if (a.Select === true && b.Select === false) {
+            return -1;
+        }
+        else if (a.Select === false && b.Select === true) {
+            return 1;
+        }
+        else {
+            return 0;
+        }
+    }
+
+    loadProjectTCGridData(0);
+    function loadProjectTCGridData(searchStoreId) {
+        $.ajax({
+            type: "GET",
+            url: "/StoreMaster/GetStorewiseProjectTC/",
+            data: { StoreId: searchStoreId },
+            datatype: "Json",
+            success: function (response) {
+                ClearParamGrid("projectTCGrid");
+                $ProjectTCGrid.pqGrid("option", "dataModel.data", response.records);
+                $ProjectTCGrid.pqGrid("refreshDataAndView");
+            }
+        });
+    }
+
+    $("#btnSearch").on('click', function () {
+        loadData();
+        $("#SearchGridModal").modal('show');
+    });
+    //*******************************************************new 2024
+    function ClearForm() {
+        $("#ID").val(""),
+            $("#Code").val(""),
+            $("#Name").val(""),
+            $("#ddlClient").val(""),
+            $("#Description").val(""),
+            $("#ProjectBudget").val(""),
+            $("#ClientPoNo").val(""),
+            $(".datepicker").datepicker().datepicker("setDate", new Date());
+            ClearParamGrid("servicegrid");
+        //ClearParamGrid("CategoryGrid");
+        loadData();
+        loadProjectTCGridData(0);
+        desableFields(true);
+        $("#btnAdd").prop('disabled', false);
+        $("#preApproveImg").empty(); $("#appendImg").empty(); $("#files").val(null);
+    }
+    $('#btnreset').on('click', function () {
+        ClearForm();
+    });
+    $("#Code").keyup(function () {
+        $("#Name").val($("#Code").val());
+        $("#Description").val($("#Code").val());
+    });
+    desableFields(true);
+    function desableFields(state) {
+        $("#Code").prop('disabled', state);
+        $("#Name").prop('disabled', state);
+        $("#ProjectBudget").prop('disabled', state);
+        $("#ddlClient").prop('disabled', state);
+        $("#Description").prop('disabled', state);
+        $("#ClientPoNo").prop('disabled', state);
+        $("#StartDate").prop('disabled', state);
+        $("#DueDate").prop('disabled', state);
+    }
+
+
+    // on upload of Image and Video this function run
+    var fileTypes = ['jpg', 'jpeg', 'png', 'pdf'];
+    $(document).on("change", '.uploadup', function (z) {
+        $("#preApproveImg").empty();
+        let Img = $("#files").get(0).files;
+        uploadImg(Img, 'preApproveImg');
+    });
+
+    $(document).on("click", '.imgclick', function (e) {
+        let name = e.currentTarget.getAttribute("name");
+        let files = $("#files").get(0).files;
+        for (f = 0; f < files.length; f++) {
+            if (files.item(f).name == name) {
+                imagefile = $("#files").get(0).files[f];
+                imagefile_url = URL.createObjectURL(imagefile);
+                window.open(imagefile_url, '_blank');
+            }
+        }
+    });
+
+    //************View uploaded Images in List ******//
+    function viewAttachments(Id) {
+        $.ajax({
+            type: "GET",
+            url: "/ScanDoc/ScanDoc/GetScanDocUrl",
+            data: { FileId: Id, ScanDocSubTypeId: 22 },
+            datatype: "Json",
+            success: function (data) {
+                if (data != '') {
+                    $.each(data, function (key, value) {
+                        DisplayUploadedDocuments("appendImg", value, appSetting, 22);
+                    });
+                }
+            }
+        });
+    }
+
+    $("#btnShowAttachments").click(function () {
+        let storeId = $("#ID").val();
+        if ($("#ID").val() === "" || $("#ID").val() == undefined) {
+            ShowAlert("error", "Please select Project first");
+            return;
+        }
+        else {
+
+            $.ajax({
+                type: "GET",
+                url: "/ScanDoc/ScanDoc/GetScanDocUrl",
+                data: { FileId: storeId, ScanDocSubTypeId: 22 },
+                datatype: "Json",
+                success: function (data) {
+                    if (data != '') {
+                        ViewSlideShow(data, 'slideshow-container', appSetting);
+                    }
+                    else {
+                        ShowAlert("error", "No Documents Found");
+                    }
+                }
+            });
+        }
+    })
+
+
+    let ImgIndex = 1;
+
+    function plusSlides(n) {
+        showGallary(ImgIndex += n);
+    }
+    function showGallary(n) {
+        let i;
+        let ImgSlides = document.getElementsByClassName("imgSlide");
+        let video = document.getElementById("video");
+        if (n > ImgSlides.length) { ImgIndex = 1 }
+        if (n < 1) { ImgIndex = ImgSlides.length }
+        for (i = 0; i < ImgSlides.length; i++) {
+            ImgSlides[i].style.display = "none";
+        }
+        ImgSlides[ImgIndex - 1].style.display = "block";
+        if (video) {
+            video.play();
+        }
+    }
+
+    function closeImageModal() {
+        $("#slideshow-container").empty();
+        $("#ViewModal").css('display', 'none');
+    }
+
+//***********Close SlideShow Modal*********************////
+
+</script>

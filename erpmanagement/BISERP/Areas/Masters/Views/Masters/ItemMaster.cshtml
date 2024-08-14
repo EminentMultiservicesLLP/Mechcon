@@ -1,0 +1,842 @@
+﻿@model BISERP.Areas.Masters.Models.ItemMasterModel
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <h5 class="page-header orangeDottedBottomBorder">Item Master</h5>
+    <fieldset>
+
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-groupingBoder">
+                    <div class="panel-heading">
+                        <div class="panel-title">
+                            <label id="lblItemEntryHeader">Item Entry Form</label>
+                        </div>
+                    </div>
+                    <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                        <div class="panel-body">
+                            <div>
+                                <div class="submit-row">
+                                    <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                                    <button type="button" class="btn btn-primary" id="btnReset">Reset</button>
+                                    <button type="button" class="btn btn-info" id="btnSearch">Find</button>
+                                    @*<button type="button" class="btn btn-success">Report</button>*@
+                                </div>
+                            </div>
+
+                            <br>
+                            <fieldset class="fieldsetCustom">
+                                <legend class="legendCustom">Create Item</legend>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        @Html.LabelFor(model => model.Name, new { @class = "required" })
+                                        @Html.TextAreaFor(model => model.Name, new { @class = "form-control", style = "height: 82px;" })
+                                        @Html.ValidationMessageFor(model => model.Name)
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.LabelFor(model => model.ItemTypeID, new { @class = "required" })
+                                        @Html.DropDownList("ddlItemtype", new SelectList(string.Empty, "Value", "Text"), "Select ItemType", new { @class = "wrapperdropdown-content form-control" })
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.LabelFor(model => model.HSNCode, new { @class = "required" })
+                                        @Html.TextBoxFor(model => model.HSNCode, new { @class = "form-control" })
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.LabelFor(model => model.UnitID, new { @class = "required" })
+                                        @Html.DropDownList("ddlUnit", new SelectList(string.Empty, "Value", "Text"), "Select Unit", new { @class = "wrapperdropdown-content form-control" })
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.LabelFor(model => model.TaxRate, new { @class = "required" })
+                                        @Html.TextBoxFor(model => model.TaxRate, new { @class = "form-control" })
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.LabelFor(model => model.Make, new { @class = "required" })
+                                        @Html.TextBoxFor(model => model.Make, new { @class = "form-control" })
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.LabelFor(model => model.MaterialOfConstruct, new { @class = "required" })
+                                        @Html.TextBoxFor(model => model.MaterialOfConstruct, new { @class = "form-control" })
+                                    </div>
+                                    <div class="col-sm-2" hidden>
+                                        @Html.LabelFor(model => model.OPBalance, new { @class = "required" })
+                                        @Html.TextBoxFor(model => model.OPBalance, new { @class = "form-control" })
+                                    </div>
+                                    <div class="col-sm-2" hidden>
+                                        @Html.LabelFor(model => model.Code, new { @class = "required" })
+                                        @Html.TextBoxFor(model => model.Code, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.Code)
+                                        @Html.HiddenFor(model => model.ID)
+                                    </div>
+                                    <div class="col-sm-2" hidden>
+                                        @Html.LabelFor(model => model.ItemNumber, new { @class = "required" })
+                                        @Html.TextBoxFor(model => model.ItemNumber, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="row" hidden>
+                                    <div class="col-sm-6">
+                                        @Html.LabelFor(model => model.DescriptiveName, new { @class = "required" })
+                                        @Html.TextAreaFor(model => model.DescriptiveName, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.DescriptiveName)
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <div class="row">
+                                <div class="col-sm-6" hidden>
+                                    <fieldset class="fieldsetCustom">
+                                        <legend class="legendCustom">Miscellaneous Information</legend>
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                @Html.LabelFor(model => model.PackSizeID, new { @class = "required" })
+                                                @Html.DropDownList("ddlItemPackSize", new SelectList(string.Empty, "Value", "Text"), new { @class = "wrapperdropdown-content form-control" })
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                </div>
+                                <div class="col-sm-6">
+                                    <fieldset class="fieldsetCustom">
+                                        <legend class="legendCustom">Settings</legend>
+                                        <div class="row">
+                                            @*<div class="col-sm-2">
+                                                    @Html.CheckBoxFor(model => model.ExpiryDtRequired)
+                                                    @Html.LabelFor(model => model.ExpiryDtRequired)
+
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    @Html.CheckBoxFor(model => model.BatchRequired)
+                                                    @Html.LabelFor(model => model.BatchRequired)
+
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    @Html.CheckBoxFor(model => model.NoMrp)
+                                                    @Html.LabelFor(model => model.NoMrp)
+                                                    &nbsp;&nbsp;
+                                                </div>*@
+
+                                            <div class="col-sm-6">
+                                                @Html.CheckBoxFor(model => model.Service)
+                                                @Html.Label("Selling Item")
+                                                @*@Html.LabelFor(model => model.Service)*@
+                                                &nbsp;&nbsp;
+                                            </div>
+                                            <div class="col-sm-6">
+                                                @Html.CheckBoxFor(model => model.PackingList)
+                                                @Html.Label("PackingList Item")
+                                                @*@Html.LabelFor(model => model.Service)*@
+                                                &nbsp;&nbsp;
+                                            </div>
+                                            <div class="col-sm-6" hidden>
+                                                @Html.CheckBoxFor(model => model.ScrapItem)
+                                                @Html.LabelFor(model => model.ScrapItem)
+                                                &nbsp;&nbsp;
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            @*<div class="col-sm-2">
+                                                    @Html.CheckBoxFor(model => model.InventoryItem)
+                                                    @Html.LabelFor(model => model.InventoryItem)
+                                                    &nbsp;&nbsp;
+                                                </div>*@
+                                            <div class="col-sm-6">
+                                                @Html.CheckBoxFor(model => model.PurchaseItem)
+                                                @Html.LabelFor(model => model.PurchaseItem)
+                                                &nbsp;&nbsp;
+                                            </div>
+                                            <div class="col-sm-6">
+                                                @Html.CheckBoxFor(model => model.Deactive)
+                                                @Html.LabelFor(model => model.Deactive)
+                                                @Html.ValidationMessageFor(model => model.Deactive)
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+
+    @* new addition 2024 *@
+    <div id="SearchGridModal" class="modal fade" role="dialog" data-backdrop="false">
+        <div class="modal-dialog find-search-grid-modal">
+            <div class="modal-content gridmodal-content">
+                <div class="modal-header gridmodal-header">
+                    <button type="button" class="close" onclick="closeModal()">&times;</button>
+                    <h4 class="modal-title">Item Details</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="fill">
+                        <div id="itemGrid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @********@
+
+    @*<div id="SupplierModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Select Supplier</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div id="AllSuppliergrid"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" id="btnAddSupplier">Add</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>*@
+    @*<div id="ItemModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Select Items</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div id="AllItemgrid"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" id="btnAddItems">Add</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>*@
+}
+
+<script type="text/javascript">
+    var $Suppliergrid;
+    var $AllSuppliergrid;
+    //var $Itemgrid;
+    $(".datepicker").datepicker({
+        showOn: "button",
+        buttonImage: "/Content/images/calendar.gif",
+        buttonImageOnly: true,
+        buttonText: "Select date",
+        dateFormat: "dd-MM-yy"
+    }).datepicker("setDate", new Date());
+    $("#anim").change(function () {
+        $(".datepicker").datepicker("option", "showAnim", "fadeIn");
+    });
+
+    $('#ddlItemtype').change(function () {
+        GetCode();
+    });
+    $("#Service").prop('checked', true);
+    $("#PackingList").prop('checked', true);
+    $("#PurchaseItem").prop('checked', true);
+
+    function GetCode() {
+        $('#Code').empty().html("");
+        var itemtypeid = $("#ddlItemtype").val();
+        $.ajax({
+            type: "GET",
+            url: "/ItemMaster/GetItemCode",
+            data: { itemtypeid: itemtypeid },
+            datatype: "Json",
+            async: true,
+            success: function (data) {
+                $("#Code").val(data[0].Code);
+            }
+        });
+    }
+
+    function Clearform() {
+        $("#ID").val(""); $("#Name").val(""); $("#Code").val(""); $("#OPBalance").val("");$("#DescriptiveName").val(""); $("#ddlItemtype").val(""); $("#ddlUnit").val(""); $("#ddlItemPackSize").val(1); $("#MarkupPercentage").val(""); $("#TaxOnPurchase").val("");
+        $("#PurchaseRate").val(""); $("#TaxOnSale").val(""); $("#MRP").val(""); $("#ExpiryDtRequired").prop('checked', false); $("#BatchRequired").prop('checked', false); $("#NoMrp").prop('checked', false);
+        $("#Asset").prop('checked', false); $("#Deactive").prop('checked', false); $("#VatOn").val(""); $("#Service").prop('checked', true), $("#PackingList").prop('checked', true), $("#SaleItem").prop('checked', false), $("#ScrapItem").prop('checked', false),
+        $("#ddlItemgroup").val("0"); $("#HSNCode").val(""), $("#InventoryItem").prop('checked', false), $("#PurchaseItem").prop('checked', true), $("#ItemNumber").val("0"), $("#ItemCategory").val(""),
+            $("#TaxRate").val("0"); $("#Make").val(""); $("#MaterialOfConstruct").val("");
+
+        //$("#IsRoutineItem").prop('checked', false); $("#AutoConsumed").prop('checked', false); $("#VENDORFLAG").prop('checked', false); $("#UnIndentItem").prop('checked', false);
+        //$("#SeasonDate").datepicker().datepicker("setDate", new Date());
+        //$("#StandardRate").val("");
+        $("#grid").jsGrid("itemGrid");
+        ClearParamGrid("Suppliergrid");
+        //ClearParamGrid("Itmgrid");
+        $("#Deactive").attr("disabled", true);
+        $("#ExpiryDtRequired").prop('checked', true);
+        $("#BatchRequired").prop('checked', true);
+    }
+    function LoadSuppliergrid() {
+        $.ajax({
+            type: "GET",
+            url: "/SupplierMaster/ActiveSupplier",
+            datatype: "Json",
+            success: function (data) {
+                $AllSuppliergrid.pqGrid("option", "dataModel.data", data.records);
+                $AllSuppliergrid.pqGrid("refreshDataAndView");
+            }
+        });
+    }
+    //function LoadItemgrid() {
+    //    $.ajax({
+    //        type: "GET",
+    //        url: "/ItemMaster/NonVendorItemMasters",
+    //        datatype: "Json",
+    //        success: function (data) {
+
+    //            $AllItemgrid.pqGrid("option", "dataModel.data", data);
+    //            $AllItemgrid.pqGrid("refreshDataAndView");
+    //        }
+    //    });
+    //}
+    var grid;
+
+    $(document).ready(function () {
+        //$("#ExpiryDtRequired").prop('checked', true);
+        //$("#BatchRequired").prop('checked', true);
+        $("#Code").prop('disabled', true);
+
+        $.ajax({
+            type: "GET",
+            url: "/Master/AllItemPackSize",
+            datatype: "Json",
+            success: function (data) {
+                $.each(data, function (index, value) {
+                    $('#ddlItemPackSize').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                });
+            }
+        });
+
+        $.ajax({
+            type: "GET",
+            url: "/Master/AllItemType",
+            datatype: "Json",
+            success: function (data) {
+                $.each(data, function (index, value) {
+                    $('#ddlItemtype').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                });
+            }
+        });
+
+        $.ajax({
+            type: "GET",
+            url: "/Master/AllActiveUnit",
+            datatype: "Json",
+            success: function (data) {
+                $.each(data, function (index, value) {
+                    $('#ddlUnit').append('<option value="' + value.ID + '">' + value.UnitName + '</option>');
+                });
+            }
+        });
+        //$.ajax({
+        //    type: "GET",
+        //    url: "/Master/AllActiveItemGroup",
+        //    datatype: "Json",
+        //    success: function (data) {
+        //        $.each(data, function (index, value) {
+        //            $('#ddlItemgroup').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+        //        });
+        //    }
+        //});
+        //$("#Code").keyup(function () {
+        //    var code = $("#Code").val();
+        //    $("#DescriptiveName").val(code);
+        //});
+        $("#MarkupPercentage").keyup(function () {
+            if ($("#MarkupPercentage").val() == "" || $("#MarkupPercentage").val() == undefined) {
+                $("#MRP").prop('disabled', false);
+            }
+            else {
+                $("#MRP").prop('disabled', true);
+                var markupPer = $("#MarkupPercentage").val();
+                var purchaseRate = $("#PurchaseRate").val();
+                if (purchaseRate == 0 || purchaseRate == undefined) purchaseRate = 0;
+                var mrp = parseFloat(purchaseRate) + (purchaseRate * markupPer) / 100;
+                $("#MRP").val(mrp);
+            }
+        });
+        $("#PurchaseRate").keyup(function () {
+            if ($("#MarkupPercentage").val() == "" || $("#MarkupPercentage").val() == undefined) {
+            }
+            else {
+                var markupPer = $("#MarkupPercentage").val();
+                var purchaseRate = $("#PurchaseRate").val();
+                if (purchaseRate == 0 || purchaseRate == undefined) purchaseRate = 0;
+                var mrp = parseFloat(purchaseRate) + (purchaseRate * markupPer) / 100;
+                $("#MRP").val(mrp);
+            }
+        });
+
+        //$('#IsRoutineItem').change(function () {
+        //    if ($(this).is(':checked')) {
+        //        $("#SeasonDate").prop('disabled', false);
+        //    } else {
+        //        $("#SeasonDate").prop('disabled', true);
+        //    }
+        //});
+    });
+
+
+    //$(document).ready(function () {
+    function loadItemData() {
+        grid = $("#itemGrid").jsGrid({
+            width: "100%",
+            height: "400px",
+            filtering: true, //will display top 1st row as filter
+            selecting: true,
+            sorting: true,
+            //inserting: true, // false will not allow inserting new entry
+            //editing: true,// false will not allow exisiting data entry
+            //autoload: true, // this statement require to load data using ajax call
+            paging: true,
+            pageSize: 100,
+
+            controller: {
+                loadData: function (filter) {
+                    var d = $.Deferred();
+                    $.ajax({
+                        type: 'GET',
+                        @*url: '@Url.Action("AllItemMasters","ItemMaster")',*@
+                        url: "/ItemMaster/AllItemMasters",
+                        dataType: "json",
+                        data: { SearchName: filter.Name, SearchCode: filter.Code, SearchHSNCode: filter.HSNCode, Searchitemtypename: filter.itemtypename },
+                        success: function (data) {
+                            if (data.success) {
+                                d.resolve(data.records);
+                            } else {
+                                ShowAlert("error", data.Massage);
+                                $(".jsgrid-load-panel").hide();
+                                }
+                        },
+                        error: function (e) {
+                            ShowAlert("error", "Server error! Please Contact Administrator");
+                            d.resolve();
+                        }
+                    });
+                    return d.promise();
+                }
+            },
+            fields: [
+                { name: "ID", visible: false, width: 0 },
+                { name: "Code", title: "Code", type: "text" ,width:20},
+                { name: "Name", title: "Name", type: "text", width: 50 },
+                { name: "DescriptiveName", title: "Descriptive Name", type: "text", filtering: false, width: 50, visible: false },
+                { name: "ItemTypeID", visible: false, width: 0 },               
+                { name: "itemtypename", title: "Item type", type: "text",width:50}           
+
+                
+            ],
+            ///********** Row Selection Event you can use in suupplier***********/
+            rowClick: async function (args) {
+                //$("#lblItemEntryHeader").val("Selected Item Details");
+                $(".jsgrid-load-panel").show();
+                let rowData = args.item;
+                let itemDetails = await getSelectedItemDetails([{ ID: rowData.ID }],0);
+                let data = itemDetails[0];
+                $(".jsgrid-load-panel").hide();
+                $("#ID").val(data.ID);
+                $("#Code").val(data.Code);
+                $("#Name").val(data.Name);
+                $("#HSNCode").val(data.HSNCode);
+                $("#OPBalance").val(data.OPBalance);
+                $("#DescriptiveName").val(data.DescriptiveName);
+                $("#ddlUnit").val(data.UnitID);
+                $("#ddlItemtype").val(data.ItemTypeID);
+                $("#ddlItemgroup").val(data.ItemGroupID);
+                $("#ddlItemPackSize").val(data.PackSizeID);
+                $("#VatOn").val(data.VatOn);
+                $("#MarkupPercentage").val(data.MarkupPercentage);
+                $("#TaxOnPurchase").val(data.TaxOnPurchase);
+                $("#PurchaseRate").val(data.PurchaseRate);
+                $("#TaxOnSale").val(data.TaxOnSale);
+                $("#MRP").val(data.MRP);
+                $("#ExpiryDtRequired").prop('checked', data.ExpiryDtRequired);
+                $("#BatchRequired").prop('checked', data.BatchRequired);
+                $("#NoMrp").prop('checked', data.NoMrp);
+                $("#Asset").prop('checked', data.Asset);
+                $("#Service").prop('checked', data.Service);
+                $("#PackingList").prop('checked', data.PackingList);
+                //$("#AutoConsumed").prop('checked', data.AutoConsumed);
+                //$("#IsRoutineItem").prop('checked', data.IsRoutineItem);
+                //$("#VENDORFLAG").prop('checked', data.VENDORFLAG);
+                //$("#UnIndentItem").prop('checked', data.UnIndentItem);
+                //if ($("#IsRoutineItem").is(':checked')) {
+                //    $("#SeasonDate").prop('disabled', false);
+                //    $("#SeasonDate").val(data.strSeasonDate);
+                //} else {
+                //    $("#SeasonDate").prop('disabled', true);
+                //    $("#SeasonDate").val("");
+                //}
+                //$("#StandardRate").prop('checked', data.StandardRate);
+                $("#ItemNumber").val(data.ItemNumber);
+                $("#ItemCategory").val(data.ItemCategory);
+                $("#TaxRate").val(data.TaxRate);
+                $("#Make").val(data.Make);
+                $("#MaterialOfConstruct").val(data.MaterialOfConstruct);
+                $("#ScrapItem").prop('checked', data.ScrapItem);
+                $("#SaleItem").prop('checked', data.SaleItem);
+                $("#InventoryItem").prop('checked', data.InventoryItem);
+                $("#PurchaseItem").prop('checked', data.PurchaseItem);
+
+
+
+                $("#Deactive").prop('checked', data.Deactive);
+                $("#Deactive").attr("disabled", false);
+                ClearParamGrid("Suppliergrid");
+                //ClearParamGrid("Itmgrid");
+                var dataMGrid = [];
+                $.ajax({
+                    type: "GET",
+                    url: "/ItemMaster/ItemSuppliers/",
+                    data: { ItemId: data.ID },
+                    datatype: "Json",
+                    success: function (data) {
+                        $.each(data.suppliers, function (index, value) {
+                            var grdData = {
+                                'ID': value.ID,'Name': value.Name,'Code': value.Code,
+                            }
+                            dataMGrid.push(grdData);
+                        });
+                        $Suppliergrid.pqGrid("option", "dataModel.data", dataMGrid);
+                        $Suppliergrid.pqGrid("refreshDataAndView");
+                        dataMGrid = [];
+                        //$.each(data.vendorItems, function (index, value) {
+                        //    var grdData = {
+                        //        'ID': value.ID, 'Name': value.Name, 'Code': value.Code,
+                        //    }
+                        //    dataMGrid.push(grdData);
+                        //});
+                        //$Itemgrid.pqGrid("option", "dataModel.data", dataMGrid);
+                        //$Itemgrid.pqGrid("refreshDataAndView");
+                    }
+                });
+                $("#SearchGridModal").modal('hide');                                                                    // new addition 2024
+            }
+        });
+    }
+
+    //*******************************************************new 2024
+    function closeModal() {
+        $("#SearchGridModal").modal('hide');
+    }
+
+    $("#btnSearch").on('click', function () {
+        loadItemData();
+        $("#itemGrid").jsGrid("loadData");  
+        $("#SearchGridModal").modal('show');
+    });
+    $('#btnReset').on('click', function () {
+        Clearform();
+    });
+    //*************************************************
+
+    $(document).ready(function () {
+        $("#btnSave").click(function () {
+            if ($("#Code").val() == "") {
+                ShowAlert("error", "code is missing! Please enter the code");
+                return;
+            }
+            if ($("#Name").val() == "") {
+                ShowAlert("error", "Name is missing! Please enter the Name");
+                return;
+            }
+            if ($("#DescriptiveName").val() == "") {
+                ShowAlert("error", "DescriptiveName is missing! Please enter the DescriptiveName");
+                return;
+            }
+            if ($("#ddlItemtype").val() == "") {
+                ShowAlert("error", "Itemtype is missing! Please Select Itemtype");
+                return;
+            }
+            if ($("#HSNCode").val() == "") {
+                ShowAlert("error", "HSN/SACCode is missing!");
+                return;
+            }
+            //if ($("#ddlItemgroup").val() == "") {
+            //    ShowAlert("error", "ItemGroup is missing! Please Select Itemtype");
+            //    return;
+            //}
+            if ($("#ddlItemPackSize").val() == "") {
+                ShowAlert("error", "ItemPackSize is missing! Please Select ItemPackSize");
+                return;
+            }
+            if ($("#ddlUnit").val() == "") {
+                ShowAlert("error", "Unit is missing! Please Select Unit");
+                return;
+            }
+            //if ($("#IsRoutineItem").is(':checked')) {
+            //    if ($("#SeasonDate").val() == "") {
+            //        ShowAlert("error", "Please Enter Season Start Date");
+            //        return;
+            //    }
+            //}
+            //if ($("#ItemNumber").val() == "") {                                                                 // new addition2024
+            //    ShowAlert("error", "Item Number is missing! Please enter the Number");
+            //    return;
+            //}
+            //if ($("#ItemCategory").val() == "") {
+            //    ShowAlert("error", "Item Category is missing! Please enter the Category");
+            //    return;
+            //}
+            if ($("#TaxRate").val() == "") {
+                ShowAlert("error", "Tax Rate is missing! Please enter the Tax Rate");
+                return;
+            }                                                                                                           ///******///
+
+            var gridData = $Suppliergrid.pqGrid("option", "dataModel.data");
+            //var vendorItems = $Itemgrid.pqGrid("option", "dataModel.data");
+
+            var items = JSON.stringify({ //Passing data
+                ID: $("#ID").val(), //Reading text box values using Jquery
+                Name: $("#Name").val(),
+                Code: $("#Code").val(),
+                OPBalance: $("#OPBalance").val(),
+                DescriptiveName: $("#DescriptiveName").val(),
+                UnitID: $("#ddlUnit").val(),
+                ItemTypeID: $("#ddlItemtype").val(),
+                ItemGroupID: $("#ddlItemgroup").val(),
+                PackSizeID: 1 /*$("#ddlItemPackSize").val()*/,
+                VatOn: $("#VatOn").text().trim(),
+                MarkupPercentage: $("#MarkupPercentage").val(),
+                TaxOnPurchase: $("#TaxOnPurchase").val(),
+                PurchaseRate: $("#PurchaseRate").val(),
+                TaxOnSale: $("#TaxOnSale").val(),
+                //StandardRate:$("#StandardRate").val(),
+                MRP: $("#MRP").val(),
+                ExpiryDtRequired: $("#ExpiryDtRequired").prop('checked'),
+                Service: $("#Service").prop('checked'),
+                PackingList: $("#PackingList").prop('checked'),
+                BatchRequired: $("#BatchRequired").prop('checked'),
+                NoMrp: $("#NoMrp").prop('checked'),
+                Asset: $("#Asset").prop('checked'),
+                HSNCode: $("#HSNCode").val(),
+                //AutoConsumed: $("#AutoConsumed").prop('checked'),
+                //IsRoutineItem: $("#IsRoutineItem").prop('checked'),
+                //SeasonDate: $("#SeasonDate").val(),
+                //IsRoutineItem: $("#IsRoutineItem").prop('checked'),
+                //VENDORFLAG: $("#VENDORFLAG").prop('checked'),
+                //UnIndentItem: $("#UnIndentItem").prop('checked'),
+                Deactive: $("#Deactive").prop('checked'),
+                suppliers: gridData,
+                //,vendorItems: vendorItems
+                ItemNumber: $("#ItemNumber").val(),                                         //newAddition 2024
+                ItemCategory: $("#ItemCategory").val(),
+                TaxRate: $("#TaxRate").val(),
+                Make: $("#Make").val(),
+                MaterialOfConstruct: $("#MaterialOfConstruct").val(),
+                ScrapItem: $("#ScrapItem").prop('checked'),
+                SaleItem: $("#SaleItem").prop('checked'),
+                InventoryItem: $("#InventoryItem").prop('checked'),
+                PurchaseItem: $("#PurchaseItem").prop('checked')
+            });
+            $.ajax(
+            {
+                type: "POST", //HTTP POST Method
+                traditional: true,
+                contentType: 'application/json; charset=utf-8',
+                url: '/ItemMaster/SaveItemMaster', // Controller/View
+                data: items,
+                success: function (msg) {
+                    if (msg.success) {
+                        Clearform();
+                        ShowAlert("success", "Item added successfully to system.");
+                    }
+                    else {
+                        ShowAlert("error", msg.Message);
+                    }
+                }
+            });
+        });
+    });
+
+    $(document).ready(function () {
+        var dataSupplierM = { location: "local", sorting: 'local' }
+        var colSupplierM = [
+                { title: "", dataIndx: "ID", dataType: "integer", hidden: true },
+                { title: "Code", dataIndx: "Code", width: 100 },
+                { title: "Supplier Name", dataIndx: "Name", width: 200 }
+        ];
+        var SupplierM = {
+            width: '60%',
+            height: 300,
+            sortable: false,
+            numberCell: { show: false },
+            hoverMode: 'cell',
+            showTop: false,
+            resizable: true,
+            scrollModel: { autoFit: true },
+            editable: false,
+            selectionModel: { type: 'row', mode: 'single' },
+            colModel: colSupplierM,
+            dataModel: dataSupplierM,
+            pageModel: { type: "local", rPP: 20 },
+        };
+        $Suppliergrid = $("#Suppliergrid").pqGrid(SupplierM);
+    });
+
+    $(document).ready(function () {
+        var dataM = { location: "local", sorting: 'local' }
+        var colM = [
+                {
+                    dataIndx: "state", Width: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                    editor: false, dataType: 'bool',
+                    cb: { select: true,all: false,header: true}
+                },
+                { title: "", dataIndx: "ID", dataType: "integer", hidden: true },
+                { title: "Code", dataIndx: "Code", width: 100, editable: false, filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } },
+                { title: "Supplier Name", dataIndx: "Name", width: 400, editable: false, filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } }
+        ];
+        var SuppM = {
+            width: '100%',
+            height: 300,
+            sortable: false,
+            numberCell: { show: false },
+            hoverMode: 'cell',
+            showTop: false,
+            resizable: true,
+            editable: true,
+            filterModel: { on: true, mode: "AND", header: true },
+            colModel: colM,
+            dataModel: dataM,
+            pageModel: { type: "local", rPP: 20 },
+        };
+        $AllSuppliergrid = $("#AllSuppliergrid").pqGrid(SuppM);
+        LoadSuppliergrid();
+    });
+
+    //$(document).ready(function () {
+    //    var dataIM = { location: "local", sorting: 'local' }
+    //    var colIM = [
+    //            { title: "", dataIndx: "ID", dataType: "integer", hidden: true },
+    //            { title: "Code", dataIndx: "Code", width: 200, editable: false },
+    //            { title: "Item Name", dataIndx: "Name", width: 300, editable: false }
+    //    ];
+    //    var ItemModel = {
+    //        width: '100%',
+    //        height: 300,
+    //        sortable: false,
+    //        numberCell: { show: false },
+    //        hoverMode: 'cell',
+    //        showTop: false,
+    //        resizable: true,
+    //        scrollModel: { autoFit: true },
+    //        selectionModel: { type: 'row', mode: 'single' },
+    //        colModel: colIM,
+    //        dataModel: dataIM,
+    //        pageModel: { type: "local", rPP: 20 },
+    //    };
+    //    $  = $("#Itmgrid").pqGrid(ItemModel);
+    //});
+    //$(document).ready(function () {
+    //    var dataM = { location: "local", sorting: 'local' }
+    //    var colM = [
+    //            {
+    //                dataIndx: "state", Width: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+    //                editor: false, dataType: 'bool',
+    //                cb: { select: true, all: false, header: true }
+    //            },
+    //            { title: "", dataIndx: "ID", dataType: "integer", hidden: true },
+    //            { title: "Code", dataIndx: "Code", width: 200, editable: false, filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } },
+    //            { title: "Item Name", dataIndx: "Name", width: 300, editable: false, filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } }
+    //    ];
+    //    var ItemM = {
+    //        width: '100%',
+    //        height: 300,
+    //        sortable: false,
+    //        numberCell: { show: false },
+    //        hoverMode: 'cell',
+    //        showTop: false,
+    //        resizable: true,
+    //        scrollModel: { autoFit: true },
+    //        filterModel: { on: true, mode: "AND", header: true },
+    //        colModel: colM,
+    //        dataModel: dataM,
+    //        pageModel: { type: "local", rPP: 20 },
+    //    };
+    //    $AllItemgrid = $("#AllItemgrid").pqGrid(ItemM);
+    //    LoadItemgrid();
+    //});
+    function getRowIndx() {
+        var arr = $Suppliergrid.pqGrid('selection', { type: 'row', method: 'getSelection' });
+        if (arr && arr.length > 0) {
+            return arr[0].rowIndx;
+        }
+        else {
+            alert("Select a row.");
+            return null;
+        }
+    }
+    //function findRowIndx() {
+    //    var arr = $Itemgrid.pqGrid('selection', { type: 'row', method: 'getSelection' });
+    //    if (arr && arr.length > 0) {
+    //        return arr[0].rowIndx;
+    //    }
+    //    else {
+    //        alert("Select a row.");
+    //        return null;
+    //    }
+    //}
+    $(document).ready(function () {
+        $('#btnViewSupplier').on('click', function () {
+            $("#SupplierModal").modal('toggle');
+        });
+        //$('#btnViewItems').on('click', function () {
+
+        //    $("#ItemModal").modal('toggle');
+        //});
+        $('#btnRemoveSupplier').on('click', function () {
+            var rowIndx = getRowIndx();
+            if (rowIndx == null) {
+                return;
+            }
+            $Suppliergrid.pqGrid("deleteRow", { rowIndx: rowIndx });
+        });
+        //$('#btnRemoveItems').on('click', function () {
+        //    var rowIndx = findRowIndx();
+        //    if (rowIndx == null) {
+        //        return;
+        //    }
+        //    $Itemgrid.pqGrid("deleteRow", { rowIndx: rowIndx });
+        //});
+        $('#btnAddSupplier').on('click', function () {
+            var dataMGrid = [];
+            var getData = $AllSuppliergrid.pqGrid("option", "dataModel.data");
+            var selectedItems = jLinq.from(getData).equals("state", true).select();
+
+            $.each(selectedItems, function (key, value) {
+                var grdData = {
+                    'ID': value.ID, 'Name': value.Name, 'Code': value.Code,
+                }
+                dataMGrid.push(grdData);
+            });
+            $("#SupplierModal").modal('toggle');
+            $Suppliergrid.pqGrid("option", "dataModel.data", dataMGrid);
+            $Suppliergrid.pqGrid("refreshDataAndView");
+        });
+        //$('#btnAddItems').on('click', function () {
+        //    var dataMGrid = [];
+        //    var MaingrdData = $Itemgrid.pqGrid("option", "dataModel.data");
+
+        //    var getData = $AllItemgrid.pqGrid("option", "dataModel.data");
+        //    var selectedItems = jLinq.from(getData).equals("state", true).select();
+
+        //    $.each(MaingrdData, function (key, value) {
+        //        var grdData = {
+        //            'ID': value.ID, 'Name': value.Name, 'Code': value.Code,
+        //        }
+        //        dataMGrid.push(grdData);
+        //    });
+
+        //    $.each(selectedItems, function (key, value) {
+        //        var grdData = {
+        //            'ID': value.ID, 'Name': value.Name, 'Code': value.Code,
+        //        }
+        //        dataMGrid.push(grdData);
+        //    });
+        //    $("#ItemModal").modal('toggle');
+        //    $Itemgrid.pqGrid("option", "dataModel.data", dataMGrid);
+        //    $Itemgrid.pqGrid("refreshDataAndView");
+        //});
+
+    });
+</script>

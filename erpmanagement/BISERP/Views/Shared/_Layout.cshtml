@@ -1,0 +1,214 @@
+﻿@using BISERP.Models.UserMangement
+@model List<MenuUserRightsModel>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MECHCON</title>
+    <link rel='shortcut icon' href='~/Mechcon-Logo.png' type='image/x-icon' />
+    @Styles.Render("~/Content/Bootstrap")
+    @Styles.Render("~/Content/Common")
+    @Scripts.Render("~/bundles/jquery")
+
+    <link href="~/Content/timeout-dialog.css" rel="stylesheet" />
+    <script src="~/Scripts/custom/timeout-dialog.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <div class="ui-theme-settings">
+            <div id="TooltipDemo" class="btn-open-options btn btn-warning">
+                <i class="fa fa-cog fa-w-16 fa-2x"></i>
+            </div>
+            <div class="theme-settings__inner">
+                @{ Html.RenderPartial("~/Views/Partials/ChangeColorSetting_Partial.cshtml"); }
+            </div>
+        </div>
+        <div class="app-main">
+            @{
+                var MenuList = new List<MenuUserRightsModel>();
+                var header = (Session["UserHeaderCss"] != null ? Convert.ToString(Session["UserHeaderCss"]) : "");
+                var sideMenu = (Session["UserSideBarMenuCSS"] != null ? Convert.ToString(Session["UserSideBarMenuCSS"]) : "");
+                MenuList = ((Model == null || Model.Count == 0) ? (Session["UserMenu"] != null ? (Session["UserMenu"] as List<MenuUserRightsModel>) : MenuList) : Model);
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true);
+                <nav class="navbar navbar-fixed-top @header">
+                    <div class="container-fluid">
+                        <div class="navbar-header">
+                            <a class="navbar-brand" href="#"><strong><i id="menu-toggle" style="padding:3px;" class="fa fa-bars"></i> Mechcon Industrial Solutions </strong> </a>
+                        </div>
+                        <div id="navbar" class="navbar-collapse collapse">
+                            <ul class="nav navbar-nav navbar-right">
+                                <li><a href="JavaScript: location.reload(true);">Refresh</a></li>
+                                <li><a class="navMenu" action="ChangePassword" controller="AdminPanel/AdminPanel" href="">Change Password</a></li>
+                                <li><a href="@Url.Action("LogOff", "Account")">Logout</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+                <div class="app-sidebar @sideMenu">
+                    <input type="hidden" id="SideBarMenu" state="" />
+                    <sidebar>
+                        <nav>
+                            <div class="menuSection menuTopSection">
+                                <ul class="nav">
+                                    <li>
+                                        <a class="navMenu" action="Home" controller="Home" href="#">
+                                            <i class="pe-va fa fa-home" title="Home" style="font-size: large; margin-top: -1px;"></i>
+                                            <strong class="nav-label">Home</strong>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            @if (MenuList != null)
+                            {
+                                foreach (var Menu in MenuList.Where(w => (w.ParentMenuId == 0 & w.PageName != "Home")))
+                                {
+                                    <div class='menuSection'>
+                                        <button class='menu-collapse collapsed' type='button' data-toggle='collapse' data-target='#Menu_@Menu.MenuName' aria-expanded='false' aria-controls='collapseExample'>
+                                            <span class='caret'></span> <strong>@Menu.MenuName</strong>
+                                        </button>
+                                        <div class='menuSection formMenu collapse' id='Menu_@Menu.MenuName'>
+                                            @foreach (var SubMenu in MenuList.Where(w => w.ParentMenuId == Menu.MenuId & w.SubMenuId == 0))
+                                            {
+                                                if (SubMenu.IsActionMenu == true)           /*(2 Layers Menu)*/
+                                                {
+                                                    var action = SubMenu.PageName;
+                                                    var controller = Menu.PageName + "/" + Menu.PageName;
+                                                    <ul class='nav'>
+                                                        <li>
+                                                            <a class="navMenu" action=@action controller=@controller href="#">
+                                                                <i class='pe-va @SubMenu.IconType pe-2x' aria-hidden="true" title="@SubMenu.MenuName"></i>
+                                                                <strong class="nav-label">@SubMenu.MenuName</strong>
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                }
+                                                else            /*(3 Layers Menu)*/
+                                                {
+                                                    <button class='menu-collapse collapsed' type='button' data-toggle='collapse' data-target='#Menu_@SubMenu.MenuName' aria-expanded='true' aria-controls='collapseExample'>
+                                                        <span class='caret'></span> <strong>@SubMenu.MenuName</strong>
+                                                    </button>
+                                                    <div class='collapse' id='Menu_@SubMenu.MenuName' aria-expanded='false'>
+                                                        <ul class='nav'>
+                                                            @foreach (var Form in MenuList.Where(w => w.SubMenuId == SubMenu.MenuId))
+                                                            {
+                                                                var action = Form.PageName;
+                                                                var controller = SubMenu.PageName + "/" + SubMenu.PageName;
+                                                                <li>
+                                                                    <a class="navMenu" action=@action controller=@controller href="#">
+                                                                        <i class='pe-va @Form.IconType pe-2x' aria-hidden="true" title="@Form.MenuName"></i>
+                                                                        <strong class="nav-label">@Form.MenuName</strong>
+                                                                    </a>
+                                                                </li>
+                                                            }
+                                                        </ul>
+                                                    </div>
+                                                }
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </nav>
+                    </sidebar>
+                </div>
+                <div class="app-main__outer" id="renderBody">
+                    <div class="app-main__inner">
+                        @RenderBody()
+                        <div id="ContentViewSection">
+                            <div id="page-wrapper">
+                                <div>
+                                    <img src="~/Images/MechconHome.png">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    @Styles.Render("~/Content/GridChart")
+
+    @Scripts.Render("~/bundles/Bootstrap")
+    @Scripts.Render("~/bundles/CommonJs")
+    <script src="~/Scripts/jsgrid/jsgrid.min.js"></script>
+    <script src="~/Scripts/pqgrid/pqgrid.minv5.1.js"></script>
+    @Scripts.Render("~/bundles/Grid_Chart")
+    <script src="~/Scripts/common.js"></script>
+    <script src="~/Scripts/loadash.js"></script>
+    <script src="~/Scripts/chartjs/chartjs-plugin-labels.js"></script>
+    @RenderSection("scripts", required: false)
+<script type="text/javascript">
+        $(function () {
+            $('.navbar-brand').click(function (e) {
+                $('.app-sidebar').toggleClass('collapsed');
+                $(".app-main__outer").toggleClass("menuexpand");
+                $("i", this).toggleClass("fa-bars fa-window-close");
+
+                RefreshGridAfterResize("app-main__inner", true);
+            });
+
+            $(".navMenu").click(function (e) {
+                var ahref = $(this);
+                e.preventDefault(); // prevent default link button redirect behaviour
+                $(".nav li").removeClass("active");
+                $(this).parent().addClass("active");
+                var url = "/" + ahref.attr("controller") + "/" + ahref.attr("action");
+                $('#ContentViewSection').append('<div style="" id="loadingDiv1"><div class="loader1">Loading...</div></div>');
+                setTimeout(function () { $("#loadingDiv1").remove(); }, 8000);
+                $('#ContentViewSection').load(url);
+            });
+
+            Chart.defaults.global.defaultFontFamily = '"Segoe UI",Verdana,Helvetica,Sans-Serif';
+            Chart.defaults.global.defaultFontSize = 11;
+            //Chart.plugins.unregister(ChartDataLabels);
+            Chart.plugins.register({
+                beforeDraw: function (chart) {
+                    if (chart.config.centerText && chart.config.centerText.display !== null &&
+                        typeof chart.config.centerText.display !== 'undefined' &&
+                        chart.config.centerText.display) {
+                        drawCenterText(chart, chart.config.centerText.fontColor, chart.config.centerText.isHalfPie);
+                    }
+                },
+                afterDraw: function (chart) {
+                    if (chart.data.datasets.length === 0) {
+                        // No data is present
+                        var chartTitle = " to display";
+                        var ctx = chart.chart.ctx;
+                        var width = chart.chart.width;
+                        var height = chart.chart.height
+                        chart.clear();
+
+                        ctx.save();
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.font = "20px 'Helvetica'";
+                        if (chart.options.title.text != undefined && chart.options.title.text.trim().length > 0)
+                            chartTitle = " for " + chart.options.title.text.trim();
+
+                        ctx.fillText('No data' + chartTitle, width / 2, height / 2);
+                        ctx.restore();
+                    }
+                }
+            });
+              var fnTimeOut = function () {
+                jQuery.timeoutDialog.setupDialogTimer({
+                    timeout: 18000,
+                    countdown: 30,
+                    logout_redirect_url: '@Url.Action("LogOff", "Account")',
+                    keep_alive_url: '@Url.Action("Keepalive", "Home")'
+               });
+            };
+            fnTimeOut();
+
+            $(document).ajaxComplete(function () {
+                jQuery.timeoutDialog.setupDialogTimer();
+            });
+        });
+</script>
+
+</body>
+</html>

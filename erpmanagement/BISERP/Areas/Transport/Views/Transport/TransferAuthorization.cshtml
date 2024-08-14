@@ -1,0 +1,332 @@
+﻿@model BISERP.Areas.Transport.Models.VehicleTransferModel
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-groupingBoder">
+                    <div class="panel-heading">
+                        <div class="panel-title">
+                            <a class="collapsediv" data-toggle="collapse" href="#SearchDetails" style="color:white">
+                                Search Details
+                            </a>
+                        </div>
+                    </div>
+                    <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                        <div class="panel-body">
+                            <div class="container fill">
+                                <div id="searchgrid"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-groupingBoder">
+                    <div class="panel-heading">
+                        <div class="panel-title">
+                            Entry Form
+                        </div>
+                    </div>
+                    <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <button type="button" id="btnAuthorize" class="btn btn-success">Authorize</button>
+                                    <button type="button" id="btnCancel" class="btn btn-success">Cancel</button>
+                                    <button type="button" id="btnAdd" class="btn btn-success">Reset</button>
+                                </div>
+                            </div>
+                            <br />
+                            <div class="panel-groupingBoder">
+                                <div class="row">
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @Html.LabelFor(m => m.VehicleId)
+                                            @Html.TextBoxFor(m => m.VehicleNo, "", new { @class = "form-control", @disabled = "disabled" })
+                                            @Html.HiddenFor(m => m.VehicleId)
+                                            @Html.HiddenFor(m => m.TransferId)
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @Html.LabelFor(m => m.OldBranchId)
+                                            @Html.TextBoxFor(m => m.OldBranch, "", new { @class = "form-control", @disabled = "disabled" })
+                                            @Html.HiddenFor(m => m.OldBranchId)
+                                        </div>
+                                    </div>                                    
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @Html.LabelFor(m => m.EMICompleted)
+                                            @Html.TextBoxFor(m => m.EMICompleted, "", new { @class = "form-control", @disabled = "disabled" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @Html.RadioButton("TransferSold", "0")
+                                            @Html.LabelFor(m => m.TransferDate)
+                                            @Html.TextBoxFor(m => m.TransferDate, "", new { @class = "form-control", @disabled = "disabled" })                                            
+                                        </div>
+                                        <div class="col-sm-3"></div>
+                                        <div class="col-sm-3">
+                                            @Html.RadioButton("TransferSold", "1")
+                                            @Html.LabelFor(m => m.SoldDate)
+                                            @Html.TextBoxFor(m => m.SoldDate, "", new { @class = "form-control", @disabled = "disabled" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <br />
+                                <div class="row">
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @Html.LabelFor(m => m.NewBranchId)
+                                            @Html.TextBoxFor(m => m.NewBranch, "", new { @class = "form-control", @disabled = "disabled" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @Html.LabelFor(m => m.EMIPending)
+                                            @Html.TextBoxFor(m => m.EMIPending, "", new { @class = "form-control", @disabled = "disabled" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @Html.LabelFor(m => m.CustomerName)
+                                            @Html.TextBoxFor(m => m.CustomerName, "", new { @class = "form-control", @disabled = "disabled" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @Html.LabelFor(m => m.SoldAmount)
+                                            @Html.TextBoxFor(m => m.SoldAmount, "", new { @class = "form-control", @disabled = "disabled" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-6">
+                                            @Html.LabelFor(m => m.TransferReason)
+                                            @Html.TextAreaFor(m => m.TransferReason, new { @class = "form-control", @disabled = "disabled" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-6">
+                                            @Html.LabelFor(m => m.SoldReason)
+                                            @Html.TextAreaFor(m => m.SoldReason, new { @class = "form-control", @disabled = "disabled" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="VehicleModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Vehicle List</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div id="Vehiclegrid"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        var $SearchGrid;
+        function ClearForm() {
+            $("#VehicleId").val("");
+            $("#VehicleNo").val("");
+            $("#OldBranch").val("");
+            $("#OldBranchId").val("");            
+            $("#ddlBranch").val("");
+            $("#EMIPending").val(""); SoldDate
+            $("#TransferReason").val("");
+            $("#TransferDate").val("");
+            $("#SoldDate").val("");
+            $("#NewBranch").val("");
+            $("#EMICompleted").val("");
+            
+            $("#CustomerName").val("");
+            $("#SoldReason").val("");
+            $("#CustomerName").val(""),
+            $('input:radio[name="TransferSold"][value="0"]').prop('checked', true);
+        }
+        function LoadSearchGrid() {
+            $.ajax({
+                url: "/VehicleTransfer/AllTransferVehicle",
+                cache: false,
+                async: true,
+                method: "GET",
+                dataType: "JSON",
+                beforeSend: function () {
+                    $SearchGrid.pqGrid("showLoading");
+                },
+                complete: function () {
+                    $SearchGrid.pqGrid("hideLoading");
+                },
+                success: function (response) {
+                    $SearchGrid.pqGrid("hideLoading");
+                    $SearchGrid.pqGrid("option", "dataModel.data", response);
+
+                    var column = $SearchGrid.pqGrid("getColumn", { dataIndx: "OldBranch" });
+                    var filter = column.filter;
+                    filter.cache = null;
+                    filter.options = $SearchGrid.pqGrid("getData", { dataIndx: ["OldBranch"] });
+
+                    var column = $SearchGrid.pqGrid("getColumn", { dataIndx: "NewBranch" });
+                    var filter = column.filter;
+                    filter.cache = null;
+                    filter.options = $SearchGrid.pqGrid("getData", { dataIndx: ["NewBranch"] });
+                    $SearchGrid.pqGrid("refreshDataAndView");
+                }
+            });
+        }
+
+        /********* Search Grid *********/
+        $(document).ready(function () {
+            var dataM = { location: "local", sorting: 'local' }
+            var colM = [
+                    { title: "", dataIndx: "TransferId", dataType: "integer", hidden: true },
+                    { title: "", dataIndx: "VehicleId", dataType: "integer", hidden: true },
+                    { title: "", dataIndx: "OldBranchId", dataType: "integer", hidden: true },
+                    { title: "", dataIndx: "NewBranchId", dataType: "integer", hidden: true },
+                    {
+                        title: "Vehicle No", dataIndx: "VehicleNo", width: 400,
+                        filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                    },
+                    {
+                        title: "From Branch", dataIndx: "OldBranch", width: 200,
+                        filter: {
+                            type: "select",
+                            condition: 'equal',
+                            prepend: { '': '--Select--' },
+                            valueIndx: "OldBranch",
+                            labelIndx: "OldBranch",
+                            listeners: ['change']
+                        }
+                    },
+                    {
+                        title: "To Branch", dataIndx: "NewBranch", width: 200, filter: {
+                            type: "select",
+                            condition: 'equal',
+                            prepend: { '': '--Select--' },
+                            valueIndx: "NewBranch",
+                            labelIndx: "NewBranch",
+                            listeners: ['change']
+                        }
+                    },
+            ];
+
+            var setM = {
+                height: 250,
+                sortable: false,
+                numberCell: { show: false },
+                hoverMode: 'cell',
+                showTop: false,
+                resizable: true,
+                scrollModel: { autoFit: true },
+                draggable: false,
+                wrap: false,
+                editable: false,
+                columnBorders: true,
+                selectionModel: { type: 'row', mode: 'single' },
+                filterModel: { on: true, mode: "AND", header: true },
+                colModel: colM,
+                dataModel: dataM,
+                virtaulX: true,
+                virtaulY: true,
+                pageModel: { type: "local", rPP: 20 },
+                rowClick: function (evt, ui) {
+                    ClearParamGrid("grid");
+                    if (ui.rowData) {
+                        var rowIndx = parseInt(ui.rowIndx);
+                        var record = ui.rowData;
+                        $("#TransferId").val(record.TransferId);
+                        $("#VehicleId").val(record.VehicleId);
+                        $("#VehicleNo").val(record.VehicleNo);
+                        $("#OldBranch").val(record.OldBranch);
+                        $("#OldBranchId").val(record.OldBranchId);
+                        $("#NewBranch").val(record.NewBranch);
+                        $("#EMIPending").val(record.EMIPending);
+                        $("#EMICompleted").val(record.EMICompleted);
+                        $("#TransferReason").val(record.TransferReason);
+                        $("#SoldAmount").val(record.SoldAmount);
+                        $("#SoldReason").val(record.SoldReason);
+                        $("#CustomerName").val(record.CustomerName);
+                        
+                        $("#TransferDate").prop('disabled', true);
+                        $("#SoldDate").prop('disabled', true);
+                        $('#TransferDate').val("");
+                        $('#SoldDate').val("");
+                        
+                        if (record.TransferSold == 0) {
+                            $('#TransferDate').val(record.strTransferDate);
+                            $('input:radio[name="TransferSold"][value="0"]').prop('checked', true);
+                        }
+                        else {
+                            $('#SoldDate').val(record.strSoldDate);
+                            $('input:radio[name="TransferSold"][value="1"]').prop('checked', true);
+                        }
+                    }
+                }
+            };
+            $SearchGrid = $("#searchgrid").pqGrid(setM)
+            LoadSearchGrid();
+        });
+        $(document).ready(function () {
+            $("#btnAuthorize").click(function () {
+                var items = JSON.stringify({
+                    TransferId: $("#TransferId").val(),
+                    Authorised: 1
+                });
+                $.ajax(
+                {
+                    type: "POST",
+                    traditional: true,
+                    contentType: 'application/json; charset=utf-8',
+                    url: '/VehicleTransfer/AuthorizeCancel/',
+                    data: items,
+                    success: function (msg) {
+                        ShowAlert("success", "Vehicle Transfer Authorized successfully.");
+                        ClearForm();
+                    },
+                    error: function (jqXHR, exception) {
+                    }
+                });
+            });
+            $("#btnCancel").click(function () {
+                var items = JSON.stringify({
+                    TransferId: $("#TransferId").val(),
+                    Authorised: 0
+                });
+                $.ajax(
+                {
+                    type: "POST",
+                    traditional: true,
+                    contentType: 'application/json; charset=utf-8',
+                    url: '/VehicleTransfer/AuthorizeCancel/',
+                    data: items,
+                    success: function (msg) {
+                        ShowAlert("success", "Vehicle Transfer Cancelled successfully.");
+                        ClearForm();
+                    },
+                    error: function (jqXHR, exception) {
+                    }
+                });
+            });
+        });
+    </script>
+}

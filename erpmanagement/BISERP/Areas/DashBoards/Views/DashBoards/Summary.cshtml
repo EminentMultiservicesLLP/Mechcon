@@ -1,0 +1,110 @@
+﻿@model BISERP.Areas.DashBoards.Models.DashBoardModel
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div id="MasterPlaceHolder" style="height:100%;">
+            <div class="panel-groupingBoder">
+                <fieldset>
+                    <br />
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div id="grid"></div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="panel panel-default">
+                                <div class="panel-groupingBoder">
+                                    <div class="panel-heading2">
+                                        Item Summary
+                                    </div>
+                                    <div class="panel-collapse">
+                                        <div class="panel-body2" style="color: #5bc0de">
+                                            Total Items &nbsp;
+                                            <span class="badge">
+                                                @Model.TotalItem
+                                            </span>
+                                        </div>
+                                        <div class="panel-body2" style="color: #5cb85c">
+                                            Active Items &nbsp;
+                                            <span class="badge">
+                                                @Model.ActiveItem
+                                            </span>
+                                        </div>
+                                        <div class="panel-body2" style="color: #d9534f;">
+                                            Low Stock Items &nbsp;
+                                            <span class="badge">
+                                                @Model.LowStockItem
+                                            </span>
+                                        </div>
+                                        <div class="panel-body2" style="color: #f0ad4e">
+                                            Quantity of Transit Items &nbsp;
+                                            <span class="badge">
+                                                @Model.TransitItemQuantity
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                </fieldset>
+            </div>
+        </div>
+    <script src="~/Scripts/Chart/Chart.bundle.min.js"></script>
+    <script type="text/javascript">
+        function LoadSearchGrid() {
+            $.ajax({
+                url: "/StoreQuantityLimits/GetNotificationQuantity",
+                cache: false,
+                async: true,
+                method: "GET",
+                dataType: "JSON",
+                success: function (response) {
+                    $DetailsGrid.pqGrid("option", "dataModel.data", response.records);
+                    $DetailsGrid.pqGrid("refreshDataAndView");
+                }
+            });
+        }
+        $(function () {
+            colIID = [
+
+                   { title: "", dataIndx: "ItemId", width: 10, dataType: "integer", editable: false, resizable: false, hidden: true },
+                   { title: "", dataIndx: "storeId", width: 10, dataType: "integer", editable: false, resizable: false, hidden: true },
+                   { title: "StoreName", dataIndx: "StoreName", width: 150, dataType: "string", editable: false },
+                   { title: "Item Name", dataIndx: "ItemName", width: 200, dataType: "string", editable: false, align: "left" },
+                   { title: "MinLevel", dataIndx: "MinLevel", width: 100, dataType: "float", editable: false, hidden: true },
+                   { title: "StockQty", dataIndx: "OPBalance", width: 80, resizable: true, dataType: "float", editable: false, align: "left" },
+                   { title: "ReOrderQty", dataIndx: "ReOrderLevel", width: 70, dataType: "float", resizable: true, align: "left" }
+            ];
+            dataIID = {
+                location: 'local',
+                sorting: 'local',
+                paging: 'local',
+                dataType: 'JSON'
+            };
+
+            setIID = {
+                height: '300',
+                maxheight: '400',
+                title: "<font color='Red'><b> Item Details</b></font>",
+                sortable: false,
+                numberCell: { show: false },
+                selectionModel: { type: 'row' },
+                hoverMode: 'cell',
+                editor: { type: 'textbox' },
+                showTop: true,
+                resizable: true,
+                editModel: {
+                    saveKey: $.ui.keyCode.ENTER
+                },
+                draggable: false,
+                virtualX: true,
+                virtualY: true,
+                colModel: colIID,
+                dataModel: dataIID,
+            };
+            $DetailsGrid = $("#grid").pqGrid(setIID);
+            LoadSearchGrid();
+        });
+    </script>
+}

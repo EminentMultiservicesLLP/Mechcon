@@ -1,0 +1,272 @@
+﻿@model IEnumerable<BISERP.Models.UserMangement.ReportListModel>
+<script>
+    $(function () {
+        $('#FromDate').datetimepicker({
+            format: 'DD-MMM-YYYY',
+            extraFormats: ['DD-MM-YYYY', 'DD-MM-YY'],
+            defaultDate: new Date()
+        });
+        $('#ToDate').datetimepicker({
+            format: 'DD-MMM-YYYY',
+            extraFormats: ['DD-MM-YYYY', 'DD-MM-YY'],
+            defaultDate: new Date()
+        });
+    });
+</script>
+@using (Html.BeginForm())
+{
+
+    <div id="MasterPlaceHolder" style="height: 100%">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-groupingBoder">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-3">
+                                    Report
+                                    <select id="selMasters" class="wrapper-dropdown-content form-control">
+                                        <option class="wrapperdropdown-content">Select</option>
+                                        @foreach (var item in Model)
+                                        {
+                                            <option class="wrapperdropdown-content" value="@item.ReportID">@item.ReportName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-3">
+                                    @Html.Label("From Date")
+                                    <div class='input-group date' id='FromDate'>
+                                        <input type='text' class="form-control" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-3">
+                                    @Html.Label("To Date")
+                                    <div class='input-group date' id='ToDate'>
+                                        <input type='text' class="form-control" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-3">
+                                    @Html.Label("Store")
+                                    @Html.DropDownList("ddlStore", new SelectList(string.Empty, "Value", "Text"), "Select Store", new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-3">
+                                    @Html.Label("Indent No")
+                                    @Html.TextBox("IndentNo", "", new { @class = "form-control" })
+                                    @Html.Hidden("IndentId")
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <button type="button" class="btn btn-success" id="btnPrint">Show</button>
+                                <button type="button" class="btn btn-success" id="btnReset">Reset</button>
+                            </div>
+                        </div>
+
+                        @*<a id="ReportUrl_Performance" href="@Url.Action("ReportTemplate", "Report", new { ReportName = "PurchaseOrderNewErp", ReportDescription = "Performance Report", Width = 100, Height = 650 })">
+                            Performance Report
+                        </a>
+                        <br>*@
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <iframe id="iframeReportViewer" style="width: 100%; height: 300px"></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div title="Select Indent No" id="IndentModal" style="display: none;">
+        <div id="Indentgrid"></div>
+    </div>
+}
+<script>
+
+    function ReportValidationCheck() {
+        if ($("#selMasters").val() == "101") {
+            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#selMasters").val() + "&indentid=" + $("#IndentId").val();
+        }
+        else if ($("#selMasters").val() == "102" || $("#selMasters").val() == "103") {
+            console.log($("#ddlStore").val());
+            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#selMasters").val() + "&fromdate=" + $("#FromDate").data('date') + "&todate=" + $("#ToDate").data('date') + "&storeid=" + $("#ddlStore").val();
+        }
+        else {
+            url = "";
+        }
+        console.log(url);
+        var myframe = document.getElementById("iframeReportViewer");
+        if (myframe != null) {
+            if (myframe.src) {
+                myframe.src = url;
+            }
+            else if (myframe.contentWindow != null && myframe.contentWindow.location != null) {
+                myframe.contentWindow.location = url;
+            }
+            else {
+                myframe.setAttribute('src', url);
+            }
+            return false;
+        }
+    }
+
+    var $IndentSearchGrid;
+    function LoadSearchGrid() {
+        var StoreId = $("#ddlStore").val();
+        $("#IndentModal").dialog({
+            height: 500,
+            width: 700,
+            modal: true,
+            open: function (evt, ui) {
+                $.ajax({
+                    url: "/MaterialIndent/AllMaterialIndent",
+                    cache: false,
+                    async: true,
+                    method: "GET",
+                    dataType: "JSON",
+                    data: { StoreId: StoreId, fromdate: $("#FromDate").data('date'), todate: $("#ToDate").data('date') },
+                    success: function (response) {
+                        $("#Indentgrid").pqGrid("option", "dataModel.data", response);
+                        $("#Indentgrid").pqGrid("refreshDataAndView");
+                    }
+                });
+            },
+            close: function (event, ui) {
+            },
+            show: {
+                effect: "blind",
+                duration: 500
+            }
+        });
+    }
+
+    function ClearForm() {
+        $('#FromDate').data("DateTimePicker").disable();
+        $('#ToDate').data("DateTimePicker").disable();
+        ResetDate("FromDate");
+        ResetDate("ToDate");
+        $("#IndentNo").prop('disabled', true);
+        $('#ddlStore').prop('disabled', true);
+        $("#IndentId").val("");
+        $("#IndentNo").val("");
+    }
+
+    $(document).ready(function () {
+        $.ajax({
+            type: "GET",
+            url: "/Master/AllStores",
+            datatype: "Json",
+            async: true,
+            success: function (data) {
+                $.each(data, function (index, value) {
+                    $('#ddlStore').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                });
+            }
+        });
+        var dataM = { location: "local", sorting: 'local' };
+        var colM = [
+                { title: "", dataIndx: "Indent_Id", dataType: "integer", hidden: true },
+                {
+                    title: "Indent No", dataIndx: "IndentNo", width: 400,
+                    filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }, width: 200
+                },
+                {
+                    title: "Indent Date", dataIndx: "strIndentDate", width: 150, dataType: "date", filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                }
+        ];
+
+        var setM = {
+            width: "auto", //auto width
+            height: "100%-30", //height in %age
+            sortable: false,
+            numberCell: { show: false },
+            hoverMode: 'cell',
+            showTop: false,
+            resizable: false,
+            draggable: false,
+            wrap: false,
+            editable: false,
+            columnBorders: true,
+            filterModel: { on: true, mode: "AND", header: true },
+            colModel: colM,
+            dataModel: dataM,
+            resizable: true,
+            virtualX: true,
+            pageModel: { type: "local", rPP: 20 },
+            rowClick: function (evt, ui) {
+                ClosePopupWindow("IndentModal");
+                if (ui.rowData) {
+                    var rowIndx = parseInt(ui.rowIndx);
+                    var record = ui.rowData;
+                    $("#IndentId").val(record.Indent_Id);
+                    $("#IndentNo").val(record.IndentNo);
+                }
+            }
+        };
+        $("#Indentgrid").pqGrid(setM);
+    });
+    $(document).ready(function () {
+        ClearForm();
+        $('#btnPrint').on('click', function () {
+            if ($("#selMasters").val() == "101") {
+                if ($("#IndentId").val() == "") {
+                    ShowAlert("error", "Please Select Indent No");
+                    return;
+                }
+            }
+            ReportValidationCheck();
+        });
+
+        $('#btnReset').on('click', function () {
+            $("#selMasters").val("");
+            ClearForm();
+        });
+
+        $('#IndentNo').on('click', function () {
+            if ($("#ddlStore").val() == "") {
+                ShowAlert("error", "Please Select Store");
+                return;
+            }
+            LoadSearchGrid();
+        });
+        $('#selMasters').change(function () {
+            ClearForm();
+            if ($("#selMasters").val() == "101") {
+                $("#IndentNo").prop('disabled', false);
+                $('#FromDate').data("DateTimePicker").enable();
+                $('#ToDate').data("DateTimePicker").enable();
+                $('#ddlStore').prop('disabled', false);
+            }
+            else if ($("#selMasters").val() == "102") {
+                $('#FromDate').data("DateTimePicker").enable();
+                $('#ToDate').data("DateTimePicker").enable();
+                $('#ddlStore').prop('disabled', false);
+            }
+            else if ($("#selMasters").val() == "103") {
+                $('#FromDate').data("DateTimePicker").enable();
+                $('#ToDate').data("DateTimePicker").enable();
+                $('#ddlStore').prop('disabled', false);
+            }
+        });
+    });
+</script>

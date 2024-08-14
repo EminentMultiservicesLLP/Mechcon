@@ -1,0 +1,328 @@
+﻿@{
+    
+    ViewBag.Title = "Masters";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                @*<div class="panel-heading">
+                    <div class="panel-title">
+                        Search Filter
+                    </div>
+                </div>*@
+                @*<div id="collapse1" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-sm-1">
+                                    @Html.Label("Outward Type")
+                                </div>
+                                <div class="col-sm-2">
+                                    <select class="wrapper-dropdown">
+                                        <option value="Transfer" class="wrapperdropdown-content">Transfer</option>
+                                        <option value="Returnable" class="wrapperdropdown-content">Returnable</option>
+                                        <option value="NonReturnable" class="wrapperdropdown-content">Non Returnable</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-1">
+                                    @Html.Label("Outward No")
+                                </div>
+                                <div class="col-sm-2">
+                                    @Html.Editor("Outward No")
+                                </div>
+                                <div class="col-sm-1">
+                                    <button class="btn btn-primary" type="button">
+                                        Find
+                                        <span class="glyphicon glyphicon-search"></span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>*@
+          
+            <div class="panel-heading">
+                <div class="panel-title">
+                    <a class="collapsediv" data-toggle="collapse" href="#SearchDetails" style="color:white">
+                        Search Details
+                    </a>
+                </div>
+            </div>
+            <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                <div class="panel-body">
+                    <div class="container fill">
+                        <div id="Searchgrid"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        Entry Form
+                    </div>
+                </div>
+                <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <fieldset>
+                            <legend></legend>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    @*<a data-toggle="collapse" class="btn btn-success" href="#collapse1">Search</a>*@
+                                    <a data-toggle="collapse" class="btn btn-success" href="#SearchDetails">Show Search</a>
+                                    <a data-toggle="collapse" class="btn btn-success">Add</a>
+                                    <button type="button" class="btn btn-success">Save</button>
+                                    <button type="button" class="btn btn-success">Preview</button>
+                                    </div>
+                                </div>
+                            <br>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-sm-1">
+                                        @Html.Label("Outward No")
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.Editor("Outward No")
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-1">
+                                        @Html.Label("Outward Type")
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <select id="calcOption" class="wrapper-dropdown">
+                                            <option value="Transfer" class="wrapperdropdown-content">Transfer</option>
+                                            <option value="Returnable" class="wrapperdropdown-content">Returnable</option>
+                                            <option value="NonReturnable" class="wrapperdropdown-content">Non Returnable</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-sm-1">
+                                        @*<div data-bind="text: dropdownText"></div>*@
+                                        <label id="labelChanged"></label>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.Editor("Select Location")
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-1">
+                                        @Html.Label("Name Of Person")
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.Editor("Name Of Person")
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-sm-1">
+                                        @Html.Label("Stores")
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.DropDownList("ddlStores", new SelectList(string.Empty, "Value", "Text"), "Select Store", new { @class = "wrapperdropdown-content" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-1">
+                                        @Html.Label("Remark")
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.TextArea("Remark")
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ItemModal">Add Item</button>
+                                        <a href="" class="btn btn-primary" type="button">Remove Item</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="container fill">
+                                    <div id="grid"></div>
+                                </div>
+                            </div>
+                        </fieldset>
+                      </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+   
+
+    <div id="SearchModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Find</h4>
+                </div>
+                <div class="modal-body">
+                    <div id="Searchgrid"></div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $.ajax({
+                type: "GET",
+                url: "/Master/AllStores",
+                datatype: "Json",
+                success: function (data) {
+                    $.each(data, function (index, value) {
+                        $('#ddlStores').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                    });
+                }
+            });
+        });
+        var grid;
+        var ShowSearchgrid;
+        function Search() {
+            grid.reload({ searchString: $("#search").val() });
+        }
+
+        //$(document).ready(function () {
+        //    grid = $("#grid").grid({
+        //        dataKey: "ID",
+        //        uiLibrary: "bootstrap",
+        //        columns: [
+        //            { field: "ID", width: 10, sortable: false, hidden: true },
+        //            { field: "Sr No.", width: 10, title: "Sr No.", sortable: true, priority: 1, },
+        //            { field: "ItemName", width: 20, title: "Item Name", sortable: true, priority: 2 },
+        //            { field: "Qty", width: 20, title: "Qty", sortable: true, priority: 3 },
+        //            { field: "ReturnableDate", width: 20, title: "Returnable Date", sortable: true, priority: 4 }
+        //        ],
+        //        pager: { enable: true, limit: 5, sizes: [2, 5, 10, 20] }
+        //    });
+        //    $("#btnSearch").on("click", Search);
+        //});
+        colIID = [
+                 { title: "", dataIndx: "ID", width: 10, dataType: "integer", editable: false, resizable: false, hidden: true },
+                 { title: "", dataIndx: "Item_Id", width: 10, dataType: "integer", editable: false, resizable: false, hidden: true },
+                 { title: "ItemName", dataIndx: "ItemName", width: 170, dataType: "string", resizable: false, editable: false },
+                 { title: "Qty", dataIndx: "Qty", width: 160, dataType: "string", resizable: false, editable: false },
+                 { title: "ReturnableDate", dataIndx: "ReturnableDate", width: 150, resizable: false, dataType: "string", editable: false },
+        ];
+        dataIID = {
+            location: 'local',
+            sorting: 'local',
+            paging: 'local',
+            dataType: 'JSON'
+        };
+
+        setIID = {
+            virtualX: true,
+            virtualY: true,
+            height: '300',
+            maxheight: '400',
+            // title: "Material Indent Item Details",
+            sortable: false,
+            numberCell: { show: false },
+            selectionModel: { type: 'row' },
+            hoverMode: 'cell',
+            editor: { type: 'textbox' },
+            showTop: true,
+            resizable: true,
+            editModel: {
+                saveKey: $.ui.keyCode.ENTER
+            },
+            draggable: false,
+            colModel: colIID,
+            dataModel: dataIID,
+            pageModel: { type: "local", rPP: 20 },
+        };
+        $ReportGrid = $("#grid").pqGrid(setIID);
+        colIID = [
+                { title: "", dataIndx: "ID", width: 10, dataType: "integer", editable: false, resizable: false, hidden: true },
+                { title: "", dataIndx: "Item_Id", width: 10, dataType: "integer", editable: false, resizable: false, hidden: true },
+                { title: "OutWardNo", dataIndx: "ItemName", width: 170, dataType: "string", resizable: false, editable: false },
+                { title: "OutWardType", dataIndx: "Qty", width: 160, dataType: "string", resizable: false, editable: false },
+                { title: "OutWardDate", dataIndx: "ReturnableDate", width: 150, resizable: false, dataType: "string", editable: false },
+                { title: "Carryingperson", dataIndx: "Qty", width: 160, dataType: "string", resizable: false, editable: false },
+                { title: "StoreName", dataIndx: "ReturnableDate", width: 150, resizable: false, dataType: "string", editable: false },
+        ];
+        dataIID = {
+            location: 'local',
+            sorting: 'local',
+            paging: 'local',
+            dataType: 'JSON'
+        };
+
+        setIID = {
+            virtualX: true,
+            virtualY: true,
+            height: '300',
+            maxheight: '400',
+            // title: "Material Indent Item Details",
+            sortable: false,
+            numberCell: { show: false },
+            selectionModel: { type: 'row' },
+            hoverMode: 'cell',
+            editor: { type: 'textbox' },
+            showTop: true,
+            resizable: true,
+            editModel: {
+                saveKey: $.ui.keyCode.ENTER
+            },
+            draggable: false,
+            colModel: colIID,
+            dataModel: dataIID,
+            pageModel: { type: "local", rPP: 20 },
+        };
+        $ShowSearchgrid = $("#Searchgrid").pqGrid(setIID);
+        //$(document).ready(function () {
+        //    grid = $("#Searchgrid").grid({
+        //        dataKey: "ID",
+        //        uiLibrary: "bootstrap",
+        //        columns: [
+
+        //            { field: "ID", width: 10, sortable: false, hidden: true },
+        //            { field: "OutWardNo", title: "OutWard No", width: 30, sortable: false },
+        //            { field: "OutWardType", title: "OutWard Type", width: 30, sortable: false },
+        //            { field: "OutWardDate", title: "OutWard Date", width: 30, sortable: false },
+        //            { field: "Carryingperson", title: "Carrying person", width: 40, sortable: false },
+        //            { field: "StoreName", title: "Store Name", width: 30, sortable: false }
+        //        ],
+        //        pager: { enable: true, limit: 5, sizes: [2, 5, 10, 20] }
+        //    });
+        //});
+
+        var newLabel = '';
+        $('#calcOption').on('change', function () {
+            //Change the text before changing the value
+            switch (this.value) {
+                case 'Transfer':
+                    newLabel = 'Select Location';
+                    break;
+                case 'Returnable':
+                    newLabel = 'Select Supplier';
+                    break;
+                case 'NonReturnable':
+                    newLabel = 'Purchase Return No';
+                    break;
+            }
+            $('#labelChanged').text(newLabel);
+        }).trigger('change');
+    </script>
+}

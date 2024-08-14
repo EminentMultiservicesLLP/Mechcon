@@ -1,0 +1,504 @@
+﻿@model BISERP.Areas.Asset.Models.RequestRegisterModel
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <a class="collapsediv" data-toggle="collapse" href="#SearchDetails" style="color:white">
+                            Search Details
+                        </a>
+                    </div>
+                </div>
+                <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="container fill">
+                                <div id="searchgrid"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        Entry Form
+                    </div>
+                </div>
+                <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <fieldset>
+                            <legend></legend>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                                    <a data-toggle="collapse" class="btn btn-success" id="btnAdd">Reset</a>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.Label("Branch")
+                                        @Html.DropDownList("ddlBranch", new SelectList(string.Empty, "Value", "Text"), "Select Branch", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.RequestCode)
+                                        @Html.TextBoxFor(m => m.RequestCode, "", new { @class = "form-control", @disabled = "disabled" })
+                                        @Html.HiddenFor(m => m.RequestId)
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.RequestedDate)
+                                        <div class='input-group date'>
+                                            @Html.TextBoxFor(m => m.RequestedDate, "", new { @class = "form-date-control" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <div class="panel-group">
+                            <div class="panel panel-default">
+                                <div class="panel-groupingBoder">
+                                    <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                                        <div class="panel-body">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <b>Request List</b>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group form-horizontal">
+                                                    <div class="col-sm-3">
+                                                        @Html.Label("Equipment Serial No", new { @class = "required" })
+                                                        @Html.TextBox("EquipmentSerialNo", "", new { @class = "form-control " })
+                                                    </div>
+                                                </div>
+                                                <div class="form-group form-horizontal">
+                                                    <div class="col-sm-3">
+                                                        @Html.Label("Asset Code")
+                                                        @Html.TextBox("AssetCode", "", new { @class = "form-control", @disabled = "disabled" })
+                                                        @Html.HiddenFor(m => m.AssetId)
+                                                    </div>
+                                                </div>
+                                                <div class="form-group form-horizontal">
+                                                    <div class="col-sm-3">
+                                                        @Html.Label("Equipment Description")
+                                                        @Html.TextBox("EquipmentDescription", "", new { @class = "form-control", @disabled = "disabled" })
+                                                        @Html.Hidden("AssetLocationId")
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <div class="form-group">
+                                                        <button type="button" class="btn btn-primary" id="btnAddItem">View Attachments</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-group">
+                            <div class="panel panel-default">
+                                <div class="panel-groupingBoder">
+                                    <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                                        <div class="panel-body">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <b>Complaint Details</b>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group form-horizontal">
+                                                    <div class="col-sm-3">
+                                                        @Html.LabelFor(m => m.ProblemNature)
+                                                        @Html.TextBoxFor(m => m.ProblemNature, "", new { @class = "form-control" })
+                                                    </div>
+                                                </div>
+                                                <div class="form-group form-horizontal">
+                                                    <div class="col-sm-3">
+                                                        @Html.LabelFor(m => m.Priority)
+                                                        <br />
+                                                        @Html.RadioButton("Priority", "Regular", true)  Regular
+                                                        @Html.RadioButton("Priority", "Emergancy") Emergancy
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group form-horizontal">
+                                                    <div class="col-sm-3">
+                                                        @Html.LabelFor(m => m.Complaint, new { @class = "required" })
+                                                        @Html.TextAreaFor(m => m.Complaint, new { @class = "form-control " })
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group form-horizontal">
+                                                    <div class="col-sm-3">
+                                                        @Html.LabelFor(m => m.RequiredDate)
+                                                        <div class='input-group date'>
+                                                            @Html.TextBoxFor(m => m.RequiredDate, "", new { @class = "form-date-control" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group form-horizontal">
+                                                    <div class="col-sm-3">
+                                                        @Html.LabelFor(m => m.Remark)
+                                                        @Html.TextBoxFor(m => m.Remark, "", new { @class = "form-control" })
+                                                    </div>
+                                                </div>
+                                                <div class="form-group form-horizontal">
+                                                    <div class="col-sm-3">
+                                                        @Html.LabelFor(m => m.RequestedBy, new { @class = "required" })
+                                                        @Html.TextBox("RequestedBy", User.Identity.Name, new { @class = "form-control", @readonly = "true" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div title="Select Items" id="SerialModal" style="display: none;">
+        <div id="grid"></div>
+    </div>
+    <div title="View Attachments" id="ViewModal" style="display: none;">
+        <div class="col-sm-10">
+            <ul id="displayImages" class="attachment" style="max-height: 150px; overflow-y: scroll;" />
+        </div>
+    </div>
+    <script type="text/javascript">
+        var appSetting = '@BISERP.Common.Constants.ScandocUrl'
+        function LoadSearchGrid() {
+            var branchid = $("#ddlSearchBranch").val();
+            if (branchid == "" || branchid == undefined) branchid = 0;
+            $.ajax({
+                url: "/RequestRegister/GetAllRequestRegister",
+                cache: false,
+                async: true,
+                method: "GET",
+                dataType: "JSON",
+                success: function (response) {
+                    $("#searchgrid").pqGrid("option", "dataModel.data", response);
+                    $("#searchgrid").pqGrid("refreshDataAndView");
+                }
+            });
+        }
+        function LoadAssetGrid() {
+            var BranchId = $("#ddlBranch").val();
+            if (BranchId == undefined || BranchId == "") BranchId = 0
+            $("#SerialModal").dialog({
+                height: 500,
+                width: 700,
+                modal: true,
+                open: function (evt, ui) {
+                    $.ajax({
+                        url: "/AssetSchedule/GetBranchAssetsforschedule",
+                        cache: false,
+                        async: true,
+                        method: "GET",
+                        dataType: "JSON",
+                        data: { BranchId: BranchId },
+                        success: function (response) {
+                            $("#grid").pqGrid("option", "dataModel.data", response);
+                            $("#grid").pqGrid("refreshDataAndView");
+                        }
+                    });
+                },
+                close: function (event, ui) {
+                },
+                show: {
+                    effect: "blind",
+                    duration: 500
+                }
+            });
+        }
+        function ClearForm() {
+            $("#ddlBranch").val("");
+            $("#AssetId").val("");
+            $("#AssetCode").val("");
+            $("#RequestCode").val("");
+            $("#ItemName").val("");
+            $("#EquipmentSerialNo").val("");
+            $("#EquipmentDescription").val("")
+            $("#ModelNo").val("");
+            $("#RequestId").val("");
+            $("#RequestedDate").datepicker().datepicker("setDate", new Date());
+            $("#RequiredDate").datepicker().datepicker("setDate", new Date());
+            $("#Complaint").val("");
+            $("#ProblemNature").val("");
+            $("#Remark").val("");
+            $("#EquipmentSerialNo").prop("disabled", false);
+            $("#ddlBranch").prop("disabled", false);
+            $("#RequestedBy").val('@User.Identity.Name');
+            $("#RequestId").val("");
+        }
+        function DisplayUploadedImages(objectName, FileDetail) {
+
+            var newImageLI = '<li>';
+            newImageLI = newImageLI + '<a class="title" id="' + FileDetail.FileId + '" href= "' + appSetting + FileDetail.FilePath + '" target="_blank"> ' + FileDetail.FileNames + '</a>';
+            newImageLI = newImageLI + '<a href="javascript:void(0);" data-id="' + FileDetail.FileId + '"  class="deleteItem" onclick="Deletefile(' + FileDetail.FileId + ');return false;">X</a>';
+            newImageLI = newImageLI + "</li>";
+
+            $("#" + objectName).append(newImageLI);
+        }
+        function ViewAttachments() {
+            var AssetLocationId = $("#AssetLocationId").val();
+            $("#ViewModal").dialog({
+                height: 400,
+                width: 700,
+                modal: true,
+                open: function (evt, ui) {
+                    $.ajax({
+                        type: "GET",
+                        url: "/ScanDoc/ScanDoc/GetScanDocUrl",
+                        data: { FileId: AssetLocationId, ScanDocSubTypeId: 7 },
+                        datatype: "Json",
+                        success: function (data) {
+                            $.each(data, function (key, value) {
+                                DisplayUploadedImages("displayImages", value);
+                            });
+
+                        }
+
+                    });
+
+                },
+                close: function (event, ui) {
+                },
+                show: {
+                    effect: "blind",
+                    duration: 500
+                }
+            });
+        }
+
+        $(function () {
+            $('#RequestedDate').datepicker({
+                defaultDate: new Date(),
+                dateFormat: 'dd-M-yy',
+                yearRange: '2015:2099',
+                showOn: "button",
+                buttonImage: "../../Content/images/calendar.gif",
+                buttonImageOnly: true,
+                changeMonth: true,
+                changeYear: true
+            }).datepicker("setDate", new Date());
+
+            $('#RequiredDate').datepicker({
+                defaultDate: new Date(),
+                dateFormat: 'dd-M-yy',
+                yearRange: '2015:2099',
+                showOn: "button",
+                buttonImage: "../../Content/images/calendar.gif",
+                buttonImageOnly: true,
+                changeMonth: true,
+                changeYear: true
+            });
+            $("#RequestedDate").datepicker().datepicker('disable');
+
+
+            $.ajax({
+                type: "GET",
+                url: "/Master/AllBranches",
+                datatype: "Json",
+                async: true,
+                success: function (data) {
+                    $.each(data, function (index, value) {
+                        $('#ddlBranch').append('<option value="' + value.BranchID + '">' + value.BranchName + '</option>');
+                    });
+                }
+            });
+
+            dataList = { location: 'local', sorting: 'local', paging: 'local', dataType: 'JSON' };
+            var setAssetCol = [
+                   { dataIndx: "AssetId", hidden: true },
+                   { title: "AssetCode", dataIndx: "AssetCode", width: 100, dataType: "string", filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } },
+                   { title: "AssetName", dataIndx: "ItemName", width: 200, dataType: "string", filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } },
+                   { title: "Serial No", dataIndx: "SerialNo", width: 90 },
+
+            ];
+            setAssetList = {
+                width: "auto", //auto width
+                height: "100%-30", //height in %age
+                selectionModel: { type: 'cell' },
+                autoSizeInterval: 0,
+                dragColumns: { enabled: false },
+                hoverMode: 'cell',
+                editor: { type: 'textbox' },
+                filterModel: { on: true, mode: "AND", header: true },
+                showTop: false,
+                resizable: true,
+                virtualX: true,
+                colModel: setAssetCol,
+                dataModel: dataList,
+
+                cellClick: function (evt, ui) {
+                    if (ui.rowData) {
+                        var rowIndx = parseInt(ui.rowIndx);
+                        var record = ui.rowData;
+                        $("#AssetId").val(record.AssetId);
+                        $("#AssetCode").val(record.AssetCode);
+                        $("#ItemName").val(record.ItemName);
+                        $("#EquipmentSerialNo").val(record.SerialNo);
+                        $("#ModelNo").val(record.ModelNo);
+                        ClosePopupWindow("SerialModal");
+
+                        $.ajax({
+                            type: "GET",
+                            url: "/AssetLocation/GetAssetLocations",
+                            datatype: "Json",
+                            async: true,
+                            data: { AssetId: record.AssetId },
+                            success: function (data) {
+                                $("#EquipmentDescription").val(data.Description);
+                                $("#AssetLocationId").val(data.AssetLocationId);
+                            }
+                        });
+                    }
+                },
+                pageModel: { type: "local", rPP: 20 }
+            };
+            $("#grid").pqGrid(setAssetList);
+
+            var dataSearchGrid = { location: "local", sorting: 'local' };
+            var colSearchGrid = [
+                    { title: "", dataIndx: "AssetId", dataType: "integer", hidden: true },
+                    { title: "", dataIndx: "RequestId", dataType: "integer", hidden: true },
+                    { title: "Request No", dataIndx: "RequestCode", width: 200 },
+                    { title: "Request Date", dataIndx: "StrRequestedDate", width: 100, dataType: "date" },
+                    { title: "Requested By", dataIndx: "UserName", width: 100, dataType: "string" },
+                    { title: "Priority", dataIndx: "Priority", width: 100, dataType: "string" },
+                    { title: "BranchId", dataIndx: "BranchId", dataType: "string", hidden: true },
+                    { title: "AssetCode", dataIndx: "AssetCode", dataType: "string", hidden: true },
+                    { title: "SerialNo", dataIndx: "SerialNo", dataType: "string", hidden: true },
+                    { title: "ModelNo", dataIndx: "ModelNo", dataType: "string", hidden: true },
+                    { title: "Description", dataIndx: "Description", dataType: "string", hidden: true },
+                    { title: "Complaint", dataIndx: "Complaint", dataType: "string", hidden: true },
+                    { title: "ProblemNature", dataIndx: "ProblemNature", dataType: "string", hidden: true },
+                    { title: "ProblemNature", dataIndx: "ProblemNature", dataType: "string", hidden: true },
+                    { title: "Remark", dataIndx: "Remark", dataType: "string", hidden: true },
+                    { title: "StrRequiredDate", dataIndx: "StrRequiredDate", dataType: "string", hidden: true },
+                    { title: "AssetLocationId", dataIndx: "AssetLocationId", dataType: "int", hidden: true }
+            ];
+            var setSearchGrid = {
+                width: '100%',
+                height: 250,
+                sortable: false,
+                numberCell: { show: false },
+                showTop: false,
+                resizable: true,
+                scrollModel: { autoFit: true },
+                draggable: false,
+                wrap: false,
+                editable: false,
+                columnBorders: true,
+                selectionModel: { type: 'row', subtype: 'incr', cbHeader: true, cbAll: true },
+                filterModel: { on: false },
+                colModel: colSearchGrid,
+                dataModel: dataSearchGrid,
+                pageModel: { type: "local", rPP: 50 },
+                rowClick: function (evt, ui) {
+                    if (ui.rowData) {
+                        var rowIndx = parseInt(ui.rowIndx);
+                        var record = ui.rowData;
+                        $("#AssetLocationId").val(record.AssetLocationId);
+                        $("#RequestId").val(record.RequestId);
+                        $("#AssetId").val(record.AssetId);
+                        $("#Branch").val(record.BranchName);
+                        $("#ddlBranch").val(record.BranchId);
+                        $("#RequestCode").val(record.RequestCode);
+                        $("#AssetCode").val(record.AssetCode);
+                        $("#EquipmentSerialNo").val(record.SerialNo);
+                        $("#ModelNo").val(record.ModelNo);
+                        $("#EquipmentDescription").val(record.Description);
+                        $("#Complaint").val(record.Complaint);
+                        $("#ProblemNature").val(record.ProblemNature);
+                        $("#Remark").val(record.Remark);
+                        $("#RequestedBy").val(record.UserName);
+                        $('#RequestedDate').val(record.StrRequestedDate);
+                        $('#RequiredDate').val(record.StrRequiredDate);
+                        $("#EquipmentSerialNo").prop("disabled", true);
+                        $("#ddlBranch").prop("disabled", true);
+                    }
+                }
+            }
+            $SearchGrid = $("#searchgrid").pqGrid(setSearchGrid);
+            LoadSearchGrid();
+
+            $('#EquipmentSerialNo').on('click', function () {
+                if ($("#ddlBranch").val() == "" || $("#ddlBranch").val() == undefined) {
+                    ShowAlert("error", "Please Select Branch");
+                    return;
+                }
+                LoadAssetGrid();
+            });
+            $("#btnAdd").click(function () {
+                ClearForm();
+            });
+
+            $("#btnAddItem").click(function () {
+                $("#displayImages").html("");
+                ViewAttachments();
+            });
+            $("#btnSave").click(function () {
+                if ($("#Complaint").val() == "") {
+                    ShowAlert("error", "Please Enter Complaint");
+                    return;
+                }
+                if ($("#AssetId").val() == "") {
+                    ShowAlert("error", "Please Select Asset Code");
+                    return;
+                }
+
+                var griditems = JSON.stringify({
+                    RequestId: $("#RequestId").val(),
+                    AssetId: $("#AssetId").val(), //Reading text box values using Jquery
+                    RequestedDate: $("#RequestedDate").val(),
+                    Priority: $("[name='Priority']:checked").val(),
+                    Complaint: $("#Complaint").val(),
+                    RequiredDate: $("#RequiredDate").val(),
+                    ProblemNature: $("#ProblemNature").val(),
+                    Remark: $("#Remark").val()
+                });
+
+                $.ajax(
+                {
+                    type: "POST", //HTTP POST Method
+                    traditional: true,
+                    contentType: 'application/json; charset=utf-8',
+                    url: '/RequestRegister/SaveRequestRegister', // Controller/View
+                    data: griditems,
+                    success: function (msg) {
+                        if (msg.success) {
+                            if ($("#RequestId").val() == "")
+                                ShowAlert("success", "Request No : " + msg.Message);
+                            else
+                                ShowAlert("success", "Request Updated Successfully");
+                            ClearForm();
+                            LoadSearchGrid();
+                        }
+                        else {
+                            ShowAlert("error", msg.Message);
+                        }
+                    },
+                    error: function (jqXHR, exception) {
+                    }
+                });
+            });
+        });
+    </script>
+}
+

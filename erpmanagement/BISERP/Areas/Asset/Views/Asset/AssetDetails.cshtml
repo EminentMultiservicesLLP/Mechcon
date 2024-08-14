@@ -1,0 +1,450 @@
+﻿@model BISERP.Areas.Asset.Models.AssetModel
+@Scripts.Render("~/bundles/jquerymodels")
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">                
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        Entry Form
+                    </div>
+                </div>
+
+                <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <fieldset>
+                            <legend></legend>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                                    <a data-toggle="collapse" class="btn btn-success" id="btnAdd">Reset</a>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.Label("Branch")
+                                        @Html.DropDownList("ddlBranch", new SelectList(string.Empty, "Value", "Text"), "Select Branch", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.Label("Item Name")
+                                        @Html.TextBox("ItemName","", new { @class = "form-control" })
+                                        @Html.Hidden("ItemId")
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.Label("Item Code")
+                                        @Html.TextBox("ItemCode","", new { @class = "form-control", @readonly = "true" })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.Label("Supplier Name", new { @class = "required" })
+                                        @Html.TextBox("SupplierName", "", new Dictionary<string, object> { { "class", "form-control" } })
+                                        @Html.Hidden("SupplierId")
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.Label("Quantity", new { @class = "required" })
+                                        @Html.TextBox("Quantity", "", new Dictionary<string, object> { { "class", "form-control" } })
+                                    </div>
+                                </div>    
+                            </div>
+                        </fieldset>
+                        <fieldset>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <button type="button" class="btn btn-primary" id="btnAddItem">Add Item</button>
+                                        @*<button type="button" class="btn btn-primary" data-toggle="modal" >Add Accessory</button>*@
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <fieldset>
+                            <legend></legend>
+                            <div class="row">
+                                <div class="container fill">
+                                    <div id="grid"></div>
+                                </div>
+                            </div>
+
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div title="Select Items" id="ItemModal" style="display: none;">
+        <div id="Itemgrid"></div>
+    </div>
+    <div id="SupplierModal" title="Select Items" style="display: none;">
+        <div id="Suppliergrid"></div>
+    </div>
+    <script type="text/javascript">
+        var $AssetDetailGrid;
+        var $SupplierGrid;
+        var setIID, colIID, dataIID;
+        var colIL, dataIL, setIL;
+        function ClearForm() {
+            $("#ddlBranch").val("");
+            $("#ItemName").val("");
+            $("#ItemCode").val("");
+            $("#SupplierName").val("");
+            $("#Quantity").val("");
+            $("#Quantity").html("");
+            $("#ItemId").val("");
+            $("#SupplierId").val("");
+            ClearParamGrid("grid");
+        }
+     
+        (function ($) {
+
+            $.ajax({
+                type: "GET",
+                url: "/Master/AllBranches",
+                datatype: "Json",
+                async: true,
+                success: function (data) {
+                    $.each(data, function (index, value) {
+                        $('#ddlBranch').append('<option value="' + value.BranchID + '">' + value.BranchName + '</option>');
+                    });
+                }
+            });
+            
+
+            var dateEditor = function (ui) {
+                var $inp = ui.$cell.find("input"),
+                    grid = this,
+                    validate = function (that) {
+                        var valid = grid.isValid({
+                            dataIndx: ui.dataIndx,
+                            value: $inp.val(),
+                            rowIndx: ui.rowIndx
+                        }).valid;
+                        if (!valid) {
+                            that.firstOpen = false;
+                        }
+                    };
+
+                $inp.on("input", function () {
+                    validate(this);
+                })
+                .datepicker({
+                    changeMonth: true,
+                    changeYear: true,
+                    showAnim: '',
+                    onSelect: function () {
+                        this.firstOpen = true;
+                        validate(this);
+                    },
+                    beforeShow: function () {
+                        return !this.firstOpen;
+                    },
+                    onClose: function () {
+                        this.focus();
+                    }
+                });
+            }
+            //$(document).ready(function () {
+            colIID = [
+                { title: "", dataIndx: "AssetId", width: 10, dataType: "integer", hidden: true },
+                { title: "", dataIndx: "ItemId", width: 10, dataType: "integer", hidden: true },
+                {
+                    title: "Item Code",
+                    dataIndx: "ItemCode",
+                    width: 150,
+                    dataType: "string",
+                    editable: false,
+                    align: "left"
+                },
+                {
+                    title: "Item Name",
+                    dataIndx: "ItemName",
+                    width: 300,
+                    dataType: "string",
+                    editable: false,
+                    align: "left"
+                },
+                {
+                    title: "Asset Code",
+                    dataIndx: "AssetCode",
+                    width: 150,
+                    dataType: "string",
+                    editable: true,
+                    align: "left"
+                },
+                {
+                    title: "Serial No",
+                    dataIndx: "SerialNo",
+                    width: 150,
+                    dataType: "string",
+                    editable: true,
+                    align: "left"
+                },
+                {
+                    title: "Model No",
+                    dataIndx: "ModelNo",
+                    width: 150,
+                    dataType: "string",
+                    editable: true,
+                    align: "left"
+                },
+                {
+                    title: "Acquired Date",
+                    width: 150,
+                    dataIndx: "strAcquiredDate",
+                    dataType: 'date',
+                    format: 'dd-mm-yy',
+                    editor: {
+                        type: 'textbox',
+                        init: dateEditor
+                    },
+                    validations: [
+                        { type: 'regexp', value: '^[0-9]{2}/[0-9]{2}/[0-9]{4}$', msg: 'Not in dd/mm/yyyy format' }
+                    ]
+                },
+                  {
+                      title: "Remarks",
+                      dataIndx: "Remarks",
+                      width: 150,
+                      dataType: "string",
+                      editable: true,
+                      align: "left"
+                  }
+
+            ];
+            dataIID = {
+                location: 'local',
+                sorting: 'local',
+                paging: 'local',
+                dataType: 'JSON'
+            };
+
+            setIID = {
+                height: '300',
+                maxheight: '400',
+                title: "Asset List",
+                sortable: false,
+                numberCell: { show: false },
+                selectionModel: { type: 'row' },
+                hoverMode: 'cell',
+                editor: { type: 'textbox' },
+                showTop: true,
+                resizable: true,
+                editModel: {
+                    saveKey: $.ui.keyCode.ENTER
+                },
+                draggable: false,
+                virtualX: true,
+                virtualY: true,
+                colModel: colIID,
+                dataModel: dataIID,
+                pageModel: { type: "local", rPP: 50 }
+            };
+            $AssetDetailGrid = $("#grid").pqGrid(setIID);
+
+            /*************** Item Grid which willbe available for ALl item list **********/
+            var setItemList = [
+                { dataIndx: "ID", hidden: true },
+                { title: "Code", dataIndx: "Code", width: 100, dataType: "string", hidden: true },
+                {
+                    title: "Item Name",
+                    dataIndx: "Name",
+                    width: 200,
+                    dataType: "string",
+                    filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                },
+                { title: "Unit Name", dataIndx: "UnitName", width: 90 },
+                { title: "PackSize", dataIndx: "PackSize", width: 80 }
+            ];
+            setItemList = {
+                width: "auto", //auto width
+                height: "100%-30", //height in %age
+                selectionModel: { type: 'cell' },
+                autoSizeInterval: 0,
+                scrollModel: { autoFit: true },
+                dragColumns: { enabled: false },
+                hoverMode: 'cell',
+                editor: { type: 'textbox' },
+                filterModel: { on: true, mode: "AND", header: true },
+                showTop: false,
+                resizable: true,
+                virtualX: true,
+                colModel: setItemList,
+                dataModel: dataItemList,
+                toggle: function (evt, ui) {
+                    if (ui.state === 'max') {
+                        $(".ui-dialog,.ui-widget-overlay").css('position', 'static');
+                    }
+                    else {
+                        $(".ui-dialog,.ui-widget-overlay").css('position', 'absolute');
+                    }
+                },
+                cellClick: function (evt, ui) {
+                    if (ui.rowData) {
+                        var record = ui.rowData;
+                        $("#ItemId").val(record.ID);
+                        $("#ItemName").val(record.Name);
+                        $("#ItemCode").val(record.Code);
+                        ClosePopupWindow("ItemModal");
+                    }
+                },
+                pageModel: { type: "local", rPP: 20 }
+            };
+            $("#Itemgrid").pqGrid(setItemList);
+            //Click on View/Add Item button on main page
+            $("#ItemName").on('click', function () {
+                $("#ItemModal").dialog({
+                    height: 500,
+                    width: 700,
+                    modal: true,
+                    open: function () {
+                        $.ajax({
+                            type: "GET",
+                            url: "/ItemMaster/GetAssetItems/",
+                            datatype: "Json",
+                            beforeSend: function () {
+                                $("#Itemgrid").pqGrid("showLoading");
+                            },
+                            complete: function () {
+                                $("#Itemgrid").pqGrid("hideLoading");
+                            },
+                            success: function (data) {
+                                $("#Itemgrid").pqGrid("hideLoading");
+                                $("#Itemgrid").pqGrid("option", "dataModel.data", data);
+                                $("#Itemgrid").pqGrid("refreshDataAndView");
+                            },
+                            error: function () {
+                                $("#Itemgrid").pqGrid("hideLoading");
+                                ShowAlert("error", "Error while loading Itemlist");
+                                return;
+                            }
+                        });
+                    },
+                    close: function () {
+                    },
+                    show: {
+                        effect: "blind",
+                        duration: 500
+                    }
+                });                
+            });
+            /********* Supplier Grid *********/
+            $(document).ready(function () {
+                var SupplierM = {
+                    height: 400,
+                    autoSizeInterval: 0,
+                    scrollModel: { autoFit: true },
+                    dragColumns: { enabled: false },
+                    hoverMode: 'cell',
+                    editor: { type: 'textbox' },
+                    filterModel: { on: true, mode: "AND", header: true },
+                    showTop: false,
+                    resizable: true,
+                    virtualX: true,
+                    colModel: colSupplierM,
+                    dataModel: dataSupplierM,
+                    pageModel: { type: "local", rPP: 20 },
+                    toggle: function (evt, ui) {
+                        if (ui.state == 'max') {
+                            $(".ui-dialog,.ui-widget-overlay").css('position', 'static');
+                        }
+                        else {
+                            $(".ui-dialog,.ui-widget-overlay").css('position', 'absolute');
+                        }
+                    },
+                    cellClick: function (evt, ui) {
+                        if (ui.rowData) {
+                            var rowIndx = parseInt(ui.rowIndx);
+                            var record = ui.rowData;
+                            $("#SupplierId").val(record.ID);
+                            $("#SupplierName").val(record.Name);
+                            ClosePopupWindow("SupplierModal");
+                        }
+                    }
+                };
+                $("#SupplierName").on('click', function () {
+                    ShowSupplierListPoup("Suppliergrid", "SupplierModal", SupplierM, "/Master/AllSupplier/");
+                });
+            });
+            //Click on Add selected items to main grid
+            $('#btnAddItem').on('click', function () {
+                var itemQuantity = $("#Quantity").val();
+
+                var dataMGrid = [];
+                for(var i=1;i<=itemQuantity;i++)
+                {
+                    var grdData = {
+                        'AssetId': 0, 'ItemId': $("#ItemId").val(), 'ItemCode': $("#ItemCode").val(), 'ItemName': $("#ItemName").val()
+                    };
+                    dataMGrid.push(grdData);
+                }
+
+                $AssetDetailGrid.pqGrid("option", "dataModel.data", dataMGrid);
+                $AssetDetailGrid.pqGrid("refreshDataAndView");
+            });
+
+            $("#btnAdd").on("click", ClearForm);
+            $("#btnSave").click(function () {
+                if ($("#ddlBranch").val() === "") {
+                    ShowAlert("error", "Please Select Branch");
+                    return;
+                }
+                DisableClick("btnSave");
+                var dataMGrid = [];
+                var items = $AssetDetailGrid.pqGrid("getData", { dataIndx: ['AssetId', 'ItemId', 'ItemCode', 'ItemName', 'AssetCode', 'SerialNo', 'ModelNo', 'strAcquiredDate', 'Remarks'] });
+                $.each(items, function (key, value) {
+                    var grdData = {
+                        'AssetId': value.AssetId, 'ItemId': value.ItemId, 'ItemCode': value.ItemCode, 'ItemName': value.ItemName,
+                        'AssetCode': value.AssetCode, 'SerialNo': value.SerialNo, 'ModelNo': value.ModelNo,
+                        'strAcquiredDate': value.strAcquiredDate, 'SupplierId': $("#SupplierId").val(), 'BranchId': $("#ddlBranch").val(), 'Remarks': value.Remarks
+                    };
+                    dataMGrid.push(grdData);
+                });
+                var griditems = JSON.stringify(dataMGrid);
+                
+                $.ajax(
+                {
+                    type: "POST", //HTTP POST Method
+                    traditional: true,
+                    contentType: 'application/json; charset=utf-8',
+                    url: '/Asset/Asset/SaveAsset', // Controller/View
+                    data: griditems,
+                    success: function (msg) {
+                        if (msg.success) {                            
+                                ShowAlert("success", "Asset Details saved successfully.");
+                            ClearForm();
+                        }
+                        else {
+                            ShowAlert("error", msg.Message);
+                        }
+                    },
+                    error: function () {
+                    }
+                });
+            });
+
+        })(jQuery);
+
+        $(document).ready(function () {
+
+        });
+       
+    </script>
+}

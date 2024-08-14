@@ -1,0 +1,38 @@
+﻿@model IEnumerable<BISERP.Areas.Store.Models.Store.StoreMenuModel>
+@{    
+    Layout = "~/Areas/Branch/Views/Shared/_BranchLayout.cshtml";
+}
+
+@using (Html.BeginForm())
+{
+    <div id="content">
+        <div id="content-tab">
+            <ul class="nav nav-tabs" id="tabs">
+                @foreach (var item in Model)
+                {
+                    <li>
+                        <a class="tabs" href="#" id="@item.MenuAction">@item.MenuName</a>
+                    </li>
+                }
+            </ul>
+        </div>
+        <div id="MasterPlaceHolder" style="display:none;">
+
+        </div>
+    </div>
+}
+<script type="text/javascript">
+    $(function () {
+        $('.tabs').click(function () {
+            var selectedID = this.id;
+
+            clearTabSelection($(this));
+
+            $.get('/Branch/' + selectedID, function (data) {
+                $('#MasterPlaceHolder').html(data);
+                $('#MasterPlaceHolder').fadeIn('fast');
+            });
+        });
+    });
+</script>
+

@@ -1,0 +1,478 @@
+﻿@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        Entry Form
+                    </div>
+                </div>
+
+                <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <fieldset>
+                            <legend></legend>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                                    <a data-toggle="collapse" class="btn btn-success" id="btnAdd">Reset</a>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.Label("Branch")
+                                        @Html.DropDownList("ddlBranch", new SelectList(string.Empty, "Value", "Text"), "Select Branch", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-group">
+                                <div class="panel panel-default">
+                                    <div class="panel-groupingBoder">
+                                        <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                                            <div class="panel-body">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <b>Requistion Details</b>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group form-horizontal">
+                                                        <div class="col-sm-3">
+                                                            @Html.Label("Requistion No", new { @class = "required" })
+                                                            @Html.TextBox("RequistionNo", "", new { @class = "form-control " })
+                                                            @Html.Hidden("RequestId")
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group form-horizontal">
+                                                        <div class="col-sm-3">
+                                                            @Html.Label("Requistion Date")
+                                                            <div class='input-group date' id='RequistionDate'>
+                                                                <input type='text' class="form-control" />
+                                                                <span class="input-group-addon">
+                                                                    <span class="glyphicon glyphicon-calendar"></span>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group form-horizontal">
+                                                        <div class="col-sm-3">
+                                                            @Html.Label("Asset Code")
+                                                            @Html.TextBox("AssetCode", "", new { @class = "form-control", @disabled = "disabled" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group form-horizontal">
+                                                        <div class="col-sm-3">
+                                                            @Html.Label("SerialNo")
+                                                            @Html.TextBox("SerialNo", "", new { @class = "form-control", @disabled = "disabled" })
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group form-horizontal">
+                                                        <div class="col-sm-3">
+                                                            @Html.Label("Equipment Description")
+                                                            @Html.TextBox("EquipmentDescription", "", new { @class = "form-control", @disabled = "disabled" })
+                                                            @Html.Hidden("AssetLocationId")
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group form-horizontal">
+                                                        <div class="col-sm-3">
+                                                            <button type="button" class="btn btn-primary" id="btnAddItem">View Attachment</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-group">
+                                <div class="panel panel-default">
+                                    <div class="panel-groupingBoder">
+                                        <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                                            <div class="panel-body">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <b>Complaint Details</b>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group form-horizontal">
+                                                        <div class="col-sm-3">
+                                                            @Html.Label("Nature Of problem")
+                                                            @Html.TextBox("NatureOfPrb", "", new { @class = "form-control", @disabled = "disabled" })
+                                                        </div>
+                                                        <div class="col-sm-3">
+                                                            @Html.Label("Required Date")
+                                                            <div class='input-group date' id='RequriedDate'>
+                                                                <input type='text' class="form-control" />
+                                                                <span class="input-group-addon">
+                                                                    <span class="glyphicon glyphicon-calendar"></span>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-3">
+                                                            @Html.Label("Complaint by user")
+                                                            @Html.TextArea("Complaint", "", new { @class = "form-control", @disabled = "disabled" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group form-horizontal">
+                                                        <div class="col-sm-3">
+                                                            @Html.Label("Remark")
+                                                            @Html.TextBox("Remark", "", new { @class = "form-control", @disabled = "disabled" })
+                                                        </div>
+                                                        <div class="col-sm-3">
+                                                            @Html.Label("Requested By")
+                                                            @Html.TextBox("UserName", "", new { @class = "form-control", @disabled = "disabled" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-group">
+                                <div class="panel panel-default">
+                                    <div class="panel-groupingBoder">
+                                        <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                                            <div class="panel-body">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <b>Requistion Status</b>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group form-horizontal">
+                                                        <div class="col-sm-3">
+                                                            @Html.Label("Requistion Status", new { @class = "required" })
+                                                            <select id="RequisitionStatus" class="wrapperdropdown-content form-control ">
+                                                                <option class="wrapperdropdown-content" value="0">"-- Select from List --"</option>
+                                                                <option class="wrapperdropdown-content" value="1">Accepted</option>
+                                                                <option class="wrapperdropdown-content" value="2">Rejected</option>
+                                                                <option class="wrapperdropdown-content" value="3">Hold</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group form-horizontal">
+                                                        <div class="col-sm-3">
+                                                            @Html.Label("Maintenance Status", new { @class = "required" })
+                                                            <select id="MaintenanceStatus" class="wrapperdropdown-content form-control ">
+                                                                <option class="wrapperdropdown-content" value="0">"-- Select from List --"</option>
+                                                                <option class="wrapperdropdown-content" value="1">Inhouse</option>
+                                                                <option class="wrapperdropdown-content" value="2">warrenty</option>
+                                                                <option class="wrapperdropdown-content" value="3">AMC</option>
+                                                                <option class="wrapperdropdown-content" value="4">Outside</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group form-horizontal">
+                                                        <div class="col-sm-3">
+                                                            @Html.Label("Assigment")
+                                                            @Html.TextBox("Assigment", "", new { @class = "form-control " })
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group form-horizontal">
+                                                        <div class="col-sm-3">
+                                                            @Html.Label("RejectionReason")
+                                                            @Html.TextBox("RejectionReason", "", new { @class = "form-control " })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div title="Select Request No" id="RequestModal" style="display: none;">
+        <div id="grid"></div>
+    </div>
+    <div title="View Attachments" id="ViewModal" style="display: none;">
+        <div class="col-sm-10">
+            <ul id="displayImages" class="attachment" style="max-height: 150px; overflow-y: scroll;" />
+        </div>
+    </div>
+    <script type="text/javascript">
+        var appSetting = '@BISERP.Common.Constants.ScandocUrl'
+        function LoadAssetGrid() {
+            var BranchId = $("#ddlBranch").val();
+            if (BranchId == undefined || BranchId == "") BranchId = 0
+            $("#RequestModal").dialog({
+                height: 500,
+                width: 700,
+                modal: true,
+                open: function (evt, ui) {
+                    $.ajax({
+                        url: "/Asset/RequestRegister/GetRequestno",
+                        cache: false,
+                        async: true,
+                        method: "GET",
+                        dataType: "JSON",
+                        data: { BranchId: BranchId },
+                        success: function (response) {
+                            $("#grid").pqGrid("option", "dataModel.data", response);
+                            $("#grid").pqGrid("refreshDataAndView");
+                        },
+                        error: function (request, status, error) {
+                            ClearParamGrid("grid");
+                            return;
+                        }
+                    });
+                },
+                close: function (event, ui) {
+                },
+                show: {
+                    effect: "blind",
+                    duration: 500
+                }
+            });
+        }
+        function DisplayUploadedImages(objectName, FileDetail) {
+
+            var newImageLI = '<li>';
+            newImageLI = newImageLI + '<a class="title" id="' + FileDetail.FileId + '" href= "' + appSetting + FileDetail.FilePath + '" target="_blank"> ' + FileDetail.FileNames + '</a>';
+            newImageLI = newImageLI + '<a href="javascript:void(0);" data-id="' + FileDetail.FileId + '"  class="deleteItem" onclick="Deletefile(' + FileDetail.FileId + ');return false;">X</a>';
+            newImageLI = newImageLI + "</li>";
+
+            $("#" + objectName).append(newImageLI);
+        }
+        function ViewAttachments() {
+            var AssetLocationId = $("#AssetLocationId").val();
+            $("#ViewModal").dialog({
+                height: 400,
+                width: 700,
+                modal: true,
+                open: function (evt, ui) {
+                    $.ajax({
+                        type: "GET",
+                        url: "/ScanDoc/ScanDoc/GetScanDocUrl",
+                        data: { FileId: AssetLocationId, ScanDocSubTypeId: 7 },
+                        datatype: "Json",
+                        success: function (data) {
+                            $.each(data, function (key, value) {
+                                DisplayUploadedImages("displayImages", value);
+                            });
+
+                        }
+
+                    });
+
+                },
+                close: function (event, ui) {
+                },
+                show: {
+                    effect: "blind",
+                    duration: 500
+                }
+            });
+        }
+
+        $("#RequisitionStatus").change(function () {
+            if ($("#RequisitionStatus").val() == "1") {
+                $("#RejectionReason").prop('disabled', true);
+                $("#Assigment").prop('disabled', false);
+            } 
+            else if ($("#RequisitionStatus").val() == "2") {
+                $("#RejectionReason").prop('disabled', false);
+                $("#Assigment").prop('disabled', true);
+            }
+            else if ($("#RequisitionStatus").val() == "3") {
+                $("#RejectionReason").prop('disabled', false);
+                $("#Assigment").prop('disabled', false);
+            }
+        });
+
+        function ClearForm() {
+            $("#ddlBranch").val("");
+            $("#RequestId").val("");
+            $("#RequistionNo").val("");
+            $("#AssetCode").val("");
+            $("#SerialNo").val("");
+            $("#EquipmentDescription").val("")
+            $("#NatureOfPrb").val("");
+            $("#Complaint").val("");
+            $("#Remark").val("");
+            $("#RequestedBy").val("");
+            $('#RequistionDate').data("DateTimePicker").disable();
+            $('#RequriedDate').data("DateTimePicker").disable();
+            $("#RequisitionStatus").val("");
+            $("#MaintenanceStatus").val("");
+            $("#Assigment").val("");
+            $("#RejectionReason").val("");
+        }
+        $("#btnAdd").click(function () {
+            ClearForm();
+        });
+        $(function () {
+            $('#RequistionDate').datetimepicker({
+                format: 'DD-MMM-YYYY',
+                extraFormats: ['DD-MM-YYYY', 'DD-MM-YY'],
+                defaultDate: new Date()
+            });
+            $('#RequriedDate').datetimepicker({
+                format: 'DD-MMM-YYYY',
+                extraFormats: ['DD-MM-YYYY', 'DD-MM-YY'],
+                defaultDate: new Date()
+            });
+            $('#RequistionDate').data("DateTimePicker").disable();
+            $('#RequriedDate').data("DateTimePicker").disable();
+            $.ajax({
+                type: "GET",
+                url: "/Master/AllBranches",
+                datatype: "Json",
+                async: true,
+                success: function (data) {
+                    $.each(data, function (index, value) {
+                        $('#ddlBranch').append('<option value="' + value.BranchID + '">' + value.BranchName + '</option>');
+                    });
+                }
+            });
+            dataList = { location: 'local', sorting: 'local', paging: 'local', dataType: 'JSON' };
+            var setAssetCol = [
+                   { dataIndx: "RequestId", dataType: "int", hidden: true },
+                   { dataIndx: "AssetId", dataType: "int", hidden: true },
+                   { title: "RequestNo", dataIndx: "RequestCode", width: 100, dataType: "string", filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } },
+                   { title: "RequestedDate", dataIndx: "RequestedDate", width: 100, dataType: "DateTime", hidden: true },
+                   { title: "RequestedDate", dataIndx: "StrRequestedDate", width: 100, dataType: "string" },
+                   { title: "AssetCode", dataIndx: "AssetCode", width: 100, dataType: "string", hidden: false },
+                   { title: "SerialNo", dataIndx: "SerialNo", width: 100, dataType: "string", hidden: true },
+                   { title: "Description", dataIndx: "Description", width: 100, dataType: "string", hidden: true },
+                   { title: "Complaint", dataIndx: "Complaint", width: 100, dataType: "string", hidden: true },
+                   { title: "ProblemNature", dataIndx: "ProblemNature", width: 100, dataType: "string", hidden: true },
+                   { title: "RequiredDate", dataIndx: "RequiredDate", width: 100, dataType: "DateTime", hidden: true },
+                   { title: "StrRequiredDate", dataIndx: "StrRequiredDate", width: 100, dataType: "string", hidden: true },
+                   { title: "Remark", dataIndx: "Remark", width: 100, dataType: "string", hidden: true },
+                   { title: "RequestedBy", dataIndx: "RequestedBy", width: 100, dataType: "int", hidden: true },
+                   { title: "UserName", dataIndx: "UserName", width: 100, dataType: "string", hidden: true },
+                   { title: "AssetLocationId", dataIndx: "AssetLocationId", width: 100, dataType: "string", hidden: true },
+            ];
+            setASTList = {
+                height: "100%-30", //height in %age
+                selectionModel: { type: 'cell' },
+                autoSizeInterval: 0,
+                scrollModel: { autoFit: true },
+                dragColumns: { enabled: false },
+                hoverMode: 'cell',
+                editor: { type: 'textbox' },
+                filterModel: { on: true, mode: "AND", header: true },
+                showTop: false,
+                resizable: true,
+                virtualX: true,
+                virtualX: true,
+                colModel: setAssetCol,
+                dataModel: dataList,
+
+                cellClick: function (evt, ui) {
+                    if (ui.rowData) {
+                        var rowIndx = parseInt(ui.rowIndx);
+                        var record = ui.rowData;
+                        $("#RequestId").val(record.RequestId);
+                        $("#AssetId").val(record.AssetId);
+                        $("#RequistionNo").val(record.RequestCode);
+                        $('#RequistionDate').data({ date: record.StrRequestedDate });
+                        $('#RequistionDate').datetimepicker('update');
+                        $('#RequistionDate').datetimepicker().children('input').val(record.StrRequestedDate);
+                        $("#AssetCode").val(record.AssetCode);
+                        $("#SerialNo").val(record.SerialNo);
+                        $("#EquipmentDescription").val(record.Description);
+                        $("#Complaint").val(record.Complaint);
+                        $("#NatureOfPrb").val(record.ProblemNature);
+                        $('#RequriedDate').data({ date: record.StrRequiredDate });
+                        $('#RequriedDate').datetimepicker('update');
+                        $('#RequriedDate').datetimepicker().children('input').val(record.StrRequiredDate);
+                        $("#Remark").val(record.Remark);
+                        $("#RequestedBy").val(record.RequestedBy);
+                        $("#UserName").val(record.UserName);
+                        $("#AssetLocationId").val(record.AssetLocationId);
+                        ClosePopupWindow("RequestModal");
+                    }
+                },
+                pageModel: { type: "local", rPP: 20 }
+            };
+            $("#grid").pqGrid(setASTList);
+
+
+            $('#RequistionNo').on('click', function () {
+                if ($("#ddlBranch").val() == "" || $("#ddlBranch").val() == undefined) {
+                    ShowAlert("error", "Please Select Branch");
+                    return;
+                }
+                LoadAssetGrid();
+            });
+            $("#btnSave").click(function () {
+                if ($("#RequestId").val() == "") {
+                    ShowAlert("error", "Please Select RequistionNo");
+                    return;
+                }
+                if ($("#RequisitionStatus").val() == "") {
+                    ShowAlert("error", "Please Select RequisitionStatus");
+                    return;
+                }
+                if ($("#MaintenanceStatus").val() == "") {
+                    ShowAlert("error", "Please Select MaintenanceStatus");
+                    return;
+                }
+                if ($("#RequisitionStatus").val() == "1" && $("#Assigment").val() == "") {
+                    ShowAlert("error", "Please Enter Assignment");
+                    return;
+                }
+                if ($("#RequisitionStatus").val() == "2" && $("#RejectionReason").val() == "") {
+                    ShowAlert("error", "Please Enter RejectionReason");
+                    return;
+                }
+                if ($("#RequisitionStatus").val() == "3" && $("#RejectionReason").val() == "" && $("#Assigment").val() == "") {
+                    ShowAlert("error", "Please Enter Assignment and RejectionReason");
+                    return;
+                }
+
+                var griditems = JSON.stringify({
+                    RequestId: $("#RequestId").val(),
+                    RequisitionStatus: $("#RequisitionStatus").val(),
+                    MaintenanceStatus: $("#MaintenanceStatus").val(),
+                    Assignment: $("#Assigment").val(),
+                    RejectionReason: $("#RejectionReason").val(),
+                });
+
+                $.ajax(
+                {
+                    type: "POST", //HTTP POST Method
+                    traditional: true,
+                    contentType: 'application/json; charset=utf-8',
+                    url: '/RequestRegister/UpdRequestAcceptance', // Controller/View
+                    data: griditems,
+                    success: function (msg) {
+                        if (msg.success) {
+                            ShowAlert("success", msg.Message);
+                            ClearForm();
+                        }
+                        else {
+                            ShowAlert("error", msg.Message);
+                        }
+                    },
+                    error: function (jqXHR, exception) {
+                    }
+                });
+            });
+            $("#btnAddItem").click(function () {
+                $("#displayImages").html("");
+                ViewAttachments();
+            });
+        });
+      
+    </script>
+}
+

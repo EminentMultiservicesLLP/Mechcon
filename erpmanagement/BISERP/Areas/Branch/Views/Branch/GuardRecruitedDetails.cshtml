@@ -1,0 +1,267 @@
+﻿@model BISERP.Areas.Branch.Models.GuardInfoModel
+@{
+    Layout = "~/Areas/Branch/Views/Shared/_IssueReturnLayout.cshtml";
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        Entry Form
+                    </div>
+                </div>
+                <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <fieldset>
+                            <legend></legend>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                                    <a data-toggle="collapse" class="btn btn-success" id="btnAdd">Reset</a>
+                                </div>
+                            </div>
+                            <br>
+
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.BranchId, new { @class = "required" })
+                                        @Html.DropDownList("ddlBranch", new SelectList(string.Empty, "Value", "Text"), "Select Branch", new { @class = "form-control" })
+                                        @Html.HiddenFor(m => m.BranchId)
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.TicketCode)
+                                        @Html.TextBoxFor(m => m.TicketCode, "", new { @class = "form-control" })
+                                        @Html.HiddenFor(m => m.GuardDt.EmpId)
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.Label("Employee Name")
+                                        @Html.TextBoxFor(m => m.EmpFName, "", new { @class = "form-control", @disabled = "disabled" })
+                                        @Html.HiddenFor(m => m.GuardDt.EmpId)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.strGender)
+                                        <input type="radio" name="strGender" value="Male"> Male
+                                        <input type="radio" name="strGender" value="Female"> Female
+                                        @Html.HiddenFor(m => m.strGender)
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.Designation)
+                                        @Html.TextBoxFor(m => m.Designation, "", new { @class = "form-control", @disabled = "disabled" })
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.age)
+                                        @Html.TextBoxFor(m => m.age, "", new { @class = "form-control", @disabled = "disabled" })
+                                    </div>
+                                </div>
+
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <fieldset>
+
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.CheckBoxFor(m => m.GuardDt.PoliceVerification)
+                                        @Html.LabelFor(m => m.GuardDt.PoliceVerification)
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.Label("Upload")
+                                        <div>
+                                            <input type='file' id="files" multiple="multiple" disabled="disabled" />
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <ul id="displayImages" class="attachment" style="max-height: 150px; overflow-y: scroll;"></ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.GuardDt.Reference1)
+                                        @Html.TextBoxFor(m => m.GuardDt.Reference1, "", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.GuardDt.Reference2)
+                                        @Html.TextBoxFor(m => m.GuardDt.Reference2, "", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.GuardDt.Reference3)
+                                        @Html.TextBoxFor(m => m.GuardDt.Reference3, "", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.GuardDt.Reference4)
+                                        @Html.TextBoxFor(m => m.GuardDt.Reference4, "", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $.ajax({
+            type: "GET",
+            url: "/Master/AllBranches",
+            datatype: "Json",
+            async: true,
+            success: function (data) {
+                $.each(data, function (index, value) {
+                    $('#ddlBranch').append('<option value="' + value.BranchID + '">' + value.BranchName + '</option>');
+                });
+                if ($("#ddlBranch").val() === "") {
+                    var ddlBranch = $("#BranchId").val();
+                    $("#ddlBranch").val(ddlBranch);
+                }
+            }
+        });
+        $("#ddlBranch").prop('disabled', true);
+        $("input[type=radio][name=strGender]").attr('disabled', true);
+        $('#GuardDt_PoliceVerification').change(function () {
+            if ($(this).is(':checked')) {
+                $("#files").prop('disabled', false);
+
+            } else {
+                $("#files").prop('disabled', true);
+            }
+        });
+        if ($('input:radio[name="strGender"][value=""]')) {
+            value = $("#strGender").val();
+            $("input[name=strGender][value=" + value + "]").prop('checked', true);
+        }
+        $("#TicketCode").autocomplete({
+            source: function (request, response) {
+                console.log(request.term);
+                $.ajax({
+                    url: "/Branch/Branch/SearchTicketCode",
+                    type: "POST",
+                    dataType: "json",
+                    data: { ticketcode: request.term },
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            return { label: item.TicketCode + ' ' + item.EmployeeName, value: item.TicketCode, EmpName: item.EmployeeName, EmpId: item.EmpId, BranchId: item.BranchId, Age: item.Age, Designation: item.Designation, Gender: item.Gender };
+                        }));
+                    }
+                });
+            },
+            select: function (e, i) {
+                $("#EmpFName").val(i.item.EmpName);
+                $("#GuardDt_EmpId").val(i.item.EmpId);
+                $("#ddlBranch").val("");
+                $("#ddlBranch").val(i.item.BranchId);
+                $("#age").val(i.item.Age);
+                $("#Designation").val(i.item.Designation);
+                $('input:radio[name="strGender"][value="' + i.item.Gender + '"]').prop('checked', true);
+            }
+        });
+        $("#btnAdd").on("click", ClearForm);
+        function ClearForm() {
+            $("#ddlBranch").val("");
+            $("#EmpFName").val("");
+            $("#GuardDt_EmpId").val("");
+            $("#age").val("");
+            $("#Designation").val("");
+            $("#TicketCode").val("");
+            $("#GuardDt_Reference1").val("");
+            $("#GuardDt_Reference2").val("");
+            $("#GuardDt_Reference3").val("");
+            $("#GuardDt_Reference4").val("");
+            $("#GuardDt_Reference4").val("");
+            $("#GuardDt_PoliceVerification").prop('checked', false);
+            $("#strGender").val("");
+            $("input[name=strGender]").prop("checked", false);
+            $("#files").prop('disabled', true);
+            $("#ddlBranch").prop('disabled', true);
+            $("#EmpFName").prop('disabled', true);
+            $("#age").prop('disabled', true);
+            $("#Designation").prop('disabled', true);
+            ResetDate("DateOfBirth");
+        }
+
+        $("#btnSave").click(function () {
+            var gender;
+            if ($("[name='Gender']:checked").val() === "1")
+                gender = 1;
+            else
+                gender = 0;
+
+            if ($("#TicketCode").val() === "") {
+                ShowAlert("error", "Please Select TicketCode");
+                return;
+            }
+            DisableClick("btnSave");
+            var items = JSON.stringify({
+                EmpId: $("#GuardDt_EmpId").val(),
+                BranchId: $("#ddlBranch").val(), //Reading text box values using Jquery
+                Reference1: $("#GuardDt_Reference1").val(),
+                Reference2: $("#GuardDt_Reference2").val(), //Reading text box values using Jquery
+                Reference3: $("#GuardDt_Reference3").val(),
+                Reference4: $("#GuardDt_Reference4").val(),
+                PoliceVerification: $("#GuardDt_PoliceVerification").prop('checked')
+            });
+            $.ajax(
+            {
+                type: "POST",
+                traditional: true,
+                contentType: 'application/json; charset=utf-8',
+                url: '/GuardDetails/SaveGuardRecruitedDetails',
+                data: items,
+
+                success: function (msg) {
+                    if (msg.success) {
+                        if (msg.success) {
+                            SaveScandoc("files", msg.Id, "Branch", "GuardDetails");
+                            ShowAlert("success", "GuardRecruitedDetails saved successfully.");
+                            ClearForm();
+                            $("#files").val('');
+                        }
+                        else {
+                            ShowAlert("error", msg.Message);
+                        }
+                    }
+                },
+                error: function () {
+                }
+            });
+        });
+    </script>
+
+}

@@ -1,0 +1,313 @@
+﻿@{
+//Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<hgroup class="title">
+    @Styles.Render("~/Content/font-awesome/css/font-awesome.min.css")
+</hgroup>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div style="height: 100%; width: 100%; background-color: #EEF5F9; display: inline-block;">
+        <div class="row">
+            <!-- Dashboard Counts Section-->
+            <div class="col-sm-12">
+                <section class="dashboard-counts no-padding-bottom">
+                    <div class="container-fluid">
+                        <div id="topSectionCountPI" class='row bg-white has-shadow roundedBorder'>
+                            <div class="viewDetailSection">
+                                <a id="hrefMenu" href="#">
+                                    <span class="">View Details</span>
+                                    <span class=""><i class="fa fa-arrow-circle-right"></i></span>
+                                    <div class="clearfix"></div>
+                                </a>
+                            </div>
+                            <div class='col-xl-3 col-sm-3'>
+                                <div class='item d-flex align-items-center'>
+                                    <div class='title' style="margin: 0;">
+                                        <span> Purchase Indent for </span>
+                                        <div class="centerDiv">
+                                            <div class="btn-group align-items-center">
+                                                <div class="btn  btn-default btn-rounded btn-icon" style="padding: 0">
+                                                    <i class="fa fa-calendar pull-left"></i>
+                                                    <input id="startPIDt" type="text" class="date" placeholder="DD-MM-YYYY" title="Enter a date in this format DD-MMM-YYYY" />
+                                                </div>
+                                                <div class="btn btn-default btn-rounded btn-icon" style="padding: 0">
+                                                    <i class="fa fa-calendar pull-left"></i>
+                                                    <input id="endPIDt" type="text" class="date" placeholder="DD-MM-YYYY" title="Enter a date in this format DD-MMM-YYYY" />
+                                                </div>
+                                                <span><i style="cursor:pointer;" class="fa fa-arrow-circle-right" id="btnRefreshPIDiv"></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @*<div class='icon bg_lb' id="btnRefreshPIDiv">
+                                            <i class='fa fa-refresh fa-2x'> </i>
+                                        </div>*@
+                                </div>
+                            </div>
+                        </div>
+                        <div id="topSectionCountPO" class='row bg-white has-shadow roundedBorder'>
+                            <div class="viewDetailSection">
+                                <a id="hrefMenu" href="#">
+                                    <span class="">View Details</span>
+                                    <span class=""><i class="fa fa-arrow-circle-right"></i></span>
+                                    <div class="clearfix"></div>
+                                </a>
+                            </div>
+                            <div class='col-xl-3 col-sm-3'>
+                                <div class='item d-flex align-items-center'>
+
+                                    <div class='title' style="margin: 0;">
+                                        <span> Purchase Order for </span>
+                                        <div class="centerDiv">
+                                            <div class="btn-group align-items-center">
+                                                <div class="btn  btn-default btn-rounded btn-icon" style="padding: 0">
+                                                    <i class="fa fa-calendar pull-left"></i>
+                                                    <input id="startPODt" type="text" class="date" placeholder="DD-MM-YYYY" title="Enter a date in this format DD-MMM-YYYY" />
+                                                </div>
+                                                <div class="btn btn-default btn-rounded btn-icon" style="padding: 0">
+                                                    <i class="fa fa-calendar pull-left"></i>
+                                                    <input id="endPODt" type="text" class="date" placeholder="DD-MM-YYYY" title="Enter a date in this format DD-MMM-YYYY" />
+                                                </div>
+                                                <span><i style="cursor:pointer;" class="fa fa-arrow-circle-right" id="btnRefreshPODiv"></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @*<div class='icon bg_lb' id="btnRefreshPODiv">
+                                            <i class='fa fa-refresh fa-2x'> </i>
+                                        </div>*@
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <!-- Dashboard Header Section    -->
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="widget" style="width: 100%;">
+                    <h4>
+                        Last 3 months - Purchase Requests
+                    </h4>
+                    <div id="topLeftSection">
+                        <ul class="site-stats">
+                            <li class="bg_lb"><i class="fa fa-list"></i> <strong id="PICount">0</strong> <small>Purchase Indents</small></li>
+                            <li class="bg_dg"><i class="fa fa-check"></i> <strong id="PIACount">0</strong> <small>Indent Authorization </small></li>
+                            <li class="bg_lo"><i class="fa fa-list-ul"></i> <strong id="PORCount">0</strong> <small>PO Request</small></li>
+                            <li class="bg_ly"><i class="fa fa-check-circle-o"></i> <strong id="PORACount">0</strong> <small>PO Authorization</small></li>
+                            <li class="bg_ls"><i class="fa fa-indent"></i> <strong id="TPICount">0</strong> <small>Total Indent</small></li>
+                            <li class="bg_lr"><i class="fa fa-inr"></i> <strong id="TPOCount">0</strong> <small>Total PO</small></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="widget" style="width: 100%;">
+                    <h4>
+                        Last 6 months - Purchase order for Supplier (Top 5)
+                    </h4>
+                    <div id="topRightSection" class="canvas-container">
+                        <canvas id="StoreLast6MonthPOCost"></canvas>
+                        @*<progress id="animationProgress" max="1" value="0" style="width: 100%"></progress>*@
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    <script src="~/Scripts/Chart/Chart.bundle.min.js"></script>
+    <script type="text/javascript">
+
+        var colors = ["#E74C3C", "#8E44AD", "#58D68D", "#FF33F3", "#dbba34", "#F5B041", "#f990a7", "#aad2ed", "#9966FF", "#99e5e5"];
+        var StoreLast6MonthPOCostData = [], barChartStoreLast6MonthPOCost = {};
+        $(document).ready(function () {
+            $('#endPIDt').datepicker().datepicker("setDate", new Date());
+            $('#startPIDt').datepicker().datepicker("setDate", new Date());
+            $('#startPODt').datepicker().datepicker("setDate", new Date());
+            $('#endPODt').datepicker().datepicker("setDate", new Date());
+
+            $('#btnRefreshPODiv').on("click", function () {
+                GetPOCounts();
+            });
+
+            $('#btnRefreshPIDiv').on("click", function () {
+                GetPICounts();
+            });
+            
+            GetPOCounts();
+            GetPICounts();
+            ajaxCall("/PurchaseDashBoard/SupplierCostLastSixMonth/", null, 10000, "GET", successGetStoreLast6MonthPOCostRequest, afterFail, true, "topRightSection");
+            ajaxCall("/PurchaseDashBoard/GetPurchaseRequestCounts/", { fromdate: today, todate: today, isToday: false, isPIRequest: true }, 10000, "GET", successGetPurchaseRequestCounts, afterFail, true, "topLeftSection");
+
+        });
+        function afterFail(msg) {
+            
+            //ShowAlert("error", msg.Message);
+        }
+
+        function GetPICounts() {
+            
+            if (isValidDate('startPIDt', 'DD-MMM-YYYY')) {
+                ShowAlert("error", "Please select proper PI From Date.");
+                $("#startPIDt").focus();
+                return;
+            }
+            if (isValidDate('endPIDt', 'DD-MMM-YYYY')) {
+                ShowAlert("error", "Please select proper PI To Date.");
+                $("#endPIDt").focus();
+                return;
+            }
+
+            var urlData = { fromdate: $("#startPIDt").val(), todate: $("#endPIDt").val(), isTodaysRequest: true, isPiRequest: true };
+            ajaxCall("/PurchaseDashBoard/GetPurchaseRequestCounts/", urlData, 10000, "GET", successGetPurchaseIndentRequestCount, afterFail, true, "topSectionCountPI");
+        }
+
+        function GetPOCounts() {
+            
+            if (isValidDate('startPODt', 'DD-MM-YYYY')) {
+                ShowAlert("error", "Please select proper PO From Date.");
+                $("#startPODt").focus();
+                return;
+            }
+            if (isValidDate('endPODt', 'DD-MM-YYYY')) {
+                ShowAlert("error", "Please select proper PO To Date.");
+                $("#endPODt").focus();
+                return;
+            }
+
+            var urlData = { fromdate: $("#startPODt").val(), todate: $("#endPODt").val(), isTodaysRequest: true, isPiRequest: false };
+            ajaxCall("/PurchaseDashBoard/GetPurchaseRequestCounts/", urlData, 10000, "GET", successGetPurchaseOrderRequestCount, afterFail, true, "topSectionCountPO");
+        }
+
+        /******************** Today request status *************************/
+        function successGetPurchaseIndentRequestCount(data) {
+            if (data != null && data.result != null && data.result != undefined) {
+                var colorColl = ["bg_lb", "bg_dg", "bg_lo", "bg_ly", "bg_ls", "bg_lr"];
+                var pageMenu = "#";
+                var mainDiv = $("#topSectionCountPI");
+                mainDiv.find('.dynamic').remove();
+
+                var newHtml = "";
+                $.each(data.result, function (index, jsonObject) {
+                    var newListItem = "";
+                    pageMenu = jsonObject.MenuId;
+                    //if (index > 0 && index % 3 == 0)
+                    //    newHtml = newHtml + "<div class='col-xl-3 col-sm-3 dynamic'/>";
+
+                    newListItem = "<div class='col-xl-3 col-sm-3 dynamic'><div class='item d-flex align-items-center'><div class='icon " + colorColl[index] + "'>" +
+                        "<i class='" + jsonObject.Icon.toString() + " fa-2x'> </i></div><div class='title'><span>" + jsonObject.RequestType + " </span>" +
+                        "<div class='progress'><div role='progressbar' style='width: '" + jsonObject.RequestCount + "%;height: 4px;' aria-valuenow='"
+                        + jsonObject.RequestCount + "' aria-valuemin='0' aria-valuemax='100' class='progress-bar '" + colorColl[index] +
+                        "'></div></div></div><div class='number'><strong>" + jsonObject.RequestCount + "</strong></div> </div> </div>";
+                    newHtml = newHtml + newListItem;
+                });
+
+                mainDiv.append(newHtml);
+                mainDiv.find("a#hrefMenu").attr("href", window.location.origin + '/' + pageMenu);
+            }
+
+        }
+
+        function successGetPurchaseOrderRequestCount(data) {
+            if (data != null && data.result != null && data.result != undefined) {
+                var colorColl = ["bg_lb", "bg_dg", "bg_lo", "bg_ly", "bg_ls", "bg_lr"];
+                var pageMenu = "#";
+                var mainDiv = $("#topSectionCountPO");
+                mainDiv.find('.dynamic').remove();
+                
+                var newHtml = "";
+                $.each(data.result, function (index, jsonObject) {
+                    pageMenu = jsonObject.MenuId;
+                    var newListItem = "";
+                    if (index > 0 && index % 3 == 0)
+                        newHtml = newHtml + "<div class='col-xl-3 col-sm-3 dynamic'/>";
+
+                    newListItem = "<div class='col-xl-3 col-sm-3 dynamic'><div class='item d-flex align-items-center'><div class='icon " + colorColl[index] + "'>" +
+                        "<i class='" + jsonObject.Icon.toString() + " fa-2x'> </i></div><div class='title'><span>" + jsonObject.RequestType + " </span>" +
+                        "<div class='progress'><div role='progressbar' style='width: '" + jsonObject.RequestCount + "%;height: 4px;' aria-valuenow='"
+                        + jsonObject.RequestCount + "' aria-valuemin='0' aria-valuemax='100' class='progress-bar '" + colorColl[index] +
+                        "'></div></div><div><span>" + jsonObject.TotalAmount + " </span></div></div><div class='number'><strong>" + jsonObject.RequestCount + "</strong></div> </div> </div>";
+                    newHtml = newHtml + newListItem;
+                });
+                mainDiv.append(newHtml);
+                mainDiv.find("a#hrefMenu").attr("href", window.location.origin + '/' + pageMenu);
+
+            }
+        }
+
+        /*-------------------------- Six MOnth PO Request Area -----------------------------------------*/
+        function successGetStoreLast6MonthPOCostRequest(data) {
+            //var progress = document.getElementById('animationProgress');
+            if (data != null && data.result != null && data.result != undefined) {
+                var datatStoreLast6MonthPoCostreq = [];
+                if (data.result.LabelValues != null && data.result.LabelValues.length > 0) {
+                    for (var i = 0; i < data.result.LabelValues.length; i++) {
+                        datatStoreLast6MonthPoCostreq.push({
+                            label: data.result.Legends[i],
+                            fill: true,
+                            borderColor: colors[i],
+                            backgroundColor: colors[i],
+                            data: data.result.LabelValues[i]
+                        });
+                    }
+                }
+                var config = {
+                    type: 'line',
+                    data: {
+                        labels: data.result.Labels,
+                        datasets: datatStoreLast6MonthPoCostreq
+                    },
+                    options: {
+                        responsive: true,
+                        legend: {
+                            position: 'bottom'
+                        },
+                        hover: {
+                            mode: 'index'
+                        },
+                        scales: {
+                            xAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                    labelString: 'Month'
+                                }
+                            }],
+                            yAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                    labelString: 'Value'
+                                }
+                            }]
+                        },
+                        animation: {
+                            duration: 2000
+                        }
+                    }
+                };
+                var ctx = document.getElementById('StoreLast6MonthPOCost').getContext('2d');
+                window.myLine = new Chart(ctx, config);
+            }
+        }
+
+        function successGetPurchaseRequestCounts(data) {
+            if (data != null && data.result != null && data.result != undefined) {
+                var ulElem = $("ul.site-stats");
+                var liClass = ["bg_lb", "bg_dg", "bg_lo", "bg_ly", "bg_ls", "bg_lr"];
+                if (data.result.length > 0) {
+                    ulElem.empty(); // = "";
+                }
+                $.each(data.result, function (index, jsonObject) {
+                    var newListItem = $("<li class='" + liClass[index] + "'><i class='" + jsonObject.Icon.toString() + "'> </i> <strong>" + jsonObject.RequestCount + " </strong> <small>" + jsonObject.RequestType + "</small></li>");
+                    ulElem.append(newListItem);
+                });
+            }
+        }
+
+
+
+    </script>
+}

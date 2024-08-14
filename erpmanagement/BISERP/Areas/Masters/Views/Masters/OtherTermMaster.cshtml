@@ -1,0 +1,242 @@
+﻿@model  BISERP.Areas.Masters.Models.OtherTermMasterModel
+
+@{
+    ViewBag.Title = "Other Term Master";
+}
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <h5 class="page-header orangeDottedBottomBorder">FREIGHT TERM MASTER</h5>
+    <fieldset>
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-groupingBoder">
+                    <div class="panel-heading">
+                        <div class="panel-title">
+                            <label id="EntryHeader">Freight Term Entry Form</label>
+                        </div>
+                    </div>
+                    <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                        <div class="panel-body">
+                            <div class="submit-row">
+                                <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                                <button type="button" class="btn btn-primary" id="btnReset">Reset</button>
+                                <button type="button" class="btn btn-info" id="btnSearch">Find</button>
+                                @*<button type="button" class="btn btn-success">Report</button>*@
+                            </div>
+                            <fieldset class="fieldsetCustom">
+                                <legend class="legendCustom">Create Freight Term</legend>
+                                <div class="row">
+                                    <div class="col-sm-2">
+                                        @Html.LabelFor(model => model.OthersTermCode, new { @class = "required" })
+                                        @Html.TextBoxFor(model => model.OthersTermCode, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.OthersTermCode)
+                                        @*@Html.HiddenFor(model => model.TermID)*@
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.LabelFor(model => model.OthersTermDesc, new { @class = "required" })
+                                        @Html.TextAreaFor(model => model.OthersTermDesc, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.OthersTermDesc)
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <br />
+                                        @Html.CheckBoxFor(model => model.Deactive)
+                                        @Html.LabelFor(model => model.Deactive)
+                                        @Html.ValidationMessageFor(model => model.Deactive)
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+
+
+    @* new addition 2024 *@
+    <div id="SearchGridModal" class="modal fade" role="dialog" data-backdrop="false">
+        <div class="modal-dialog find-search-grid-modal">
+            <div class="modal-content gridmodal-content">
+                <div class="modal-header gridmodal-header">
+                    <button type="button" class="close" onclick="closeModal()">&times;</button>
+                    <h4 class="modal-title">Item Details</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="fill">
+                        <div id="grid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @********@
+}
+
+
+
+<script type="text/javascript">
+    var grid;
+    var TermId=0;
+    //$(document).ready(function () {
+    function loadGridData() {
+        grid = $("#grid").jsGrid({
+            width: "100%",
+            height: "500px",
+            filtering: true, //will display top 1st row as filter
+            selecting: true,
+
+            inserting: false, // false will not allow inserting new entry
+            editing: false,// false will not allow exisiting data entry
+            sorting: true,
+            autoload: false, // this statement require to load data using ajax call
+            paging: true,
+            pageSize: 20,
+
+            controller: {
+                loadData: function (filter) {
+                    var d = $.Deferred();
+                    $.ajax({
+                        type: 'GET',
+                        @*url: '@Url.Action("AllOtherTerm", "OtherTermMaster")',*@
+                        url: "/OtherTermMaster/AllOtherTerm",
+                        dataType: "json",
+                        data: { searchOtherTerm: filter.OthersTermDesc, searchCode: filter.OthersTermCode },
+                        success: function (data) {
+                            if (data.success) {
+                                d.resolve(data.records);
+                            } else {
+                                ShowAlert("error", data.Massage);
+                                $(".jsgrid-load-panel").hide();
+                            }
+                        },
+                        error: function (e) {
+                            ShowAlert("error", "No Record Found");
+                        }
+                    });
+                    return d.promise();
+                },
+                //insertItem: function (item) {
+                //    var d = $.Deferred();
+                //    $.ajax(
+                //    {
+                //        type: "POST", //HTTP POST Method
+                //        dataType: "json",
+                //        url: '/OtherTermMaster/SaveOtherTerm', // Controller/View
+                //        data: item,
+                //        success: function (msg) {
+                //            if (msg.success) {
+                //                ShowAlert("success", "OthersTerm added successfully.");
+                //            } else {
+                //                ShowAlert("error", msg.Message);
+                //            }
+                //        },
+                //    }).done(function (insertedItem) {
+                //        d.resolve(insertedItem.data);
+                //        $("#grid").jsGrid("loadData");
+                //    });
+                //    return d.promise();
+                //},
+                //updateItem: function (item) {
+                //    var d = $.Deferred();
+                //    $.ajax(
+                //    {
+                //        type: "POST", //HTTP POST Method
+                //        dataType: "json",
+                //        url: '/OtherTermMaster/SaveOtherTerm', // Controller/View
+                //        data: item,
+                //        success: function (msg) {
+                //            if (msg.success) {
+                //                ShowAlert("success", "OthersTerm updated successfully.");
+                //            } else {
+                //                ShowAlert("error", msg.Message);
+                //            }
+                //        },
+                //    }).done(function (insertedItem) {
+                //        d.resolve(insertedItem.data);
+                //        $("#grid").jsGrid("loadData");
+                //    });
+                //    return d.promise();
+                //}
+            },
+            fields: [
+                { name: "TermID", visible: false, width: 0 },
+                { name: "OthersTermCode", title: "Code", type: "text", validate: { validator: "required", message: "code is missing! Please enter the code " }, width: 20 },
+                { name: "OthersTermDesc", title: "Description", type: "textarea", validate: { validator: "required", message: "Description is missing! Please enter the Description " } },
+                { name: "Deactive", title: "Deactive", type: "checkbox", filtering: false, width: 10, inserting: false },
+               /* { type: "control", deleteButton: false, width: 10 }*/
+            ],
+            ///********** Row Selection ***********/
+            rowClick: function (args) {
+                var data = args.item;
+                /*  $("#TermID").val(data.TermID);*/
+                TermId = data.TermID;
+                $("#OthersTermCode").val(data.OthersTermCode);
+                $("#OthersTermDesc").val(data.OthersTermDesc);
+                $("#Deactive").prop('checked', data.Deactive);
+                $("#SearchGridModal").modal('hide');
+            }
+
+        });
+    }
+    //*******************************************************new 2024
+    $("#btnSave").on('click', function () {
+        if ($("#OthersTermCode").val() == "") {
+            ShowAlert("error", "Code is missing! Please enter the code");
+            return;
+        }
+        if ($("#OthersTermDesc").val() == "") {
+            ShowAlert("error", "Description is missing! Please enter the Description");
+            return;
+        }
+
+        var item = JSON.stringify({ //Passing data
+            TermID: TermId,/* $("#TermID").val(),*/ //Reading text box values using Jquery
+            OthersTermCode: $("#OthersTermCode").val(),
+            OthersTermDesc: $("#OthersTermDesc").val(),
+            Deactive: $("#Deactive").prop('checked')
+        });
+        $.ajax(
+        {
+            type: "POST", //HTTP POST Method
+            traditional: true,
+            contentType: 'application/json; charset=utf-8',
+            url: '/OtherTermMaster/SaveOtherTerm', // Controller/View
+            data: item,
+            success: function (msg) {
+                if (msg.success) {
+                    TermId == 0 || TermId == "" ? ShowAlert("success", "OthersTerm added successfully."):ShowAlert("success", "OthersTerm updated successfully.");
+                    $("#grid").jsGrid("loadData");
+                    Clearform();
+                } else {
+                    ShowAlert("error", msg.Message);
+                }
+            },
+            })
+    })
+
+
+    $("#btnSearch").on('click', function () {
+        loadGridData();
+        $("#grid").jsGrid("loadData");
+        $("#SearchGridModal").modal('show');
+    });
+
+    function closeModal() {
+        $("#SearchGridModal").modal('hide');
+    }
+
+    function Clearform() {
+        TermId = 0;
+      /*  $("#TermID").val("");*/
+        $("#OthersTermCode").val("");
+        $("#OthersTermDesc").val("");
+        $("#Deactive").prop('checked', false);
+    }
+
+    $('#btnReset').on('click', function () {
+        Clearform();
+    });
+</script>

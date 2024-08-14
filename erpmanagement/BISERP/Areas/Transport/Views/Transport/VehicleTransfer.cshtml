@@ -1,0 +1,340 @@
+﻿@model BISERP.Areas.Transport.Models.VehicleTransferModel
+<script>
+    $(function () {       
+            $('#PurchaseDate').datetimepicker({
+                format: 'DD-MMM-YYYY',
+                extraFormats: ['DD-MM-YYYY', 'DD-MM-YY'],
+                defaultDate: new Date()
+            });
+            $('#TransferDate').datetimepicker({
+                format: 'DD-MMM-YYYY',
+                extraFormats: ['DD-MM-YYYY', 'DD-MM-YY'],
+                defaultDate: new Date()
+            });
+            $('#SoldDate').datetimepicker({
+                format: 'DD-MMM-YYYY',
+                extraFormats: ['DD-MM-YYYY', 'DD-MM-YY'],
+                defaultDate: new Date()
+            });
+    });
+</script>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-groupingBoder">
+                    <div class="panel-heading">
+                        <div class="panel-title">
+                            Entry Form
+                        </div>
+                    </div>
+                    <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <button type="button" id="btnSave" class="btn btn-success">Save</button>
+                                    <button type="button" id="btnAdd" class="btn btn-success">Reset</button>
+                                </div>
+                            </div>
+                            <br />
+                            <div class="panel-groupingBoder">
+                                <div class="row">                                    
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @Html.LabelFor(m => m.VehicleId)
+                                            @Html.TextBoxFor(m => m.VehicleNo, "", new { @class = "form-control" })
+                                            @Html.HiddenFor(m => m.VehicleId)
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @Html.LabelFor(m => m.OldBranchId)
+                                            @Html.TextBoxFor(m => m.OldBranch, "", new Dictionary<string, object> { { "readonly", "true" }, { "class", "form-control" } })
+                                            @Html.HiddenFor(m => m.OldBranchId)
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @Html.Label("Purchase Date")
+                                            <div class='input-group date' id='PurchaseDate'>
+                                                <input type='text' class="form-control" />
+                                                <span class="input-group-addon">
+                                                    <span class="glyphicon glyphicon-calendar"></span>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @Html.LabelFor(m => m.EMICompleted)
+                                            @Html.TextBoxFor(m => m.EMICompleted, "", new Dictionary<string, object> { { "readonly", "true" }, { "class", "form-control" } })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @Html.RadioButton("TransferSold", "0")
+                                            @Html.LabelFor(m => m.TransferDate)
+                                            <div class='input-group date' id='TransferDate'>
+                                                <input type='text' class="form-control" />
+                                                <span class="input-group-addon">
+                                                    <span class="glyphicon glyphicon-calendar"></span>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3"></div>
+                                        <div class="col-sm-3">
+                                            @Html.RadioButton("TransferSold", "1")
+                                            @Html.LabelFor(m => m.SoldDate)
+                                            <div class='input-group date' id='SoldDate'>
+                                                <input type='text' class="form-control" />
+                                                <span class="input-group-addon">
+                                                    <span class="glyphicon glyphicon-calendar"></span>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>                                    
+                                </div>
+                                <br />
+                                <div class="row">
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @Html.LabelFor(m => m.NewBranchId)
+                                            @Html.DropDownList("ddlBranch", new SelectList(string.Empty, "Value", "Text"), new { @class = "form-control" })
+                                        </div>
+                                    </div>                                    
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @Html.LabelFor(m => m.EMIPending)
+                                            @Html.TextBoxFor(m => m.EMIPending, "", new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @Html.LabelFor(m => m.CustomerName)
+                                            @Html.TextBoxFor(m => m.CustomerName, "", new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-3">
+                                            @Html.LabelFor(m => m.SoldAmount)
+                                            @Html.TextBoxFor(m => m.SoldAmount, "", new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-6">
+                                            @Html.LabelFor(m => m.TransferReason)
+                                            @Html.TextAreaFor(m => m.TransferReason, new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-1"></div>
+                                    <div class="form-group form-horizontal">
+                                        <div class="col-sm-6">
+                                            @Html.LabelFor(m => m.SoldReason)
+                                            @Html.TextAreaFor(m => m.SoldReason, new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br>                            
+                        </div>
+                    </div>
+                </div>                
+            </div>
+        </div>
+    </div>
+    <div id="VehicleModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Vehicle List</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div id="Vehiclegrid"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        var $Vehicle;
+        function LoadVehicleGrid() {
+            $.ajax({
+                url: "/VehicleInfo/AllVehicle",
+                cache: false,
+                async: true,
+                method: "GET",
+                dataType: "JSON",
+                beforeSend: function () {
+                    $Vehicle.pqGrid("showLoading");
+                },
+                complete: function () {
+                    $Vehicle.pqGrid("hideLoading");
+                },
+                success: function (response) {
+                    $Vehicle.pqGrid("hideLoading");
+                    $Vehicle.pqGrid("option", "dataModel.data", response);
+                    $Vehicle.pqGrid("refreshDataAndView");
+                }
+            });
+        }
+        function ClearForm() {
+            $("#VehicleId").val("");
+            $("#VehicleNo").val("");
+            $("#OldBranch").val("");
+            $("#OldBranchId").val("");
+            $("#PurchaseDate").val("");
+            $("#ddlBranch").val("");
+            $("#EMIPending").val("");
+            $("#TransferReason").val("");
+
+            $('#PurchaseDate').data("DateTimePicker").disable();
+            $('#TransferDate').data("DateTimePicker").enable();
+            $('#SoldDate').data("DateTimePicker").disable();
+            $("#ddlBranch").prop('disabled', false); SoldAmount
+            $("#EMIPending").prop('disabled', false);
+            $("#SoldAmount").prop('disabled', true);
+            $("#TransferReason").prop('disabled', false);
+            $("#CustomerName").prop('disabled', true);
+            $("#SoldReason").prop('disabled', true);
+            $("#CustomerName").val(""),
+            $("#SoldAmount").val(""),
+            $("#SoldReason").val(""),
+            $('input:radio[name="TransferSold"][value="0"]').prop('checked', true);
+        }
+        $(document).ready(function () {
+            ClearForm();
+
+            $.ajax({
+                type: "GET",
+                url: "/Master/AllBranches",
+                datatype: "Json",
+                async: true,
+                success: function (data) {
+                    $.each(data, function (index, value) {
+                        $('#ddlBranch').append('<option value="' + value.BranchID + '">' + value.BranchName + '</option>');
+                    });
+                }
+            });
+
+            $("#VehicleNo").on("click", function () {
+                $("#VehicleModal").modal('toggle');
+
+                LoadVehicleGrid();
+            });
+            $('input[type=radio][name=TransferSold]').change(function () {
+                if ($("[name='TransferSold']:checked").val() == "0") {
+                    $('#TransferDate').data("DateTimePicker").enable();
+                    $('#SoldDate').data("DateTimePicker").disable();
+                    $("#ddlBranch").prop('disabled', false);
+                    $("#EMIPending").prop('disabled', false);
+                    $("#SoldAmount").prop('disabled', true);
+                    $("#TransferReason").prop('disabled', false);
+                    $("#CustomerName").prop('disabled', true);
+                    $("#SoldReason").prop('disabled', true);
+                }
+                else {
+                    $("#SoldAmount").prop('disabled', false);
+                    $("#TransferReason").prop('disabled', true);
+                    $("#ddlBranch").prop('disabled', true);
+                    $("#EMIPending").prop('disabled', true);
+                    $('#TransferDate').data("DateTimePicker").disable();
+                    $('#SoldDate').data("DateTimePicker").enable();
+                    $("#CustomerName").prop('disabled', false);
+                    $("#SoldReason").prop('disabled', false);
+                }
+            });
+        });
+
+        $(document).ready(function () {
+            var dataM = { location: "local", sorting: 'local' };
+            var colM = [
+                    { title: "", dataIndx: "VehicleId", dataType: "integer", hidden: true },
+                    {
+                        title: "Vehicle No", dataIndx: "VehicleNo", width: 400,
+                        filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }, width: 200
+                    },
+            ];
+
+            var setM = {
+                height: 400,
+                sortable: false,
+                numberCell: { show: false },
+                hoverMode: 'cell',
+                showTop: false,
+                resizable: false,
+                draggable: false,
+                wrap: false,
+                editable: false,
+                columnBorders: true,
+                filterModel: { on: true, mode: "AND", header: true },
+                colModel: colM,
+                dataModel: dataM,
+                virtualX: true,
+                virtualY: true,
+                pageModel: { type: "local", rPP: 20 },
+                rowClick: function (evt, ui) {
+                    $("#VehicleModal").modal('toggle');
+                    if (ui.rowData) {
+                        var rowIndx = parseInt(ui.rowIndx);
+                        var record = ui.rowData;
+                        $("#VehicleId").val(record.VehicleId);
+                        $("#VehicleNo").val(record.VehicleNo);
+                        $("#OldBranch").val(record.BranchName);
+                        $("#OldBranchId").val(record.BranchId);
+                        $("#EMICompleted").val(record.EMICompleted);
+                        $("#EMIPending").val(record.EMIPending);
+
+                        $('#PurchaseDate').data({ date: record.strPurchaseDate });
+                        $('#PurchaseDate').datetimepicker('update');
+                        $('#PurchaseDate').datetimepicker().children('input').val(record.strPurchaseDate);
+                    }
+                }
+            };
+            $Vehicle = $("#Vehiclegrid").pqGrid(setM);
+        });
+        
+        
+        $("#btnSave").click(function () {
+            var items = JSON.stringify({
+                VehicleId: $("#VehicleId").val(),
+                TransferSold: $("[name='TransferSold']:checked").val(), //Reading text box values using Jquery
+                TransferDate: $("#TransferDate").data('date'),
+                SoldDate: $("#SoldDate").data('date'),
+                OldBranchId: $("#OldBranchId").val(),
+                NewBranchId: $("#ddlBranch").val(),
+                EMICompleted: $("#EMICompleted").val(),
+                EMIPending: $("#EMIPending").val(),
+                TransferReason: $("#TransferReason").val(),
+                CustomerName: $("#CustomerName").val(),
+                SoldAmount: $("#SoldAmount").val(),
+                SoldReason: $("#SoldReason").val(),
+            });
+            $.ajax(
+            {
+                type: "POST",
+                traditional: true,
+                contentType: 'application/json; charset=utf-8',
+                url: '/VehicleTransfer/SaveVehicleTransfer',
+                data: items,
+                success: function (msg) {
+                    ClearForm();
+                    ShowAlert("success", "Vehicle Transfered successfully.");
+                },
+                error: function (jqXHR, exception) {
+                }
+            });            
+        });
+    </script>
+}

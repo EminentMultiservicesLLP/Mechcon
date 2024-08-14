@@ -1,0 +1,175 @@
+﻿@model BISERP.Areas.Masters.Models.StorewiseItemTypeMappingMasterModel
+      
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+        
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-groupingBoder">
+                    <div class="panel-heading">
+                        <div class="panel-title">
+                            Projectwise Item Type Mapping Details                  
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row ">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="col-sm-1">
+                                        @Html.LabelFor(model => model.StoreID)
+                                    </div>
+                                    <div class="col-sm-3">
+                                        @Html.DropDownList("ddlStores", new SelectList(string.Empty, "Value", "Text"), "--Select Project--", new { @class = "wrapperdropdown-content form-control" })
+                                    </div>
+                                    <div class="col-sm-1">
+                                        <button type="button" class="btn btn-primary" id="btnFind">
+                                            Find
+                                            <span class="glyphicon glyphicon-search"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-collapse collapse in" aria-expanded="true">
+                        <div class="panel-body">
+                            <div class="container fill">
+                                <div id="ItemTypeMappingGrid"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+     <div class="row">
+        <div class="col-sm-12">
+           <button type="button" class="btn btn-success" id="btnSave">Save</button>
+         </div>
+      </div>
+ <script type="text/javascript">
+     var $ItemtypeListGrid;
+    $(document).ready(function () {
+        $.ajax({
+            type: "GET",
+            url: "/Master/AllStores",
+            datatype: "Json",
+            success: function (data) {
+                $.each(data, function (index, value) {
+                    $('#ddlStores').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                });
+            }
+        });
+    });
+    $('#btnFind').on('click', function () {
+        if ($('#ddlStores').val()==="") {
+            ShowAlert("error","Please select Project");
+        }
+
+        var searchStoreId = $("#ddlStores").val();
+        ClearParamGrid("ItemTypeMappingGrid");
+        $.ajax({
+            type: "GET",
+            url: "/StorewiseItemTypeMapping/StorewiseItemTypeItems/",
+            data: { StoreId: searchStoreId },
+            datatype: "Json",
+            success: function (response) {
+                $ItemtypeListGrid.pqGrid("option", "dataModel.data", response.records);
+                $ItemtypeListGrid.pqGrid("refreshDataAndView");
+            }
+        });
+       
+     });
+    $(document).ready(function () {
+        colIL = [
+            {
+                dataIndx: "Select", Width: 200, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                editor: false, dataType: 'bool',
+                title: "<input type='checkbox' />",
+                cb: { select: true, all: false, header: true }
+            },
+            { dataIndx: "ItemTypeID", dataType: "integer", editable: false, hidden: true },
+            { dataIndx: "StoreId", dataType: "integer", editable: false, hidden: true },
+            { dataIndx: "StoreID", dataType: "integer", editable: false, hidden: true },
+            { title: "Code", dataIndx: "Code", width: 300, dataType: "string", editable: false },
+            { title: "Name", dataIndx: "Name", width: 650, dataType: "string", editable: false },
+        ];
+
+        dataIL =  {
+            location: 'local',
+            sorting: 'local',
+            paging: 'local',
+            dataType: 'JSON'
+        };
+
+        setIL = {
+            width: '100%',
+            height: 300,
+            sortable: false,
+            numberCell: { show: false },
+            filterModel: { on: true, mode: "AND"},
+            selectionModel: { type: 'row' },
+            hoverMode: 'cell',
+            editor: { type: 'textbox' },
+            showTop: false,
+            resizable: true,
+            editModel: {
+                saveKey: $.ui.keyCode.ENTER
+            },
+            draggable: false,
+            wrap: false,
+            colModel: colIL,
+            dataModel:dataIL,
+            pageModel: { type: "local", rPP: 20 },
+        };
+
+        $ItemtypeListGrid = $("#ItemTypeMappingGrid").pqGrid(setIL);
+    });
+    $(document).ready(function () {
+        $("#btnSave").click(function () {
+            var selectedItems;
+            try {
+                selectedItems = $ItemMainGrid.pqGrid("option", "dataModel.data");
+            }
+            catch (err) {
+                selectedItems = $("#ItemTypeMappingGrid").pqGrid("option", "dataModel.data");
+            }
+            if (selectedItems != undefined) {
+                selectedItemsMainGrid = jLinq.from(selectedItems).equals("Select", true).select();
+
+            }
+
+            if (selectedItemsMainGrid != undefined) {
+                if (selectedItemsMainGrid.length > 0) {
+                }
+                else {
+                    ShowAlert("error", "No Item selected to save");
+                    return;
+                }
+            }
+          
+            var griditems = JSON.stringify(selectedItemsMainGrid);
+            $.ajax(
+            {
+                type: "POST", //HTTP POST Method
+                traditional: true,
+                contentType: 'application/json; charset=utf-8',
+                url: '/StorewiseItemTypeMapping/SaveStorewiseItemType', // Controller/View   
+                data: griditems,
+                success: function (msg) {
+                    if (msg.success) {
+                        ShowAlert("success", "Project wise ItemTypeMapping Master record added successfully to system.");
+                    }
+                    else {
+                        ShowAlert("error", msg.Message);
+                    }
+                },
+                error: function (jqXHR, exception) {
+                    ShowAlert("error", "No Record Found");
+                }
+            });
+        });
+    });
+</script>  
+}

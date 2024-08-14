@@ -1,0 +1,202 @@
+﻿@model BISERP.Models.UserMangement.MenuUserRightsModel
+<script>
+    $(".datepicker").datepicker({
+        showOn: "button",
+        buttonImage: "/Content/images/calendar.gif",
+        buttonImageOnly: true,
+        buttonText: "Select date",
+        dateFormat: "dd-MM-yy"
+    }).datepicker("setDate", new Date());
+    $("#anim").change(function () {
+        $(".datepicker").datepicker("option", "showAnim", "fadeIn");
+    });
+</script>
+@using (Html.BeginForm())
+{
+
+    <div id="MasterPlaceHolder" style="height:100%">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-groupingBoder">
+                    <div class="panel-body">
+                        <fieldset>
+                            <legend></legend>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        Report
+                                        <select id="selMasters" class="wrapper-dropdown-content form-control">
+                                            <option class="wrapperdropdown-content">Select</option>
+                                            @foreach (var item in Model.Child)
+                                            {
+                                                <option class="wrapperdropdown-content" value="@item.PageName">@item.MenuName</option>
+                                            }
+                                        </select>
+                                        @*<select id="" class="wrapperdropdown-content form-control">
+                                            <option class="wrapperdropdown-content" value="0">Cancelled PO</option>
+                                            <option class="wrapperdropdown-content" value="1">Purchse Order</option>
+                                            <option class="wrapperdropdown-content" value="1">Store Wise Purchase</option>
+                                        </select>*@
+                                    </div>
+                                    </div>
+                                </div>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.Label("From Date")  
+                                        @Html.TextBox("From Date","", new { @class = "form-control datepicker" })                                        
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.Label("To Date")
+                                        @Html.TextBox("ToDate","", new { @class = "form-control datepicker" })
+                                    </div>
+                                </div>
+                            </div>
+                           
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.Label("Supplier")
+                                        @Html.TextBox("Supplier", "", new Dictionary<string, object> { { "data-toggle", "modal" }, { "data-target", "#IndentModal" }, { "class", "form-control" } })
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.Label("Main Store")
+                                        @Html.TextBox("Supplier", "", new Dictionary<string, object> { { "data-toggle", "modal" }, { "data-target", "#Modal" }, { "class", "form-control" } })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.Label("Cancelled Purchase Order ")
+                                        @Html.TextBox("PONo","", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                           
+                            <br>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <button type="button" class="btn btn-success" id="btnSave">Print</button>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="IndentModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div id="Indentgrid"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div id="Modal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div id="grid" ></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+    <script>
+        var $IndentSearchGrid;
+        var $SearchGrid;
+        $(document).ready(function () {
+            var dataM = { location: "local", sorting: 'local' };
+            var colM = [
+                    { title: "", dataIndx: "Indent_Id", dataType: "integer", hidden: true },
+                   // { title: "", dataIndx: "S", dataType: "integer", hidden: true },
+                  //  { title: "", dataIndx: "Supplier Code", dataType: "integer", hidden: true },
+                    {
+                        title: "Code", dataIndx: "IndentNo", width: 400,
+                        filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }, width: 200
+                    },
+                    {
+                        title: "Supplier Name", dataIndx: "strIndentDate", width: 150, dataType: "date", filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                    },
+            ];
+
+            var setM = {
+                width: '100%',
+                height: 400,
+                sortable: false,
+                numberCell: { show: false },
+                hoverMode: 'cell',
+                showTop: false,
+                resizable: false,
+                //scrollModel: { autoFit: true },
+                draggable: false,
+                wrap: false,
+                editable: false,
+                columnBorders: true,
+                filterModel: { on: true, mode: "AND", header: true },
+                colModel: colM,
+                dataModel: dataM,
+                pageModel: { type: "local", rPP: 20 },
+              
+            };
+            $IndentSearchGrid = $("#Indentgrid").pqGrid(setM);
+           
+        });
+        $(document).ready(function () {
+            var dataM = { location: "local", sorting: 'local' };
+            var colM = [
+                    { title: "", dataIndx: "Indent_Id", dataType: "integer", hidden: true },
+                   // { title: "", dataIndx: "S", dataType: "integer", hidden: true },
+                  //  { title: "", dataIndx: "Supplier Code", dataType: "integer", hidden: true },
+                    {
+                        title: "Name", dataIndx: "IndentNo", width: 600,
+                        filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }, width: 600
+                    },
+            ];
+
+            var setM = {
+                width: '100%',
+                height: 400,
+                sortable: false,
+                numberCell: { show: false },
+                hoverMode: 'cell',
+                showTop: false,
+                resizable: false,
+                //scrollModel: { autoFit: true },
+                draggable: false,
+                wrap: false,
+                editable: false,
+                columnBorders: true,
+                filterModel: { on: true, mode: "AND", header: true },
+                colModel: colM,
+                dataModel: dataM,
+                pageModel: { type: "local", rPP: 20 },
+            };
+            $SearchGrid = $("#grid").pqGrid(setM);
+
+        });
+    </script>

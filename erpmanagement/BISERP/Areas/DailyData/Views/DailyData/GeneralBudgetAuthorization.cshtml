@@ -1,0 +1,255 @@
+﻿@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <a class="collapsediv" data-toggle="collapse" href="#SearchDetails" style="color:white">
+                            Search Details
+                        </a>
+                    </div>
+                </div>
+                <div class="panel-collapse collapse in" aria-expanded="true" id="SearchDetails">
+                    <div class="panel-body">
+                        <div class="container fill">
+                            <div id="searchgrid"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        Entry Form
+                    </div>
+                </div>
+                <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <fieldset>
+                            <legend></legend>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <a data-toggle="collapse" class="btn btn-success" href="#SearchDetails"> Show Search</a>
+                                    <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                                    <button type="button" class="btn btn-success" id="btnReset">Reset</button>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.Label("Select Status")
+                                        @Html.RadioButton("AuthCancel", "Authorised", true)Accept
+                                        @Html.RadioButton("AuthCancel", "Cancel")Cancel
+                                        @Html.Hidden("BudgetId")
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <fieldset>
+                            <legend></legend>
+                            <div class="row">
+                                <div class="container fill">
+                                    <div id="grid"></div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+<script type="text/javascript">
+    function LoadSearchGrid() {
+        $.ajax({
+            url: "/GeneralBudgetProposal/GetGeneralBudgetProposal",
+            cache: false,
+            async: true,
+            method: "GET",
+            dataType: "JSON",
+            beforeSend: function () {
+                $searchgrid.pqGrid("showLoading");
+            },
+            complete: function () {
+                $searchgrid.pqGrid("hideLoading");
+            },
+            success: function (response) {
+                $searchgrid.pqGrid("hideLoading");
+                $searchgrid.pqGrid("option", "dataModel.data", response);
+                $searchgrid.pqGrid("refreshDataAndView");
+            }
+        });
+    }
+    var $searchgrid;
+    $(document).ready(function () {
+        var dataSearchGrid = { location: "local", sorting: 'local' };
+        var colSearchGrid = [
+            { title: "", dataIndx: "BudgetId", dataType: "integer", hidden: true },
+            {
+                title: "BudgetMonth", dataIndx: "MonthYear", width: 400,
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            },
+            {
+                title: "ExpanseTotal", dataIndx: "ExpenseTotal", width: 200,
+            },
+            {
+                title: "ProposedTotal", dataIndx: "ProposedTotal", width: 200
+            },
+
+        ];
+        var setSearchGrid = {
+            width: '100%',
+            height: 250,
+            sortable: false,
+            numberCell: { show: false },
+            showTop: false,
+            resizable: true,
+            scrollModel: { autoFit: true },
+            draggable: false,
+            wrap: false,
+            editable: false,
+            columnBorders: true,
+            selectionModel: { type: 'row' },
+            filterModel: { on: true, mode: "AND", header: true },
+            colModel: colSearchGrid,
+            dataModel: dataSearchGrid,
+            pageModel: { type: "local", rPP: 20 },
+            rowClick: function (evt, ui) {
+                // ClearParamGrid("grid");
+                if (ui.rowData) {
+                    var rowIndx = parseInt(ui.rowIndx);
+                    var record = ui.rowData;
+                    $("#BudgetId").val(record.BudgetId);
+                    $.ajax({
+                        type: "GET",
+                        url: "/GeneralBudgetProposal/GetAllGeneralBudgetProposalDtl/",
+                        data: { BudgetId: record.BudgetId },
+                        datatype: "Json",
+                        async: true,
+                        beforeSend: function () {
+                            $DetailsGrid.pqGrid("showLoading");
+                        },
+                        complete: function () {
+                            $DetailsGrid.pqGrid("hideLoading");
+                        },
+                        success: function (data) {
+                            var dataMGrid = [];
+                            $.each(data, function (index, value) {
+                                var grdData = {
+                                    'BudgetId': value.BudgetId,
+                                    'BudgetDtlId': value.BudgetDtlId,
+                                    'BudgetHeads': value.BudgetHeads,
+                                    'ActualExpense': value.ActualExpense,
+                                    'ProposalBudget': value.ProposalBudget,
+                                    'AuthorizedBudget': value.AuthorizedBudget,
+
+                                }
+                                dataMGrid.push(grdData);
+                            });
+                            $DetailsGrid.pqGrid("hideLoading");
+                            $DetailsGrid.pqGrid("option", "dataModel.data", dataMGrid);
+                            try {
+                                $DetailsGrid.pqGrid("refreshDataAndView");
+                            }
+                            catch (e) { $("#grid").pqGrid("refreshDataAndView"); }
+                        },
+                        error: function (request, status, error) {
+                            $DetailsGrid.pqGrid("hideLoading");
+                            ShowAlert("error", "Error while loading Itemlist");
+                            return;
+                        }
+                    });
+                }
+            }
+        }
+        $searchgrid = $("#searchgrid").pqGrid(setSearchGrid);
+        LoadSearchGrid();
+    });
+    colIID = [
+
+        { title: "", dataIndx: "BudgetId", dataType: "integer", editable: false, hidden: true },
+        { title: "", dataIndx: "BudgetDtlId", dataType: "integer", editable: false, hidden: true },
+        { title: "BudgetHead", dataIndx: "BudgetHeads", dataType: "string", width: 250, editable: false },
+        { title: "Actual Expense", dataIndx: "ActualExpense", width: 250, dataType: "double", editable: false },
+        { title: "Proposal Buget", dataIndx: "ProposalBudget", width: 250, dataType: "double", editable: false },
+        { title: "Authorized Budget", dataIndx: "AuthorizedBudget", width: 200, dataType: "double", editable: true },
+    ];
+    dataIID = {
+        location: 'local',
+        sorting: 'local',
+        paging: 'local',
+        dataType: 'JSON'
+    };
+
+    setIID = {
+        virtualX: true,
+        virtualY: true,
+        height: '300',
+        maxheight: '400',
+        // title: "Material Return Item Details",
+        sortable: false,
+        numberCell: { show: false },
+        selectionModel: { type: 'none', subtype: 'incr', cbHeader: true, cbAll: true },
+        hoverMode: 'cell',
+        editor: { type: 'textbox' },
+        showTop: true,
+        resizable: true,
+        editModel: {
+            saveKey: $.ui.keyCode.ENTER
+        },
+        draggable: false,
+        colModel: colIID,
+        dataModel: dataIID,
+        pageModel: { type: "local", rPP: 20 },
+    };
+    $DetailsGrid = $("#grid").pqGrid(setIID);
+
+    $('#btnSave').on('click', function () {
+        DisableClick("btnSave");
+        var authorize = false;
+        var cancel = false;
+        if ($("[name='AuthCancel']:checked").val() == "Authorised")
+            authorize = true;
+        else
+            cancel = true;
+        var gridData = $DetailsGrid.pqGrid("getData", { dataIndx: ['BudgetId', 'BudgetDtlId', 'BudgetHeads', 'ActualExpense', 'ProposalBudget', 'AuthorizedBudget'] });
+        var item = JSON.stringify({
+            BudgetId: $("#BudgetId").val(),
+            Authorized: authorize,
+            cancelled: cancel,
+            BudgetDtModel: gridData
+        });
+
+        $.ajax(
+        {
+            type: "PUT", //HTTP POST Method
+            traditional: true,
+            contentType: 'application/json; charset=utf-8',
+            url: '/GeneralBudgetProposal/AuthCancelBudgetProposal', // Controller/View
+            data: item,
+            success: function (msg) {
+                if (msg.success == true) {
+                    LoadSearchGrid();
+                    if ($("[name='AuthCancel']:checked").val() == "Authorised")
+                        ShowAlert("success", "GeneralBudget Accepted.");
+                    else
+                        ShowAlert("success", "GeneralBudget cancelled successfully.");
+                }
+                else {
+                    ShowAlert("error", "Falied to save");
+                }
+            },
+            error: function () {
+                ShowAlert("error", "Error while saving GeneralBudget.");
+            }
+             
+        });
+        ClearParamGrid("grid");
+    });
+</script>

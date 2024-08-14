@@ -1,0 +1,492 @@
+﻿@model BISERP.Areas.Accounts.Models.VendorBillingModel
+@using (Html.BeginForm())
+{
+    <fieldset>
+        <div id="content">
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-groupingBoder">
+                        <div class="panel-heading">
+                            <div class="panel-title">
+                                <a class="collapsediv" data-toggle="collapse" href="#collapse2" style="color: white">
+                                    Search Detail
+                                </a>
+                            </div>
+                        </div>
+                        <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                            <div class="panel-body">
+                                <fieldset>
+                                    <div class="row">
+                                        <div class="form-group form-horizontal">
+                                            <div class="col-sm-3">
+                                                @Html.Label("Select Vendor", new { @class = "required" })
+                                                @Html.DropDownList("ddlVendor", new SelectList(string.Empty, "Value", "Text"), "--Select Vendor--", new { @class = "form-control" })
+                                            </div>
+                                        </div>
+                                        <div class="form-group form-horizontal">
+                                            <div class="col-sm-3">
+                                                @Html.Label("Bill Date")
+                                                @Html.TextBoxFor(model => model.VendorBillDate, new { @class = "form-control" })
+                                            </div>
+                                        </div>
+                                        <br />
+                                        <div class="col-sm-3">
+                                            <div class="form-group" style="margin-left: 4px">
+                                                <button type="button" class="btn btn-primary" id="btnshow">ShowGRN</button>
+                                                <button type="button" class="btn btn-success" id="btnReset">Reset</button>
+                                                <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </fieldset>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-groupingBoder">
+                    <div class="panel-heading">
+                        <div class="panel-title">
+                            <a class="collapsediv" data-toggle="collapse" href="#collapse3" style="color: white">
+                                PO Detail
+                            </a>
+                        </div>
+                    </div>
+                    <div id="collapse3" class="panel-collapse collapse in" aria-expanded="true">
+                        <div class="panel-body">
+                            <fieldset>
+                                <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                                    <div class="panel-body">
+                                        <div class="row">
+                                            <div class="container fill">
+                                                <div id="POGrid"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-groupingBoder">
+                    <div class="panel-heading">
+                        <div class="panel-title">
+                            <a class="collapsediv" data-toggle="collapse" href="#collapse3" style="color: white">
+                                GRN Detail
+                            </a>
+                        </div>
+                    </div>
+                    <div id="collapse3" class="panel-collapse collapse in" aria-expanded="true">
+                        <div class="panel-body">
+                            <fieldset>
+                                <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                                    <div class="panel-body">
+                                        <div class="row">
+                                            <div class="container fill">
+                                                <div id="GRNGrid"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel-group">
+                                    <div class="panel panel-default">
+                                        <div class="panel-groupingBoder">
+                                            <div class="panel-body">
+                                                <div class="container fill">
+                                                    <div class="row">
+                                                        <div class="col-sm-4">
+                                                        </div>
+                                                        <div class="col-sm-4">
+                                                        </div>
+                                                        <div class="col-sm-4">
+                                                            <table align="right">
+
+                                                                <tr>
+                                                                    <td>Discount</td>
+                                                                    <td>@Html.TextBoxFor(m => m.DiscountAmt, new Dictionary<string, object> {{"Id", "DiscountAmt"}, {"readonly", "true"}, {"class", "form-control"}})</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Net Amt</td>
+                                                                    <td>@Html.TextBoxFor(m => m.NetAmt, new Dictionary<string, object> {{"Id", "NetAmt"}, {"readonly", "true"}, {"class", "form-control"}})</td>
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </fieldset>
+    <script>
+        var $GRNgrid;
+        var $POgrid;
+        $("#VendorBillDate").prop('disabled', true);
+        $('#VendorBillDate').datepicker({ dateFormat: "dd-mm-yy" }).datepicker('setDate', 'today'); //'setDate', 'today',
+        $.ajax({
+            type: "GET",
+            url: "/VendorMaster/AllVendor",
+            datatype: "Json",
+            async: true,
+            success: function (data) {
+                $.each(data.records,
+                    function (index, value) {
+                        $('#ddlVendor').append('<option value="' + value.VendorId + '">' + value.Name + '</option>');
+                    });
+            }
+        });
+        var PaymentModes = [];
+        $.ajax({
+            type: "GET",
+            url: "/ClientBilling/GetAllPaymentModes",
+            success: function (data) {
+                
+                $.each(data,
+                   function (index, value) {
+                       PaymentModes.push({ value: value.PaymentModeId, text: value.PaymentMode });
+                   });
+            }
+        });
+        //$("#btnshow").click(function () {
+        //    var vendorId = $("#ddlVendor").val();
+        //    if (vendorId == undefined || vendorId === "") vendorId = 0;
+        //    LoadGRNGrid(vendorId);
+        //});
+
+        $(document).ready(function () {
+            var datapo = { location: "local", sorting: 'local' };
+            var colpo = [
+                    { title: "", dataIndx: "POId", dataType: "integer", hidden: true },
+                    {
+                        title: "PO No", dataIndx: "PONo", width: 200,
+                        filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                    },
+                    { title: "PO Date", dataIndx: "PODate", width: 100, dataType: "string" },
+                    { title: "Po Amount", dataIndx: "PoAmount", width: 100, },
+                    { title: "Paid Amount", dataIndx: "PaidAmount", width: 100, },
+            ];
+            var setPogrid = {
+                width: '100%',
+                height: 200,
+                sortable: false,
+                numberCell: { show: false },
+                hoverMode: 'cell',
+                showTop: false,
+                resizable: true,
+                scrollModel: { autoFit: true },
+                draggable: false,
+                wrap: false,
+                editable: false,
+                columnBorders: true,
+                selectionModel: { type: 'row', mode: 'single' },
+                colModel: colpo,
+                dataModel: datapo,
+                pageModel: { type: "local", rPP: 20 },
+                filterModel: { on: true, mode: "AND", header: true },
+                rowClick: function (evt, ui) {
+                    if (ui.rowData) {
+                        var rowIndx = parseInt(ui.rowIndx);
+                        var record = ui.rowData;
+                        POId = record.POId;
+                        $.ajax({
+                            type: "GET",
+                            url: "/SupplierBilling/GetGRNbyPOId",
+                            data: { POId: POId, supplier: 0, vendor:1 },
+                            datatype: "Json",
+                            async: true,
+                            success: function (response) {
+                                
+                                $GRNgrid.pqGrid("option", "dataModel.data", response.records);
+                                $GRNgrid.pqGrid("refreshDataAndView");
+
+                            }
+                        });
+                    }
+                }
+            }
+            $POgrid = $("#POGrid").pqGrid(setPogrid);
+
+            $("#btnshow").click(function () {
+                var vendorid = $("#ddlVendor").val();
+                if (vendorid == undefined || vendorid === "") vendorid = 0;
+                loadPoGrid(vendorid);
+            });
+            function loadPoGrid(vendorid) {
+                $.ajax({
+                    type: "GET",
+                    url: "/SupplierBilling/GetPoBySupplierId",
+                    datatype: "Json",
+                    data: { supplierId: 0, vendorid: vendorid },
+                    beforeSend: function () {
+                        $POgrid.pqGrid("showLoading");
+                    },
+                    complete: function () {
+                        $POgrid.pqGrid("hideLoading");
+                    },
+                    success: function (response) {
+                        $POgrid.pqGrid("hideLoading");
+                        $POgrid.pqGrid("option", "dataModel.data", response.records);
+                        $POgrid.pqGrid("refreshDataAndView");
+                    }
+                });
+            }
+        });
+        //function LoadGRNGrid(vendorId) {
+        //    $.ajax({
+        //        type: "GET",
+        //        url: "/SupplierBilling/GetGRNbyVendorId",
+        //        datatype: "Json",
+        //        data: { vendorId: vendorId },
+        //        beforeSend: function () {
+        //            $GRNgrid.pqGrid("showLoading");
+        //        },
+        //        complete: function () {
+        //            $GRNgrid.pqGrid("hideLoading");
+        //        },
+        //        success: function (response) {
+        //            $GRNgrid.pqGrid("hideLoading");
+        //            $GRNgrid.pqGrid("option", "dataModel.data", response.records);
+        //            $GRNgrid.pqGrid("refreshDataAndView");
+        //        }
+        //    });
+        //}
+
+        $(document).ready(function () {
+            var datagrn = { location: "local", sorting: 'local' };
+            var colgrn = [
+                 {
+                     dataIndx: "state", Width: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                     editor: false, dataType: 'bool',
+                     title: "<input type='checkbox' />",
+                     cb: { select: true, all: false, header: true }
+                 },
+                    { title: "", dataIndx: "ID", dataType: "integer", hidden: true },
+                     { title: "", dataIndx: "PoID", dataType: "integer", hidden: true },
+                    { title: "GRN No", dataIndx: "GRNNo", dataType: "string", hidden: false, minWidth: 130, editable: false },
+                    { title: "GRN Date", dataIndx: "strGRNDate", width: 100, dataType: "date", editable: false },
+                    { title: "Payable Amount", dataIndx: "TotalAmount", width: 80, editable: false },
+                    { title: "Paid Amount", dataIndx: "PaidAmount", width: 80, editable: false },
+                    {
+                        title: "Due Amount", dataIndx: "PendingAmount", width: 80, editable: false,
+                        formula: function (ui) {
+                            var rd = ui.rowData;
+                            return rd["TotalAmount"] - rd["PaidAmount"];
+                        }
+                    },
+                     { title: "", dataIndx: "PaymentModeId", width: 150, dataType: "integer", hidden: true, editable: true },
+                     {
+                         title: "Pay Mode", dataIndx: "PaymentMode", dataType: "string", width: 80,
+                         editor: {
+                             type: "select",
+                             mapIndices: { "value": "PaymentModeId", "text": "PaymentMode" },
+                             valueIndx: "value",
+                             labelIndx: "text",
+                             options: PaymentModes
+                         }
+                     },
+                    {
+                        title: "Bank Name", dataIndx: "BankName", minWidth: 150, dataType: "string",
+                        editable: function (ui) {
+                            
+                            if (ui.rowData != undefined) {
+                                var column = this.getColumn({ dataIndx: 'PaymentModeId' }),
+                                obj = ui.rowData.PaymentModeId,
+                                    val = column.val;
+                                if (obj == 2)
+                                    return true;
+
+                                else
+                                    return false;
+
+                            }
+
+                        }
+                    },
+                     {
+                         title: "DD/Cheque No.", dataIndx: "ChequeNo", width: 150, dataType: "double",
+                         editable: function (ui) {
+                             
+                             if (ui.rowData != undefined) {
+                                 var column = this.getColumn({ dataIndx: 'PaymentModeId' }),
+                                     obj = ui.rowData.PaymentModeId,
+                                     val = column.val;
+                                 if (obj === 2)
+                                     return true;
+
+                                 else
+                                     return false;
+
+                             }
+
+                         }
+                     },
+                    {
+                        title: "Amount", dataIndx: "PayingAmount", width: 80,
+                        editable: function (ui) {
+                            var column = this.getColumn({ dataIndx: 'state' }),
+                                state = ui.rowData.state,
+                                check = column.cb.check;
+                            if (state === check)
+                                return true;
+                            else
+                                return false;
+                        }
+                    },
+                    {
+                        title: "Discnt Amt", dataIndx: "DiscountAmount", width: 80,
+                        editable: function (ui) {
+                            var column = this.getColumn({ dataIndx: 'state' }),
+                                state = ui.rowData.state,
+                                check = column.cb.check;
+                            if (state === check)
+                                return true;
+                            else
+                                return false;
+                        }
+                    },
+                    {
+                        title: "Discount Reason", dataIndx: "DiscountReason", width: 100,
+                        editable: function (ui) {
+                            var column = this.getColumn({ dataIndx: 'state' }),
+                                state = ui.rowData.state,
+                                check = column.cb.check;
+                            if (state === check)
+                                return true;
+                            else
+                                return false;
+                        }
+                    }
+
+
+            ];
+            var setGrngrid = {
+                width: '100%',
+                height: 250,
+                sortable: false,
+                numberCell: { show: false },
+                hoverMode: 'cell',
+                showTop: false,
+                resizable: true,
+                scrollModel: { autoFit: true },
+                draggable: false,
+                wrap: false,
+                editable: true,
+                columnBorders: true,
+                selectionModel: { type: 'row', mode: 'single' },
+                colModel: colgrn,
+                dataModel: datagrn,
+                cellSave: function (evt, ui) {
+                    this.refreshRow(ui);
+                    CalculateTotalReciept();
+                },
+                pageModel: { type: "local", rPP: 20 },
+                rowClick: function (evt, ui) {
+                    
+                }
+            }
+            $GRNgrid = $("#GRNGrid").pqGrid(setGrngrid);
+
+
+        });
+        function CalculateTotalReciept() {
+            var getData = $GRNgrid.pqGrid("option", "dataModel.data");
+            var recieptAmt = 0, disAmt = 0;
+            $.each(getData, function (_, item) {
+                if (!isNaN(item.PayingAmount) && item.PayingAmount != null)
+                    recieptAmt += parseFloat(item.PayingAmount);
+                if (!isNaN(item.DiscountAmount) && item.DiscountAmount != null)
+                    disAmt += parseFloat(item.DiscountAmount);
+            });
+            $("#DiscountAmt").val(disAmt.toFixed(2));
+            $("#NetAmt").val(recieptAmt.toFixed(2));
+        }
+
+        $("#btnSave").click(function () {
+            
+            var item = $GRNgrid.pqGrid("getData", { dataIndx: ['ID', 'PayingAmount', 'DiscountAmount', 'DiscountReason', 'PaymentModeId', 'BankName', 'ChequeNo', 'state'] });
+            if (item != undefined) {
+                var selectedItemsMainGrid = jLinq.from(item).equals("state", true).select();
+                if (selectedItemsMainGrid.length > 0) {
+                    if (jLinq.from(selectedItemsMainGrid).empty("PayingAmount").or(undefined).count() > 0) {
+                        ShowAlert("info", "Please Enter Amount for selected items");
+                        return;
+                    }
+
+                }
+                else {
+                    ShowAlert("warning", "Please Select at least one Item before saving.");
+                    return;
+                }
+            }
+            var chkamt = 0, chkmode = 0;
+            $.each(selectedItemsMainGrid, function (key, value) {
+                
+                if (value.PayingAmount === "" || value.PayingAmount == undefined || value.PayingAmount == '0') chkamt++;
+                if (value.PaymentModeId === "" || value.PaymentModeId == undefined || value.PayingAmount == '0') chkmode++;
+            });
+            if (chkamt > 0) {
+                ShowAlert("warning", "Please entre Amount For selected item's");
+                return;
+            }
+            if (chkamt > 0) {
+                ShowAlert("warning", "Please select Payment mode For selected item's");
+                return;
+            }
+            var items = JSON.stringify({
+                VendorId: $("#ddlVendor").val(),
+                VendorBillDate: $("#VendorBillDate").val(),
+                NetAmt: $("#NetAmt").val(),
+                DiscountAmt: $("#DiscountAmt").val(),
+                VendorBillingdt: selectedItemsMainGrid
+            });
+            $.ajax({
+                type: "POST", //HTTP POST Method
+                traditional: true,
+                contentType: 'application/json; charset=utf-8',
+                url: '/SupplierBilling/CreateVendorBill', // Controller/Action
+                data: items,
+                success: function (msg) {
+                    if (msg.success) {
+                        
+                        ShowAlert("success", "Bill No : " + msg.billNo);
+                        ClearForm();
+                    }
+                    else {
+                        ShowAlert("error", msg.Message);
+                        ClearForm();
+                    }
+                }
+            });
+        });
+        
+        function ClearForm() {
+            $("#DiscountAmt").val("");
+            $("#NetAmt").val("");
+            $("#ddlVendor").val("");
+            $("#VendorBillDate").datepicker().datepicker("setDate", new Date());//
+            ClearParamGrid("GRNGrid");
+        }
+        $("#btnReset").click(function () {
+            ClearForm();
+        });
+    </script>
+    
+}

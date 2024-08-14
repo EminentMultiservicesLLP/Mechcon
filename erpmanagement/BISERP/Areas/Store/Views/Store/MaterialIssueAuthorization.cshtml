@@ -1,0 +1,397 @@
+﻿@model BISERP.Areas.Store.Models.Store.MaterialIssueModel
+<script>
+    $(function () {
+        $(".datepicker").datepicker({
+            showOn: "button",
+            buttonImage: "",
+            buttonImageOnly: true,
+            buttonText: "",
+            dateFormat: "dd-MM-yy"
+        }).datepicker("setDate", new Date());
+        $("#anim").change(function () {
+            $(".datepicker").datepicker("option", "showAnim", "fadeIn");
+        });
+    });
+</script>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <h5 class="page-header orangeDottedBottomBorder"> MATERIAL ISSUE ACCEPTANCE </h5>
+    @* new addition 2024 *@
+    <div id="SearchGridModal" class="modal fade" role="dialog" data-backdrop="false">
+        <div class="modal-dialog find-search-grid-modal">
+            <div class="modal-content gridmodal-content">
+                <div class="modal-header gridmodal-header">
+                    <button type="button" class="close" onclick="closeModal()">&times;</button>
+                    <h4 class="modal-title">Details</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="fill">
+                        <div id="searchgrid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        Entry Form
+                    </div>
+                </div>
+                <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <div class="submit-row">
+                            <div class="col-sm-6" style="text-align:start">
+                                <button type="button" class="btn btn-danger" id="btnSearch">Select</button>
+                                <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                                <button type="button" class="btn btn-primary" id="btnReset">Reset</button>
+                            </div>
+                            <div class="col-sm-6" style="text-align:end">
+                            </div>
+                        </div>
+                        <fieldset class="fieldsetCustom">
+                            <legend class="legendCustom"></legend>
+                            <br>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    @Html.LabelFor(m => m.IssueDate)
+                                    @Html.TextBoxFor(m => m.IssueDate, new { @readonly = "readonly", @class = "form-control" })
+                                </div>
+                                <div class="col-sm-2">
+                                    @Html.LabelFor(m => m.IssueNo)
+                                    @Html.TextBoxFor(m => m.IssueNo, new { @readonly = "readonly", @class = "form-control" })
+                                    @Html.HiddenFor(m => m.IssueId)
+                                </div>
+                                <div class="col-sm-2" hidden>
+                                    @Html.LabelFor(m => m.FromStore, "From Project")
+                                    @Html.TextBoxFor(m => m.FromStore, new { @readonly = "readonly", @class = "form-control" })
+                                    @Html.HiddenFor(m => m.FromStoreId)
+                                </div>
+                                <div class="col-sm-2">
+                                    @Html.LabelFor(m => m.ToStore, "Project")
+                                    @Html.TextBoxFor(m => m.ToStore, new { @readonly = "readonly", @class = "form-control" })
+                                    @Html.HiddenFor(m => m.StoreId)
+                                </div>
+                                @*<div class="form-group">
+                                        <div class="col-sm-2">
+                                            @Html.Label("Issue type")
+                                        </div>
+                                        <div class="col-sm-2">
+                                            @Html.TextBoxFor(m => m.IndentType, new { @readonly = "readonly", @class = "form-control" })
+                                        </div>
+                                    </div>*@
+                                <div class="col-sm-2">
+                                    <br />
+                                    @Html.Label("Status", new { @class = "required" })
+                                    @Html.RadioButton("AuthCancel", "Authorised", true)Accept
+                                    @Html.RadioButton("AuthCancel", "Cancel")Cancel
+                                </div>
+                            </div>
+                        </fieldset>
+                        <fieldset>
+                            <div id="grid"></div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div title="View Attachments" id="ViewModal" style="display: none;">
+        <div class="col-sm-10">
+            <ul id="displayImages" class="attachment" style='margin:10px; overflow-y: scroll;' />
+        </div>
+    </div>
+}
+<script type="text/javascript">
+        var appSetting = '@BISERP.Common.Constants.ScandocUrl';
+        var grid;
+        var selectedItems = [];
+        var $searchgrid;
+        function ClearForm() {
+            $("#IssueNo").val("");
+            $("#IssueId").val("");
+            $("#IssueDate").val("");
+            $("#FromStore").val("");
+            $("#ToStore").val("");
+            $("#FromStoreId").val("");
+            $("#ToStoreId").val("");
+            //$("#IndentType").val("");
+            ClearParamGrid("grid");
+        }
+
+        $("#btnShowAttachments").click(function () {
+            var IntId = $("#IssueId").val();
+            if (isNaN(IntId))
+                ShowAlert("error", "Please first select Issue to see already attached files");
+            else
+                ViewAllAttachedFiles($("#IssueId").val(), 13, appSetting);
+        });
+
+
+        function LoadSearchGrid() {
+            $.ajax({
+                url: "/MaterialIssue/AllMaterialIssueforAuthorization",
+                cache: false,
+                async: true,
+                method: "GET",
+                dataType: "JSON",
+                beforeSend: function () {
+                    $searchgrid.pqGrid("showLoading");
+                },
+                complete: function () {
+                    $searchgrid.pqGrid("hideLoading");
+                },
+                success: function (response) {
+                    if (response.records) {
+                        $searchgrid.pqGrid("hideLoading");
+                        $searchgrid.pqGrid("option", "dataModel.data", response.records);
+
+                        var column = $searchgrid.pqGrid("getColumn", { dataIndx: "FromStore" });
+                        var filter = column.filter;
+                        filter.cache = null;
+                        filter.options = $searchgrid.pqGrid("getData", { dataIndx: ["FromStore"] });
+
+                        var column = $searchgrid.pqGrid("getColumn", { dataIndx: "StoreName" });
+                        var filter = column.filter;
+                        filter.cache = null;
+                        filter.options = $searchgrid.pqGrid("getData", { dataIndx: ["StoreName"] });
+
+                        $searchgrid.pqGrid("refreshDataAndView");
+                    }
+                    else {
+                        $searchgrid.pqGrid("hideLoading");
+                        $searchgrid.pqGrid("option", "dataModel.data",[]);
+                        $searchgrid.pqGrid("refreshDataAndView");
+                    }
+                }
+            });
+        }
+        $(document).ready(function () {
+            var grid = $("#grid").pqGrid({
+                height: 400,
+                sortable: false,
+                numberCell: { show: false },
+                selectionModel: { type: 'row' },
+                hoverMode: 'cell',
+                editor: { type: 'textbox' },
+                showTop: false,
+                resizable: true,
+                virtualX: true,
+                virtualY: true,
+                scrollModel: { autoFit: true },
+                editModel: {
+                    saveKey: $.ui.keyCode.ENTER
+                },
+                draggable: false,
+                wrap: false,
+                colModel: [
+                    {
+                        dataIndx: "state", Width: "5%", align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                        editor: false, dataType: 'bool',
+                        title: "<input type='checkbox' />",
+                        cb: { select: true, all: false, header: true }
+                    },
+                    { title: "", dataIndx: "IssueDetailsId", width: 10, dataType: "integer", editable: false, hidden: true },
+                    { title: "", dataIndx: "ItemId", width: 10, dataType: "integer", editable: false, hidden: true },
+                    { title: "", dataIndx: "Batchid", width: 10, dataType: "integer", editable: false, hidden: true },
+                    { title: "Item Name & Description", dataIndx: "ItemName", width:"20%", dataType: "string", editable: false },
+                    { title: "Unit", dataIndx: "Unit", width: "10%", dataType: "string", editable: false },
+                    { title: "Batch", dataIndx: "BatchName", width: "10%", dataType: "string", editable: false },
+                    { title: "ExpiryDate", dataIndx: "ExpiryDate", width: "15%", dataType: "string", editable: false },
+                    { title: "Available Stock", dataIndx: "Item_Stock", width:"15%", dataType: "double", editable: false },
+                    { title: "Issued Qty", dataIndx: "IssuedQuantity", width:"10%", dataType: "double", editable: false },
+                    { title: "Accepted Qty", dataIndx: "AuthorisedQuantity", width:"15%", dataType: "double", align: "left", editable: false }
+                ],
+                dataModel: {},
+                pageModel: { type: "local", rPP: 50 },
+            });
+        });
+
+        $(document).ready(function () {
+            var dataM = { location: "local", sorting: 'local' };
+            var colM = [
+                    { title: "", dataIndx: "IssueId", dataType: "integer", hidden: true },
+                    { title: "", dataIndx: "Indent_Id", dataType: "integer", hidden: true },
+                    { title: "", dataIndx: "FromStoreId", dataType: "integer", hidden: true },
+                    { title: "", dataIndx: "StoreId", dataType: "integer", hidden: true },
+                    {
+                        title: "Issue No", dataIndx: "IssueNo", width: "25%",
+                        filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                    },
+                    {
+                        title: "Indent No", dataIndx: "IndentNo", width: "25%",
+                        filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                    },
+                    {
+                        title: "Issue Date", dataIndx: "strIssueDate", width: "25%", dataType: "date"
+                    },
+                    {
+                        title: "Project", dataIndx: "FromStore", width: "25%",
+                        filter: {
+                            type: "select",
+                            condition: 'equal',
+                            prepend: { '': '--Select--' },
+                            valueIndx: "FromStore",
+                            labelIndx: "FromStore",
+                            listeners: ['change']
+                        }, hidden: true
+                    },
+                    {
+                        title: "Project", dataIndx: "StoreName", width: "25%", filter: {
+                            type: "select",
+                            condition: 'equal',
+                            prepend: { '': '--Select--' },
+                            valueIndx: "StoreName",
+                            labelIndx: "StoreName",
+                            listeners: ['change']
+                        }
+                    },
+            ];
+            var gridM = {
+                height: 400,
+                sortable: false,
+                numberCell: { show: false },
+                hoverMode: 'cell',
+                showTop: false,
+                resizable: true,
+                virtualX: true,
+                virtualY: true,
+                scrollModel: { autoFit: true },
+                draggable: false,
+                wrap: false,
+                editable: false,
+                columnBorders: true,
+                filterModel: { on: true, mode: "AND", header: true },
+                selectionModel: { type: 'row' },
+                colModel: colM,
+                dataModel: dataM,
+                virtualX: true,
+                virtualY: true,
+                pageModel: { type: "local", rPP: 20 },
+                rowClick: function (evt, ui) {
+
+                    ClearParamGrid("grid");
+                    if (ui.rowData) {
+
+                        var rowIndx = parseInt(ui.rowIndx);
+                        var record = ui.rowData;
+                        $("#IssueId").val(record.IssueId);
+                        $("#IssueNo").val(record.IssueNo);
+                        $("#IssueDate").val(record.strIssueDate);
+                        $("#FromStore").val(record.FromStore);
+                        $("#ToStore").val(record.StoreName);
+                        $("#FromStoreId").val(record.FromStoreId);
+                        $("#StoreId").val(record.StoreId);
+                        //$("#IndentType").val(data.Indent_Type);
+
+                        $.ajax({
+                            type: "GET",
+                            url: "/MaterialIssue/MaterialIssueItems/",
+                            data: { IssueId: record.IssueId },
+                            datatype: "Json",
+                            beforeSend: function () {
+                                $("#grid").pqGrid("showLoading");
+                            },
+                            complete: function () {
+                                $("#grid").pqGrid("hideLoading");
+                            },
+                            success: function (data) {
+                                var dataMGrid = [];
+                                $.each(data, function (index, value) {
+                                    var grdData = {
+                                        'IssueDetailsId': value.IssueDetailsId,
+                                        'ItemId': value.ItemId,
+                                        'ItemName': value.ItemName,
+                                        'Unit': value.UnitName,
+                                        'Batchid': value.Batchid,
+                                        'BatchName': value.BatchName,
+                                        'ExpiryDate': value.ExpiryDate,
+                                        'Rate': value.Rate,
+                                        'Item_Stock': value.Item_Stock,
+                                        'AuthorisedQuantity': value.IssuedQuantity,
+                                        'IssuedQuantity': value.IssuedQuantity,
+                                        'state':true
+                                    };
+                                    dataMGrid.push(grdData);
+                                });
+                                $("#grid").pqGrid("hideLoading");
+                                $("#grid").pqGrid("option", "dataModel.data", dataMGrid);
+                                $("#grid").pqGrid("refreshDataAndView");
+                            },
+                            error: function (request, status, error) {
+                                $("#grid").pqGrid("hideLoading");
+                                ClearParamGrid("grid");
+                                ShowAlert("error", "Error while loading Itemlist");
+                                return;
+                            }
+                        });
+                        closeModal();
+                    }
+                }
+            };
+            $searchgrid = $("#searchgrid").pqGrid(gridM);
+        });
+
+        $('#btnReset').on('click', function () {
+            ClearForm();
+        });
+        $('#btnSave').on('click', function () {
+                DisableClick("btnSave");
+                var items = $("#grid").pqGrid("getData", { dataIndx: ['state', 'IssueDetailsId', 'ItemId', 'Item_Stock', 'IssuedQuantity', 'Batchid', 'AuthorisedQuantity', 'ItemName', 'Item_Stock', 'IssuedQuantity', 'AuthorisedQuantity'] });
+                var authorize = false;
+                var cancel = false;
+                if ($("[name='AuthCancel']:checked").val() == "Authorised")
+                    authorize = true;
+                else
+                    cancel = true;
+
+                var Issue = JSON.stringify({
+                    IssueId: $("#IssueId").val(),
+                    FromStoreId: $("#FromStoreId").val(),
+                    StoreId: $("#StoreId").val(),
+                    Authorised: authorize,
+                    Cancelled: cancel,
+                    strIssueDate: $("#IssueDate").val(),
+                    IssueNo: $("#IssueNo").val(),
+                    FromStore: $("#FromStore").val(),
+                    ToStore: $("#ToStore").val(),
+                    MaterialIssueDt: items
+                });
+
+                $.ajax(
+                {
+                    type: "POST", //HTTP POST Method
+                    traditional: true,
+                    contentType: 'application/json; charset=utf-8',
+                    url: '/MaterialIssue/AuthCancelMaterialIssue', // Controller/View
+                    data: Issue,
+                    success: function (msg) {
+                        if (msg.success == true) {
+                            ClearForm();
+                        if ($("[name='AuthCancel']:checked").val() == "Authorised")
+                            ShowAlert("success", "Material Issue Accepted.");
+                        else
+                            ShowAlert("success", "Material Issue cancelled successfully.");
+                        }
+                        else {
+                            ShowAlert("error", "Falied to Save! " + msg.responseText);
+                        }
+                    },
+                    error: function (jqXHR, exception) {
+                        Notify("Falied to authorize/cancel", "error", "System Error");
+                    }
+                });
+        });
+        $("#btnSearch").on('click', function () {
+            $("#SearchGridModal").modal('show');
+            LoadSearchGrid();
+        });
+        function closeModal() {
+            $("#SearchGridModal").modal('hide');
+        }
+</script>

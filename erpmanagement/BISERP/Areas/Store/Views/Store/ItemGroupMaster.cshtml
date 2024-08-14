@@ -1,0 +1,167 @@
+﻿@model BISERP.Areas.Store.Models.Master.ItemGroupMasterModel
+
+@{
+    ViewBag.Title = "Item Group";
+}
+<script type="text/javascript">
+    var grid;
+
+    function Search() {
+        var searchItemTypeName = $("#SearchItemTypeName").val();
+        var SearchCode = $("#SearchCode").val();
+        grid.reload({ searchUnit: searchItemTypeName, searchCode: SearchCode });
+    }
+
+    $(document).ready(function () {
+        grid = $("#grid").grid({
+            dataKey: "ID",
+            uiLibrary: "bootstrap",
+            columns: [
+                { field: "ItemGroupID", title: "ID", width: 50, sortable: false, hidden: true },
+                { field: "Code", title: "Code", sortable: false },
+                { field: "Name", title: "Name", sortable: false },
+                { field: "Quantity", title: "Quantity", sortable: false },
+                { field: "Deactive", title: "Deactive", type: "checkbox", enable: false, readonly: true }
+            ],
+            pager: { enable: true, limit: 5, sizes: [2, 5, 10, 20] },
+
+        });
+        grid.on('cellDataBound', function (e, $wrapper, id, column, record) {
+            if ('IsActive' === column.field) {
+                $wrapper.find('input[type="checkbox"]').prop("checked", record.IsActive);
+            }
+        });
+        $("#btnSearch").on("click", Search);
+    });
+</script>
+
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <fieldset>
+        <legend><h4>Item Group Master</h4></legend>
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        Search Filter
+                    </div>
+                </div>
+                <div id="collapse1" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        <div class="row ">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="col-sm-1">
+                                        @Html.LabelFor(model => model.PackCode)
+                                    </div>
+                                    <div class="col-sm-2">
+                                      @Html.TextBoxFor(model => model.PackCode, new { id = "SearchCode" })
+                                      @Html.ValidationMessageFor(model => model.PackCode)
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-1">
+                                        @Html.LabelFor(model => model.PackName)
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.TextBoxFor(model => model.PackName, new { id = "SearchItemTypeName" })
+                                        @Html.ValidationMessageFor(model => model.PackName)
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-1">
+                                    <a href="" class="btn btn-primary" type="button">
+                                        Find
+                                        <span class="glyphicon glyphicon-search"></span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        Search Details
+                    </div>
+                </div>
+                <div class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <div class="container fill">
+                            <table id="grid" data-source="@Url.Action("AllItemGroups","ItemGroupMaster")"></table>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        Entry Form
+                    </div>
+                </div>
+                <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <fieldset>
+                          
+                            <div class="row ">
+                                <div class="form-group">
+                                    <div class="col-sm-1">
+                                        @Html.LabelFor(model => model.PackCode)
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.EditorFor(model => model.PackCode)
+                                        @Html.ValidationMessageFor(model => model.PackCode)
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-1">
+                                        @Html.LabelFor(model => model.PackName)
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.EditorFor(model => model.PackName)
+                                        @Html.ValidationMessageFor(model => model.PackName)
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-1">
+                                        @Html.LabelFor(model => model.PackQuantity)
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.EditorFor(model => model.PackQuantity)
+                                        @Html.ValidationMessageFor(model => model.PackQuantity)
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(model => model.Deactive)
+                                        @Html.EditorFor(model => model.Deactive)
+                                        @Html.ValidationMessageFor(model => model.Deactive)
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                 
+                   </div>
+                    </div>
+                </div>
+               
+            
+                   
+                   
+    </fieldset>
+     <div class="panel-heading">
+            <a data-toggle="collapse" class="btn btn-success" href="#collapse1">Search</a>
+            <button type="button" class="btn btn-success">Add</button>
+            <button type="button" class="btn btn-success">Save</button>
+            <button type="button" class="btn btn-success">Report</button>
+        </div>
+}
+
+
+
+

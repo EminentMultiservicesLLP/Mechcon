@@ -1,0 +1,501 @@
+﻿@model BISERP.Areas.CommonUtilities.Models.PettyCashModel
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <a class="collapsediv" data-toggle="collapse" href="#collapse2" style="color:white">
+                            Search Details
+                        </a>
+                    </div>
+                </div>
+               
+                <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <fieldset>
+                            <legend></legend>
+
+                            <div class="row">
+                                <div class="form-group" style="display:none">
+                                    <div class="col-sm-3">
+                                     
+                                        @Html.LabelFor(m => m.BranchId, new {@class = "required"})
+                                        @Html.DropDownList("ddlBranch", new SelectList(string.Empty, "Value", "Text"), new {@class = "form-control"})
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        @Html.Label("Type", new {@class = "required"})
+                                        <select id="ddltype" class="wrapperdropdown-content form-control">
+                                            <option class="wrapperdropdown-content" value="0">Select from list</option>
+                                            <option class="wrapperdropdown-content" value="1">Deposit</option>
+                                            <option class="wrapperdropdown-content" value="2">Withdrawal</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        @Html.Label("FromDate")
+                                        <div class='input-group date'>
+                                            <input type='text' id='FromDate' class="form-date-control"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-3" style="margin-left: -20px">
+                                        @Html.Label("ToDate")
+                                        <div class='input-group date'>
+                                            <input type='text' id='ToDate' class="form-date-control"/>
+                                            <button type="button" class="btn btn-primary" id="btnShow">Show</button>
+                                        </div>
+
+                                    </div>
+                                    @*<div class="col-sm-2">
+                                        <button type="button" class="btn btn-primary" id="btnShow">Show</button>
+                                    </div>*@
+                                </div>
+                            </div>
+                         </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+<div class="panel-group">
+<div class="panel panel-default">
+    <div class="panel-groupingBoder">
+        <div class="panel-groupingBoder">
+            <div class="panel-heading">
+                <div class="panel-title">
+                    <a class="collapsediv" data-toggle="collapse" href="#EntryForm" style="color: white">
+                        Entry Form
+                    </a>
+                </div>
+            </div>
+            <div id="EntryForm" class="panel-collapse collapse in" aria-expanded="true">
+                <div class="panel-body">
+                    <fieldset>
+                        <legend></legend>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                                <button type="button" class="btn btn-success" id="btnResetgrid">Reset</button>
+
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+
+                            <div class="col-sm-10">
+                                <div class="form-group">
+                                    <button type="button" class="btn btn-primary" id="btnViewItem">Add </button>
+                                    <button type="button" class="btn btn-primary" data-target="#grid" id="btnRemoveItem">Remove</button>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="form-group">
+                                    @Html.Label("Total Amount", new { @class = "required" })
+                                    @Html.TextBox("TotalAmount")
+                                </div>
+                            </div>
+                        </div>
+                      
+                        <div class="row" style="margin-top: 7px">
+                            <div class="container fill">
+                                <div id="grid"></div>
+                            </div>
+                        </div>
+
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+    </div>					
+</div>
+</div>
+
+
+    <script type="text/javascript">
+
+        $('#FromDate')
+            .datepicker({
+                defaultDate: new Date(),
+                dateFormat: 'dd-mm-yy',
+                yearRange: '2015:2099',
+                showOn: "button",
+                buttonImage: "../../Content/images/calendar.gif",
+                buttonImageOnly: true,
+                changeMonth: true,
+                changeYear: true
+            }).datepicker("setDate", new Date());
+        $('#ToDate')
+            .datepicker({
+                defaultDate: new Date(),
+                dateFormat: 'dd-mm-yy',
+                yearRange: '2015:2099',
+                showOn: "button",
+                buttonImage: "../../Content/images/calendar.gif",
+                buttonImageOnly: true,
+                changeMonth: true,
+                changeYear: true
+            }).datepicker("setDate", new Date());
+        var $grid;
+        $.ajax({
+            type: "GET",
+            url: "/Master/AllBranches",
+            datatype: "Json",
+            async: true,
+            success: function (data) {
+                $.each(data, function (index, value) {
+                    $('#ddlBranch').append('<option value="' + value.BranchID + '">' + value.BranchName + '</option>');
+                });
+            }
+        });
+
+        $("#ddltype").change(function () {
+            ClearParamGrid("grid");
+        });
+      
+        $('#btnShow').on('click', function () {
+            if ($("#ddltype").val() == 0 || $("#ddltype").val() == undefined) {
+                ShowAlert("error", "Please Select Transaction Type");
+                return;
+            }
+            LoadSearchGrid();
+           
+        });
+        function LoadSearchGrid() {
+            var Type = $("#ddltype").val();
+            $.ajax({
+                url: "/PettyCash/GetPettyCash",
+                cache: false,
+                async: true,
+                method: "GET",
+                data: {
+                    FromDate: $("#FromDate").val(),
+                    Todate: $("#ToDate").val(),
+                    Type: Type
+                },
+                dataType: "JSON",
+                success: function (response) {
+                    
+                    $("#grid").pqGrid("option", "dataModel.data", response);
+                    $("#grid").pqGrid("refreshDataAndView");
+                    CalculateTotalAmount();
+                }
+            });
+        }
+        /*********  Grid Function*********/
+
+        var dateEditor = function (ui) {
+            var $inp = ui.$cell.find("input"),
+                grid = this,
+                validate = function (that) {
+                    var valid = grid.isValid({
+                        dataIndx: ui.dataIndx,
+                        value: $inp.val(),
+                        rowIndx: ui.rowIndx
+                    }).valid;
+                    if (!valid) {
+                        that.firstOpen = false;
+                    }
+                };
+
+            $inp.on("input", function (evt) {
+                validate(this);
+            })
+                .datepicker({
+                    changeMonth: true,
+                    changeYear: true,
+                    showAnim: '',
+                    onSelect: function () {
+                        this.firstOpen = true;
+                        validate(this);
+                    },
+                    beforeShow: function (input, inst) {
+                        return !this.firstOpen;
+                    },
+                    onClose: function () {
+                        this.focus();
+                    }
+                });
+        }
+        function Editing() {
+       
+
+            var colM = $grid.pqGrid("option", "colModel");
+            var childColM = colM[2].colModel;
+            childColM[2].editable = true;
+            childColM[3].editable = true;
+            $grid.pqGrid("option", "colModel", colM);
+
+        }
+
+        var colModel = [
+        { dataIndx: "BranchId", width: 10, dataType: "integer", editable: false, resizable: false, hidden: true },
+        { dataIndx: "ddltype", width: 10, dataType: "integer", editable: false, resizable: false, hidden: true },
+        { dataIndx: "TransactionId", width: 10, dataType: "integer", editable: false, resizable: false, hidden: true },
+        {
+            title: "ByCash",
+            dataIndx: "IsCashTransaction",
+            Width: 25,
+            align: "center",
+            type: 'checkBoxSelection',
+            cls: 'ui-state-default',
+            sortable: false,
+            dataType: 'bool',
+            //ditable: true,
+            cb: { select: true, all: false, header: true },
+
+            editable: function(ui) {
+                
+                if (ui.rowData != undefined) {
+                    var column = this.getColumn({ dataIndx: 'ChequeNumber' }),
+                        obj = ui.rowData.ChequeNumber,
+                        val = column.val;
+                    if (obj == "" || obj == undefined)
+                        return true;
+
+                    else
+                        return false;
+
+                }
+               
+            }
+
+        },
+                            {
+                                title: "Date", width: "100", dataIndx: "TransactionDate", dataType: 'date',
+                                format: 'dd-mm-yy',
+                                editor: {
+                                    type: 'textbox',
+                                    init: dateEditor
+                                },
+                                validations: [
+                                    { type: 'regexp', value: '^[0-9]{2}/[0-9]{2}/[0-9]{4}$', msg: 'Not in dd/mm/yyyy format' }
+                                ]
+                            },
+             {
+                 title: "Amount",
+                 dataIndx: "TransactionAmount",
+                 width: 150,
+                 dataType: "float",
+                 editable: true,
+                 align: "left"
+                
+             },
+
+            {
+                title: "CheckNumber",
+                dataIndx: "ChequeNumber",
+                width: 150,
+                dataType: "string",
+                editable: function (ui) {
+                    var column = this.getColumn({ dataIndx: 'IsCashTransaction' }),
+                        state = ui.rowData.IsCashTransaction,
+                        check = column.cb.check;
+                    if (state === check)
+                        return false;
+                    else
+                        return true;
+                },
+
+                align: "left"
+            },
+             {
+                 title: "BankName",
+                 dataIndx: "ChequeBank",
+                 width: 150,
+                 dataType: "string",
+                 editable: function (ui) {
+                     var column = this.getColumn({ dataIndx: 'IsCashTransaction' }),
+                         state = ui.rowData.IsCashTransaction,
+                         check = column.cb.check;
+                     if (state === check)
+                         return false;
+                     else
+                         return true;
+                 },
+                 align: "left"
+             },
+            {
+                title: "Payee",
+                dataIndx: "PayeeName",
+                width: 150,
+                dataType: "string",
+                editable: true,
+                align: "left"
+            },
+            {
+                title: "Purpose/Description",
+                dataIndx: "Remarks",
+                width: 150,
+                dataType: "string",
+                editable: true,
+                align: "left"
+            },
+           {
+               title: "IsDeposite", dataIndx: "IsDeposite", Width: 80, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+               editable: true, dataType: 'bool',
+               cb: { select: true, all: false, header: true }
+           }
+        ];
+        var dataMGrid = { location: "local", sorting: 'local' };
+
+        var setMainItemList = {
+            width: '100%',
+            height: 400,
+            numberCell: { show: true },
+            editModel: {
+                saveKey: $.ui.keyCode.ENTER
+            },
+            trackModel: { on: true, dirtyClass: 'pq-cell-dirty' },
+            virtualX: true,
+            virtualY: true,
+            sortable: false,
+            showTop: false,
+            resizable: false,
+            scrollModel: { autoFit: true },
+            draggable: false,
+            wrap: false,
+            editor: { type: 'textbox' },
+            editable: true,
+            hwrap: false,
+            columnBorders: true,
+            rowBorders: true,
+            showHeader: true,
+            selectionModel: { type: 'row' },
+            filterModel: { on: false },
+            colModel: colModel,
+            dataModel: dataMGrid,
+            pageModel: { type: "local" }
+
+        };
+        $grid = $("#grid").pqGrid(setMainItemList);
+       
+
+        function CalculateTotalAmount() {
+            
+            var getData = $grid.pqGrid("option", "dataModel.data");
+
+            var totalAmount = 0;
+            $.each(getData, function (_, item) {
+                totalAmount = totalAmount + parseFloat(item.TransactionAmount);
+            });
+           
+            $("#TotalAmount").val(totalAmount);
+        }
+
+
+
+        $('#btnViewItem').on('click', function () {
+            
+
+            var dataMGrid = [];
+            var getData = $("#grid").pqGrid("option", "dataModel.data");
+            $.each(getData, function (key, value) {
+                var grdData = {
+                    'BranchId': $('#ddlBranch').val(),
+                    'TransactionId': value.TransactionId,
+                    'ddltype': $('#ddltype').val(),
+                    'TransactionDate': value.TransactionDate, 'TransactionAmount': value.TransactionAmount, 'IsCashTransaction': value.IsCashTransaction, 'ChequeNumber': value.ChequeNumber, 'ChequeBank': value.ChequeBank,
+                    'PayeeName': value.PayeeName, 'Remarks': value.Remarks, 'IsDeposite': value.IsDeposite, 'Balance': value.Balance
+
+                };
+                dataMGrid.push(grdData);
+            });
+            var gridData = { 'TransactionId': '', 'BranchId': $('#ddlBranch').val(), 'ddltype': $('#ddltype').val(), 'TransactionDate': '', 'TransactionAmount': '', 'IsCashTransaction': true, 'ChequeNumber': '', 'ChequeBank': '', 'PayeeName': '', 'Remarks': '', 'IsDeposite': '', 'Balance': '' };
+
+            dataMGrid.push(gridData);
+            $("#grid").pqGrid("option", "dataModel.data", dataMGrid);
+            $("#grid").pqGrid("refreshDataAndView");
+        });
+
+
+        function getRowIndx() {
+            var arr = $("#grid").pqGrid('selection', { type: 'row', method: 'getSelection' });
+            if (arr && arr.length > 0) {
+                return arr[0].rowIndx;
+            }
+            else {
+                alert("Select a row.");
+                return null;
+            }
+        }
+
+        $('#btnRemoveItem').on('click', function () {
+            
+            var rowIndx = getRowIndx();
+            if (rowIndx == null) {
+                return;
+            }
+            $("#grid").pqGrid("deleteRow", { rowIndx: rowIndx });
+        });
+
+       // $("#btnAdd").on("click", ClearForm);
+
+        $('#btnResetgrid').on('click', function () {
+            
+            ClearParamGrid("grid");
+            $("#TotalAmount").val("");
+        });
+        $("#btnSave").click(function () {
+            
+            var griditems;
+            var selectedItemsMainGrid;
+            var selectedItems = $grid.pqGrid("option", "dataModel.data");
+
+            var checkAmount = 0;
+            $.each(selectedItems, function (key, value) {
+                if (value.TransactionAmount == "" || value.TransactionAmount == undefined) checkAmount++;
+            });
+
+            if (checkAmount > 0) {
+                ShowAlert("error", "Please Enter Amount");
+                return;
+            }
+
+            if (selectedItems != undefined) {
+                griditems = JSON.stringify(selectedItems);
+
+                $.ajax({
+                    type: "POST", //HTTP POST Method
+                    traditional: true,
+                    contentType: 'application/json; charset=utf-8',
+                    url: '/PettyCash/SaveTransaction', // Controller/View
+                    data: griditems,
+                    success: function (msg) {
+                        if (msg.success) {
+                            //if ($("#ID").val() !== "")
+                            //    ShowAlert("success", "PettyCash Register saved successfully");
+                            //else {
+                            //    ShowAlert("success", msg.Message);
+                            //}
+                            ShowAlert("success", "PettyCash Entries saved successfully");
+                            ClearParamGrid("grid");
+                        } else {
+                            ShowAlert("error", "Falied to Save! " + msg.Message);
+                        }
+                    },
+                    error: function (jqXHR, exception) {
+                        ShowAlert("error", "Error while saving PettyCash Register.");
+                    }
+                });
+            }
+
+
+
+           
+
+
+        });
+
+    </script>
+
+}

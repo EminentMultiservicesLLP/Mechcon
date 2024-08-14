@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+This file is used by the publish/package process of your Web project. You can customize the behavior of this process
+by editing this MSBuild file. In order to learn more about this please visit http://go.microsoft.com/fwlink/?LinkID=208121. 
+-->
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <TimeStampOfAssociatedLegacyPublishXmlFile />
+    <_PublishTargetUrl>E:\06-Feb-2017\BISERPService_Publish</_PublishTargetUrl>
+    <EncryptedPassword>AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAp96PUcx2pU2PbZpMw41XwAAAAAACAAAAAAADZgAAwAAAABAAAACFzCqizR7Od9Mpis+5GeodAAAAAASAAACgAAAAEAAAANajWl04bgcLIEy1DMoQXlIYAAAAAyVHq84d/UCS8vjCZFmuYgaxIr8aIZj9FAAAADEiZD6AFBiy8in14JdqvWgzBlXN</EncryptedPassword>
+  </PropertyGroup>
+  <ItemGroup>
+    <File Include="bin/App_global.asax.compiled">
+      <publishTime>02/06/2017 11:52:50</publishTime>
+    </File>
+    <File Include="bin/App_global.asax.dll">
+      <publishTime>02/06/2017 11:52:50</publishTime>
+    </File>
+    <File Include="bin/AutoMapper.dll">
+      <publishTime>01/06/2017 18:04:21</publishTime>
+    </File>
+    <File Include="bin/AutoMapper.EF6.dll">
+      <publishTime>01/06/2017 18:04:21</publishTime>
+    </File>
+    <File Include="bin/BISERPBusinessLayer.dll">
+      <publishTime>02/06/2017 11:52:01</publishTime>
+    </File>
+    <File Include="bin/BISERPCommon.dll">
+      <publishTime>02/01/2017 12:45:00</publishTime>
+    </File>
+    <File Include="bin/BISERPDataLayer.dll">
+      <publishTime>02/06/2017 11:51:59</publishTime>
+    </File>
+    <File Include="bin/BISERPService.dll">
+      <publishTime>02/06/2017 11:52:01</publishTime>
+    </File>
+    <File Include="bin/BISERPService.dll.config">
+      <publishTime>01/21/2017 14:53:29</publishTime>
+    </File>
+    <File Include="bin/DelegateDecompiler.dll">
+      <publishTime>01/06/2017 18:04:21</publishTime>
+    </File>
+    <File Include="bin/DelegateDecompiler.EntityFramework.dll">
+      <publishTime>01/06/2017 18:04:21</publishTime>
+    </File>
+    <File Include="bin/EntityFramework.dll">
+      <publishTime>01/06/2017 18:04:24</publishTime>
+    </File>
+    <File Include="bin/EntityFramework.SqlServer.dll">
+      <publishTime>01/06/2017 18:04:24</publishTime>
+    </File>
+    <File Include="bin/log4net.config">
+      <publishTime>01/06/2017 18:04:32</publishTime>
+    </File>
+    <File Include="bin/log4net.dll">
+      <publishTime>01/06/2017 18:04:27</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Practices.Unity.Configuration.dll">
+      <publishTime>01/06/2017 18:04:26</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Practices.Unity.dll">
+      <publishTime>01/06/2017 18:04:26</publishTime>
+    </File>
+    <File Include="bin/Mono.Reflection.dll">
+      <publishTime>01/06/2017 18:04:25</publishTime>
+    </File>
+    <File Include="bin/Newtonsoft.Json.dll">
+      <publishTime>01/06/2017 18:04:26</publishTime>
+    </File>
+    <File Include="bin/System.Net.Http.Formatting.dll">
+      <publishTime>01/06/2017 18:04:24</publishTime>
+    </File>
+    <File Include="bin/System.Web.Http.dll">
+      <publishTime>01/06/2017 18:04:25</publishTime>
+    </File>
+    <File Include="bin/System.Web.Http.WebHost.dll">
+      <publishTime>01/06/2017 18:04:25</publishTime>
+    </File>
+    <File Include="Global.asax">
+      <publishTime>01/06/2017 18:04:28</publishTime>
+    </File>
+    <File Include="localhostLey.pfx">
+      <publishTime>01/06/2017 18:04:29</publishTime>
+    </File>
+    <File Include="packages.config">
+      <publishTime>01/06/2017 18:04:30</publishTime>
+    </File>
+    <File Include="PrecompiledApp.config">
+      <publishTime>02/06/2017 11:52:47</publishTime>
+    </File>
+    <File Include="Views/Web.config">
+      <publishTime>09/28/2016 11:13:36</publishTime>
+    </File>
+    <File Include="Web.config">
+      <publishTime>02/06/2017 11:52:46</publishTime>
+    </File>
+  </ItemGroup>
+</Project>

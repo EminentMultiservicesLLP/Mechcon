@@ -1,0 +1,240 @@
+﻿@using (Html.BeginForm())
+    {
+         @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+        <fieldset>
+            <div id="content">
+                <div class="panel-group">
+                    <div class="panel panel-default">
+                        <div class="panel-groupingBoder">
+                            <div class="panel-heading">
+                                <div class="panel-title">
+                                    <a class="collapsediv" data-toggle="collapse" href="#collapse2" style="color: white">
+                                        Search Detail
+                                    </a>
+                                </div>
+                            </div>
+                            <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                                <div class="panel-body">
+                                    <fieldset>
+                                        <div class="row">
+                                            <div class="col-sm-2">
+                                                @Html.Label("From Date")
+                                                <div class='input-group date' id='FromDate'>
+                                                    <input type='text' class="form-control" />
+                                                    <span class="input-group-addon">
+                                                        <span class="glyphicon glyphicon-calendar"></span>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                @Html.Label("To Date")
+                                                <div class='input-group date' id='ToDate'>
+                                                    <input type='text' class="form-control" />
+                                                    <span class="input-group-addon">
+                                                        <span class="glyphicon glyphicon-calendar"></span>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="form-group form-horizontal">
+                                                <div class="col-sm-2">
+                                                    @Html.Label("Select Project", new { @class = "required" })
+                                                    @Html.DropDownList("ddlProject", new SelectList(string.Empty, "Value", "Text"), "--Select Project--", new { @class = "form-control" })
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <div class="form-group">
+                                                    <br />
+                                                    <button type="button" class="btn btn-success" id="btnShow">Show</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <br />
+                                    </fieldset>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-group">
+                    <div class="panel panel-default">
+                        <div class="panel-groupingBoder">
+                            <div class="panel-heading">
+                                <div class="panel-title">
+                                    <a class="collapsediv" data-toggle="collapse" href="#Summary" style="color: white">
+                                        Summary
+                                    </a>
+                                </div>
+                            </div>
+                            <div id="Summary" class="panel-collapse collapse in" aria-expanded="true">
+                                <div class="panel-body">
+                                    <div class="container fill">
+                                        <div id="grid_summary"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    }
+    <script>
+        var $Datagrid;
+        $(document).ready(function () {
+        $('#FromDate').datetimepicker({
+            format: 'DD-MMM-YYYY',
+            extraFormats: ['DD-MM-YYYY', 'DD-MM-YY'],
+            defaultDate: new Date()
+        });
+        $('#ToDate').datetimepicker({
+            format: 'DD-MMM-YYYY',
+            extraFormats: ['DD-MM-YYYY', 'DD-MM-YY'],
+            defaultDate: new Date()
+        });
+        $.ajax({
+            type: "GET",
+            url: "/Master/MainStores",
+            datatype: "Json",
+            async: true,
+            success: function (data) {
+                $.each(data,
+                    function (index, value) {
+                        $('#ddlProject').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                    });
+            }
+        });
+        });
+        var totalData;
+        //calculate sum of 3rd and 4th column.
+        function calculateSummary() {
+            
+            var basicAmount = 0, gstAmount = 0, grandTotal = 0, closedAmt = 0;
+           var data = $("#grid_summary").pqGrid('option', 'dataModel.data');
+            for (var i = 0; i < data.length; i++) {
+                var row = data[i];
+                basicAmount += parseFloat(row["BasicAmount"]);
+                gstAmount += parseFloat(row["GSTAmount"]);
+                grandTotal += parseFloat(row["GrandTotal"]);
+                closedAmt += parseFloat(row["ClosedAmount"]);
+            }
+           
+
+            basicAmount = $.paramquery.formatCurrency(basicAmount);
+            gstAmount = $.paramquery.formatCurrency(gstAmount);
+            grandTotal = $.paramquery.formatCurrency(grandTotal);
+            
+            totalData = { ProjectCode: "<b><span style='color:red;'>Total</span></b>", PONo: "", PoDate: "", SupplierName: "", VendorName: "", ItemCategory: "", BasicAmount: '<span style="color:red;">' + basicAmount + '</span>', GSTAmount: '<span style="color:red;">' + gstAmount + '</span>', GrandTotal: '<span style="color:red;">' + grandTotal + '</span>', PoStatus: "", ClosedAmount: '<span style="color:red;">' + closedAmt + '</span>', pq_rowcls: 'green' };
+        }
+        var dataM = { location: "local", sorting: 'local' };
+        var colM = [
+            {
+                title: "Project Code",
+                dataIndx: "ProjectCode",
+                dataType: "string",
+                width: 100,
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            },
+            {
+                title: "PONo",
+                dataIndx: "PONo",
+                dataType: "string",
+                width: 100,
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            },
+            {
+                title: "PO Date",
+                dataIndx: "PoDate",
+                dataType: "string",
+                width: 100,
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            },
+            {
+                title: "Supplier",
+                dataIndx: "SupplierName",
+                dataType: "string",
+                width: 100,
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            },
+            {
+                title: "Vendor",
+                dataIndx: "VendorName",
+                dataType: "string",
+                width: 100,
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            },
+            {
+                title: "Item Category",
+                dataIndx: "ItemCategory",
+                dataType: "string",
+                width: 100,
+                filter: {
+                    type: "select",
+                    condition: 'equal',
+                    prepend: { '': '--Select--' },
+                    valueIndx: "ItemCategory",
+                    labelIndx: "ItemCategory",
+                    listeners: ['change']
+                }
+            },
+            { title: "Basic Value", dataIndx: "BasicAmount", dataType: "string", width: 100 },
+            { title: "GST", dataIndx: "GSTAmount", dataType: "string", width: 100 },
+            { title: "Total Value", dataIndx: "GrandTotal", dataType: "string", width: 100 },
+            { title: "Status", dataIndx: "PoStatus", dataType: "string", width: 100 },
+            { title: "Closed Amt", dataIndx: "ClosedAmount", dataType: "string", width: 100 }
+        ];
+        var gridObjects = gridCommonObject;
+        gridObjects.toolbar = exportToExcelToolbar,
+            gridObjects.colModel = colM,
+            gridObjects.dataModel = dataM,
+            gridObjects.title = false,
+            gridObjects.editable = false;
+
+
+        var $summary = "";
+        gridObjects.render = function (evt, ui) {
+            $summary = $("<div class='pq-grid-summary'  ></div>")
+                .prependTo($(".pq-grid-bottom", this.widget()));
+            
+            calculateSummary();
+        }
+        ////refresh summary whenever data changes due to edit, add, paste, undo, redo etc.
+        gridObjects.change = function (evt, ui) {
+            gridObjects.refresh.call(this);
+        }
+        gridObjects.refresh = function (evt, ui) {
+            calculateSummary();
+            var data = [totalData]; //2 dimensional array
+            var obj = { data: data, $cont: $summary }
+            this.createTable(obj);
+        }
+
+        $Datagrid = $("#grid_summary").pqGrid(gridObjects);
+        $("#btnShow").click(function () {
+            ShowGridRecord();
+        });
+
+        function afterFail(xStatus, status, preStatus) {
+
+        }
+        function ShowGridRecord() {
+            var searchStoreId = $("#ddlProject").val();
+            var fromDate = $("#FromDate").data('date');
+            var toDate = $("#ToDate").data('date');
+            if (searchStoreId === "" || searchStoreId == undefined) searchStoreId = 0;
+            ajaxCall("/StoreQuantityLimits/GetProjectBudgetConclusion", { StoreId: searchStoreId, FromDate: fromDate, ToDate: toDate }, 6000, "GET", SucessGetProjectBudgetConclusion, afterFail);
+        }
+
+
+        function SucessGetProjectBudgetConclusion(data) {
+            
+            $("#grid_summary").pqGrid("option", "dataModel.data", data.model);
+
+            var column = $("#grid_summary").pqGrid("getColumn", { dataIndx: "ItemCategory" });
+            var filter = column.filter;
+            filter.cache = null;
+            filter.options = $("#grid_summary").pqGrid("getData", { dataIndx: ["ItemCategory"] });
+
+            $("#grid_summary").pqGrid("refreshDataAndView");
+        }
+    </script>

@@ -1,0 +1,208 @@
+﻿@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <fieldset>
+        <div id="content">
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-groupingBoder">
+                        <div class="panel-heading">
+                            <div class="panel-title">
+                                <a class="collapsediv" data-toggle="collapse" href="#collapse2" style="color: white">
+                                    Search Detail
+                                </a>
+                            </div>
+                        </div>
+                        <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                            <div class="panel-body">
+                                <fieldset>
+                                    <div class="row">
+                                        <div class="col-sm-2">
+                                            @Html.Label("From Date")
+                                            <div class='input-group date' id='FromDate'>
+                                                <input type='text' class="form-control" />
+                                                <span class="input-group-addon">
+                                                    <span class="glyphicon glyphicon-calendar"></span>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            @Html.Label("To Date")
+                                            <div class='input-group date' id='ToDate'>
+                                                <input type='text' class="form-control" />
+                                                <span class="input-group-addon">
+                                                    <span class="glyphicon glyphicon-calendar"></span>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group form-horizontal">
+                                            <div class="col-sm-2">
+                                                @Html.Label("Select Project", new { @class = "required" })
+                                                @Html.DropDownList("ddlProject", new SelectList(string.Empty, "Value", "Text"), "--Select Project--", new { @class = "form-control" })
+                                            </div>
+                                        </div>
+                                        <div class="form-group form-horizontal">
+                                            <div class="col-sm-2">
+                                                @Html.Label("Select Supplier", new { @class = "required" })
+                                                @Html.DropDownList("ddlSupplier", new SelectList(string.Empty, "Value", "Text"), "--Select Project--", new { @class = "form-control" })
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <br />
+                                                <button type="button" class="btn btn-success" id="btnShow">Show</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br />
+                                </fieldset>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-groupingBoder">
+                        <div class="panel-heading">
+                            <div class="panel-title">
+                                <a class="collapsediv" data-toggle="collapse" href="#Summary" style="color: white">
+                                    Summary
+                                </a>
+                            </div>
+                        </div>
+                        <div id="Summary" class="panel-collapse collapse in" aria-expanded="true">
+                            <div class="panel-body">
+                                <div class="container fill">
+                                    <div id="grid_summary"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+}
+<script>
+        var $Datagrid;
+        $(document).ready(function () {
+        $('#FromDate').datetimepicker({
+            format: 'DD-MMM-YYYY',
+            extraFormats: ['DD-MM-YYYY', 'DD-MM-YY'],
+            defaultDate: new Date()
+        });
+        $('#ToDate').datetimepicker({
+            format: 'DD-MMM-YYYY',
+            extraFormats: ['DD-MM-YYYY', 'DD-MM-YY'],
+            defaultDate: new Date()
+        });
+        $.ajax({
+            type: "GET",
+            url: "/Master/MainStores",
+            datatype: "Json",
+            async: true,
+            success: function (data) {
+                $.each(data,
+                    function (index, value) {
+                        $('#ddlProject').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                    });
+            }
+        });
+        $.ajax({
+            type: "GET",
+            url: "/Master/AllSupplier",
+            datatype: "Json",
+            async: true,
+            success: function (data) {
+                $.each(data,
+                    function (index, value) {
+                        $('#ddlSupplier').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                    });
+            }
+        });
+        });
+        var totalData;
+        var dataM = { location: "local", sorting: 'local' };
+        var colM = [
+            {
+                title: "Project Code",
+                dataIndx: "ProjectCode",
+                dataType: "string",
+                width: 100,
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            },
+            {
+                title: "Supplier",
+                dataIndx: "SupplierName",
+                dataType: "string",
+                width: 100,
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            },
+            {
+                title: "PONo",
+                dataIndx: "PONo",
+                dataType: "string",
+                width: 100,
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            },
+            {
+                title: "PO Date",
+                dataIndx: "PoDate",
+                dataType: "string",
+                width: 100,
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            },
+            
+            {
+                title: "Vendor",
+                dataIndx: "VendorName",hidden:true,
+                dataType: "string",
+                width: 100,
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            },
+            { title: "Item Name", dataIndx: "ItemName", dataType: "string", width: 100 },
+             { title: "Description", dataIndx: "ItemDescription", dataType: "string", width: 300 },
+            { title: "PO Qty", dataIndx: "PoQty", dataType: "string", width: 100 },
+            { title: "GRN Qty", dataIndx: "GRNQty", dataType: "string", width: 100 },
+            { title: "Pending Qty", dataIndx: "PendingQty", dataType: "string", width: 100 },
+            { title: "Basic Value", dataIndx: "BasicAmount", dataType: "string", width: 100, hidden: true },
+            { title: "GST", dataIndx: "GSTAmount", dataType: "string", width: 100, hidden: true },
+            { title: "Total Value", dataIndx: "GrandTotal", dataType: "string", width: 100,hidden:true },
+        ];
+        var a = Window.height;
+        var gridObjects = gridCommonObject;
+        gridObjects.toolbar = exportToExcelToolbar,
+            gridObjects.colModel = colM,
+            gridObjects.dataModel = dataM,
+        gridObjects.scrollModel = { autoFit: false },
+        gridObjects.title = false,
+            gridObjects.height = 600,
+            gridObjects.editable = false;
+        $Datagrid = $("#grid_summary").pqGrid(gridObjects);
+        $("#btnShow").click(function () {
+            //ClearparamGrid('grid_summary');
+            ShowGridRecord();
+        });
+
+        function afterFail(xStatus, status, preStatus) {
+
+        }
+        function ShowGridRecord() {
+            var searchStoreId = $("#ddlProject").val();
+            var supplierId = $("#ddlSupplier").val();
+            var fromDate = $("#FromDate").data('date');
+            var toDate = $("#ToDate").data('date');
+            if (searchStoreId === "" || searchStoreId == undefined) searchStoreId = 0;
+            if (supplierId === "" || supplierId == undefined) supplierId = 0;
+            
+            ajaxCall("/PurchaseReports/grnVSpoitemcomparison", { StoreId: searchStoreId, SupplierId: supplierId, FromDate: fromDate, ToDate: toDate }, 6000, "GET", SucessGetProjectBudgetConclusion, afterFail);
+        }
+
+
+        function SucessGetProjectBudgetConclusion(data) {
+            $("#grid_summary").pqGrid("option", "dataModel.data", data.model);
+            $("#grid_summary").pqGrid("refreshDataAndView");
+        }
+</script>

@@ -1,0 +1,182 @@
+﻿@model IEnumerable<BISERP.Models.UserMangement.ReportListModel>
+@using (Html.BeginForm())
+{
+    <div id="MasterPlaceHolder" style="height: 100%">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-groupingBoder">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-3">
+                                    Report
+                                    <select id="selMasters" class="wrapper-dropdown-content form-control">
+                                        <option class="wrapperdropdown-content">Select</option>
+                                        @foreach (var item in Model)
+                                        {
+                                            <option class="wrapperdropdown-content" value="@item.ReportID">@item.ReportName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group form-horizontal"><br />
+                                <div class="col-sm-3">
+                                    @Html.Label("Select Report Type") &nbsp;&nbsp;&nbsp;
+                                    @Html.RadioButton("ReportType", "Vertical", true)Vertical &nbsp;&nbsp;
+                                    @Html.RadioButton("ReportType", "Horizontal")Horizontal
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-3">
+                                    purchase No.
+                                    @Html.TextBox("PONo", "", new { @class = "form-control" })
+                                    @Html.Hidden("POId")
+                                </div>
+                                <br />
+                                <div class="col-sm-6">
+                                    <button type="button" class="btn btn-success" id="btnPrint">Show</button>
+                                    <button type="button" class="btn btn-success" id="btnReset">Reset</button>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <iframe id="iframeReportViewer" style="width:100% ; min-height: 300px; max-height:600px"></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="PoModal" title="Select Asset" style="display: none;">
+        <div id="pogrid"></div>
+    </div>
+
+}
+<script>
+    var url;
+    $('#btnPrint').on('click', function () {    
+        if ($("#selMasters").val() === "228") {
+            if ($("#POId").val() === "" || $("#POId").val() == undefined) {
+                ShowAlert("error", "Please select Purchase Order");
+                return;
+            }
+
+        }
+        ReportValidationCheck();
+    });
+    function ReportValidationCheck() {
+        
+        if ($("#selMasters").val() === "228") {
+            var poId = $("#POId").val();
+            var poType = "Purchase Order";
+            var ReportType = "Vertical";
+            if ($("[name='ReportType']:checked").val() == "Vertical")
+                ReportType = "Vertical";
+            else
+                ReportType = "Horizontal";
+            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#selMasters").val() + "&poId=" + poId + "&poType=" + poType + "&rpttype=" + ReportType;
+        }
+       
+        else {
+            url = "";
+        } 
+        console.log(url);
+        var myframe = document.getElementById("iframeReportViewer");
+        if (myframe != null) {
+            if (myframe.src) {
+                myframe.src = url;
+            }
+            else if (myframe.contentWindow != null && myframe.contentWindow.location != null) {
+                myframe.contentWindow.location = url;
+            }
+            else {
+                myframe.setAttribute('src', url);
+            }
+            return false;
+        }
+    }
+
+    $('#PONo').on('click', function () {
+        LoadPoGrid();
+    });
+    function LoadPoGrid() {
+        $("#PoModal").dialog({
+            height: 500,
+            width: 700,
+            modal: true,
+            open: function (evt, ui) {
+                $.ajax({
+                    //url: "/PurchaseOrder/GetPOForAuthorization",
+                     url: "/PurchaseOrder/AuthorizedPurchaseOrder",
+                    cache: false,
+                    async: true,
+                    method: "GET",
+                    data: { StoreId: 0},
+                    dataType: "JSON",
+                    success: function (data) {
+
+                        
+                        $("#pogrid").pqGrid("option", "dataModel.data", data.records);
+                        $("#pogrid").pqGrid("refreshDataAndView");
+                    }
+                });
+            },
+            close: function (event, ui) {
+            },
+            show: {
+                effect: "blind",
+                duration: 500
+            }
+        });
+    }
+
+    dataList = { location: 'local', sorting: 'local', paging: 'local', dataType: 'JSON' };
+    var setpocols = [
+        { title: "", dataIndx: "ID", dataType: "integer", hidden: true },
+        { title: "PO No", dataIndx: "PONo", width: 200, filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } },
+         {
+             title: "Supplier", dataIndx: "SupplierName", width: 100,
+             filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+         },
+        {
+            title: "Project Code", dataIndx: "StoreName", width: 100,
+            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+        },
+    ];
+    setsetpoList = {
+        width: "auto", //auto width
+        height: "100%-30", //height in %age
+        selectionModel: { type: 'cell' },
+        autoSizeInterval: 0,
+        scrollModel: { autoFit: true },
+        dragColumns: { enabled: false },
+        hoverMode: 'cell',
+        editor: { type: 'textbox' },
+        filterModel: { on: true, mode: "AND", header: true },
+        showTop: false,
+        resizable: true,
+        virtualX: true,
+        colModel: setpocols,
+        dataModel: dataList,
+        cellClick: function (evt, ui) {
+            
+            if (ui.rowData) {
+                var rowIndx = parseInt(ui.rowIndx);
+                var record = ui.rowData;
+                $("#POId").val(record.ID);
+                $("#PONo").val(record.PONo);
+                console.log($("#ItemId").val());
+                ClosePopupWindow("PoModal");
+            }
+        },
+        pageModel: { type: "local", rPP: 20 }
+    };
+    $("#pogrid").pqGrid(setsetpoList);
+
+
+</script>

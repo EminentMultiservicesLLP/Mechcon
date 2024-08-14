@@ -1,0 +1,133 @@
+﻿body {
+}
+
+.close {
+    color: red;
+    opacity: 1;
+    font-size: 28px;
+    line-height: 25px
+}
+
+.gridmodal-header {
+    padding: 7px 15px;
+    color: aliceblue;
+    background-color: #0f3fa1;
+}
+
+.find-search-grid-modal {
+    position: relative;
+    margin: auto;
+    top: 50% !important;
+    transform: translate(0, -50%) !important;
+    -ms-transform: translate(0, -50%) !important;
+    -webkit-transform: translate(0, -50%) !important;
+    width: 70%;
+    height: auto;
+}
+
+.gridmodal-content {
+    position: relative;
+    background-color: #ecefef;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    border: 1px solid #999;
+    border: 1px solid rgba(0,0,0,.2);
+    border-radius: 6px;
+    outline: 0;
+    -webkit-box-shadow: 0 3px 9px rgba(0,0,0,.5);
+    box-shadow: 0 3px 9px rgba(0,0,0,.5);
+    min-height: 40vh;
+    height: auto;
+}
+
+.gridmodal-body {
+    position: absolute;
+    top: 50px; /** height of header **/
+    bottom: 1px; /** height of footer **/
+    left: 0;
+    right: 0;
+    overflow-y: auto;
+}
+
+.btn-close {
+    background-color: #0f3fa1;
+    color: aliceblue;
+}
+
+.modal {
+    backdrop-filter: blur(3px);
+}
+/*View Modal Image for SlideShow with prev and next*/
+/* Next & previous buttons */
+.slide-prev,
+.slide-next {
+    cursor: pointer;
+    position: absolute;
+    top: 40%;
+    width: auto;
+    padding: 16px;
+    margin-top: -50px;
+    color: aquamarine;
+    font-weight: bold;
+    font-size: 50px;
+    border-radius: 0 3px 3px 0;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* Position the "next button" to the right */
+.slide-next {
+    right: 20px;
+    border-radius: 3px 0 0 3px;
+}
+/* Position the "prev button" to the right */
+.slide-prev {
+    left: 20px;
+    border-radius: 3px 0 0 3px;
+}
+
+
+/* The Modal (background) */
+.slideModal {
+    display: none;
+    position: fixed;
+    z-index: 13;
+    left: 0;
+    top: 51px;
+    width: auto;
+    height: auto;
+    overflow: auto;
+    backdrop-filter: blur(3px);
+}
+
+/*     Modal Content/Box */
+.slideContent {
+    /*  background-color: rgb(102 102 108 / 44%);*/
+    margin: auto;
+    padding: 36px;
+    /*        border: 1px solid #8AE;*/
+    width: 60%;
+    top: 6rem;
+}
+
+/*
+     The Close Button */
+.slideClose {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+    .slideClose:hover,
+    .slideClose:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+.downloadFiles {
+    display: flow;
+    direction: rtl;
+    font-size: x-large;
+}

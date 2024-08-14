@@ -1,0 +1,295 @@
+﻿@model BISERP.Areas.Asset.Models.LocationModel
+<script type="text/javascript">
+    var grid;    
+    $(document).ready(function () {
+    
+        grid = $("#grid").jsGrid({
+            width: "100%",
+            height: "320px",
+            filtering: true, //will display top 1st row as filter
+            selecting: true,
+
+            inserting: false, // false will not allow inserting new entry
+            editing: false,// false will not allow exisiting data entry
+            sorting: true,
+            autoload: true,
+            paging: true,
+            pageSize: 20,
+
+            controller: {
+                loadData: function (filter) {
+                    var d = $.Deferred();
+                    $.ajax({
+                        type: 'GET',
+                        url: '@Url.Action("AllLocation", "Location")',
+                        dataType: "json",
+                        data: { SearchName: filter.LocationName, SearchCode: filter.LocationCode },
+                        success: function (data) {
+                            d.resolve(data);
+                        },
+                        error: function (e) {
+                            ShowAlert("error", "Server Error! Please Contact administrator!");
+                        }
+                    });
+                    return d.promise();
+                },
+            },
+
+            fields: [
+                { name: "LocationId", visible: false, width: 0 },
+                { name: "LocationCode", title: "Code", type: "text", validate: "required", width: 20 },
+                { name: "LocationName", title: "Name", type: "text", validate: "required" },
+                { name: "Deactive", title: "Deactive", type: "checkbox", filtering: false, width: 10 },
+                { name: "Address1", visible: false, width: 0 },
+                { name: "Address2", visible: false, width: 0 },
+                { name: "CityId", visible: false, width: 0 },
+                { name: "StateId", visible: false, width: 0 },
+                { name: "CityName", visible: false, width: 0 },
+                { name: "Pincode", visible: false, width: 0 },
+                { name: "StateName", visible: false, width: 0 },
+                { name: "Telephone", visible: false, width: 0 },
+                { name: "BranchId", visible: false, width: 0 },
+                { type: "control", editButton: false, deleteButton: false, clearFilterButton: true, modeSwitchButton: true, width: 10 }
+
+            ],
+            /********** Row Selection Event you can use in suupplier***********/
+            rowClick: function (args) {
+                var data = args.item;
+                $("#LocationId").val(data.LocationId);
+                $("#LocationCode").val(data.LocationCode); $("#LocationName").val(data.LocationName); $("#Deactive").prop('checked', data.Deactive);
+                $("#Address1").val(data.Address1); $("#Address2").val(data.Address2); 
+                $("#ddlCity").val(data.CityId); $("#Pincode").val(data.Pincode); $("#ddlState").val(data.StateId); $("#Telephone").val(data.Telephone);
+                $("#ConsumerNo").val(data.ConsumerNo); $("#ddlBranch").val(data.BranchId);
+                $("#Deactive").attr("disabled", false);
+            },
+        });
+
+    });
+
+    $(document).ready(function () {
+        $("#btnSave").click(function () {
+            if ($("#LocationCode").val() == "") {
+                ShowAlert("error", "code is missing! Please enter the code");
+                return;
+            }
+            if ($("#LocationName").val() == "") {
+                ShowAlert("error", "Name is missing! Please enter the Name");
+                return;
+            }
+
+
+            $.ajax(
+            {
+                type: "POST", //HTTP POST Method
+                url: '/Location/SaveLocation', // Controller/View
+                data: { //Passing data
+                    LocationId: $("#LocationId").val(),
+                    LocationName: $("#LocationName").val(),
+                    LocationCode: $("#LocationCode").val(),
+                    Address1: $("#Address1").val(),
+                    Address2: $("#Address2").val(),
+                    CityId: $("#ddlCity").val(),
+                    Pincode: $("#Pincode").val(),
+                    StateId: $("#ddlState").val(),
+                    Telephone: $("#Telephone").val(),
+                    ConsumerNo: $("#ConsumerNo").val(),
+                    BranchId: $("#ddlBranch").val(),
+                    Deactive: $("#Deactive").prop('checked')
+                },
+                success: function (msg) {
+                    if (msg.success) {
+                        if ($("#LocationId").val() == "")
+                            ShowAlert("success", "Location added successfully.");
+                        else
+                            ShowAlert("success", "Location updated successfully.");
+                        ClearForm();
+                            
+                        $("#grid").jsGrid("loadData");
+                        
+                    }
+                    else {
+                        ShowAlert("error", msg.Message);
+                    }
+                },
+
+            });
+        });
+    });
+    $.ajax({
+        type: "GET",
+        url: "/Master/AllCities",
+        datatype: "Json",
+        success: function (data) {
+            $.each(data, function (index, value) {
+                $('#ddlCity').append('<option value="' + value.ID + '">' + value.CityName + '</option>');
+            });
+        }
+    });
+        
+    $.ajax({
+        type: "GET",
+        url: "/Master/AllStates",
+        datatype: "Json",
+        success: function (data) {
+            $.each(data, function (index, value) {
+                $('#ddlState').append('<option value="' + value.ID + '">' + value.StateName + '</option>');
+            });
+        }
+    });
+    $.ajax({
+        type: "GET",
+        url: "/Master/AllBranches",
+        datatype: "Json",
+        async: true,
+        success: function (data) {
+            $.each(data, function (index, value) {
+                $('#ddlBranch').append('<option value="' + value.BranchID + '">' + value.BranchName + '</option>');
+            });
+        }
+    });
+    function ClearForm() {
+        $("#Deactive").prop('checked', false);
+        $("#LocationId").val(""),
+        $("#LocationName").val(""),
+        $("#LocationCode").val(""),
+        $("#Address1").val(""),
+        $("#Address2").val(""),
+        $("#ddlCity").val(""),
+        $("#Pincode").val(""),
+        $("#ddlState").val(""),
+        $("#Telephone").val(""),
+        $("#ConsumerNo").val(""),
+        $("#BranchId").val(""),
+        $("#Deactive").prop('checked')
+    }
+
+    $(document).ready(function () {
+        $("#btnAdd").click(function () {
+            ClearForm();
+        });
+    });
+
+</script>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <fieldset>
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-groupingBoder">
+                    <div class="panel-heading">
+                        <div class="panel-title">
+                            <h4>
+                                <a class="collapsediv" data-toggle="collapse" href="#SearchDetails" style="color:white">
+                                  Location 
+                                </a>
+                            </h4>
+                        </div>
+                    </div>
+                    <div class="panel-collapse collapse in" aria-expanded="true" id="SearchDetails">
+                        <div class="panel-body">
+                            <div class="container fill">
+                                <div id="grid" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <br>
+        <div class="panel-groupingBoder">
+            <div class="panel-heading">
+                <div class="panel-title">
+                    Entry Form
+                </div>
+            </div>
+            <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                <div class="panel-body">
+                    <fieldset>
+
+                        <div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <button type="button" id="btnSave" class="btn btn-success">Save</button>
+                                    <button type="button" id="btnAdd" class="btn btn-success">Reset</button>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(model => model.LocationCode, new { @class = "required" })
+                                @Html.TextBoxFor(model => model.LocationCode, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.LocationCode)
+                                @Html.HiddenFor(model => model.LocationId)
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(model => model.LocationName, new { @class = "required" })
+                                @Html.TextBoxFor(model => model.LocationName, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.LocationName)
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-2">
+                                    @Html.LabelFor(model => model.Deactive)
+                                    @Html.CheckBoxFor(model => model.Deactive,  new { @disabled = "disabled" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <b>Address</b>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(m => m.BranchId, new { @class = "required" })
+                                @Html.DropDownList("ddlBranch", new SelectList(string.Empty, "Value", "Text"), "Select Branch", new { @class = "form-control" })
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(model => model.Address1)
+                                @Html.TextBoxFor(model => model.Address1, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.Address1)
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(model => model.Address2)
+                                @Html.TextBoxFor(model => model.Address2, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.Address2)
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(model => model.Pincode)
+                                @Html.TextBoxFor(model => model.Pincode, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.Pincode)
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(model => model.CityId)
+                                @Html.DropDownList("ddlCity", new SelectList(string.Empty, "Value", "Text"), "Select City", new { @class = "wrapperdropdown-content form-control" })
+                                @Html.ValidationMessageFor(model => model.CityId)
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(model => model.StateId)
+                                @Html.DropDownList("ddlState", new SelectList(string.Empty, "Value", "Text"), "Select State ", new { @class = "wrapperdropdown-content form-control" })
+                                @Html.ValidationMessageFor(model => model.StateId)
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(model => model.Telephone)
+                                @Html.TextBoxFor(model => model.Telephone, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.Pincode)
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(model => model.ConsumerNo)
+                                @Html.TextBoxFor(model => model.ConsumerNo, new { @class = "form-control" })
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+}

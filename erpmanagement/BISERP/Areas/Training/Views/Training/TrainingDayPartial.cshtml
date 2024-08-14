@@ -1,0 +1,177 @@
+﻿@model BISERP.Areas.Training.Models.TrainingTempHeaderModel
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    var day = Model.BatchDay;
+    <div class="InsideTabPlaceHolder">
+        <div class="row">
+            <div class="col-sm-12">
+                <button type="button" class="btn btn-success" id="btnSave_@day">Save</button>
+                <button type="button" class="btn btn-success" id="btnReset_@day">Reset</button>
+            </div>
+        </div>
+        <br />
+        @for (var i = 1; i <= Model.SlotPerDay; i++)
+        {
+        var categoryId = ((Model.TrainingTempDaywiseModel != null && Model.TrainingTempDaywiseModel.Count >0 ) ? Model.TrainingTempDaywiseModel[i - 1].CategoryId : 0);
+        var trainerId = ((Model.TrainingTempDaywiseModel != null && Model.TrainingTempDaywiseModel.Count > 0) ? Model.TrainingTempDaywiseModel[i - 1].TrainerId : 0);
+        var timeFrom = ((Model.TrainingTempDaywiseModel != null && Model.TrainingTempDaywiseModel.Count > 0) ? Model.TrainingTempDaywiseModel[i - 1].strFromTime : string.Empty);
+        var timeTo = ((Model.TrainingTempDaywiseModel != null && Model.TrainingTempDaywiseModel.Count > 0) ? Model.TrainingTempDaywiseModel[i - 1].strToTime : string.Empty);
+        var detailsId = ((Model.TrainingTempDaywiseModel != null && Model.TrainingTempDaywiseModel.Count > 0) ? Model.TrainingTempDaywiseModel[i - 1].Id : 0);
+        <div class="item-@i">
+            <div id="div_@(day)" class="row">
+                <div class="col-md-2">
+                    @Html.Label("Training Category")
+                    @Html.DropDownListFor(m => categoryId, new SelectList(Model.TrainingCategories, "CategoryId ", "Category", categoryId), "-- Select Category --", new { id = string.Format("ddlTrainingCategory_{1}_{0}", i, day), @class = "wrapperdropdown-content form-control" })
+                    @Html.HiddenFor(m => detailsId, new { @id = string.Format("TrainingTempDaywiseModel_{1}_{0}", i, day) })
+                </div>
+                <div class="col-md-2">
+                    @Html.Label("Trainer")
+                    @Html.DropDownListFor(m => m.BatchName, new SelectList(Model.TrainingTrainer, "TrainerId ", "TrainerName", trainerId), "-- Select Trainer --", new { id = string.Format("ddlTrainer_{1}_{0}", i, day), @class = "wrapperdropdown-content form-control" })
+                    @Html.HiddenFor(m => m.TrainingTemplateId)
+                </div>
+                <div class="col-sm-1">
+                    @Html.Label("FromTime")
+                    @Html.TextBoxFor(t => timeFrom, new { id = string.Format("FromTime_{1}_{0}", i, day), @class = "input-group date form-control" })
+                   
+                </div>
+                <div class="col-sm-1">
+                    @Html.Label("ToTime")
+                    @Html.TextBoxFor(t => timeTo, new { id = string.Format("ToTime_{1}_{0}", i, day), @class = "input-group date form-control" })
+
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+
+    <script type="text/javascript">
+        var loop = '@Model.SlotPerDay';
+        var currentDay = '@Model.BatchDay';
+
+        $(document)
+           .ready(function () {
+                
+               for (var i = 1; i <= loop; i++) {
+                  
+                   $('#FromTime_' + currentDay + '_' + i).timepicker();
+                   $('#ToTime_' + currentDay + '_' + i).timepicker();
+                   if ($("#TrainingTemplateId").val() == "") {
+                       $('#FromTime_' + currentDay + '_' + i).timepicker('setTime', new Date());
+                       $('#ToTime_' + currentDay + '_' + i).timepicker('setTime', new Date());
+                   }
+                   //$('#FromTime_' + currentDay + '_' + i).change(function () {
+                   //    
+                   //    var fromTime = $('#FromTime_' + currentDay + '_' + i).value;
+                   //    var fromTimeid1 = $('#FromTime_' + currentDay + '_' + i)[0].value;
+                   //    fromtime.setHours(fromtime.getHours() + 1);
+                   //    $('#ToTime_' + currentDay + '_' + i).val(fromTime);
+                   //});
+                  
+               }
+           });
+  
+            
+      
+        $("#btnSave_" + currentDay)
+            .click(function () {
+                if ($("#TrainingName").val() == "") {
+                    ShowAlert("error", "Please enter TrainingName");
+                    return;
+                } else if ($("#TrainingName").val().length <= 2) {
+                    ShowAlert("error", "Training Name at least 3 characters");
+                    return;
+                } else if ($("#TrainingCode").val() == "") {
+                    ShowAlert("error", "Please enter TrainingCode");
+                    return;
+                } else if ($("#TrainingCode").val().length <= 2) {
+                    ShowAlert("error", "Training Code at least 3 characters");
+                    return;
+                }
+                var item = [];
+                for (var i = 1; i <= loop; i++) {
+                    if ($('#ddlTrainingCategory_' + currentDay + '_' + i).val() != "" && $('#ddlTrainer_' + currentDay + '_' + i).val() == "") {
+                        ShowAlert("error", "Please select Trainer");
+                        return;
+                    } if ($('#ddlTrainer_' + currentDay + '_' + i).val() != "" && $('#ddlTrainingCategory_' + currentDay + '_' + i).val() == "" ) {
+                        ShowAlert("error", "Please select TrainingCategory");
+                        return;
+                    }if ($('#ddlTrainer_' + currentDay + '_' + i).val() != "" && $('#ddlTrainingCategory_' + currentDay + '_' + i).val() !== "" && $('#FromTime_' + currentDay + '_' + i).val() == "" && $('#ToTime_' + currentDay + '_' + i).val() == "") {
+                     ShowAlert("error", "Please select FromTime");
+                     return;
+                     }
+                    if ($('#ddlTrainer_' + currentDay + '_' + i).val() != "" && $('#ddlTrainingCategory_' + currentDay + '_' + i).val() !== "" && $('#FromTime_' + currentDay + '_' + i).val() == "" && $('#ToTime_' + currentDay + '_' + i).val() !== "") {
+                        ShowAlert("error", "Please select FromTime");
+                        return;
+                    } if ($('#ddlTrainer_' + currentDay + '_' + i).val() != "" && $('#ddlTrainingCategory_' + currentDay + '_' + i).val() !== "" && $('#FromTime_' + currentDay + '_' + i).val() !== "" && $('#ToTime_' + currentDay + '_' + i).val() == "") {
+                        ShowAlert("error", "Please select ToTime");
+                        return;
+                    }
+                   
+                   
+                    var trainerId = $('#ddlTrainer_' + currentDay + '_' + i).val();
+                    var categoryId = $('#ddlTrainingCategory_' + currentDay + '_' + i).val();
+                    var fromTime = $('#FromTime_' + currentDay + '_' + i).val();
+                    var toTime = $('#ToTime_' + currentDay + '_' + i).val();
+                    var id = $('#TrainingTempDaywiseModel_' + currentDay + '_' + i).val();
+                    var trainingDay = currentDay;
+                    item.push({
+                        "TrainerId": trainerId,
+                        "CategoryId": categoryId,
+                        "FromTime": fromTime,
+                        "ToTime": toTime,
+                        "TrainingDay": trainingDay,
+                        "Id": id
+                    });
+
+                }
+                var items = JSON.stringify({
+                    TrainingName: $("#TrainingName").val(),
+                    TrainingCode: $("#TrainingCode").val(),
+                    TrainingTemplateId: $("#TrainingTemplateId").val(),
+                    BatchId: '@Model.BatchId',
+                    TrainingTempDaywiseModel: item
+                });
+                $.ajax({
+                    type: "POST", //HTTP POST Method
+                    traditional: true,
+                    contentType: 'application/json; charset=utf-8',
+                    url: '/TrainingTemplate/SaveTrainingTemplate', // Controller/View   SlotId
+                    data: items,
+                    success: function (msg) {
+                        if (msg.success == true) {
+                            $("#TrainingTemplateId").val(msg.TrainingTemplateId);
+                            ShowAlert("success", "Template Entries saved successfully");
+                            LoadSearchGrid();
+                            //ClearForm();
+                        } else {
+                            ShowAlert("error", "Error while saving Template.");
+                        }
+                    },
+                    error: function () {
+                        ShowAlert("error", "Error while saving TrainingTemplate.");
+                    }
+                });
+            });
+
+
+       
+
+        function ClearForm() {
+            for (var i = 1; i <= loop; i++) {
+                $("#ddlTrainer_" + currentDay + '_' + i).val("");
+                $("#ddlTrainingCategory_" + currentDay + '_' + i).val("");
+                $("#FromTime_" + currentDay + '_' + i).val("");
+                $("#ToTime_" + currentDay + '_' + i).val("");
+                $('#FromTime_' + currentDay + '_' + i).timepicker('setTime', new Date());
+                $('#ToTime_' + currentDay + '_' + i).timepicker('setTime', new Date());
+            }
+        }
+
+        $("#btnReset_" + currentDay).on("click", ClearForm);
+    
+    </script>
+}
+

@@ -1,0 +1,672 @@
+﻿@model BISERP.Areas.Accounts.Models.ClientRecieptModel
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <fieldset>
+        <div id="content">
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-groupingBoder">
+                        <div class="panel-heading">
+                            <div class="panel-title">
+                                <a class="collapsediv" data-toggle="collapse" href="#collapse2" style="color: white">
+                                    Search Detail
+                                </a>
+                            </div>
+                        </div>
+                        <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                            <div class="panel-body">
+                                <fieldset>
+                                    @*<div class="row">
+                                        <div class="form-group form-horizontal">
+                                            <div class="col-sm-3">
+                                                @Html.Label("Select Project", new {@class = "required"})
+                                                @Html.DropDownList("ddlProject", new SelectList(string.Empty, "Value", "Text"), "--Select Project--", new {@class = "form-control"})
+                                            </div>
+                                        </div>
+                                    </div>*@
+                                    <div class="row">
+                                        <div class="form-group form-horizontal">
+                                            <div class="col-sm-1">
+                                                @Html.Label("Bill No")
+                                            </div>
+                                        </div>
+                                        <div class="form-group form-horizontal">
+                                            <div class="col-sm-2">
+                                                @Html.TextBoxFor(model => model.BillNo, new { @class = "form-control" })
+                                                @Html.ValidationMessageFor(model => model.BillNo)
+                                                @Html.HiddenFor(model => model.ClientBillId)
+                                            </div>
+                                        </div>
+                                        <div class="form-group form-horizontal">
+                                            <div class="col-sm-2">
+                                                @Html.Label("Bill Amount")
+                                            </div>
+                                        </div>
+                                        <div class="form-group form-horizontal">
+                                            <div class="col-sm-2" style="margin-left: -80px">
+                                                @Html.TextBoxFor(model => model.NetAmt, new { @class = "form-control" })
+                                            </div>
+                                        </div>
+                                        <div class="form-group form-horizontal">
+                                            <div class="col-sm-2">
+                                                @Html.Label("Total Recieved")
+                                            </div>
+                                        </div>
+                                        <div class="form-group form-horizontal">
+                                            <div class="col-sm-2" style="margin-left: -80px">
+                                                @Html.TextBoxFor(model => model.TotalRecieved, new { @class = "form-control" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group form-horizontal">
+                                            <div class="col-sm-1">
+                                                @Html.Label("Reciept Date")
+                                            </div>
+                                        </div>
+                                        <div class="form-group form-horizontal">
+                                            <div class="col-sm-2">
+                                                @*<div class='input-group date' id='RecieptDate'>
+                                                    <input type='text' class="form-control" />
+                                                    <span class="input-group-addon">
+                                                        <span class="glyphicon glyphicon-calendar"></span>
+                                                    </span>
+                                                </div>*@ 
+                                                @Html.TextBoxFor(m => m.RecieptDate, "", new { @class = "form-date-control" })
+                                            </div>
+                                        </div>
+                                        <div class="form-group form-horizontal">
+                                            <div class="col-sm-2">
+                                                @Html.Label("Reciept Amt")
+                                            </div>
+                                        </div>
+                                        <div class="form-group form-horizontal">
+                                            <div class="col-sm-2" style="margin-left: -80px">
+                                                @Html.TextBoxFor(model => model.RecieptAmount, new { @class = "form-control" })
+                                            </div>
+                                        </div>
+                                        <div class="form-group form-horizontal">
+                                            <div class="col-sm-2">
+                                                <input id="btnReset" type="button" value="Reset" class="btn btn-success" />
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="form-group form-horizontal">
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <input id="btnSetPaymentMode" type="button" value="Set Payment Amount" class="btn btn-primary" style="display:none" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-groupingBoder">
+                        <div class="panel-heading">
+                            <div class="panel-title">
+                                <a class="collapsediv" data-toggle="collapse" href="#collapse4" style="color: white">
+                                    Reciept Entry
+                                </a>
+                            </div>
+                        </div>
+                        <div id="collapse4" class="panel-collapse collapse in" aria-expanded="true">
+                            <div class="panel-body">
+                                <fieldset>
+                                    <div id="BillReciept" class="panel-collapse collapse in" aria-expanded="true">
+                                        <div class="panel-body">
+                                            <div class="container fill">
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <input id="btnAddMode" type="button" value="Add Payment" class="btn btn-primary" />
+                                                        <input id="btnRemoveMode" type="button" value="Remove Payment" class="btn btn-primary" />
+                                                        <input id="btnReciept" type="button" value="Reciept" class="btn btn-success" />
+                                                        @*<input id="btnReset" type="button" value="Reset" class="btn btn-success" />*@
+                                                    </div>
+                                                </div>
+                                                <br style="padding-bottom:80px" />
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <div id="PaymentModeGrid"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-11">
+                                                        <div class="form-group form-horizontal">
+                                                            <div class="row">
+                                                                <div class="col-sm-12">
+                                                                    @Html.Label("Notes")
+                                                                    @Html.TextArea("Notes", new { @class = "form-control" })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-groupingBoder">
+                        <div class="panel-heading">
+                            <div class="panel-title">
+                                <a class="collapsediv" data-toggle="collapse" href="#collapse3" style="color: white">
+                                    Reciept Details
+                                </a>
+                            </div>
+                        </div>
+                        <div id="collapse3" class="panel-collapse collapse in" aria-expanded="true">
+                            <div class="panel-body">
+                                <fieldset>
+                                    <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                                        <div class="panel-body">
+                                            <div class="container fill">
+                                                <div id="ClientRecieptGrid"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</fieldset>
+
+     <div title="Select Items" id="BillNoModal" style="display: none;">
+        <div id="BillNoGrid"></div>
+    </div>
+    <script>
+        var $billNogrid;
+        //*************enable desable property*//////////////////////////
+        $("#NetAmt").prop('disabled', true);
+        $("#TotalRecieved").prop('disabled', true);
+        $("#RecieptAmount").prop('disabled', true);
+        /*************************** For Popup *************************************/
+        var PaymentModes = [];
+        $.ajax({
+            type: "GET",
+            url: "/ClientBilling/GetAllPaymentModes",
+            success: function (data) {
+                $.each(data,
+                   function (index, value) {
+                       PaymentModes.push({ value: value.PaymentModeId, text: value.PaymentMode });
+                       });
+                }
+            });
+
+
+        //var dateEditor = function (ui) {
+        //    var $cell = ui.$cell,
+        //        rowData = ui.rowData,
+        //        dataIndx = ui.dataIndx,
+        //        cls = ui.cls,
+        //        dc = $.trim(rowData[dataIndx]);
+        //    $cell.css('padding', '0');
+
+        //    var $inp = $("<input type='text' name='" + dataIndx + "' class='" + cls + " pq-date-editor' />")
+        //    .appendTo($cell)
+        //    .val(dc).datepicker({
+        //        changeMonth: true,
+        //        changeYear: true,
+        //        onClose: function () {
+        //            $inp.focus();
+        //        }
+        //    });
+        //    //.focus();
+        //}
+        var dateEditor = function (ui) {
+            var $inp = ui.$cell.find("input"),
+                grid = this,
+                validate = function (that) {
+                    var valid = grid.isValid({
+                        dataIndx: ui.dataIndx,
+                        value: $inp.val(),
+                        rowIndx: ui.rowIndx
+                    }).valid;
+                    if (!valid) {
+                        that.firstOpen = false;
+                    }
+                };
+
+            //initialize the editor
+            $inp
+            .on("input", function (evt) {
+                validate(this);
+            })
+            .datepicker({
+                changeMonth: true,
+                changeYear: true,
+                showAnim: '',
+                onSelect: function () {
+                    this.firstOpen = true;
+                    validate(this);
+                },
+                beforeShow: function (input, inst) {
+                    return !this.firstOpen;
+                },
+                onClose: function () {
+                    this.focus();
+                }
+            });
+        }
+
+    /*************************Bill No Btn and load Grid*///////////////////////////////////
+        $('#BillNo').on('click', function () {
+            ClearForm();
+            LoadBilNogrid();
+        });
+
+        function LoadBilNogrid() {
+            var branchId = $("#ddlProject").val();
+            if (branchId == undefined || branchId === "") branchId = 0;
+            $("#BillNoModal").dialog({
+                height: 500,
+                width: 700,
+                modal: true,
+                open: function (evt, ui) {
+                    $.ajax({
+                        url: "/ClientBilling/GetClienBillNo",
+                        cache: false,
+                        async: true,
+                        method: "GET",
+                        dataType: "JSON",
+                        data: { branchId: branchId },
+                        success: function (response) {
+                            if (response.success) {
+                                $("#BillNoGrid").pqGrid("option", "dataModel.data", response.records);
+                                $("#BillNoGrid").pqGrid("refreshDataAndView");
+                            } else {
+                                ClearParamGrid('BillNoGrid');
+                                ShowAlert("error", response.Messsage);
+                                return;
+                            }
+                        },
+                        error: function () {
+                            ClearParamGrid('BillNoGrid');
+                            ShowAlert("error", "Server error! Please Contact Administrator");
+                            return;
+                        }
+                    });
+                },
+                close: function (event, ui) {
+                },
+                show: {
+                    effect: "blind",
+                    duration: 500
+                }
+            });
+        }
+        /***********************End Billl NO btn Click and function********************************/
+        /***********************Billl NO Grid********************************/
+        databill = { location: 'local', sorting: 'local', paging: 'local', dataType: 'JSON' };
+        colbill = [
+             { title: "Bill No", dataIndx: "BillNo", width: 150, dataType: "string", editable: false },
+        ];
+
+        setbillNogrid = {
+            width: "auto", //auto width
+            height: "100%-30", //height in %age
+            sortable: false,
+            numberCell: { show: true },
+            selectionModel: { type: 'row' },
+            hoverMode: 'cell',
+            editor: { type: 'textbox' },
+            showTop: true,
+            resizable: true,
+            virtualX: true,
+            virtualY: true,
+            editModel: {
+                saveKey: $.ui.keyCode.ENTER
+            },
+            draggable: false,
+            colModel: colbill,
+            dataModel: databill,
+            pageModel: { type: "local", rPP: 50 },
+            rowClick: function (evt, ui) {
+                ClosePopupWindow("BillNoModal");
+                if (ui.rowData) {
+                    var rowIndx = parseInt(ui.rowIndx);
+                    var record = ui.rowData;
+                    $("#BillNo").val(record.BillNo);
+                    $("#ClientBillId").val(record.ClientBillId);
+                    $("#NetAmt").val(record.NetAmt);
+                    $("#TotalRecieved").val(record.TotalRecieved);
+                    $.ajax({
+                        type: "GET",
+                        url: "/ClientBilling/GetClienBillRecieptByBillingId",
+                        data: { clientBillId: record.ClientBillId },
+                        datatype: "Json",
+                        async: true,
+                        success: function (response) {
+                            $clientrecieptGrid.pqGrid("option", "dataModel.data", response);
+                            $clientrecieptGrid.pqGrid("refreshDataAndView");
+
+                        }
+                    });
+                }
+            }
+
+        };
+        $billNogrid = $("#BillNoGrid").pqGrid(setbillNogrid);
+
+        /*******************End of Bill No grid************************/
+
+        $("#btnSetPaymentMode").on("click", function () {
+         $("#ClientModal").dialog({
+                height: 550,
+                width: 800,
+                modal: true,
+                close: function (event, ui) {
+                }
+
+            });
+
+        });
+
+        /*************************** For Add And Remove Rows of Payment Grid *************************************/
+        $('#btnAddMode').on('click', function () {
+            var dataMGrid = [];
+            var getData = $("#PaymentModeGrid").pqGrid("option", "dataModel.data");
+
+            $.each(getData, function (key, value) {
+                var grdData = {
+                    'Payment Mode': value.PaymentMode,
+                    'Bank Name': value.BankName,
+                    'CC/DC/DD/Cheque No.': value.ChequeNo,
+                    'Expiry Date': value.ExpiryDate,
+                    'Amount': value.Amount,
+                    'CCCharges': value.CCCharges
+                };
+                dataMGrid.push(grdData);
+            });
+            var gridData = { 'Payment Mode': '', 'Bank Name': '', 'CC/DC/DD/Cheque No.': '', 'Expiry Date': '', 'Amount': '', 'CCCharges': '' };
+            dataMGrid.push(gridData);
+
+            $("#PaymentModeGrid").pqGrid("option", "dataModel.data", dataMGrid);
+            $("#PaymentModeGrid").pqGrid("refreshDataAndView");
+        });
+
+        function getRowIndx() {
+            var arr = $("#PaymentModeGrid").pqGrid('selection', { type: 'row', method: 'getSelection' });
+            if (arr && arr.length > 0) {
+                return arr[0].rowIndx;
+            }
+            else {
+                ShowAlert("error", "Select a row.");
+                return null;
+            }
+        }
+
+        $('#btnRemoveMode').on('click', function () {
+            var rowIndx = getRowIndx();
+            if (rowIndx == null) {
+                return;
+            }
+            $("#PaymentModeGrid").pqGrid("deleteRow", { rowIndx: rowIndx });
+        });
+
+       /*************************** For Date Picker *************************************/
+        //$(function () {
+        //    $("#RecieptDate").datetimepicker({
+        //        format: 'DD-MMM-YYYY',
+        //        extraFormats: ['DD-MM-YYYY', 'DD-MM-YY'],
+        //        defaultDate: new Date()
+        //    });
+        //});
+        $(function() {
+            $('#RecieptDate')
+                .datepicker({
+                    defaultDate: new Date(),
+                    dateFormat: 'dd-M-yy',
+                    yearRange: '2015:2099',
+                    showOn: "button",
+                    buttonImage: "../../Content/images/calendar.gif",
+                    buttonImageOnly: true,
+                    changeMonth: true,
+                    changeYear: true
+                })
+                .datepicker("setDate", new Date());
+        });
+
+        /*************************** For PayMentMode Data Grid *************************************/
+       
+        var $PaymentModeGrid;
+        datapaymentmode = { location: 'local', sorting: 'local', paging: 'local', dataType: 'JSON' };
+        colpaymentmode = [
+                        { title: "", dataIndx: "PaymentModeId", width: 150, dataType: "integer", hidden: true, editable: true },
+                        {
+                          title: "Payment Mode", dataIndx: "PaymentMode", dataType: "string", width: 150,
+                          editor: {
+                              type: "select",
+                              mapIndices: { "value": "PaymentModeId", "text": "PaymentMode" },
+                              valueIndx: "value",
+                              labelIndx: "text",
+                              options: PaymentModes
+                          }
+                      },
+
+           
+                    {
+                        title: "Bank Name", dataIndx: "BankName", minWidth: 350, dataType: "string",
+                        editable: function (ui) {
+                            if (ui.rowData != undefined) {
+                                var column = this.getColumn({ dataIndx: 'PaymentModeId' }),
+                                    obj = ui.rowData.PaymentModeId,
+                                    val = column.val;
+                                if (obj == 2)
+                                    return true;
+
+                                else
+                                    return false;
+
+                            }
+
+                        }
+                    },
+                    {
+                        title: "CC/DC/DD/Cheque No.", dataIndx: "ChequeNo", width: 200, dataType: "double",
+                        editable: function (ui) {
+                            if (ui.rowData != undefined) {
+                                var column = this.getColumn({ dataIndx: 'PaymentModeId' }),
+                                    obj = ui.rowData.PaymentModeId,
+                                    val = column.val;
+                                if (obj == 2)
+                                    return true;
+
+                                else
+                                    return false;
+
+                            }
+
+                        }
+                    },
+                    //{
+                    //    title: "Expiry Date", width: "100", dataIndx: "ChequeExpDate", editable: true, dataType: "date",
+                    //    //editor: {
+                    //    //    type: 'textbox',
+                    //    //    init: dateEditor
+                    //    //},
+                    //    editor: { type: gridDateEditor },
+                    //    render: function (ui) {
+
+
+                    //        if (ui.cellData == null) {
+                    //            return '';
+                    //        }
+                    //        else {
+                    //            var res = ui.cellData.split("/");
+                    //            var date = new Date(res[1] + "/" + res[0] + "/" + res[2]);
+                    //            var xdd = date.getDate();
+                    //            var xmm = (date.getMonth() + 1);
+                    //            var xyy = date.getFullYear();
+                    //            if (parseInt(xdd) < 10) { xdd = '0' + xdd; }
+                    //            if (parseInt(xmm) < 10) { xmm = '0' + xmm; }
+                    //            return xdd + '/' + xmm + '/' + xyy;
+
+                    //        }
+                    //    }
+                       
+                    // },
+                    { title: "Amount", dataIndx: "Amount", minWidth: 100, dataType: "double", hidden: false, editable: true },
+                    //{ title: "CCCharges", dataIndx: "CCCharges", minWidth: 100, dataType: "double", hidden: false, editable: true }
+                 ];
+
+
+        setPaymode = {
+            height: '250',
+            sortable: false,
+            title: '<b>Client Bill Reciept</b>',
+            numberCell: { show: true },
+            selectionModel: { type: 'row' },
+            hoverMode: 'cell',
+            editor: { type: 'textbox' },
+            showTop: true,
+            resizable: true,
+            virtualX: true,
+            virtualY: true,
+            editModel: {
+                saveKey: $.ui.keyCode.ENTER
+            },
+            draggable: false,
+            colModel: colpaymentmode,
+            dataModel: datapaymentmode,
+            pageModel: { type: "local", rPP: 50 },
+            cellSave: function (evt, ui) {
+                this.refreshRow(ui);
+                CalculateTotalReciept();
+            },
+           
+        };
+        $PaymentModeGrid = $("#PaymentModeGrid").pqGrid(setPaymode);
+
+        /*********************Start of Recieve Button functionality****************************/
+        $("#btnReciept").click(function () {
+            if ($("#BillNo").val() === "") {
+                ShowAlert("warning", "Please Select Bill No");
+                return;
+            }
+            var item = $PaymentModeGrid.pqGrid("option", "dataModel.data");
+
+            if (item != undefined) {
+                if (item.length > 0) {
+
+                }
+                else {
+                    ShowAlert("error", "No Items to Save");
+                    return;
+                }
+            }
+            var chkAmount = 0, chkMode = 0;
+            $.each(item, function (key, value) {
+                if (value.Amount === "" || value.Amount == undefined || value.Amount == "0") chkAmount++;
+                if (value.PaymentModeId === "" || value.PaymentModeId == undefined || value.PaymentModeId == "0") chkMode++;
+            });
+            if (chkAmount > 0) {
+                ShowAlert("info", "Please Enter Amount");
+                return;
+            }
+            if (chkMode > 0) {
+                ShowAlert("info", "Please Select Payment Mode");
+                return;
+            }
+            var Recieptitems = JSON.stringify({
+                ClientBillId: $("#ClientBillId").val(),
+                RecieptDate: $("#RecieptDate").val(),
+                RecieptAmount: $("#RecieptAmount").val(),
+                RecieptId: $("#RecieptId").val(),
+                Notes: $("#Notes").val(),
+                ClientRecieptDt: item
+            });
+            $.ajax({
+                type: "POST", //HTTP POST Method
+                traditional: true,
+                contentType: 'application/json; charset=utf-8',
+                url: '/ClientBilling/RecieptClientBill', // Controller/Action
+                data: Recieptitems,
+                success: function (msg) {
+                    if (msg.success) {
+                        ShowAlert("success", "Reciept No : " + msg.responseText);
+                        ClearForm();
+                    }
+                    else {
+                        ShowAlert("error", msg.Message);
+                        ClearForm();
+                    }
+                }
+            });
+        });
+        /*************************** For Data Grid *************************************/
+        var $clientrecieptGrid;
+        dataclientreciept = { location: 'local', sorting: 'local', paging: 'local', dataType: 'JSON' };
+        colclientreciept = [
+             { title: "RecieptId", dataIndx: "RecieptId", width: 150, dataType: "integer", editable: false ,hidden:true},
+            { title: "Bill Recieve No", dataIndx: "RecieptNo", width: 150, dataType: "string", editable: false },
+            { title: "Recieve Date", dataIndx: "StrRecieptDate", width: 150, dataType: "string", editable: false },
+            { title: "Reciept Amount", dataIndx: "RecieptAmount", width: 150, dataType: "double", editable: false },
+        ];
+
+
+        setbillingrecieptrid = {
+            height: '250',
+            sortable: false,
+            title: '<b>Client Bill Reciept</b>',
+            numberCell: { show: true },
+            selectionModel: { type: 'row' },
+            hoverMode: 'cell',
+            showTop: true,
+            resizable: true,
+            virtualX: true,
+            virtualY: true,
+            draggable: false,
+            colModel: colclientreciept,
+            dataModel: dataclientreciept,
+            pageModel: { type: "local", rPP: 10 }
+
+        };
+        $clientrecieptGrid = $("#ClientRecieptGrid").pqGrid(setbillingrecieptrid);
+        $('#btnReset').on('click', function () {
+            ClearForm();
+        });
+        function ClearForm() {
+            $("#BillNo").val("");
+            $("#ClientBillId").val("");
+            $("#NetAmt").val("");
+            $("#RecieptAmount").val("");
+            $("#TotalRecieved").val("");
+            $("#Notes").val("");
+            $("#RecieptDate").datepicker().datepicker("setDate", new Date());//
+            ClearParamGrid("ClientRecieptGrid");
+            ClearParamGrid("PaymentModeGrid");
+        }
+        function CalculateTotalReciept() {
+            var getData = $PaymentModeGrid.pqGrid("option", "dataModel.data");
+            var recieptAmt = 0;
+            $.each(getData, function (_, item) {
+                if (!isNaN(item.Amount) && item.Amount != null)
+                    recieptAmt += parseFloat(item.Amount);
+            });
+            $("#RecieptAmount").val(recieptAmt.toFixed(2));
+        }
+    </script>
+
+}

@@ -1,0 +1,117 @@
+﻿@model BISERP.Areas.Asset.Models.AssetTypeModel
+
+<script type="text/javascript">
+    var grid;
+
+    $(document).ready(function () {
+
+        grid = $("#grid").jsGrid({
+            width: "100%",
+            height: "400px",
+            filtering: true,
+            selecting: true,
+            inserting: true,
+            editing: true,
+            sorting: true,
+            autoload: true,
+            paging: true,
+            pageSize: 20,
+
+            controller: {
+
+                loadData: function (filter) {
+                    var d = $.Deferred();
+                    $.ajax({
+                        type: 'GET',
+                        url: '/AssetTypeMaster/AllAssetType',
+                        dataType: "json",
+                        data: { SearchName: filter.TechnicianName, SearchCode: filter.TechnicianCode },
+                        success: function (data) {
+                            d.resolve(data);
+                        },
+                        error: function (e) {
+                            ShowAlert("error", "No Record Found");
+                        }
+                    });
+                    return d.promise();
+                },
+                insertItem: function (item) {
+                    var d = $.Deferred();
+                    console.log(item);
+                    $.ajax(
+                    {
+                        type: "POST",
+                        dataType: "json",
+                        url: '/AssetTypeMaster/SaveAssetType', // Controller/View
+                        data: item,
+                        success: function (msg) {
+                            if (msg.success) {
+                                ShowAlert("success", "Asset Type Master added successfully to system.");
+                            } else {
+                                ShowAlert("error", msg.Message);
+                            }
+                        },
+                    }).done(function (item) {
+                        $("#grid").jsGrid("loadData");
+                    });
+
+                },
+                updateItem: function (item) {
+                    var d = $.Deferred();
+                    $.ajax(
+                    {
+                        type: "POST", //HTTP POST Method
+                        dataType: "json",
+                        url: '/AssetTypeMaster/UpdateAssetType', // Controller/View
+                        data: item,
+                        success: function (msg) {
+                            if (msg.success) {
+                                ShowAlert("success", "Asset Type Master updated successfully to system.");
+                            } else {
+                                ShowAlert("error", msg.Message);
+                            }
+                        },
+                    }).done(function (insertedItem) {
+                        d.resolve(insertedItem.data);
+                        $("#grid").jsGrid("loadData");
+
+                    });
+                    return d.promise();
+                }
+            },
+            fields: [
+                { name: "AssetTypeId", visible: false, width: 0 },
+                { name: "AssetTypeCode", title: "Code", type: "text", validate: "required", autosearch: true, validate: { validator: "required", message: "Code is missing! Please enter the Code" }, },
+                { name: "AssetType", title: "Name", type: "text", validate: "required", autosearch: true, validate: { validator: "required", message: "Name is missing! Please enter the name" }, },                
+                { name: "Deactive", title: "Deactive", type: "checkbox", filtering: false, width: 10, inserting: false },
+                { type: "control", deleteButton: false, width: 10 }
+            ],
+        });
+    });
+</script>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <fieldset>
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-groupingBoder">
+                    <div class="panel-heading">
+                        <div class="panel-title">
+                            <h4>
+                                Asset Type
+                            </h4>
+                        </div>
+                    </div>
+                    <div class="panel-collapse collapse in" aria-expanded="true">
+                        <div class="panel-body">
+                            <div class="container fill">
+                                <div id="grid" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+}

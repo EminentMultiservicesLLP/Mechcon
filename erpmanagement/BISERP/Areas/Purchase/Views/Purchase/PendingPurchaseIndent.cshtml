@@ -1,0 +1,120 @@
+﻿@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <a class="collapsediv" data-toggle="collapse" href="#SearchDetails" style="color:white">
+                            Pending Material Request
+                        </a>
+                    </div>
+                </div>
+                <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <div class="container fill">
+                            <div id="PendintMaterialRequestGrid"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        var $PendintMaterialRequestGrid;
+
+        databill = { location: 'local', sorting: 'local', paging: 'local', dataType: 'JSON' };
+        colbill = [
+              {
+                  title: "Client", dataIndx: "ClientName", width: 250, dataType: "string", editable: false,
+                  filter: {
+                      type: "select",
+                      condition: 'equal',
+                      prepend: { '': '--Select--' },
+                      valueIndx: "ClientName",
+                      labelIndx: "ClientName",
+                      listeners: ['change']
+                  }
+              },
+               {
+                   title: "Project", dataIndx: "StoreName", width: 250, dataType: "string", editable: false, hidden: false,
+                   filter: {
+                       type: "select",
+                       condition: 'equal',
+                       prepend: { '': '--Select--' },
+                       valueIndx: "StoreName",
+                       labelIndx: "StoreName",
+                       listeners: ['change']
+                   }
+               },
+             {
+                 title: "Request No", dataIndx: "IndentNumber", width: 250, dataType: "string", editable: false,
+                 filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+             },
+             { title: "Request Date ", dataIndx: "strIndentDate", width: 130, dataType: "double", editable: false },
+             
+        ];
+
+        setgrid = {
+            width: "100%", //auto width
+            height: 580, //height in %age
+            sortable: false,
+            numberCell: { show: true },
+            selectionModel: { type: 'row' },
+            hoverMode: 'cell',
+            editor: { type: 'textbox' },
+            showTop: true,
+            resizable: true,
+            filterModel: { on: true, mode: "AND", header: true },
+            virtualX: true,
+            virtualY: true,
+            editable: false,
+            draggable: false,
+            colModel: colbill,
+            dataModel: databill,
+            pageModel: { type: "local", rPP: 50 },
+        };
+        $PendintMaterialRequestGrid = $("#PendintMaterialRequestGrid").pqGrid(setgrid);
+        LoadPendintMaterialRequestGrid()
+
+        function LoadPendintMaterialRequestGrid() {
+            $.ajax({
+                url: "/PurchaseIndent/GetPendintMaterialRequest",
+                cache: false,
+                async: true,
+                method: "GET",
+                dataType: "JSON",
+                data: { clientId: 0 },
+                success: function (response) {
+                    
+                    if (response.success) {
+                        $PendintMaterialRequestGrid.pqGrid("option", "dataModel.data", response.records);
+
+                        var column = $PendintMaterialRequestGrid.pqGrid("getColumn", { dataIndx: "ClientName" });
+                        var filter = column.filter;
+                        filter.cache = null;
+                        filter.options = $PendintMaterialRequestGrid.pqGrid("getData", { dataIndx: ["ClientName"] });
+
+                        var column = $PendintMaterialRequestGrid.pqGrid("getColumn", { dataIndx: "StoreName" });
+                        var filter = column.filter;
+                        filter.cache = null;
+                        filter.options = $PendintMaterialRequestGrid.pqGrid("getData", { dataIndx: ["StoreName"] });
+
+                        $PendintMaterialRequestGrid.pqGrid("refreshDataAndView");
+                    } else {
+                        ClearParamGrid('PendintMaterialRequestGrid');
+                        ShowAlert("error", "Something Went Wrong");
+                        return;
+                    }
+                },
+                error: function () {
+                    ShowAlert("error", "Something Went Wrong");
+                    return;
+                }
+            });
+        }
+      
+    </script>
+}

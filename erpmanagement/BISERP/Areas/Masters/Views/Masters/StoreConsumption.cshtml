@@ -1,0 +1,386 @@
+﻿@model BISERP.Areas.Miscellaneous.Models.StoreConumptionModel
+<script>
+    //$(function () {
+    //    $(".datepicker").datepicker({
+    //        showOn: "button",
+    //        buttonImage: "",
+    //        buttonImageOnly: true,
+    //        buttonText: "",
+    //        dateFormat: "dd-MMM-yy"
+    //    }).datepicker("setDate", new Date());
+    //    $("#anim").change(function () {
+    //        $(".datepicker").datepicker("option", "showAnim", "fadeIn");
+    //    });
+    //});
+
+    $(function () {
+        $(".datepicker").datepicker({
+            showOn: "button",
+            buttonImage: "/Content/images/calendar.gif",
+            buttonImageOnly: true,
+            buttonText: "Select date",
+            'changeMonth': true,
+            'changeYear': true,
+            'yearRange': '2021:2030',
+            "format": "dd-M-yyyy",
+            todayBtn: "linked",
+            pickerPosition: "bottom-left",
+            "todayHighlight": true,
+            autoclose: true,
+        }).datepicker("setDate", new Date());
+        $("#anim").change(function () {
+            $(".datepicker").datepicker("option", "showAnim", "fadeIn");
+        });
+    });
+</script>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <h5 class="page-header orangeDottedBottomBorder">STORE CONSUMPTION </h5>
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <a class="collapsediv" data-toggle="collapse" href="#collapse2" style="color:white">
+                            Entry Form
+                        </a>
+                    </div>
+                </div>
+                <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+
+                        <div class="submit-row">
+                            <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                            <button type="button" class="btn btn-primary" id="btnAdd">Reset</button>
+                            <button type="button" class="btn btn-warning">Report</button>
+                        </div>
+                        <fieldset class="fieldsetCustom">
+                            <legend class="legendCustom"> Store Consumption Form</legend>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    @Html.LabelFor(model => model.ConsumptionDate)
+                                    @Html.TextBoxFor(model => model.ConsumptionDate, new { @class = "form-control datepicker" })
+                                    @Html.HiddenFor(model => model.ConsumptionId)
+                                </div>
+
+                                <div class="col-sm-2">
+                                    @Html.LabelFor(model => model.StoreId)
+                                    @Html.DropDownList("ddlStores", new SelectList(string.Empty, "Value", "Text"), "Select Store", new { @class = "wrapperdropdown-content form-control" })
+                                </div>
+                            </div>
+                            <div class="submit-row">
+                                <button type="button" class="btn btn-primary" data-target="#ItemModal" id="btnViewItem">Add Item</button>
+                                <button type="button" class="btn btn-danger" id="btnRemoveItem">Remove Item</button>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <a class="collapsediv" data-toggle="collapse" href="#SearchItemDetails" style="color:white">
+                            Item Details Grid
+                        </a>
+                    </div>
+                </div>
+                <div id="SearchItemDetails" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <div id="grid"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div title="Select Items" id="ItemModal" style="display: none;">
+        <div id="Itemgrid"></div>
+        <div style="margin-top:5px;">
+            <button type="button" class="btn btn-primary" id="btnAddItem">Add</button>
+            <button type="button" class="btn btn-primary" id="btnCloseItem">Close</button>
+        </div>
+    </div>
+    <script type="text/javascript">
+
+        var $StockDetailsGrid;
+        var $ItemListGrid;
+        $(document).ready(function () {
+            $.ajax({
+                type: "GET",
+                url: "/Master/AllStores",
+                datatype: "Json",
+                success: function (data) {
+                    $.each(data, function (index, value) {
+                        $('#ddlStores').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                    });
+                }
+            });
+        });
+        $(document).ready(function () {
+            var colIL = [
+                // { title: "", dataIndx: "ConsumptionId", dataType: "integer", hidden: true },
+                {
+                    dataIndx: "state", Width: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                    editor: false, dataType: 'bool',
+                    title: "<input type='checkbox' />",
+                    cb: { select: true, all: false, header: true }
+                },
+                { title: "", dataIndx: "ConsumptionDtlId", dataType: "integer", hidden: true },
+                { title: "", dataIndx: "ItemID", dataType: "integer", hidden: true },
+                { title: "", dataIndx: "BatchId", dataType: "integer", hidden: true },
+                { title: "ItemName", dataIndx: "ItemName", dataType: "string", width: 200, editing: false },
+                { title: "ItemCode", dataIndx: "ItemCode", dataType: "string", editing: false, hidden: true },
+                { title: "Unit", dataIndx: "Unit", dataType: "string", width: 90, editing: false },
+                { title: "Batch", dataIndx: "Batch", dataType: "string", width: 100, editing: false },
+                { title: "BatchQty", dataIndx: "StockQty", dataType: "double", width: 100, editing: false },
+                { title: "ConsumeQty", dataIndx: "ConsumeQty", dataType: "double", width: 100 },
+                { title: "Remark", dataIndx: "Remark", dataType: "string", width: 200 },
+            ];
+            var dataIL = {
+                location: 'local',
+                sorting: 'local'
+            };
+
+            var setIL = {
+                height: '300',
+                maxheight: '400',
+                sortable: false,
+                colModel: colIL,
+                dataModel: dataIL,
+                numberCell: { show: false },
+                selectionModel: { type: 'row' },
+                hoverMode: 'cell',
+                editor: { type: 'textbox' },
+                showTop: false,
+                resizable: true,
+                editable: true,
+                virtualX: true,
+                virtualY: true,
+                editModel: {
+                    saveKey: $.ui.keyCode.ENTER
+                },
+                draggable: false,
+                wrap: false,
+                pageModel: { type: "local", rPP: 20 },
+            };
+
+
+            /*
+            var colILp = [
+                    {
+                        dataIndx: "state", Width: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                        editor: false, dataType: 'bool',
+                        title: "<input type='checkbox' />",
+                        cb: { select: true, all: false, header: true }
+                    },
+
+                    { title: "", dataIndx: "ItemID", dataType: "integer", hidden: true },
+                    { title: "", dataIndx: "BatchId", dataType: "integer", hidden: true },
+                    {
+                        title: "ItemName", dataIndx: "Name", width: 150, dataType: "string",
+                        filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                    },
+                    { title: "Batch", dataIndx: "BatchName", dataType: "string", width: 80 },
+                    { title: "StockQty", dataIndx: "CurrentQty", dataType: "double", width: 80 },
+                    { title: "Unit", dataIndx: "UnitName", dataType: "string", width: 80 },
+                    { title: "ExpiryDate", dataIndx: "ExpiryDate", dataType: "date", width: 150 }
+            ];
+
+            var dataILp = {
+                location: 'local',
+                sorting: 'local'
+            };
+
+            setILp= {
+                width: '100%',
+                height: 400,
+                sortable: false,
+                numberCell: { show: false },
+                selectionModel: { type: 'row' },
+                pasteModel: { on: false },
+                hoverMode: 'cell',
+                editor: { type: 'textbox' },
+                filterModel: { on: true, mode: "AND", header: true },
+                showTop: false,
+                resizable: true,
+                virtualX: true,
+                editModel: {
+                    saveKey: $.ui.keyCode.ENTER
+                },
+                draggable: false,
+                wrap: false,
+                colModel: colILp,
+                dataModel: dataIL,
+                pageModel: { type: "local", rPP: 20 }
+            };
+            */
+
+            var colILp = [
+                {
+                    dataIndx: "state", Width: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                    editor: false, dataType: 'bool',
+                    title: "<input type='checkbox' />",
+                    cb: { select: true, all: false, header: true }
+                },
+
+                { title: "", dataIndx: "ItemID", dataType: "integer", hidden: true },
+                { title: "", dataIndx: "BatchId", dataType: "integer", hidden: true },
+                {
+                    title: "ItemName", dataIndx: "Name", width: 150, dataType: "string",
+                    filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                },
+                { title: "Batch", dataIndx: "BatchName", dataType: "string", width: 80 },
+                { title: "StockQty", dataIndx: "CurrentQty", dataType: "double", width: 80 },
+                { title: "Unit", dataIndx: "UnitName", dataType: "string", width: 80 },
+                { title: "ExpiryDate", dataIndx: "ExpiryDate", dataType: "date", width: 150 }
+            ];
+
+            var dataILp = {
+                location: 'local',
+                sorting: 'local'
+            };
+
+            setItemList = {
+                width: "auto", //auto width
+                height: "100%-30", //height in %age
+                selectionModel: { type: 'row' },
+                autoSizeInterval: 0,
+                scrollModel: { autoFit: true },
+                dragColumns: { enabled: false },
+                hoverMode: 'cell',
+                editor: { type: 'textbox' },
+                filterModel: { on: true, mode: "AND", header: true },
+                showTop: false,
+                resizable: true,
+                virtualX: true,
+                colModel: colILp,
+                dataModel: dataILp,
+                toggle: function (evt, ui) {
+                    if (ui.state == 'max') {
+                        $(".ui-dialog,.ui-widget-overlay").css('position', 'static');
+                    }
+                    else {
+                        $(".ui-dialog,.ui-widget-overlay").css('position', 'absolute');
+                    }
+                },
+                pageModel: { type: "local", rPP: 20 }
+            };
+            $StockDetailsGrid = $("#grid").pqGrid(setIL);
+            //$ItemListGrid = $("#Itemgrid").pqGrid(setILp);
+        });
+
+        $(document).ready(function () {
+            $('#btnViewItem').on('click', function () {
+                if ($("#ddlStores").val() == "") {
+                    ShowAlert("error", 'Please Select Store');
+                    return;
+                }
+                var searchStoreId = $("#ddlStores").val();
+                ShowItemListPoup("Itemgrid", "ItemModal", setItemList, "/ItemMaster/GetStoreItemStock/", searchStoreId);
+            });
+        });
+
+        $("#ddlStores").change(function () {
+            ClearParamGrid("grid");
+        })
+        $('#btnSave').on('click', function () {
+            if ($("#ddlStores").val() == "") {
+                ShowAlert("error", 'Please Select Store');
+                return;
+            }
+            var items = $StockDetailsGrid.pqGrid("getData", { dataIndx: ['ConsumptionDtlId', 'ItemID', 'BatchId', 'ConsumeQty', 'Remark', 'StockQty'] });
+            var grn = JSON.stringify({ //Passing data
+                ConsumptionId: $("#ConsumptionId").val(),
+                StoreId: $("#ddlStores").val(),
+                ConsumptionDate: $("#ConsumptionDate").val(),
+                StockConsumptiondt: items
+            });
+            $.ajax({
+                type: "POST", //HTTP POST Method
+                traditional: true,
+                contentType: 'application/json; charset=utf-8',
+                url: '/StoreConsumption/SaveConsumption', // Controller/View
+                data: grn,
+                success: function (msg) {
+                    if (msg.success) {
+                        ClearParamGrid("grid");
+                        ShowAlert("success", "Generated Consumption No : " + msg.Message);
+                    }
+                    else {
+                        ShowAlert("error", "Falied to Save! " + msg.Message);
+                    }
+                },
+                error: function (jqXHR, exception) {
+                    Notify("Falied to Save", "error", "Error while saving Consumption.");
+                }
+            });
+        });
+
+
+        $(document).ready(function () {
+            $('#btnAddItem').on('click', function () {
+                ClosePopupWindow("ItemModal");
+                $("#Itemgrid").pqGrid("reset", { filter: true });
+                var getData = $("#Itemgrid").pqGrid("option", "dataModel.data");
+                var selectedItems = jLinq.from(getData).equals("state", true).select();
+
+                var dataMGrid = [];
+                var getMainGridData = $StockDetailsGrid.pqGrid("option", "dataModel.data");
+                $.each(getMainGridData, function (key, value) {
+                    var grdData = {
+                        'ConsumptionDtlId': value.ConsumptionDtlId,
+                        'ItemID': value.ItemID,
+                        'ItemName': value.ItemName,
+                        'Batch': value.Batch,
+                        'Unit': value.Unit,
+                        'StockQty': value.StockQty,
+                        'BatchId': value.BatchId,
+                        'ConsumeQty': value.ConsumeQty,
+                        'state': true
+                    };
+                    dataMGrid.push(grdData);
+                });
+                $.each(selectedItems, function (key, value) {
+                    var grdData = {
+                        'ConsumptionDtlId': 0, 'ItemID': value.ID, 'ItemName': value.Name, 'Batch': value.BatchName, 'Unit': value.UnitName,
+                        'StockQty': value.CurrentQty, 'BatchId': value.BatchId, 'ConsumeQty': 0, 'state': true
+                    };
+                    dataMGrid.push(grdData);
+                });
+
+                $StockDetailsGrid.pqGrid("option", "dataModel.data", dataMGrid);
+                $StockDetailsGrid.pqGrid("refreshDataAndView");
+            });
+        });
+
+        $('#btnRemoveItem').on('click', function () {
+
+            var getData = $StockDetailsGrid.pqGrid("option", "dataModel.data");
+            var selectedItems = jLinq.from(getData).equals("state", true).select();
+
+            $.each(selectedItems, function (key, value) {
+                var obj = $StockDetailsGrid.pqGrid("getRowIndx", { rowData: value });
+                var rowIndx = obj.rowIndx;
+                $StockDetailsGrid.pqGrid("deleteRow", { rowIndx: rowIndx });
+            });
+
+        });
+        function ClearForm() {
+
+            $("#ConsumptionId").val("");
+            $("#ddlStores").val("");
+            ClearParamGrid("grid");
+        }
+        $("#btnAdd").on("click", ClearForm);
+    </script>
+}

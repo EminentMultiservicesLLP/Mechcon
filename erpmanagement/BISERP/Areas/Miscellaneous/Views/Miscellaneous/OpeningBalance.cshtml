@@ -1,0 +1,403 @@
+﻿@model BISERP.Areas.Miscellaneous.Models.OpeningBalanceModel
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <h5 class="page-header orangeDottedBottomBorder"> Opening Balance </h5>
+
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        Details
+                    </div>
+                </div>
+                <div class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <div class="submit-row">
+                            <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                            <button type="button" class="btn btn-warning" id="btnAdd">Reset</button>
+                        </div>
+                        <fieldset>
+                            <legend></legend>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-sm-2">
+                                        @Html.Label("Project")
+                                        @Html.DropDownList("ddlStores",new SelectList(string.Empty, "Value", "Text"),"Select Store",new { @class = "wrapperdropdown-content form-control", @disabled = "disabled" })
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <br />
+                                        <button type="button" class="btn btn-primary" data-target="#ItemModal" id="btnViewItem">Add Item</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <div class="divider"></div>
+                        <fieldset>
+                            <div id="MainGrid"></div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div title="Select Items" id="ItemModal" style="display: none;">
+        <div id="Itemgrid"></div>
+        <div style="margin-top:5px;">
+            <button type="button" class="btn btn-primary" id="btnAddItem">Add</button>
+            <button type="button" class="btn btn-danger" id="btnCloseItem">Close</button>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        var $ItemMainGrid;
+        var selectedItemsMainGrid = [];
+
+        (function ($) {
+            //$(document).ready(function () {
+            /************ Main Grid control ****************/
+            var dateEditor = function (ui) {
+                var $cell = ui.$cell,
+                    rowData = ui.rowData,
+                    dataIndx = ui.dataIndx,
+                    cls = ui.cls,
+                    dc = $.trim(rowData[dataIndx]);
+                $cell.css('padding', '0');
+
+                var $inp = $("<input type='text' name='" + dataIndx + "' class='" + cls + " pq-date-editor' />")
+                    .appendTo($cell)
+                    .val(dc).datepicker({
+                        changeMonth: true,
+                        changeYear: true,
+                        onClose: function () {
+                            $inp.focus();
+                        }
+                    });
+                //.focus();
+            }
+
+            var colMGrid = [
+                {
+                    dataIndx: "state", minWidth: 25, maxWidth: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                    editor: false, dataType: 'bool',
+                    title: "<input type='checkbox' />",
+                    cb: { select: true, all: false, header: true }
+                },
+                { title: "", dataIndx: "ID", dataType: "integer", editable: false, hidden: true },
+                { title: "", dataIndx: "Storeid", dataType: "integer", editable: false, hidden: true },
+                { title: "", dataIndx: "ItemId", dataType: "integer", editable: false, hidden: true },
+                { title: "ItemCode", dataIndx: "Code", dataType: "string", editable: false, hidden: true },
+                { title: "Item Name & Description", dataIndx: "ItemName", dataType: "string", width: 500, editable: false },
+                { title: "Item Type", dataIndx: "itemtypename", dataType: "string", width: 100, editable: false },
+                { title: "Unit", dataIndx: "UnitName", dataType: "string", width: 70, editable: false },
+                { title: "Batch", dataIndx: "BatchName", width: 90, dataType: "string", editable: false, hidden: true},
+                {
+                    title: "Expiry Date", dataIndx: "ExpiryDate", width: 90, editable: true, hidden: true, editor: { type: dateEditor },
+                    validations: [{ type: 'regexp', value: '[0-9]{2}/[0-9]{2}/[0-9]{4}', msg: 'Not in mm/dd/yyyy format' }]
+                },
+                { title: "OpeningBal", dataIndx: "OpeningBal", width: 90, dataType: "double", editable: true },
+                { title: "MRP", dataIndx: "MRP", width: 90, dataType: "double", editable: true, hidden: true },
+                { title: "Rate", dataIndx: "Rate", width: 90, dataType: "double" }
+            ];
+
+            var dataMGrid = {
+                location: 'local',
+                sorting: 'local',
+                data: []
+            };
+
+            var setMGrid = {
+
+                showTop: false,
+                editModel: {
+                    saveKey: $.ui.keyCode.ENTER
+                },
+                trackModel: { on: true, dirtyClass: 'pq-cell-dirty' },
+                colModel: colMGrid,
+                dataModel: dataMGrid,
+                wrap: false,
+                width: '100%',
+                height: 'flex',
+                wrap: false,
+                hwrap: false,
+                scrollModel: { autoFit: true },
+                pageModel: { type: "local", rPP: 50 },
+                selectionModel: { type: 'row' },
+            };
+            $ItemMainGrid = $("#MainGrid").pqGrid(setMGrid);
+
+            function ClearForm() {
+                $("#ddlStores").val(1);
+                ClearParamGridByObject($ItemMainGrid);
+            }
+
+            $("#btnAdd").on("click", ClearForm);
+
+            $.ajax({
+                type: "GET",
+                url: "/Master/AllStores",
+                datatype: "Json",
+                async: true,
+                success: function (data) {
+                    $.each(data, function (index, value) {
+                        $('#ddlStores').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                    });
+                    $("#ddlStores").val(1);
+                },
+                error: function (jqXHR, exception) {
+                    Notify("Strore list", "error", "Error while loading Store list");
+                }
+            });
+            /*************** Item Grid which willbe available for ALl item list **********/
+            //$(document).ready(function () {
+            colItemList = [
+                {
+                    dataIndx: "state", Width: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                    editor: false, dataType: 'bool',
+                    title: "<input type='checkbox' />",
+                    cb: { select: true, all: false, header: true }
+                },
+                { dataIndx: "ID", hidden: true },
+                { dataIndx: "ExpiryDate", hidden: true },
+                { title: "Code", dataIndx: "Code", width: 100, dataType: "string", filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }, hidden: true },
+                { title: "Item Name & Description", dataIndx: "Name", width: 500, dataType: "string", filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } },
+                { title: "Description", dataIndx: "DescriptiveName", width: 300, dataType: "string", filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }, hidden: true },
+                { title: "Item Type", dataIndx: "itemtypename", width: 100, dataType: "string", filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } },
+                { title: "HSN/SAC Code", dataIndx: "HSNCode", width: 150, editable: false, hidden: true, filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }},
+                { title: "Unit Name", dataIndx: "UnitName", width: 100, filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }},
+                { title: "PackSize", dataIndx: "PackSize", width: 100, filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }},
+                { title: "Mrp", dataIndx: "MRP", width: 60, hidden: true, filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }},
+                { title: "Current Stock", dataIndx: "CurrentQty", width: 90, dataType: "double", editable: false, hidden: true, filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }},
+            ];
+
+            setItemList = {
+                width: "auto", //auto width
+                height: "100%-30", //height in %age
+                selectionModel: { type: 'cell' },
+                autoSizeInterval: 0,
+                scrollModel: { autoFit: true },
+                dragColumns: { enabled: false },
+                hoverMode: 'cell',
+                editor: { type: 'textbox' },
+                filterModel: { on: true, mode: "AND", header: true },
+                showTop: false,
+                resizable: true,
+                virtualX: true,
+                colModel: colItemList,
+                dataModel: dataItemList,
+                toggle: function (evt, ui) {
+                    if (ui.state == 'max') {
+                        $(".ui-dialog,.ui-widget-overlay").css('position', 'static');
+                    }
+                    else {
+                        $(".ui-dialog,.ui-widget-overlay").css('position', 'absolute');
+                    }
+                },
+                pageModel: { type: "local", rPP: 20 }
+            };
+
+
+            $('#btnViewItem').on('click', function () {
+                if ($("#ddlStores").val() == "") {
+                    ShowAlert("error", "Please Select Project");
+                    return;
+                }
+                var searchStoreId = $("#ddlStores").val();
+
+                var ItemListGrid = $("#Itemgrid");
+                var ModelWindow = $("#ItemModal");
+                if (ItemListGrid != undefined) {
+
+                    ItemListGrid.pqGrid(setItemList);
+                    ItemListGrid.pqGrid("option", "dataModel.data", []);
+
+                    ModelWindow.dialog({
+                        height: 500,
+                        width: 1000,
+                        modal: true,
+                        open: function (evt, ui) {
+
+                            $.ajax({
+                                type: "GET",
+                                url: "/ItemMaster/GetStoreItems/",
+                                data: { StoreId: searchStoreId },
+                                datatype: "Json",
+                                beforeSend: function () {
+                                    ItemListGrid.pqGrid("showLoading");
+                                },
+                                complete: function () {
+                                    ItemListGrid.pqGrid("hideLoading");
+                                },
+                                success: function (data) {
+                                    if (data.success) {
+                                        ItemListGrid.pqGrid("hideLoading");
+                                        ItemListGrid.pqGrid("option", "dataModel.data", data.items);
+                                        ItemListGrid.pqGrid("refreshDataAndView");
+                                        return;
+                                    } else {
+                                        ClearParamGrid('Itemgrid');
+                                        ShowAlert("error", data.Messsage);
+                                        return;
+                                    }
+                                },
+                                error: function (request, status, error) {
+                                    ItemListGrid.pqGrid("hideLoading");
+                                    ItemListGrid.pqGrid("refreshDataAndView");
+                                    ShowAlert("error", "Server error! Please Contact Administrator");
+                                    return;
+                                }
+                            });
+                        },
+                        close: function (event, ui) {
+                        },
+                        show: {
+                            effect: "blind",
+                            duration: 500
+                        }
+                    });
+                }
+
+            });
+            $('#btnCloseItem').on('click', function () {
+                ClosePopupWindow("ItemModal");
+            });
+            // $(document).ready(function () {
+            $('#btnAddItem').on('click', function () {
+                ClosePopupWindow("ItemModal");
+                $("#Itemgrid").pqGrid("reset", { filter: true });
+                var getData = $("#Itemgrid").pqGrid("option", "dataModel.data");
+                var selectedItems = jLinq.from(getData).equals("state", true).select();
+                var getmaingridData = $ItemMainGrid.pqGrid("option", "dataModel.data");
+
+                var dataMGrid = [];
+                $.each(getmaingridData, function (key, value) {
+                    var grdData = {
+                        'state': ((value.state != undefined && value.state != null) ? value.state : false),
+                        'ItemId': ((value.ItemId != undefined && value.ItemId != null) ? value.ItemId : 0),
+                        'ID': ((value.ID != undefined && value.ID != null) ? value.ID : 0),
+                        'Storeid': ((value.Storeid != undefined && value.Storeid != null) ? value.Storeid : 0),
+                        'Code': ((value.Code != undefined && value.Code != null) ? value.Code : ""),
+                        'ItemName': ((value.ItemName != undefined && value.ItemName != null) ? value.ItemName : ""),
+                        'itemtypename': ((value.itemtypename != undefined && value.itemtypename != null) ? value.itemtypename : ""),
+                        'MRP': ((value.MRP != undefined && value.MRP != null) ? value.MRP : 0),
+                        'UnitName': ((value.UnitName != undefined && value.UnitName != null) ? value.UnitName : ""),
+                        'Rate': ((value.Rate != undefined && value.Rate != null) ? value.Rate : 0.0),
+                        'OpeningBal': ((value.OpeningBal != undefined && value.OpeningBal != null) ? value.OpeningBal : 0),
+                        'ExpiryDate': ((value.ExpiryDate != undefined && value.ExpiryDate != null) ? value.ExpiryDate : "01/01/2099"),
+                        'BatchName': ((value.BatchName != undefined && value.BatchName != null) ? value.BatchName : "")
+                    };
+                    dataMGrid.push(grdData);
+                });
+                $.each(selectedItems, function (key, value) {
+                    var grdData = {
+                        'state': true,
+                        'ItemId': ((value.ID != undefined && value.ID != null) ? value.ID : 0),
+                        'ID': ((value.ID != undefined && value.ID != null) ? value.ID : 0),
+                        'Storeid': $("#ddlStores").val(),
+                        'Code': ((value.Code != undefined && value.Code != null) ? value.Code : ""),
+                        'ItemName': ((value.Name != undefined && value.Name != null) ? value.Name : ""),
+                        'itemtypename': ((value.itemtypename != undefined && value.itemtypename != null) ? value.itemtypename : ""),
+                        'MRP': ((value.MRP != undefined && value.MRP != null) ? value.MRP : 0),
+                        'UnitName': ((value.UnitName != undefined && value.UnitName != null) ? value.UnitName : ""),
+                        'Rate': ((value.Rate != undefined && value.Rate != null) ? value.Rate : 0.0),
+                        'OpeningBal': ((value.OpeningBal != undefined && value.OpeningBal != null) ? value.OpeningBal : 0),
+                        'ExpiryDate': ((value.ExpiryDate != undefined && value.ExpiryDate != null) ? value.ExpiryDate : "01/01/2099"),
+                        'BatchName': ((value.Code != undefined && value.Code != null) ? value.Code : "")
+                    };
+                    dataMGrid.push(grdData);
+                });
+                $ItemMainGrid.pqGrid("option", "dataModel.data", dataMGrid);
+                try {
+                    $ItemMainGrid.pqGrid("refreshDataAndView");
+                }
+                catch (e) { $("#MainGrid").pqGrid("refreshDataAndView"); }
+            });
+
+            //$(document).ready(function () {
+            $("#btnSave").click(function () {
+                if ($("#Indent_Id").val() == "") {
+                    ShowAlert("error", "Please Select Indent No.");
+                    return;
+                }
+
+                DisableClick("btnSave");
+                var selectedItems;
+                try {
+                    selectedItems = $ItemMainGrid.pqGrid("option", "dataModel.data");
+                }
+                catch (err) {
+                    selectedItems = $("#MainGrid").pqGrid("option", "dataModel.data");
+                }
+                if (selectedItems != undefined) {
+                    selectedItemsMainGrid = jLinq.from(selectedItems).equals("state", true).select();
+
+                    if (selectedItemsMainGrid.length > 0) {
+
+                        if (jLinq.from(selectedItemsMainGrid).lessEquals("OpeningBal", 0).or(undefined).count() > 0) {
+                            ShowAlert("error", "Please Enter Opening Balance for selected items");
+                            return;
+                        }
+
+                        if (jLinq.from(selectedItemsMainGrid).empty("BatchName").or(undefined).count() > 0) {
+                            ShowAlert("error", "Please Enter Batch for selected items");
+                            return;
+                        }
+                    }
+                    else {
+                        ShowAlert("error", "Please Select at least one Item before saving.");
+                        return;
+                    }
+                }
+
+                /*var Ctr2 = 0, Ctr = 0;
+                var isSelected = false;
+                $.each(items, function (_, item) {
+                    if (item.state == true) {
+                        isSelected = true;
+                        if (item.OpeningBal == undefined || item.OpeningBal == "") {
+                            Ctr2++;
+                        }
+                        if (item.BatchName == undefined || item.BatchName == "") {
+                            Ctr++;
+                        }
+                    }
+                });
+                if (isSelected == false) {
+                    ShowAlert("error", "Please Select Items");
+                    return;
+                }
+                if (Ctr2 > 0) {
+                    ShowAlert("error", "Please Enter OpeningBal");
+                    return;
+                }
+                if (Ctr > 0) {
+                    ShowAlert("error", "Please Enter Batch");
+                    return;
+                } */
+                var griditems = JSON.stringify(selectedItemsMainGrid);
+                $.ajax(
+                    {
+                        type: "POST", //HTTP POST Method
+                        traditional: true,
+                        contentType: 'application/json; charset=utf-8',
+                        url: '/OpeningBalance/SaveOpeningBalance', // Controller/View
+                        data: griditems,
+                        success: function (msg) {
+                            ClearForm();
+                            Notify("Saved Successfully", "success", "Record saved successfully to system.");
+                        },
+                        error: function (jqXHR, exception) {
+                            Notify("Falied to save", "error", "Error while saving Opening Bal." + jqXHR.responseText);
+                        }
+                    });
+            });
+            //});
+        })(jQuery);
+
+    </script>
+
+}

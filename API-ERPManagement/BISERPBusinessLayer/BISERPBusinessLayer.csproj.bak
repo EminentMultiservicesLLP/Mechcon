@@ -1,0 +1,565 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{6D6D889C-7E3F-45B2-B323-FAA4979FC784}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>BISERPBusinessLayer</RootNamespace>
+    <AssemblyName>BISERPBusinessLayer</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>localhostLey.pfx</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AutoMapper">
+      <HintPath>..\packages\AutoMapper.4.2.0\lib\net45\AutoMapper.dll</HintPath>
+    </Reference>
+    <Reference Include="AutoMapper.EF6">
+      <HintPath>..\packages\AutoMapper.EF6.0.3.0\lib\net45\AutoMapper.EF6.dll</HintPath>
+    </Reference>
+    <Reference Include="DelegateDecompiler">
+      <HintPath>..\packages\DelegateDecompiler.0.17.0\lib\net40-Client\DelegateDecompiler.dll</HintPath>
+    </Reference>
+    <Reference Include="DelegateDecompiler.EntityFramework">
+      <HintPath>..\packages\DelegateDecompiler.EntityFramework.0.17.0\lib\net45\DelegateDecompiler.EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="Elmah">
+      <HintPath>..\packages\elmah.corelibrary.1.2.2\lib\Elmah.dll</HintPath>
+    </Reference>
+    <Reference Include="Elmah.Mvc">
+      <HintPath>..\packages\Elmah.Mvc.2.1.2\lib\net40\Elmah.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Reflection">
+      <HintPath>..\packages\Mono.Reflection.1.0.0.0\lib\Mono.Reflection.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Entities\Asset\LocationEntity.cs" />
+    <Compile Include="Entities\Asset\AMCProviderEntity.cs" />
+    <Compile Include="Entities\Asset\AssetDetailEntity.cs" />
+    <Compile Include="Entities\Asset\SparePartsOuthouseUtilEntity.cs" />
+    <Compile Include="Entities\Asset\OutsideMaintenanceEntity.cs" />
+    <Compile Include="Entities\Asset\AssetEntity.cs" />
+    <Compile Include="Entities\Asset\AssetLocationEntity.cs" />
+    <Compile Include="Entities\Asset\AssetScheduleCompletionEntity.cs" />
+    <Compile Include="Entities\Asset\AssetScheduleDetailsEntity.cs" />
+    <Compile Include="Entities\Asset\AssetScheduleEntity.cs" />
+    <Compile Include="Entities\Asset\AssetSubTypeEntity.cs" />
+    <Compile Include="Entities\Asset\AssetTypeEntity.cs" />
+    <Compile Include="Entities\Asset\CallTypeEntity.cs" />
+    <Compile Include="Entities\Asset\FloorEntity.cs" />
+    <Compile Include="Entities\Asset\InHouseEntity.cs" />
+    <Compile Include="Entities\Asset\MaintainanceTypeEntity.cs" />
+    <Compile Include="Entities\Asset\DeactivationDetailEntity.cs" />
+    <Compile Include="Entities\Asset\MaterialConsumptionEntity.cs" />
+    <Compile Include="Entities\Asset\RequestRegisterEntity.cs" />
+    <Compile Include="Entities\Asset\RoomEntity.cs" />
+    <Compile Include="Entities\Asset\TechnicianEntity.cs" />
+    <Compile Include="Entities\Asset\TechnicianEntryEntity.cs" />
+    <Compile Include="Entities\Asset\VendorEntity.cs" />
+    <Compile Include="Entities\Asset\WarrantyMaintenanceEntity.cs" />
+    <Compile Include="Entities\Asset\WarrantySparePartsEntity.cs" />
+    <Compile Include="Entities\Branch\MomentOrderEntity.cs" />
+    <Compile Include="Entities\Branch\GuardInfoEntity.cs" />
+    <Compile Include="Entities\Branch\GuardDetailsEntity.cs" />
+    <Compile Include="Entities\Branch\EmployeeEntity.cs" />
+    <Compile Include="Entities\Branch\MaterialIssueGuardDtEntity.cs" />
+    <Compile Include="Entities\Branch\MaterialIssueGuardEntity.cs" />
+    <Compile Include="Entities\Common\FlashEntity.cs" />
+    <Compile Include="Entities\Branch\MaterialReturnGuardDtEntity.cs" />
+    <Compile Include="Entities\Branch\MaterialReturnGuardEntity.cs" />
+    <Compile Include="Entities\Common\ActionResponseStatus.cs" />
+    <Compile Include="Entities\Common\PettyCashEntity.cs" />
+    <Compile Include="Entities\Masters\BranchMasterEntities.cs" />
+    <Compile Include="Entities\Masters\CityMasterEntities.cs" />
+    <Compile Include="Entities\Masters\CountryMasterEntities.cs" />
+    <Compile Include="Entities\Masters\DeliveryTermsMasterEntities.cs" />
+    <Compile Include="Entities\Masters\ItemGroupMasterEntities.cs" />
+    <Compile Include="Entities\Masters\ItemMasterEntities.cs" />
+    <Compile Include="Entities\Masters\ItemPackSizeMasterEntities.cs" />
+    <Compile Include="Entities\Masters\ItemSupplierMappingEntities.cs" />
+    <Compile Include="Entities\Masters\ItemTypeMasterEntities.cs" />
+    <Compile Include="Entities\Masters\ManufacturerMasterEntities.cs" />
+    <Compile Include="Entities\Masters\OthersTermsMasterEntities.cs" />
+    <Compile Include="Entities\Masters\PaymentTermsMasterEntities.cs" />
+    <Compile Include="Entities\Masters\StateMasterEntities.cs" />
+    <Compile Include="Entities\Masters\StoreItemTypeMappingMasterEntities.cs" />
+    <Compile Include="Entities\Masters\StoreMasterEntities.cs" />
+    <Compile Include="Entities\Masters\StoreTypeMasterEntities.cs" />
+    <Compile Include="Entities\Masters\StoreUnitLinkingEntities.cs" />
+    <Compile Include="Entities\Masters\SupplierMasterEntities.cs" />
+    <Compile Include="Entities\Masters\TaxMasterEntity.cs" />
+    <Compile Include="Entities\Masters\VillageMasterEntities.cs" />
+    <Compile Include="Entities\Purchase\PODeliveryTermEntities.cs" />
+    <Compile Include="Entities\Purchase\PODiscountEntities.cs" />
+    <Compile Include="Entities\Purchase\POOtherTermEntities.cs" />
+    <Compile Include="Entities\Purchase\POPaymentTermEntities.cs" />
+    <Compile Include="Entities\Purchase\POTaxDetailEntities.cs" />
+    <Compile Include="Entities\Purchase\PurchaseIndentDetailEntities.cs" />
+    <Compile Include="Entities\Purchase\PurchaseIndentEntities.cs" />
+    <Compile Include="Entities\Purchase\PurchaseOrderDetailsEntities.cs" />
+    <Compile Include="Entities\Purchase\PurchaseOrderEntities.cs" />
+    <Compile Include="Entities\ScanDoc\ScanDocEntity.cs" />
+    <Compile Include="Entities\Store\AdjustmentVoucherDtEntity.cs" />
+    <Compile Include="Entities\Store\AdjustmentVoucherEntity.cs" />
+    <Compile Include="Entities\Store\PurchaseMaterialIndentEntity.cs" />
+    <Compile Include="Entities\Store\Reports\MaterialIssueAllBRANCHEntity.cs" />
+    <Compile Include="Entities\Store\RequestStatusEntity.cs" />
+    <Compile Include="Entities\Store\StoreDashBoardEntity.cs" />
+    <Compile Include="Entities\Store\SupplierBillEntity.cs" />
+    <Compile Include="Entities\Store\BatchEntity.cs" />
+    <Compile Include="Entities\Store\CancelPendingMaterialIndentEntities.cs" />
+    <Compile Include="Entities\Store\DiscrepancyDtEntity.cs" />
+    <Compile Include="Entities\Store\DiscrepancyEntity.cs" />
+    <Compile Include="Entities\Store\GRNDetailEntity.cs" />
+    <Compile Include="Entities\Store\GRNEntity.cs" />
+    <Compile Include="Entities\Store\GRNVendorDetailEntity.cs" />
+    <Compile Include="Entities\Store\GRNVendorEntity.cs" />
+    <Compile Include="Entities\Store\GRNVendorItemDetailEntity.cs" />
+    <Compile Include="Entities\Store\MaterialIndentDetailsEntities.cs" />
+    <Compile Include="Entities\Store\MaterialIndentEntities.cs" />
+    <Compile Include="Entities\Store\MaterialIssueDetailsEntity.cs" />
+    <Compile Include="Entities\Store\MaterialIssueEntity.cs" />
+    <Compile Include="Entities\Store\MaterialReturnDetailsEntities.cs" />
+    <Compile Include="Entities\Store\MaterialReturnEntity.cs" />
+    <Compile Include="Entities\Store\MatrialIssueEntity.cs" />
+    <Compile Include="Entities\Store\PurchaseReturnDetailsEntities.cs" />
+    <Compile Include="Entities\Store\PurchaseReturnEntity .cs" />
+    <Compile Include="Entities\Store\StockDetailsEntity.cs" />
+    <Compile Include="Entities\Store\StockDisposeDtEntity.cs" />
+    <Compile Include="Entities\Store\StockDisposeEntity.cs" />
+    <Compile Include="Entities\Store\StockRegisterEntity.cs" />
+    <Compile Include="Entities\Store\OpeningBalanceEntity.cs" />
+    <Compile Include="Entities\Store\StoreConsumptionCancelEntities.cs" />
+    <Compile Include="Entities\Store\StoreConsumptionDetailsEntities.cs" />
+    <Compile Include="Entities\Store\StoreConsumptionEntities.cs" />
+    <Compile Include="Entities\Store\StoreQuantityLimitsEntity.cs" />
+    <Compile Include="Entities\Store\SupplierBillPaymentEntity.cs" />
+    <Compile Include="Entities\Store\VendorMaterialIssueDtEntity.cs" />
+    <Compile Include="Entities\Store\VendorMaterialIssueEntity.cs" />
+    <Compile Include="Entities\Training\BatchEntity .cs" />
+    <Compile Include="Entities\Training\BatchTypeEntity.cs" />
+    <Compile Include="Entities\Training\BudgetHeadsEntity.cs" />
+    <Compile Include="Entities\Training\GeneralBudgetProposalEntity.cs" />
+    <Compile Include="Entities\Training\GradeEntity.cs" />
+    <Compile Include="Entities\Training\MonthlyExpenditureEntity.cs" />
+    <Compile Include="Entities\Training\RatingEntity.cs" />
+    <Compile Include="Entities\Training\ScheduleEntity.cs" />
+    <Compile Include="Entities\Training\SlotEntity.cs" />
+    <Compile Include="Entities\Training\SubjectEntity.cs" />
+    <Compile Include="Entities\Training\TrainingCategoryEntity.cs" />
+    <Compile Include="Entities\Training\TrainingCentreEntity.cs" />
+    <Compile Include="Entities\Training\SubjectTopicEntity.cs" />
+    <Compile Include="Entities\Training\TrainerEntity.cs" />
+    <Compile Include="Entities\Training\TrainingDaillyUpdatesEntity.cs" />
+    <Compile Include="Entities\Training\TrainingTemplateEntity.cs" />
+    <Compile Include="Entities\Training\TrainingTypeEntity.cs" />
+    <Compile Include="Entities\Transport\DivisionMaster.cs" />
+    <Compile Include="Entities\Transport\DriverEntity.cs" />
+    <Compile Include="Entities\Transport\DriverScheduleEntity.cs" />
+    <Compile Include="Entities\Transport\FuelDetailsEntity.cs" />
+    <Compile Include="Entities\Transport\GreenTaxEntity.cs" />
+    <Compile Include="Entities\Transport\InsuranceCompanyEntity.cs" />
+    <Compile Include="Entities\Transport\InsuranceEntity.cs" />
+    <Compile Include="Entities\Transport\PermitDetailsEntity.cs" />
+    <Compile Include="Entities\Transport\PUCDetailsEntity.cs" />
+    <Compile Include="Entities\Transport\RoadTaxEntity.cs" />
+    <Compile Include="Entities\Transport\SubDivisionMasterEntity.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\Transport\VehicleInfoEntity.cs" />
+    <Compile Include="Entities\Transport\VehicleModelEntity.cs" />
+    <Compile Include="Entities\Transport\VehicleTransferEntity.cs" />
+    <Compile Include="Entities\Transport\VehicleMakeEntity.cs" />
+    <Compile Include="Entities\Transport\VehicleUsageEntity.cs" />
+    <Compile Include="Entities\Transport\VehicleTypeEntity.cs" />
+    <Compile Include="Entities\UserManagement\MenuEntity.cs" />
+    <Compile Include="Entities\UserManagement\ReportListEntity.cs" />
+    <Compile Include="Entities\UserManagement\UserDepartment.cs" />
+    <Compile Include="Entities\UserManagement\UserMenuRightsEntity.cs" />
+    <Compile Include="Mapper\Master\UnitMasterMapper.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Entities\Masters\UnitMasterEntities.cs" />
+    <Compile Include="QueryCollection\Asset\AssetQueries.cs" />
+    <Compile Include="QueryCollection\Branch\BranchQueries.cs" />
+    <Compile Include="QueryCollection\Common\FlashDetailsQueries.cs" />
+    <Compile Include="QueryCollection\Masters\MasterQueries.cs" />
+    <Compile Include="QueryCollection\Purchase\PurchaseQueries.cs" />
+    <Compile Include="QueryCollection\ScanDoc\ScanDocQueries.cs" />
+    <Compile Include="QueryCollection\Store\StoreQuery.cs" />
+    <Compile Include="QueryCollection\Training\TrainingQueries.cs" />
+    <Compile Include="QueryCollection\Transport\TransportQuery.cs" />
+    <Compile Include="QueryCollection\UserManagement\UserAccess.cs" />
+    <Compile Include="Repositories\Asset\Classes\LocationRepository.cs" />
+    <Compile Include="Repositories\Asset\Classes\AMCProviderRepository.cs" />
+    <Compile Include="Repositories\Asset\Classes\AssetCommonRepository.cs" />
+    <Compile Include="Repositories\Asset\Classes\AssetDetailRepository.cs" />
+    <Compile Include="Repositories\Asset\Classes\AssetLocationRepository.cs" />
+    <Compile Include="Repositories\Asset\Classes\AssetRepository.cs" />
+    <Compile Include="Repositories\Asset\Classes\AssetScheduleCommonRepository.cs" />
+    <Compile Include="Repositories\Asset\Classes\AssetScheduleDetailRepository.cs" />
+    <Compile Include="Repositories\Asset\Classes\AssetScheduleRepository.cs" />
+    <Compile Include="Repositories\Asset\Classes\AssetSubTypeRepository.cs" />
+    <Compile Include="Repositories\Asset\Classes\AssetTypeRepository.cs" />
+    <Compile Include="Repositories\Asset\Classes\CallTypeRepository.cs" />
+    <Compile Include="Repositories\Asset\Classes\OutsideMaintenanceCommonRepository.cs" />
+    <Compile Include="Repositories\Asset\Classes\InHouseCommonRepository.cs" />
+    <Compile Include="Repositories\Asset\Classes\InHouseRepository.cs" />
+    <Compile Include="Repositories\Asset\Classes\MaintainanceTypeRepository.cs" />
+    <Compile Include="Repositories\Asset\Classes\AssetDeletionRequestRepository.cs" />
+    <Compile Include="Repositories\Asset\Classes\SparePartsOuthouseUtilRepository.cs" />
+    <Compile Include="Repositories\Asset\Classes\MaterialConsumptionRepository.cs" />
+    <Compile Include="Repositories\Asset\Classes\OutsideMaintenanceRepository.cs" />
+    <Compile Include="Repositories\Asset\Classes\RequestRegisterRepository.cs" />
+    <Compile Include="Repositories\Asset\Classes\RoomRepository.cs" />
+    <Compile Include="Repositories\Asset\Classes\TechnicianEntryRepository.cs" />
+    <Compile Include="Repositories\Asset\Classes\TechnicianRepository.cs" />
+    <Compile Include="Repositories\Asset\Classes\VendorRepository.cs" />
+    <Compile Include="Repositories\Asset\Classes\WarrantyMaintenanceCommonRepository.cs" />
+    <Compile Include="Repositories\Asset\Classes\WarrantyMaintenanceRepository.cs" />
+    <Compile Include="Repositories\Asset\Classes\WarrantySparePartsRepository.cs" />
+    <Compile Include="Repositories\Asset\Interfaces\ILocationRepository.cs" />
+    <Compile Include="Repositories\Asset\Interfaces\IAMCProviderRepository.cs" />
+    <Compile Include="Repositories\Asset\Interfaces\IAssetCommonRepository.cs" />
+    <Compile Include="Repositories\Asset\Interfaces\IAssetDetailRepository.cs" />
+    <Compile Include="Repositories\Asset\Interfaces\IAssetLocationRepository.cs" />
+    <Compile Include="Repositories\Asset\Interfaces\IAssetRepository.cs" />
+    <Compile Include="Repositories\Asset\Interfaces\IAssetScheduleCommonRepository.cs" />
+    <Compile Include="Repositories\Asset\Interfaces\IAssetScheduleDetailRepository.cs" />
+    <Compile Include="Repositories\Asset\Interfaces\IAssetSubTypeRepository.cs" />
+    <Compile Include="Repositories\Asset\Interfaces\IAssetTypeRepository.cs" />
+    <Compile Include="Repositories\Asset\Interfaces\ICallTypeRepository.cs" />
+    <Compile Include="Repositories\Asset\Interfaces\IFloorRespository.cs" />
+    <Compile Include="Repositories\Asset\Interfaces\IOutsideMaintenanceCommonRepository.cs" />
+    <Compile Include="Repositories\Asset\Interfaces\IInHouseCommonRepository.cs" />
+    <Compile Include="Repositories\Asset\Interfaces\IInHouseRepository.cs" />
+    <Compile Include="Repositories\Asset\Interfaces\IMaintainanceTypeRepository.cs" />
+    <Compile Include="Repositories\Asset\Interfaces\IAssetDeletionRequestRepository.cs" />
+    <Compile Include="Repositories\Asset\Interfaces\ISparePartsOuthouseUtilRepository.cs" />
+    <Compile Include="Repositories\Asset\Interfaces\IMaterialConsumptionRepository.cs" />
+    <Compile Include="Repositories\Asset\Interfaces\IOutsideMaintenanceRepository.cs" />
+    <Compile Include="Repositories\Asset\Interfaces\IRequestRegisterRepository.cs" />
+    <Compile Include="Repositories\Asset\Interfaces\IRoomRepository.cs" />
+    <Compile Include="Repositories\Asset\Interfaces\ITechnicianEntryRepository.cs" />
+    <Compile Include="Repositories\Asset\Interfaces\ITechnicianRepository.cs" />
+    <Compile Include="Repositories\Asset\Interfaces\IVendorRepository.cs" />
+    <Compile Include="Repositories\Asset\Interfaces\IWarrantyMaintenanceCommonRepository.cs" />
+    <Compile Include="Repositories\Asset\Interfaces\IWarrantyMaintenanceRepository.cs" />
+    <Compile Include="Repositories\Asset\Interfaces\IWarrantySparePartsRepository.cs" />
+    <Compile Include="Repositories\Branch\Class\EmployeeRepository.cs" />
+    <Compile Include="Repositories\Branch\Class\MomentOrderRepository.cs" />
+    <Compile Include="Repositories\Branch\Class\MaterialIssueGuardCommonRepository.cs" />
+    <Compile Include="Repositories\Branch\Class\MaterialIssueGuardDtRepository.cs" />
+    <Compile Include="Repositories\Branch\Class\GuardDetailsRepository.cs" />
+    <Compile Include="Repositories\Branch\Class\MaterialIssueGuardRepository.cs" />
+    <Compile Include="Repositories\Branch\Class\MaterialReturnGuardDtRepository.cs" />
+    <Compile Include="Repositories\Branch\Class\MaterialReturnGuardRepository.cs" />
+    <Compile Include="Repositories\Asset\Interfaces\IAssetScheduleRepository.cs" />
+    <Compile Include="Repositories\Branch\Interface\IMomentOrderRepository.cs" />
+    <Compile Include="Repositories\Branch\Interface\IGuardDetailsRepository.cs" />
+    <Compile Include="Repositories\Branch\Interface\IEmployeeRepository.cs" />
+    <Compile Include="Repositories\Branch\Interface\IMaterialIssueGuardCommonRepository.cs" />
+    <Compile Include="Repositories\Branch\Interface\IMaterialIssueGuardDtRepository.cs" />
+    <Compile Include="Repositories\Branch\Interface\IMaterialIssueGuardRepository.cs" />
+    <Compile Include="Repositories\Common\IFlashDetailRepository.cs" />
+    <Compile Include="Repositories\Common\FlashDetailRepository.cs" />
+    <Compile Include="Repositories\Branch\Interface\IMaterialReturnGuardDtRepository.cs" />
+    <Compile Include="Repositories\Branch\Interface\IMaterialReturnGuardRepository.cs" />
+    <Compile Include="Repositories\Common\Interface\IPettyCashRepository.cs" />
+    <Compile Include="Repositories\Common\Class\PettyCashRepository.cs" />
+    <Compile Include="Repositories\Master\Classes\BranchMasterRepository.cs" />
+    <Compile Include="Repositories\Master\Classes\CityMasterRepository.cs" />
+    <Compile Include="Repositories\Master\Classes\CountryMasterRepository.cs" />
+    <Compile Include="Repositories\Master\Classes\DeliveryTermsMasterRepository.cs" />
+    <Compile Include="Repositories\Master\Classes\StoreUnitLinkingMasterRepository.cs" />
+    <Compile Include="Repositories\Master\Classes\TaxMasterRepository.cs" />
+    <Compile Include="Repositories\Master\Interfaces\IStoreUnitLinkingMasterRepository.cs" />
+    <Compile Include="Repositories\Master\Interfaces\ITaxMasterRepository.cs" />
+    <Compile Include="Repositories\Purchase\Classes\POCommonRepository.cs" />
+    <Compile Include="Repositories\Purchase\Classes\PODeliveryTerm.cs" />
+    <Compile Include="Repositories\Purchase\Classes\POOtherTerm.cs" />
+    <Compile Include="Repositories\Purchase\Classes\POPaymentTerm.cs" />
+    <Compile Include="Repositories\Purchase\Classes\PurchaseIndentCommonRepository.cs" />
+    <Compile Include="Repositories\Purchase\Classes\PurchaseIndentDetailRepository.cs" />
+    <Compile Include="Repositories\Master\Interfaces\IBranchMasterRepository.cs" />
+    <Compile Include="Repositories\Master\Interfaces\ICityMasterRepository.cs" />
+    <Compile Include="Repositories\Master\Interfaces\ICountryMasterRepository.cs" />
+    <Compile Include="Repositories\Master\Interfaces\IDeliveryTermsMasterRepository.cs" />
+    <Compile Include="Repositories\Master\Interfaces\IItemGroupMasterRepository.cs" />
+    <Compile Include="Repositories\Master\Interfaces\IItemMasterRepository.cs" />
+    <Compile Include="Repositories\Master\Interfaces\IItemPackSizeMasterRepository.cs" />
+    <Compile Include="Repositories\Master\Interfaces\IItemSupplierMappingRepository.cs" />
+    <Compile Include="Repositories\Master\Interfaces\IItemTypeMasterRepository.cs" />
+    <Compile Include="Repositories\Master\Interfaces\IManufacturerMasterRepository.cs" />
+    <Compile Include="Repositories\Master\Interfaces\IOthersTermsMasterRepository.cs" />
+    <Compile Include="Repositories\Master\Interfaces\IPaymentTermsMasterRepository.cs" />
+    <Compile Include="Repositories\Master\Interfaces\IStateMasterRepository.cs" />
+    <Compile Include="Repositories\Master\Interfaces\IStoreItemTypeMappingRepository.cs" />
+    <Compile Include="Repositories\Master\Interfaces\IStoreMasterRepository.cs" />
+    <Compile Include="Repositories\Master\Interfaces\IStoreTypeMasterRepository.cs" />
+    <Compile Include="Repositories\Master\Interfaces\ISupplierMasterRepository.cs" />
+    <Compile Include="Repositories\Master\Classes\ItemGroupMasterRepository.cs" />
+    <Compile Include="Repositories\Master\Classes\ItemMasterRepository.cs" />
+    <Compile Include="Repositories\Master\Classes\ItemPackSizeMasterRepository.cs" />
+    <Compile Include="Repositories\Master\Classes\ItemTypeMasterRepository.cs" />
+    <Compile Include="Repositories\Master\Interfaces\IUnitMasterRepository.cs" />
+    <Compile Include="Repositories\Master\Interfaces\IVillageMasterRepository.cs" />
+    <Compile Include="Repositories\Master\Classes\ManufacturerMasterRepository.cs" />
+    <Compile Include="Repositories\Master\Classes\OthersTermsMasterRepository.cs" />
+    <Compile Include="Repositories\Master\Classes\PaymentTermsMasterRepository.cs" />
+    <Compile Include="Repositories\Master\Classes\StateMasterRepository.cs" />
+    <Compile Include="Repositories\Master\Classes\StoreItemTypeMappingRepository.cs" />
+    <Compile Include="Repositories\Master\Classes\StoreMasterRepository.cs" />
+    <Compile Include="Repositories\Master\Classes\StoreTypeMasterRepository.cs" />
+    <Compile Include="Repositories\Master\Classes\SupplierMasterRepository.cs" />
+    <Compile Include="Repositories\Master\Classes\UnitMasterRepository.cs" />
+    <Compile Include="Repositories\Master\Classes\VillageMasterRepository.cs" />
+    <Compile Include="Repositories\Purchase\Classes\PurchaseIndentRepository.cs" />
+    <Compile Include="Repositories\Purchase\Classes\PurchaseOrderDetailRepository.cs" />
+    <Compile Include="Repositories\Purchase\Classes\PurchaseOrderRepository.cs" />
+    <Compile Include="Repositories\Purchase\Interfaces\IPOCommonRepository.cs" />
+    <Compile Include="Repositories\Purchase\Interfaces\IPODeliveryTerm.cs" />
+    <Compile Include="Repositories\Purchase\Interfaces\IPOOtherTerm.cs" />
+    <Compile Include="Repositories\Purchase\Interfaces\IPOPaymentTerm.cs" />
+    <Compile Include="Repositories\Purchase\Interfaces\IPurchaseIndentCommonRepository.cs" />
+    <Compile Include="Repositories\Purchase\Interfaces\IPurchaseIndentDetailRepository.cs" />
+    <Compile Include="Repositories\Purchase\Interfaces\IPurchaseIndentRepository.cs" />
+    <Compile Include="Repositories\Purchase\Interfaces\IPurchaseOrderDetailRepository.cs" />
+    <Compile Include="Repositories\Purchase\Interfaces\IPurchaseOrderRepository.cs" />
+    <Compile Include="Repositories\Purchase\Interfaces\PurchaseOrderDetailEntities.cs" />
+    <Compile Include="Repositories\ScanDoc\Classes\ScanDocRepository.cs" />
+    <Compile Include="Repositories\ScanDoc\Interfaces\IScanDocRepository.cs" />
+    <Compile Include="Repositories\Store\Classes\AdjustmentVoucherCommonRepository.cs" />
+    <Compile Include="Repositories\Store\Classes\AdjustmentVoucherDtRepository.cs" />
+    <Compile Include="Repositories\Store\Classes\AdjustmentVoucherRepository.cs" />
+    <Compile Include="Repositories\Store\Classes\BillCreationRepository.cs" />
+    <Compile Include="Repositories\Store\Classes\CancelPendingMaterialIndentRepository .cs" />
+    <Compile Include="Repositories\Store\Classes\DashBoardRepository.cs" />
+    <Compile Include="Repositories\Store\Classes\DiscrepancyCommonRepository.cs" />
+    <Compile Include="Repositories\Store\Classes\DiscrepancyDtRepository.cs" />
+    <Compile Include="Repositories\Store\Classes\DiscrepancyRepository.cs" />
+    <Compile Include="Repositories\Store\Classes\GRNCommonRepository.cs" />
+    <Compile Include="Repositories\Store\Classes\GRNDetailRepository.cs" />
+    <Compile Include="Repositories\Store\Classes\GRNRepository.cs" />
+    <Compile Include="Repositories\Store\Classes\GRNVendorCommonRepository.cs" />
+    <Compile Include="Repositories\Store\Classes\GRNVendorDetailRepository.cs" />
+    <Compile Include="Repositories\Store\Classes\GRNVendorItemDetailRepository.cs" />
+    <Compile Include="Repositories\Store\Classes\GRNVendorRepository.cs" />
+    <Compile Include="Repositories\Store\Classes\MaterialIssueCommonRepository.cs" />
+    <Compile Include="Repositories\Store\Classes\MaterialReturnCommonRepository.cs" />
+    <Compile Include="Repositories\Store\Classes\MaterialTransferRepository.cs" />
+    <Compile Include="Repositories\Store\Classes\MaterilaIndentCommonRepository.cs" />
+    <Compile Include="Repositories\Store\Classes\PurchaseMaterialIndentRepository.cs" />
+    <Compile Include="Repositories\Store\Classes\PurchaseReturnCommanRepository.cs" />
+    <Compile Include="Repositories\Store\Classes\PurchaseReturnDetailsRepository .cs" />
+    <Compile Include="Repositories\Store\Classes\PurchaseReturnRepository.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Repositories\Store\Classes\RequestStatusRepository.cs" />
+    <Compile Include="Repositories\Store\Classes\StockDetailsRepository.cs" />
+    <Compile Include="Repositories\Store\Classes\StockDiposeRepository .cs" />
+    <Compile Include="Repositories\Store\Classes\StockDisposeCommonRepository.cs" />
+    <Compile Include="Repositories\Store\Classes\StockDisposeDetailsRepository.cs" />
+    <Compile Include="Repositories\Store\Classes\StockRegisterRepository.cs" />
+    <Compile Include="Repositories\Store\Classes\StoreConsumptionCommonRepository.cs" />
+    <Compile Include="Repositories\Store\Classes\StoreConsumptionDetailsRepository .cs" />
+    <Compile Include="Repositories\Store\Classes\StoreConsumptionRepository .cs" />
+    <Compile Include="Repositories\Store\Classes\StoreQuantityLimitsRepository.cs" />
+    <Compile Include="Repositories\Store\Classes\SupplierBillListpository.cs" />
+    <Compile Include="Repositories\Store\Classes\SupplierBillPayment.cs" />
+    <Compile Include="Repositories\Store\Classes\VendorMaterialIssueCommonRepository.cs" />
+    <Compile Include="Repositories\Store\Classes\VendorMaterialIssueDtRepository.cs" />
+    <Compile Include="Repositories\Store\Classes\VendorMaterialIssueRepository.cs" />
+    <Compile Include="Repositories\Store\Interfaces\IAdjustmentVoucherCommonRepository.cs" />
+    <Compile Include="Repositories\Store\Interfaces\IAdjustmentVoucherDtRepository.cs" />
+    <Compile Include="Repositories\Store\Interfaces\IAdjustmentVoucherRepository.cs" />
+    <Compile Include="Repositories\Store\Interfaces\ICancelPendingMaterialIndentRepository  - Copy.cs" />
+    <Compile Include="Repositories\Store\Interfaces\IBillCreationRepository .cs" />
+    <Compile Include="Repositories\Store\Interfaces\IDashBoardRepository.cs" />
+    <Compile Include="Repositories\Store\Interfaces\IDiscrepancyCommonRepository.cs" />
+    <Compile Include="Repositories\Store\Interfaces\IDiscrepancyDtRepository.cs" />
+    <Compile Include="Repositories\Store\Interfaces\IDiscrepancyRepository.cs" />
+    <Compile Include="Repositories\Store\Interfaces\IGRNCommonRepository.cs" />
+    <Compile Include="Repositories\Store\Interfaces\IGRNDetailRepository.cs" />
+    <Compile Include="Repositories\Store\Interfaces\IGRNRepository.cs" />
+    <Compile Include="Repositories\Store\Classes\OpeningBalanceRepository.cs" />
+    <Compile Include="Repositories\Store\Interfaces\IGRNVendorCommonRepository.cs" />
+    <Compile Include="Repositories\Store\Interfaces\IGRNVendorDetailRepository.cs" />
+    <Compile Include="Repositories\Store\Interfaces\IGRNVendorItemDetailRepository.cs" />
+    <Compile Include="Repositories\Store\Interfaces\IGRNVendorRepository.cs" />
+    <Compile Include="Repositories\Store\Interfaces\IMaterialIssueCommonRepository.cs" />
+    <Compile Include="Repositories\Store\Interfaces\IMaterialReturnCommonRepository.cs" />
+    <Compile Include="Repositories\Store\Interfaces\IMaterialReturnDetailsRepository.cs" />
+    <Compile Include="Repositories\Store\Interfaces\IMaterialIndentDetailsRepository.cs" />
+    <Compile Include="Repositories\Store\Interfaces\IMaterialIssueRepository.cs" />
+    <Compile Include="Repositories\Store\Interfaces\IMaterialReturnRepository.cs" />
+    <Compile Include="Repositories\Store\Interfaces\IMaterialTransferRepository.cs" />
+    <Compile Include="Repositories\Store\Interfaces\IMaterilaIndentCommonRepository.cs" />
+    <Compile Include="Repositories\Store\Interfaces\IMaterilaIndentRepository.cs" />
+    <Compile Include="Repositories\Store\Classes\MaterialIndentDetailsRepository.cs" />
+    <Compile Include="Repositories\Store\Interfaces\IMaterialIssueDetailRepository.cs" />
+    <Compile Include="Repositories\Store\Classes\MaterialIssueDetailRepository.cs" />
+    <Compile Include="Repositories\Store\Classes\MaterialIssueRepository.cs" />
+    <Compile Include="Repositories\Store\Classes\MaterialReturnRepository.cs" />
+    <Compile Include="Repositories\Store\Classes\MaterilaIndentRepository.cs" />
+    <Compile Include="Repositories\Store\Interfaces\IPurchaseMaterialIndentRepository.cs" />
+    <Compile Include="Repositories\Store\Interfaces\IPurchaseReturnCommonRepository.cs" />
+    <Compile Include="Repositories\Store\Interfaces\IPurchaseReturnDetailsRepository.cs" />
+    <Compile Include="Repositories\Store\Interfaces\IPurchaseReturnRepository .cs" />
+    <Compile Include="Repositories\Store\Interfaces\IRequestStatusRepository.cs" />
+    <Compile Include="Repositories\Store\Interfaces\IStockDetailsRepository.cs" />
+    <Compile Include="Repositories\Store\Interfaces\IStockDisposeCommonRepository.cs" />
+    <Compile Include="Repositories\Store\Interfaces\IStockDisposeDetailsRepository.cs" />
+    <Compile Include="Repositories\Store\Interfaces\IStockDisposeRepository.cs" />
+    <Compile Include="Repositories\Store\Interfaces\IStockRegisterRepository.cs" />
+    <Compile Include="Repositories\Store\Classes\MaterialReturnDetailsRepository.cs" />
+    <Compile Include="Repositories\Store\Interfaces\IOpeningBalanceRepository.cs" />
+    <Compile Include="Repositories\Store\Interfaces\IStoreConsumptionCommonRepository.cs" />
+    <Compile Include="Repositories\Store\Interfaces\IStoreConsumptionDetailsRepository .cs" />
+    <Compile Include="Repositories\Store\Interfaces\IStoreConsumptionRepository.cs" />
+    <Compile Include="Repositories\Store\Interfaces\IStoreQuantityLimitsRepository.cs" />
+    <Compile Include="Repositories\Store\Interfaces\ISupplierBillListRepository.cs" />
+    <Compile Include="Repositories\Store\Interfaces\ISupplierBillPayment.cs" />
+    <Compile Include="Repositories\Store\Interfaces\IVendorMaterialIssueCommonRepository.cs" />
+    <Compile Include="Repositories\Store\Interfaces\IVendorMaterialIssueDtRepository.cs" />
+    <Compile Include="Repositories\Store\Interfaces\IVendorMaterialIssueRepository.cs" />
+    <Compile Include="Repositories\Training\Classes\BatchRepository.cs" />
+    <Compile Include="Repositories\Training\Classes\BatchTypeRepository.cs" />
+    <Compile Include="Repositories\Training\Classes\BudgetHeadsRepository.cs" />
+    <Compile Include="Repositories\Training\Classes\GeneralBudgetProposalRepository.cs" />
+    <Compile Include="Repositories\Training\Classes\MonthlyExpenditureRepository.cs" />
+    <Compile Include="Repositories\Training\Classes\RatingRepository.cs" />
+    <Compile Include="Repositories\Training\Classes\ScheduleRepository.cs" />
+    <Compile Include="Repositories\Training\Classes\SlotRepository.cs" />
+    <Compile Include="Repositories\Training\Classes\TrainingCategoryRepository.cs" />
+    <Compile Include="Repositories\Training\Classes\TrainingCentreRepository.cs" />
+    <Compile Include="Repositories\Training\Classes\GradeRepository.cs" />
+    <Compile Include="Repositories\Training\Classes\SubjectMasterRepository.cs" />
+    <Compile Include="Repositories\Training\Classes\SubjectTopicRepository.cs" />
+    <Compile Include="Repositories\Training\Classes\TrainerRepository.cs" />
+    <Compile Include="Repositories\Training\Classes\TrainingDaillyUpdatesRepository.cs" />
+    <Compile Include="C:\Users\erphead\Desktop\Shashi\TrainingTemplateRepository.cs">
+      <Link>Repositories\Training\Classes\TrainingTemplateRepository.cs</Link>
+    </Compile>
+    <Compile Include="Repositories\Training\Classes\TrainingTypeRepository.cs" />
+    <Compile Include="Repositories\Training\Interfaces\IBatchRepository.cs" />
+    <Compile Include="Repositories\Training\Interfaces\IBatchTypeRepository.cs" />
+    <Compile Include="Repositories\Training\Interfaces\IBudgetHeadsRepository.cs" />
+    <Compile Include="Repositories\Training\Interfaces\IGeneralBudgetProposalRepository.cs" />
+    <Compile Include="Repositories\Training\Interfaces\IMonthlyExpenditureRepository.cs" />
+    <Compile Include="Repositories\Training\Interfaces\IRatingRepository.cs" />
+    <Compile Include="Repositories\Training\Interfaces\ISlotRepository.cs" />
+    <Compile Include="Repositories\Training\Interfaces\ITrainingCategoryRepository.cs" />
+    <Compile Include="Repositories\Training\Interfaces\ITrainingCentreRepository.cs" />
+    <Compile Include="Repositories\Training\Interfaces\IGradeRepository.cs" />
+    <Compile Include="Repositories\Training\Interfaces\ISubjectMasterRepository.cs" />
+    <Compile Include="Repositories\Training\Interfaces\ISubjectTopicRepository.cs" />
+    <Compile Include="Repositories\Training\Interfaces\ITrainerRepository.cs" />
+    <Compile Include="Repositories\Training\Interfaces\ITrainingDaillyUpdatesRepository.cs" />
+    <Compile Include="Repositories\Training\Interfaces\ITrainingTemplateRepository.cs" />
+    <Compile Include="Repositories\Training\Interfaces\ITrainingTypeRepository.cs" />
+    <Compile Include="Repositories\Transport\Classes\DriverScheduleRepository.cs" />
+    <Compile Include="Repositories\Asset\Classes\FloorRespository.cs" />
+    <Compile Include="Repositories\Transport\Classes\FuelDetailsRepository.cs" />
+    <Compile Include="Repositories\Transport\Classes\DivisionRepository.cs" />
+    <Compile Include="Repositories\Transport\Classes\DriverRepository.cs" />
+    <Compile Include="Repositories\Transport\Classes\GreenTaxRepository.cs" />
+    <Compile Include="Repositories\Transport\Classes\InsuranceCompanyRepository.cs" />
+    <Compile Include="Repositories\Transport\Classes\InsuranceRepository.cs" />
+    <Compile Include="Repositories\Transport\Classes\PermitDetailsRepository.cs" />
+    <Compile Include="Repositories\Transport\Classes\PUCDetailsRepository.cs" />
+    <Compile Include="Repositories\Transport\Classes\RoadTaxRepository.cs" />
+    <Compile Include="Repositories\Transport\Classes\SubDivisionRepository.cs" />
+    <Compile Include="Repositories\Transport\Classes\VehicleInfoRepository.cs" />
+    <Compile Include="Repositories\Transport\Classes\VehicleModelRepository.cs" />
+    <Compile Include="Repositories\Transport\Classes\VehicleTransferRepository.cs" />
+    <Compile Include="Repositories\Transport\Classes\VehicleMakeRepository.cs" />
+    <Compile Include="Repositories\Transport\Classes\VehicleUsageRepository.cs" />
+    <Compile Include="Repositories\Transport\Classes\VehicleTypeRepository.cs" />
+    <Compile Include="Repositories\Transport\Interfaces\IDivisionRepository.cs" />
+    <Compile Include="Repositories\Transport\Interfaces\IDriverRepository.cs" />
+    <Compile Include="Repositories\Transport\Interfaces\IDriverScheduleRepository.cs" />
+    <Compile Include="Repositories\Transport\Interfaces\IFuelDetailsRepository.cs" />
+    <Compile Include="Repositories\Transport\Interfaces\IGreenTaxRepository.cs" />
+    <Compile Include="Repositories\Transport\Interfaces\IInsuranceRepository.cs" />
+    <Compile Include="Repositories\Transport\Interfaces\IInsuranceCompanyRepository.cs" />
+    <Compile Include="Repositories\Transport\Interfaces\IPermitDetailsRepository.cs" />
+    <Compile Include="Repositories\Transport\Interfaces\IPUCDetailsRepository.cs" />
+    <Compile Include="Repositories\Transport\Interfaces\IRoadTaxRepository.cs" />
+    <Compile Include="Repositories\Training\Interfaces\IScheduleRepository.cs" />
+    <Compile Include="Repositories\Transport\Interfaces\ISubDivisionRepository.cs" />
+    <Compile Include="Repositories\Transport\Interfaces\IVehicleInfoRepository.cs" />
+    <Compile Include="Repositories\Transport\Interfaces\IVehicleModelRepository.cs" />
+    <Compile Include="Repositories\Transport\Interfaces\IVehicleTransferRepository.cs" />
+    <Compile Include="Repositories\Transport\Interfaces\IVehicleMakeRepository.cs" />
+    <Compile Include="Repositories\Transport\Interfaces\IVehicleusageRepository.cs" />
+    <Compile Include="Repositories\Transport\Interfaces\IVehicleTypeRepository.cs" />
+    <Compile Include="Repositories\UserManagement\Class\UserDeparment.cs" />
+    <Compile Include="Repositories\UserManagement\Class\UserMenuRightsRepository.cs" />
+    <Compile Include="Repositories\UserManagement\Interface\IUserDeparment.cs" />
+    <Compile Include="Repositories\UserManagement\Interface\IUserMenuRightsRepository.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="localhostLey.pfx" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BISERPCommon\BISERPCommon.csproj">
+      <Project>{faffdac5-5c89-4a7b-88bb-87fee134e7b4}</Project>
+      <Name>BISERPCommon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BISERPDataLayer\BISERPDataLayer.csproj">
+      <Project>{3cc66ebb-6628-442a-8be8-2cdf667beb84}</Project>
+      <Name>BISERPDataLayer</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

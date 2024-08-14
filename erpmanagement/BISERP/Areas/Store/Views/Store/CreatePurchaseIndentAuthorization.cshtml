@@ -1,0 +1,157 @@
+﻿@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+   
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="panel-title">
+                    Search Filter
+                </div>
+            </div>
+            <div id="collapse1" class="panel-collapse collapse">
+                <div class="panel-body">
+                    <div class="row ">
+                        <div class="col-sm-12">                            
+                            <div class="form-group">
+                                <div class="col-sm-1">
+                                    @Html.Label("Indent No")
+                                </div>
+                                <div class="col-sm-2">
+                                    @Html.Editor("Indent No")
+                                </div>
+                            </div>
+                            <div class="col-sm-1">
+                                <a href="" class="btn btn-primary" type="button">
+                                    Find
+                                    <span class="glyphicon glyphicon-search"></span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-heading">
+                <div class="panel-title">
+                    Search Details
+                </div>
+            </div>
+            <div class="panel-collapse collapse in" aria-expanded="true">
+                <div class="panel-body">
+                    <div class="container fill">
+                        <table id="searchgrid" data-source="@Url.Action("GetPlayers")"></table>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-heading">
+                <div class="panel-title">
+                    Entry Form
+                </div>
+            </div>
+            <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                <div class="panel-body">
+                    <fieldset>
+                        <legend></legend>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-sm-2">
+                                    @Html.Label("Store Name")
+                                </div>
+                                <div class="col-sm-2">
+                                    <select id="selAgainst" class="wrapper-dropdown">
+                                        <option class="wrapperdropdown-content" value="Indent">General Main Store</option>
+                                    </select>
+                                </div>                                
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-2">
+                                    @Html.Label("Indent No")
+                                </div>
+                                <div class="col-sm-2">
+                                    @Html.Editor("Indent No")
+                                </div>
+                            </div>
+                        </div>                       
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-sm-2">
+                                    @Html.Label("Category Type")
+                                </div>
+                                <div class="col-sm-2">
+                                    @Html.RadioButton("Category Type", "Authorised") Authorised
+                                    @Html.RadioButton("Category Type", "Cancel") Cancel
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <fieldset>
+                        <legend></legend>
+                        <div class="row">
+                            <div class="container fill">
+                                <table id="grid" data-source="@Url.Action("GetPlayers")"></table>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <fieldset>
+                        <legend></legend>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                @Html.Label("Remark For Cancelling")
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                @Html.TextArea("Remark For Cancelling")
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel-heading">
+        <a data-toggle="collapse" class="btn btn-success" href="#collapse1">Search</a>
+        <button type="button" class="btn btn-success">Save</button>
+        <button type="button" class="btn btn-success">Reset</button>
+    </div>
+    
+
+    <script type="text/javascript">
+        var grid;
+
+        function Search() {
+            grid.reload({ searchString: $("#search").val() });
+        }
+
+        $(document).ready(function () {
+            grid = $("#grid").grid({
+                dataKey: "ID",
+                uiLibrary: "bootstrap",
+                columns: [                    
+                    { field: "ID", width: 10, sortable: false, hidden: true },
+                    { field: "ItemCode", width: 10, title: "Item Code", sortable: true, priority: 1 },
+                    { field: "ItemName", width: 20, title: "Item Name", sortable: true, priority: 2 },
+                     { field: "StoreName", width: 20, title: "Store Name", sortable: true, priority: 3 }
+                ],
+                pager: { enable: true, limit: 5, sizes: [2, 5, 10, 20] }
+            });
+            $("#btnSearch").on("click", Search);
+        });
+
+        $(document).ready(function () {
+            var grid = $("#searchgrid").grid({
+                dataKey: "ID",
+                uiLibrary: "bootstrap",
+                columns: [
+                    { field: "ID", width: 10, sortable: false, hidden: true },
+                    { field: "IndentNo", width: 80, title: "Indent No", sortable: true, priority: 2 },
+                    { field: "IndentDate", width: 50, title: "Indent Date", sortable: true, priority: 3 },
+                    { field: "StoreName", width: 50, title: "Store Name", sortable: true, priority: 3 }
+                ],
+                selectionMethod: 'checkbox',
+                pager: { enable: true, limit: 10, sizes: [2, 5, 10, 20] }
+            });
+        });
+    </script>
+}

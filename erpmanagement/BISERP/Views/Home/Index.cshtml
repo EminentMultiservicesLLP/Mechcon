@@ -1,0 +1,34 @@
+﻿@model IEnumerable<BISERP.Models.UserMangement.MenuUserRightsModel>
+@{
+    ViewBag.Title = "Home Page";
+}
+@*@section featured {
+    <section class="featured">
+        @if (Request.IsAuthenticated)
+        {
+            <div class="content-wrapper">
+                <nav class="nav-container showNav">
+                    <ul class="nav-list">
+                        @foreach (var menu in Model)
+                        {
+
+                            <li class="list-item">
+                                    @Html.ActionLink(@menu.MenuName, @menu.PageName, @menu.MenuName, new {area = @menu.PageName, @MenuId = @menu.MenuId}, null)
+                             
+                            </li>
+                        }
+                    </ul>
+                </nav>
+                <button class="btn-nav animated">
+                    <div class="bar arrow-top-r"></div>
+                    <div class="bar arrow-middle-r"></div>
+                    <div class="bar arrow-bottom-r"></div>
+                </button>
+            </div>
+        }
+        else
+        {
+            @Html.ActionLink("Sign In", "Login", "Account")
+        }
+    </section>
+}*@

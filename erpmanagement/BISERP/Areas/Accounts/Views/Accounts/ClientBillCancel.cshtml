@@ -1,0 +1,522 @@
+﻿@using (Html.BeginForm())
+{
+      @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-groupingBoder">
+                        <div class="panel-heading">
+                            <div class="panel-title">
+                                <a class="collapsediv" data-toggle="collapse" href="#SearchDetails" style="color:white">
+                                    Issued Bill Cancellation
+                                </a>
+                            </div>
+                        </div>
+                        <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                            <div class="panel-body">
+                                <div class="container fill">
+                                    <div id="CancelIssueBillGrid"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+    <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-groupingBoder">
+                        <div class="panel-heading">
+                            <div class="panel-title">
+                                <a class="collapsediv" data-toggle="collapse" href="#recieptDetails" style="color:white">
+                                    Reciept Bill Cancellation
+                                </a>
+                            </div>
+                        </div>
+                        <div id="recieptDetails" class="panel-collapse collapse in" aria-expanded="true">
+                            <div class="panel-body">
+                                <div class="container fill">
+                                    <div id="ClientRecieptGrid"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    <div id="BilldetailModal" style="display: none;">
+        <div id="BilldetailGrid"></div>
+    </div>
+     <div id="RecieptDetailModal" style="display: none;">
+         <div id="RecieptDetailGrid"></div>
+    </div>
+    <div title="Question" id="ConfirmModal" style="display: none;">
+        <div>Bill will be Deleted!! Are you sure to cancel bill?</div>
+        <div style="margin-top: 5px;">
+            <button type="button" class="btn btn-primary" id="btnYes">Yes</button>
+            <button type="button" class="btn btn-primary" id="btnNo">No</button>
+        </div>
+    </div>
+        <div title="Question" id="ConfirmRModal" style="display: none;">
+        <div>Bill will be Deleted!! Are you sure to cancel bill?</div>
+        <div style="margin-top: 5px;">
+            <button type="button" class="btn btn-primary" id="btnRYes">Yes</button>
+            <button type="button" class="btn btn-primary" id="btnRNo">No</button>
+        </div>
+    </div>
+<script>
+    var $CancelIssueBillGrid;
+    var $BilldetailGrid;
+    var $RecieptDetailGrid;
+    /******************************CancelIssueBillGrid Start*************************************/
+    $(document).ready(function () {
+    databill = { location: 'local', sorting: 'local', paging: 'local', dataType: 'JSON' };
+    colbill = [
+                     /*****************details Button****************/
+             {
+                 title: "Details of Bill", editable: false, width: 100, sortable: false,
+                 listeners: [{ click: detailstRow }],
+                 render: function (ui) {
+                     return "<button type='button' class='edit_btn' style='color:blue'>Detail</button>";
+                 },
+                 postRender: function (ui) {
+                     var rowIndx = ui.rowIndx,
+                         grid = this,
+                         $cell = grid.getCell(ui);
+
+                     $cell.find(".edit_btn").button({ icons: { primary: 'ui-icon-pencil' } })
+                     .bind("click", function (evt) {
+
+                         var billingId = ui.rowData.ClientBillId;
+                         detailstRow(rowIndx, grid, true, billingId);
+                     });
+                 }
+             },
+             {
+                 title: "Bill No", dataIndx: "BillNo", width: 200, dataType: "string", editable: false,
+                 filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+             },
+             { title: "Bill Date", dataIndx: "StrBillDate", width: 200, dataType: "string", editable: false },
+             { title: "Total Bill Amt", dataIndx: "NetAmt", width: 100, dataType: "string", editable: false },
+             {
+                 title: "Against To", dataIndx: "ProjectName", width: 180, dataType: "string", editable: false,
+                 filter: {
+                     type: "select",
+                     condition: 'equal',
+                     prepend: { '': '--Select--' },
+                     valueIndx: "ProjectName",
+                     labelIndx: "ProjectName",
+                     listeners: ['change']
+                 }
+             },
+
+             /*****************Cancel Button****************/
+             {
+                 title: "Cancel", editable: false, minWidth: 50, sortable: false,
+                 listeners: [{ click: editRow }],
+                 render: function (ui) {
+                     return "<button type='button' class='edit_btn'style='color:red'>Cancel</button>";
+                 },
+                 postRender: function (ui) {
+                     var rowIndx = ui.rowIndx,
+                         grid = this,
+                         $cell = grid.getCell(ui);
+
+                     $cell.find(".edit_btn").button({ icons: { primary: 'ui-icon-pencil' } })
+                     .bind("click", function (evt) {
+                         var billingId = ui.rowData.ClientBillId;
+                         editRow(rowIndx, grid, true, billingId);
+                     });
+                 }
+             },
+            ];
+
+   var setCancelgrid = {
+       width: '100%',//auto width
+        height: 300, //height in %age
+        sortable: false,
+        numberCell: { show: true },
+        selectionModel: { type: 'row' },
+        hoverMode: 'cell',
+        editor: { type: 'textbox' },
+        filterModel: { on: true, mode: "AND", header: true },
+        showTop: false,
+        editable: true,
+        resizable: true,
+        virtualX: true,
+        virtualY: true,
+        draggable: false,
+        colModel: colbill,
+        dataModel: databill,
+        postRenderInterval: -1,
+        pageModel: { type: "local", rPP: 50 }
+   };
+    $CancelIssueBillGrid = $("#CancelIssueBillGrid").pqGrid(setCancelgrid);
+    LoadCancegrid();
+
+    function LoadCancegrid() {
+        var branchId = $("#ddlProject").val();
+        if (branchId == undefined || branchId === "") branchId = 0;
+                $.ajax({
+                    url: "/ClientBilling/GetClienBillNo",
+                    cache: false,
+                    async: true,
+                    method: "GET",
+                    dataType: "JSON",
+                    data: { branchId: branchId },
+                    success: function (response) {
+                        if (response.success) {
+                            $CancelIssueBillGrid.pqGrid("option", "dataModel.data", response.records);
+
+                            var column = $CancelIssueBillGrid.pqGrid("getColumn", { dataIndx: "ProjectName" });
+                            var filter = column.filter;
+                            filter.cache = null;
+                            filter.options = $CancelIssueBillGrid.pqGrid("getData", { dataIndx: ["ProjectName"] });
+
+                            $CancelIssueBillGrid.pqGrid("refreshDataAndView");
+                        } else {
+                            ClearParamGrid('CancelIssueBillGrid');
+                            ShowAlert("error", response.Messsage);
+                            return;
+                        }
+                    },
+                    error: function () {
+                        ClearParamGrid('CancelIssueBillGrid');
+                        ShowAlert("error", "Server error! Please Contact Administrator");
+                        return;
+                    }
+                });
+    }
+
+
+        /*************************cancel button clicked****************************/
+
+    function editRow(rowIndx, grid, edit, billingId) {
+        var abc = billingId;
+        validateBeforeCancel(abc);
+        
+    }
+    function validateBeforeCancel(abc) {
+        var xyz = abc;
+            $("#ConfirmModal").dialog({
+                height: 117,
+                width: 423,
+                modal: true,
+                billingId: xyz,
+                
+                open: function (evt, ui) {
+                    $("#btnNo").focus();
+                    $("#btnYes").val(xyz);
+                    $("#btnYes").attr("billingId", xyz);
+                },
+                close: function (event, ui) {
+                },
+                show: {
+                    effect: "blind",
+                    duration: 500
+                }
+            });
+            return;
+        
+    }
+    $('#btnNo').on('click', function () {
+        ShowAlert("success", "no button pressed");
+        ClosePopupWindow("ConfirmModal");
+    });
+
+    $("#btnYes").click(function (xyz) {
+        var valbillingid = $("#btnYes").attr("billingId");
+        //alert($("#btnYes").attr("billingId"));
+        //alert("a"+ $("#btnYes").val());
+        ClosePopupWindow("ConfirmModal");
+            $.ajax({
+                type: "POST",
+                url: "/ClientBillCancel/CancelGeneratedBill",
+                datatype: "Json",
+                async: true,
+                data: { billingId: valbillingid },
+                success: function (data) {
+                    if (data.success) {
+                        ShowAlert("success", "Bill Canceld successfully.");
+                        LoadCancegrid();
+                    }
+                    else {
+                        ShowAlert("error", "Bill cannot be cancelled as Reciepts on this Bill exist");
+                    }
+                },
+                error: function (xsa) {
+                    ShowAlert("error", "Something Went Wrong");
+                    return;
+                }
+            });
+        
+    });
+        /*************detail button click of upper grid*********/
+    function detailstRow(rowIndx, grid, edit, billingId) {
+        if (rowIndx != null) {
+            LoadBilldetailGrid(billingId);
+            $("#BilldetailGrid").dialog({
+                height: 500,
+                width: 700,
+                modal: true
+            }).dialog("open");
+        }
+    }
+       
+    function LoadBilldetailGrid(billingId) {
+        $.ajax({
+            type: "GET",
+            url: "/ClientBilling/GetClienBilldeatailById",
+            datatype: "Json",
+            data: { clientBillId: billingId },
+            success: function (data) {
+                $("#BilldetailGrid").pqGrid("option", "dataModel.data", data);
+                $("#BilldetailGrid").pqGrid("refreshDataAndView");
+            },
+            error: function () {
+                ClearParamGrid('BilldetailGrid');
+                ShowAlert("error", "Something went Wrong");
+                return;
+            }
+        });
+    }
+    databilldetail = { location: 'local', sorting: 'local', paging: 'local', dataType: 'JSON' };
+    colbilldetail = [
+         { title: "Service Name", dataIndx: "ItemName", width: 150, dataType: "string", editable: false },
+        { title: "Rate", dataIndx: "Rate", width: 150, dataType: "double", hidden: false },
+        { title: "Qty", dataIndx: "Qty", width: 100, dataType: "integer", hidden: false },
+         { title: "Gross Amount", dataIndx: "Amount", width: 150, dataType: "string", editable: false },
+         { title: "Discount", dataIndx: "Discount", width: 150, dataType: "double", hidden: false },
+          { title: "Tax Amount", dataIndx: "TaxAmount", width: 150, dataType: "double", hidden: false }
+    ];
+
+    setilldetailGrid = {
+        width: 700,
+        height: 400,
+        sortable: false,
+        numberCell: { show: false },
+        hoverMode: 'cell',
+        showTop: false,
+        resizable: true,
+        scrollModel: { autoFit: true },
+        draggable: false,
+        wrap: false,
+        editable: true,
+        columnBorders: true,
+        selectionModel: { type: 'row' },
+        colModel: colbilldetail,
+        dataModel: databilldetail,
+        pageModel: { type: "local", rPP: 20 },
+
+    };
+    $BilldetailGrid = $("#BilldetailGrid").pqGrid(setilldetailGrid);
+    });
+    /******************************CancelIssueBillGrid Start*************************************/
+    $(document).ready(function () {
+        var $clientrecieptGrid;
+        dataclientreciept = { location: 'local', sorting: 'local', paging: 'local', dataType: 'JSON' };
+        colclientreciept = [
+            {
+                title: "Details of Bill", editable: false, width: 100, sortable: false,
+                listeners: [{ click: redetailRow }],
+                render: function (ui) {
+                    return "<button type='button' class='edit_btn' style='color:blue'>Detail</button>";
+                },
+                postRender: function (ui) {
+                    var rowIndx = ui.rowIndx,
+                        grid = this,
+                        $cell = grid.getCell(ui);
+
+                    $cell.find(".edit_btn").button({ icons: { primary: 'ui-icon-pencil' } })
+                    .bind("click", function (evt) {
+                        var recieptId = ui.rowData.RecieptId;
+                        redetailRow(rowIndx, grid, true, recieptId);
+                    });
+                }
+            },
+             { title: "RecieptId", dataIndx: "RecieptId", width: 150, dataType: "integer", editable: false, hidden: true },
+            {
+                title: "Bill receipt No", dataIndx: "RecieptNo", width: 200, dataType: "string", editable: false ,
+                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            },
+            {
+                title: "Bill No", dataIndx: "BillNo", width: 200, dataType: "string", editable: false
+            },
+            { title: "Receipt Date", dataIndx: "StrRecieptDate", width: 150, dataType: "string", editable: false },
+            { title: "Receipt Amount", dataIndx: "RecieptAmount", width: 100, dataType: "double", editable: false },
+            
+            {
+                title: "Cancel", editable: false, minWidth: 50, sortable: false,
+                listeners: [{ click: reditRow }],
+                render: function (ui) {
+                    return "<button type='button' class='edit_btn'style='color:red'>Cancel</button>";
+                },
+                postRender: function (ui) {
+                    var rowIndx = ui.rowIndx,
+                        grid = this,
+                        $cell = grid.getCell(ui);
+
+                    $cell.find(".edit_btn").button({ icons: { primary: 'ui-icon-pencil' } })
+                    .bind("click", function (evt) {
+                        var RecieptId = ui.rowData.RecieptId;
+                        reditRow(rowIndx, grid, true, RecieptId);
+                    });
+                }
+            },
+        ];
+
+
+        setbillingrecieptrid = {
+            height: '250',
+            sortable: false,
+            title: '<b>Client Bill Detail</b>',
+            numberCell: { show: true },
+            selectionModel: { type: 'row' },
+            filterModel: { on: true, mode: "AND", header: true },
+            hoverMode: 'cell',
+            showTop: false,
+            resizable: true,
+            virtualX: true,
+            virtualY: true,
+            draggable: false,
+            colModel: colclientreciept,
+            dataModel: dataclientreciept,
+            postRenderInterval: -1,
+            pageModel: { type: "local", rPP: 10 }
+
+        };
+        $clientrecieptGrid = $("#ClientRecieptGrid").pqGrid(setbillingrecieptrid);
+        LoadRecieptgrid();
+        function LoadRecieptgrid() {
+            $.ajax({
+                type: "GET",
+                url: "/ClientBilling/GetClienBillRecieptByBillingId",
+                data: { clientBillId: 0 },
+                datatype: "Json",
+                async: true,
+                success: function (response) {
+                    $clientrecieptGrid.pqGrid("option", "dataModel.data", response);
+                    $clientrecieptGrid.pqGrid("refreshDataAndView");
+
+                }
+            });
+        }
+
+        function reditRow(rowIndx, grid, edit, RecieptId) {
+            var abc = RecieptId;
+            validateBeforerecieptCancelation(abc);
+        }
+        function validateBeforerecieptCancelation(abc) {
+            var xyz = abc;
+            $("#ConfirmRModal").dialog({
+                height: 117,
+                width: 423,
+                modal: true,
+                clientrecieptId: xyz,
+
+                open: function (evt, ui) {
+                    $("#btnRNo").focus();
+                    $("#btnRYes").val(xyz);
+                    $("#btnRYes").attr("clientrecieptId", xyz);
+                },
+                close: function (event, ui) {
+                },
+                show: {
+                    effect: "blind",
+                    duration: 500
+                }
+            });
+            return;
+
+        }
+        $('#btnRNo').on('click', function () {
+            ClosePopupWindow("ConfirmRModal");
+        });
+        $("#btnRYes").click(function (xyz) {
+            var valRecieptid = $("#btnRYes").attr("clientrecieptId");
+            ClosePopupWindow("ConfirmRModal");
+            $.ajax({
+                type: "POST",
+                url: "/ClientBillCancel/CancelRecieptBill",
+                datatype: "Json",
+                async: true,
+                data: { recieptId: valRecieptid },
+                success: function (data) {
+                    if (success=true) {
+                        ShowAlert("success", "Bill Canceld successfully.");
+                        LoadRecieptgrid();
+                    }
+                    else {
+                        ShowAlert("error", "Something went Wrong");
+                    }
+                },
+                error: function (xsa) {
+                    ShowAlert("error", "Something went Wrong");
+                    return;
+                }
+            });
+
+        });
+
+        function redetailRow(rowIndx, grid, edit, recieptId) {
+            if (rowIndx != null) {
+                LoadRecieptDetailGrid(recieptId);
+                $("#RecieptDetailModal").dialog({
+                    height: 500,
+                    width: 700,
+                    modal: true
+                }).dialog("open");
+            }
+        }
+        function LoadRecieptDetailGrid(recieptId) {
+            $.ajax({
+                type: "GET",
+                url: "/ClientBilling/GetClienRecieptdeatailById",
+                datatype: "Json",
+                data: { recieptId: recieptId },
+                success: function (data) {
+                    $("#RecieptDetailGrid").pqGrid("option", "dataModel.data", data);
+                    $("#RecieptDetailGrid").pqGrid("refreshDataAndView");
+                },
+                error: function () {
+                    ClearParamGrid('RecieptDetailGrid');
+                    ShowAlert("error", "Something went Wrong");
+                    return;
+                }
+            });
+        }
+        dataRecieptdetail = { location: 'local', sorting: 'local', paging: 'local', dataType: 'JSON' };
+        colRecieptddetail = [
+
+                            { title: "Payment Mode", dataIndx: "PaymentMode", dataType: "string", width: 90, },
+                            { title: "Bank Name", dataIndx: "BankName", minWidth: 210, dataType: "string" },
+                            { title: "CC/DC/DD/Cheque No.", dataIndx: "ChequeNo", width: 100, dataType: "double" },
+                            //{ title: "Expiry Date", width: "100", dataIndx: "ChequeExpDate", editable: true, dataType: "date" },
+                            { title: "Amount", dataIndx: "Amount", minWidth: 100, dataType: "double", hidden: false, editable: true },
+                            { title: "CCCharges", dataIndx: "CCCharges", minWidth: 100, dataType: "double", hidden: false, editable: true }
+        ];
+
+        setRecieptdetailGrid = {
+            width: 700,
+            height: 400,
+            sortable: false,
+            numberCell: { show: false },
+            hoverMode: 'cell',
+            showTop: false,
+            resizable: true,
+
+            scrollModel: { autoFit: true },
+            draggable: false,
+            wrap: false,
+            editable: false,
+            columnBorders: true,
+            selectionModel: { type: 'row' },
+            colModel: colRecieptddetail,
+            dataModel: dataRecieptdetail,
+            pageModel: { type: "local", rPP: 20 },
+
+        };
+        $RecieptDetailGrid = $("#RecieptDetailGrid").pqGrid(setRecieptdetailGrid);
+
+    });
+</script>
+}

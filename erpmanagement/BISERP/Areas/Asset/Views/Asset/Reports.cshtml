@@ -1,0 +1,349 @@
+﻿@model IEnumerable<BISERP.Models.UserMangement.ReportListModel>
+<script>
+    $(function () {
+        $('#FromDate').datetimepicker({
+            format: 'DD-MMM-YYYY',
+            extraFormats: ['DD-MM-YYYY', 'DD-MM-YY'],
+            defaultDate: new Date()
+        });
+        $('#ToDate').datetimepicker({
+            format: 'DD-MMM-YYYY',
+            extraFormats: ['DD-MM-YYYY', 'DD-MM-YY'],
+            defaultDate: new Date()
+        });
+    });
+</script>
+@using (Html.BeginForm())
+{
+
+    <div id="MasterPlaceHolder" style="height:100%">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-groupingBoder">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-3">
+                                    Report
+                                    <select id="selMasters" class="wrapper-dropdown-content form-control">
+                                        <option class="wrapperdropdown-content">Select</option>
+                                        @foreach (var item in Model)
+                                        {
+                                            <option class="wrapperdropdown-content" value="@item.ReportID">@item.ReportName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-3">
+                                    @Html.Label("From Date")
+                                    <div class='input-group date' id='FromDate'>
+                                        <input type='text' class="form-control" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    @Html.Label("To Date")
+                                    <div class='input-group date' id='ToDate'>
+                                        <input type='text' class="form-control" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    @Html.Label("Branch")
+                                    @Html.DropDownList("ddlBranch", new SelectList(string.Empty, "Value", "Text"), "Select Branch", new { @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-3">
+                                    @Html.Label("Maintenance Type")
+                                    @Html.DropDownList("ddlMaintenanceType", new SelectList(string.Empty, "Value", "Text"), "Select Maintenance Type", new { @class = "form-control" })
+                                </div>
+                                <div class="col-sm-3">
+                                    @Html.Label("Asset Code")
+                                    @Html.TextBox("AssetCode", "", new {@class = "form-control"})
+                                    @Html.Hidden("AssetId")
+                                </div>
+                                <div class="col-sm-3">
+                                    @Html.Label("Location")
+                                    @Html.DropDownList("ddlLoc", new SelectList(string.Empty, "Value", "Text"),  "-- Select from List --", new { @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <button type="button" class="btn btn-success" id="btnPrint">Show</button>
+                                <button type="button" class="btn btn-success" id="btnReset">Reset</button>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <iframe id="iframeReportViewer" style="width:100%;height:300px"></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="AssetModal" title="Select Asset" style="display: none;">
+        <div id="Assetgrid"></div>
+    </div>
+}
+<script>
+
+    function ReportValidationCheck() {
+        if ($("#selMasters").val() === "201") {
+            url = "../../Reports/AssetReport.aspx?reportid=" + $("#selMasters").val() + "&BranchId=" + $("#ddlBranch").val() + "&AssetId=" + $("#AssetId").val();
+        }
+        else if ($("#selMasters").val() === "202") {
+            console.log($("#ddlStore").val());
+            url = "../../Reports/AssetReport.aspx?reportid=" + $("#selMasters").val() + "&fromdate=" + $("#FromDate").data('date') + "&todate=" + $("#ToDate").data('date') + "&MTypeId=" + $("#ddlMaintenanceType").val();
+        }
+        else if ($("#selMasters").val() === "203") {
+            console.log($("#ddlStore").val());
+            url = "../../Reports/AssetReport.aspx?reportid=" + $("#selMasters").val() + "&fromdate=" + $("#FromDate").data('date') + "&todate=" + $("#ToDate").data('date') + "&BranchId=" + $("#ddlBranch").val();
+        }
+      
+        else if ($("#selMasters").val() === "204") {
+            console.log($("#ddlStore").val());
+            url = "../../Reports/AssetReport.aspx?reportid=" + $("#selMasters").val() +  "&BranchId=" + $("#ddlBranch").val();
+        }
+        else if ($("#selMasters").val() === "205") {
+            console.log($("#ddlStore").val());
+            url = "../../Reports/AssetReport.aspx?reportid=" + $("#selMasters").val() + "&locationId=" + $("#ddlLoc").val();
+        }
+        else if ($("#selMasters").val() === "228") {
+            console.log($("#ddlStore").val());
+            url = "../../Reports/AssetReport.aspx?reportid=" + $("#selMasters").val() + "&locationId=" + $("#ddlLoc").val();
+        }
+        else {
+            url = "";
+        }
+        console.log(url);
+        var myframe = document.getElementById("iframeReportViewer");
+        if (myframe != null) {
+            if (myframe.src) {
+                myframe.src = url;
+            }
+            else if (myframe.contentWindow != null && myframe.contentWindow.location != null) {
+                myframe.contentWindow.location = url;
+            }
+            else {
+                myframe.setAttribute('src', url);
+            }
+            return false;
+        }
+    }
+
+    function LoadAssetGrid() {
+        var BranchId = $("#ddlBranch").val();
+        if (BranchId == undefined || BranchId == "") BranchId = 0
+        $("#AssetModal").dialog({
+            height: 500,
+            width: 700,
+            modal: true,
+            open: function (evt, ui) {
+                $.ajax({
+                    url: "/Asset/Asset/GetBranchAsset",
+                    cache: false,
+                    async: true,
+                    method: "GET",
+                    dataType: "JSON",
+                    data: { BranchId: BranchId },
+                    success: function (response) {
+                        $("#Assetgrid").pqGrid("option", "dataModel.data", response);
+                        $("#Assetgrid").pqGrid("refreshDataAndView");
+                    }
+                });
+            },
+            close: function (event, ui) {
+            },
+            show: {
+                effect: "blind",
+                duration: 500
+            }
+        });
+    }
+
+    function ClearForm() {
+        $('#FromDate').data("DateTimePicker").disable();
+        $('#ToDate').data("DateTimePicker").disable();
+        ResetDate("FromDate");
+        ResetDate("ToDate");
+        $("#AssetCode").prop('disabled', true);
+        $('#ddlBranch').prop('disabled', true);
+        $('#ddlLoc').prop('disabled', true);
+        $('#ddlMaintenanceType').prop('disabled', true);
+        $("#AssetId").val("");
+        $("#AssetCode").val("");
+    }
+
+    $(document).ready(function () {
+        $.ajax({
+            type: "GET",
+            url: "/MaintainanceType/AllActiveMaintainanceType",
+            datatype: "Json",
+            async: true,
+            success: function (data) {
+                $.each(data, function (index, value) {
+                    $('#ddlMaintenanceType').append('<option value="' + value.MaintainanceTypeId + '">' + value.MaintainanceType + '</option>');
+                });
+            }
+        });
+        $.ajax({
+            type: "GET",
+            url: "/Master/AllBranches",
+            datatype: "Json",
+            async: true,
+            success: function (data) {
+                $.each(data, function (index, value) {
+                    $('#ddlBranch').append('<option value="' + value.BranchID + '">' + value.BranchName + '</option>');
+                });
+            }
+        });
+        //$.ajax({
+        //    type: "GET",
+        //    url: "/Master/AllActivelocation",
+        //    datatype: "Json",
+        //    async: true,
+        //    success: function (data) {
+        //        $.each(data, function (index, value) {
+        //            $('#ddlLoc').append('<option value="' + value.LocationId + '">' + value.LocationName + '</option>');
+        //        });
+        //    }
+        //});
+        $('#AssetCode').on('click', function () {
+            if ($("#ddlBranch").val() == "" || $("#ddlBranch").val() == undefined) {
+                ShowAlert("error", "Please Select Branch");
+                return;
+            }
+            LoadAssetGrid();
+        });
+        dataList = { location: 'local', sorting: 'local', paging: 'local', dataType: 'JSON' };
+        var setAssetCol = [
+               { dataIndx: "AssetId", hidden: true },
+               { title: "AssetCode", dataIndx: "AssetCode", width: 100, dataType: "string", filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } },
+               { title: "Item Name", dataIndx: "ItemName", width: 200, dataType: "string", filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } },
+               { title: "Serial No", dataIndx: "SerialNo", width: 90 },
+               { title: "Model No", dataIndx: "ModelNo", width: 80 },
+               { title: "", dataIndx: "ItemId", hidden: true },
+               { title: "", dataIndx: "SupplierId", hidden: true },
+               { title: "", dataIndx: "SupplierName", hidden: true },
+        ];
+        setAssetList = {
+            width: "auto", //auto width
+            height: "100%-30", //height in %age
+            selectionModel: { type: 'cell' },
+            autoSizeInterval: 0,
+            scrollModel: { autoFit: true },
+            dragColumns: { enabled: false },
+            hoverMode: 'cell',
+            editor: { type: 'textbox' },
+            filterModel: { on: true, mode: "AND", header: true },
+            showTop: false,
+            resizable: true,
+            virtualX: true,
+            colModel: setAssetCol,
+            dataModel: dataList,
+            toggle: function (evt, ui) {
+                if (ui.state == 'max') {
+                    $(".ui-dialog,.ui-widget-overlay").css('position', 'static');
+                }
+                else {
+                    $(".ui-dialog,.ui-widget-overlay").css('position', 'absolute');
+                }
+            },
+            cellClick: function (evt, ui) {
+                if (ui.rowData) {
+                    var rowIndx = parseInt(ui.rowIndx);
+                    var record = ui.rowData;
+                    $("#AssetId").val(record.AssetId);
+                    $("#AssetCode").val(record.AssetCode);
+                    ClosePopupWindow("AssetModal");
+                }
+            },
+            pageModel: { type: "local", rPP: 20 }
+        };
+        $("#Assetgrid").pqGrid(setAssetList);
+    });
+    $(document).ready(function () {
+        ClearForm();
+        $('#btnPrint').on('click', function () {
+            if ($("#selMasters").val() == "201") {
+                if ($("#ddlBranch").val() == "") {
+                    ShowAlert("error", "Please Select Branch");
+                    return;
+                }
+            }
+            ReportValidationCheck();
+        });
+
+        $('#btnReset').on('click', function () {
+            $("#selMasters").val("");
+            ClearForm();
+        });
+        
+        $('#selMasters').change(function () {
+            ClearForm();
+            if ($("#selMasters").val() == "201") {
+                $("#AssetCode").prop('disabled', false);
+                $('#ddlBranch').prop('disabled', false);
+            }
+            else if ($("#selMasters").val() == "202") {
+                $('#FromDate').data("DateTimePicker").enable();
+                $('#ToDate').data("DateTimePicker").enable();
+                $('#ddlMaintenanceType').prop('disabled', false);
+            }
+            else if ($("#selMasters").val() == "203") {
+                $('#FromDate').data("DateTimePicker").enable();
+                $('#ToDate').data("DateTimePicker").enable();
+                $('#ddlBranch').prop('disabled', false);
+            }
+            else if ($("#selMasters").val() == "204") {
+                $('#ddlBranch').prop('disabled', false);
+            }
+            else if ($("#selMasters").val() == "205") {
+                $('#ddlBranch').prop('disabled', false);
+                $('#ddlLoc').prop('disabled', false);
+            }
+        });
+
+        $('select#ddlBranch')
+            .change(function () {
+                var branchId = $("#ddlBranch").val();
+                if (branchId.length > 0)
+                    $.ajax({
+                        type: "GET",
+                        url: "/Location/GetBranchLocation",
+                        datatype: "Json",
+                        async: true,
+                        data: { BranchId: branchId },
+                        success: function (data) {
+                            $("#ddlLoc").html("");
+                            InsertDefaultSelect($('#ddlLoc'));
+                            $.each(data,
+                                function (index, value) {
+                                    $('#ddlLoc')
+                                        .append('<option value="' +
+                                            value.LocationId +
+                                            '">' +
+                                            value.LocationName +
+                                            '</option>');
+                                });
+                        }
+                    });
+            });
+
+    });
+</script>

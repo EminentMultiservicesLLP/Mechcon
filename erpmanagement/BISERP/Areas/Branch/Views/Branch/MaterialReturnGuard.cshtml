@@ -1,0 +1,434 @@
+﻿@model BISERP.Area.Branch.Models.MaterialReturnGuardModel
+@{
+    Layout = "~/Areas/Branch/Views/Shared/_IssueReturnLayout.cshtml";
+}
+<script>
+    $(function () {
+        $(".datepicker").datepicker({
+            showOn: "button",
+            buttonImage: "",
+            buttonImageOnly: true,
+            buttonText: "",
+            dateFormat: "dd-MM-yy"
+        }).datepicker("setDate", new Date());
+        $("#anim").change(function () {
+            $(".datepicker").datepicker("option", "showAnim", "fadeIn");
+        });
+    });
+</script>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        Entry Form
+                    </div>
+                </div>                
+                <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <a data-toggle="collapse" class="btn btn-success" id="btnAdd">Reset</a>
+                                <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                            </div>
+                        </div>
+                        <br/>
+                        <div class="row">
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-3">
+                                    @Html.LabelFor(m => m.ReturnDate)
+                                    @Html.TextBoxFor(model => model.ReturnDate, new { @class = "form-control datepicker", @readonly = "true" })
+                                    @Html.HiddenFor(model => model.ReturnId)
+                                    @Html.HiddenFor(model => model.EmpId)
+                                    @Html.HiddenFor(model => model.BranchId)
+                                </div>
+                            </div>
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-3">
+                                    @Html.LabelFor(m => m.ReturnNo)
+                                    @Html.TextBoxFor(model => model.ReturnNo, new { @class = "form-control", @readonly = "true" })
+                                    @Html.ValidationMessageFor(model => model.ReturnNo)
+                                </div>
+                            </div>
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-3">
+                                    @Html.LabelFor(m => m.EmpName)
+                                    @Html.TextBoxFor(m => m.EmpName, new { @class = "form-control", @disabled = "true" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-3">
+                                    @Html.LabelFor(m => m.StoreId, new { @class = "required" })
+                                    @Html.DropDownList("ddlStore", new SelectList(string.Empty, "Value", "Text"), "Select Store", new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-3">
+                                    @Html.LabelFor(m => m.IssueNo, new { @class = "required" })
+                                    @Html.TextBoxFor(m => m.IssueNo, "", new Dictionary<string, object> { { "class", "form-control" } })
+                                    @Html.HiddenFor(m => m.IssueId)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="container fill">
+                                <div id="grid"></div>
+                            </div>
+                        </div>                        
+                        <div class="row">
+                            <div class="col-sm-9"></div>                           
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-3">
+                                    @Html.Label("TotalAmount")
+                                    @Html.TextBox("TotalAmount","", new { @class = "form-control", @disabled="true" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3"></div>
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-3">
+                                    @Html.LabelFor(m => m.ReceivedAmount)
+                                    @Html.TextBoxFor(m => m.ReceivedAmount, new { @class = "form-control", @disabled = "true" })
+                                </div>
+                            </div>
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-3">
+                                    @Html.LabelFor(m => m.BalanceAmount)
+                                    @Html.TextBoxFor(m => m.BalanceAmount, new { @class = "form-control", @disabled = "true" })
+                                </div>
+                            </div>
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-3">
+                                    @Html.LabelFor(m => m.NetAmount)
+                                    @Html.TextBoxFor(m => m.NetAmount, new { @class = "form-control", @disabled = "true" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    
+    <div id="IssueModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Select Issue No</h4>
+                </div>            
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div id="Issuegrid" ></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        var $Grid;
+        var setM, colM, dataM;
+        var setIs, colIs, dataIs;
+        function ClearForm() {
+            $("#ReturnId").val("");
+            $("#ReturnDate").datepicker().datepicker("setDate", new Date());
+            $("#ReturnNo").val("");
+            $("#IssueNo").val("");
+            $("#ddlStore").val("");
+            $("#GrossAmount").val("");
+            $("#Discount").val("");
+            $("#TotalAmount").val("");
+            $("#NetAmount").val("");
+            ClearParamGrid("grid");
+        }        
+        (function ($) {
+            $('#IssueNo').on('click', function () {
+                if ($("#ddlStore").val() == "") {
+                    ShowAlert("error", "Please Select Store");
+                    return;
+                }
+                LoadIssueGrid();
+            });
+
+            /******* Load All Store List *******/
+            var branchid = @Model.BranchId.ToString()
+            $.ajax({
+                type: "GET",
+                url: "/Master/BranchStores",
+                datatype: "Json",
+                data: { BranchId: branchid },
+                async: true,
+                success: function (data) {
+                    $.each(data, function (index, value) {
+                        $('#ddlStore').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                    });
+                }
+            });
+
+            /*************** Indent Item Details grid after row selection *************/
+            colM = [
+                    {
+                        dataIndx: "state", width: 10, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', resizable: false, sortable: false,
+                        editor: false, dataType: 'bool', title: "<input type='checkbox' />",
+                        cb: {
+                            select: true,
+                            all: false, 
+                            header: true 
+                        }
+                    },
+                    { title: "", dataIndx: "IssueDetailsId", width: 10, dataType: "integer", editable: false, hidden: true },
+                    { title: "", dataIndx: "IssueId", width: 10, dataType: "integer", editable: false, hidden: true },
+                    { title: "", dataIndx: "ItemId", width: 10, dataType: "integer", editable: false, hidden: true },
+                    { title: "", dataIndx: "BatchId", width: 10, dataType: "integer", editable: false, hidden: true },
+                    { title: "Item Name", dataIndx: "ItemName", width: 200, dataType: "string", editable: false },
+                    { title: "Batch", dataIndx: "BatchName", width: 150, dataType: "string", editable: false },
+                    { title: "Issued Quantity", dataIndx: "IssuedQuantity", width: 150, dataType: "float", editable: false },
+                    { title: "Ret. Quantity", dataIndx: "Quantity", width: 150, dataType: "float", resizable: false },
+                    { title: "MRP", dataIndx: "MRP", width: 100, resizable: false, dataType: "float", editable: false },
+                    { title: "Discount", dataIndx: "Discount", width: 100, dataType: "float", editable: false },
+                    { title: "Amount", dataIndx: "IssueAmount", width: 100, dataType: "float", editable: false },
+                    {
+                        title: "Ret. Amount", dataIndx: "Amount", width: 120, dataType: "float", resizable: false, editable: false,
+                        format: '##,###.00',
+                        formula: function (ui) {
+                            var rd = ui.rowData;
+                            return (rd.MRP * rd.Quantity);
+                        }
+                    }
+            ];
+            dataM = {
+                location: 'local',
+                sorting: 'local',
+                paging: 'local',
+                dataType: 'JSON'
+            };
+
+            setM = {
+                height: '300',
+                maxheight: '400',
+                title: "Item Details",
+                sortable: false,
+                numberCell: { show: false },
+                selectionModel: { type: 'row' },
+                hoverMode: 'cell',
+                editor: { type: 'textbox' },
+                showTop: true,
+                resizable: true,
+                virtualX: true,
+                virtualY: true,
+                editModel: {
+                    saveKey: $.ui.keyCode.ENTER
+                },
+                cellSave: function (evt, ui) {
+                    this.refreshRow(ui);
+                    CalculateTotalAmount();
+                },
+                cellBeforeSave: function (event, ui) {
+                    var dataIndx = ui.dataIndx, newVal = ui.newVal;
+                    var data = ui.rowData;
+                    if (dataIndx == 'Quantity') {
+                        if (newVal > data.IssuedQuantity) {
+                            return false;
+                        }
+                    }
+                },
+                draggable: false,
+                colModel: colM,
+                dataModel: dataM,
+                pageModel: { type: "local", rPP: 20 },
+            };
+            $Grid = $("#grid").pqGrid(setM);
+            
+            $("#btnAdd").on("click", ClearForm);
+
+            $("#btnSave").click(function () {
+                if ($("#ddlStore").val() == "") {
+                    ShowAlert("error", "Please Select Store");
+                    return;
+                }
+                if ($("#IssueId").val() == "") {
+                    ShowAlert("error", "Please Issue No");
+                    return;
+                }
+                var items = $Grid.pqGrid("getData", { dataIndx: ['IssueDetailsId', 'ItemId', 'BatchId', 'Quantity', 'MRP', 'Discount', 'Amount', 'state'] });
+                if (items != undefined) {
+                    var selectedItemsMainGrid = jLinq.from(items).equals("state", true).select();
+                    if (selectedItemsMainGrid.length > 0) {
+                        if (jLinq.from(selectedItemsMainGrid).lessEquals("Quantity", 0).or(undefined).count() > 0) {
+                            ShowAlert("error", "Please Enter Return Quantity for selected items");
+                            return;
+                        }
+                    }
+                    else {
+                        ShowAlert("error", "Please Select at least one Item before saving.");
+                        return;
+                    }
+                }
+
+                DisableClick("btnSave");
+                var items = JSON.stringify({
+                    ReturnId: $("#ReturnId").val(),
+                    ReturnDate: $("#ReturnDate").val(), //Reading text box values using Jquery
+                    ReturnNo: $("#ReturnNo").val(),
+                    IssueId: $("#IssueId").val(),
+                    StoreId: $("#ddlStore").val(),
+                    BranchId: $("#BranchId").val(),
+                    EmpId: $("#EmpId").val(),
+                    NetAmount: $("#NetAmount").val(),
+                    MaterialReturnGuardDt: items
+                });
+                $.ajax(
+                {
+                    type: "POST", //HTTP POST Method
+                    traditional: true,
+                    contentType: 'application/json; charset=utf-8',
+                    url: '/MaterialReturnGuard/SaveMaterialIssueGuard', // Controller/View
+                    data: items,
+                    success: function (msg) {
+                        if (msg.success) {
+                            ClearForm();
+                            ShowAlert("success", "Generated Return No : " + msg.responseText);
+                        }
+                        else {
+                            ShowAlert("error", msg.responseText);
+                        }
+                    },
+                    error: function (jqXHR, exception) {
+                        ShowAlert("error", "Server Error! Please contact administrator.");
+                    }
+                });
+            });
+        })(jQuery);
+
+        $(document).ready(function () {
+            var dataM = { location: "local", sorting: 'local' };
+            var colM = [
+                    { title: "", dataIndx: "IssueId", dataType: "integer", hidden: true },
+                    {
+                        title: "Issue No", dataIndx: "IssueNo", width: 400,
+                        filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }, width: 200
+                    },
+                    {
+                        title: "Issue Date", dataIndx: "strIssueDate", width: 150, dataType: "date"
+                    },
+                    { title: "", dataIndx: "BalanceAmount", dataType: "float", hidden: false },
+                    { title: "", dataIndx: "ReceivedAmount", dataType: "float", hidden: false }
+            ];
+
+            var setM = {
+                width: '100%',
+                height: 400,
+                sortable: false,
+                numberCell: { show: false },
+                hoverMode: 'cell',
+                showTop: false,
+                resizable: false,
+                scrollModel: { autoFit: true },
+                draggable: false,
+                wrap: false,
+                editable: false,
+                columnBorders: true,
+                filterModel: { on: true, mode: "AND", header: true },
+                colModel: colM,
+                dataModel: dataM,
+                pageModel: { type: "local", rPP: 20 },
+                rowClick: function (evt, ui) {
+                    ClearParamGrid("Grid");
+                    $("#IssueModal").modal('toggle');
+                    if (ui.rowData) {
+                        var rowIndx = parseInt(ui.rowIndx);
+                        var record = ui.rowData;
+                        $("#IssueId").val(record.IssueId);
+                        $("#IssueNo").val(record.IssueNo);
+                        $("#BalanceAmount").val(record.BalanceAmount);
+                        $("#ReceivedAmount").val(record.ReceivedAmount);
+                        $.ajax({
+                            type: "GET",
+                            url: "/MaterialIssueGuard/GetIssueGuardDetails/",
+                            data: { IssueId: record.IssueId },
+                            datatype: "Json",
+                            success: function (data) {
+                                var dataMGrid = [];
+                                $.each(data.dtmodel, function (key, value) {
+                                    console.log(data.dtmodel);
+                                    var grdData = {
+                                        'IssueDetailsId': value.IssueDetailsId,
+                                        'IssueId': value.IssueId,
+                                        'ItemId': value.ItemId,
+                                        'BatchId': value.BatchId,
+                                        'ItemName': value.ItemName,
+                                        'BatchName': value.BatchName,
+                                        'Quantity': 0,
+                                        'IssuedQuantity': value.IssuedQuantity,
+                                        'MRP': value.MRP,
+                                        'Discount': value.Discount,
+                                        'IssueAmount': value.Amount,
+                                        'state':true
+                                    }
+                                    dataMGrid.push(grdData);
+                                });
+                                $Grid.pqGrid("option", "dataModel.data", dataMGrid);
+                                $Grid.pqGrid("refreshDataAndView");
+                            }
+                        });
+                    }
+                }
+            };
+            $IssueGrid = $("#Issuegrid").pqGrid(setM);
+        });
+        function LoadIssueGrid() {
+            $.ajax({
+                url: "/MaterialIssueGuard/GetMaterialIssueGuard",
+                cache: false,
+                async: true,
+                method: "GET",
+                dataType: "JSON",
+                data: { StoreId: $("#ddlStore").val(), EmpId: $("#EmpId").val() },
+                beforeSend: function () {
+                    $IssueGrid.pqGrid("showLoading");
+                },
+                complete: function () {
+                    $IssueGrid.pqGrid("hideLoading");
+                },
+                success: function (response) {
+                    $("#IssueModal").modal('toggle');
+                    $IssueGrid.pqGrid("hideLoading");                    
+
+                    $IssueGrid.pqGrid("option", "dataModel.data", response.mimodel);
+                    $IssueGrid.pqGrid("refreshDataAndView");
+                },
+                error: function (request, status, error) {                    
+                    ShowAlert("error", "Error while loading Issue list");
+                    return;
+                }
+            });
+        }
+        function CalculateTotalAmount() {
+            var getData = $Grid.pqGrid("option", "dataModel.data");
+            var netAmount = 0;
+            $.each(getData, function (_, item) {
+                if (!isNaN(item.Amount))
+                    netAmount += parseFloat(item.Amount);
+            });
+            netAmount = parseFloat(netAmount);
+            var balanceAmt = $("#BalanceAmount").val();
+            var returnAmt = balanceAmt - netAmount;
+            if (returnAmt < 0)
+                returnAmt = balanceAmt;
+            returnAmt = parseFloat(returnAmt);
+            $("#TotalAmount").val(netAmount.toFixed(2));
+            $("#NetAmount").val(returnAmt.toFixed(2));
+        }
+    </script>
+}

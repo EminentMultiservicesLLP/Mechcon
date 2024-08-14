@@ -1,0 +1,474 @@
+﻿@model IEnumerable<BISERP.Models.UserMangement.ReportListModel>
+<script>
+    $(function () {
+        $('#FromDate').datetimepicker({
+            format: 'DD-MMM-YYYY',
+            extraFormats: ['DD-MM-YYYY', 'DD-MM-YY'],
+            defaultDate: new Date()
+        });
+        $('#ToDate').datetimepicker({
+            format: 'DD-MMM-YYYY',
+            extraFormats: ['DD-MM-YYYY', 'DD-MM-YY'],
+            defaultDate: new Date()
+        });
+    });
+</script>
+@using (Html.BeginForm())
+{
+
+    <div id="MasterPlaceHolder" style="height:100%">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-groupingBoder">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-3">
+                                    Report
+                                    <select id="selMasters" class="wrapper-dropdown-content form-control">
+                                        <option class="wrapperdropdown-content">Select</option>
+                                        @foreach (var item in Model)
+                                        {
+                                            <option class="wrapperdropdown-content" value="@item.ReportID">@item.ReportName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-3">
+                                    @Html.Label("From Date")
+                                    <div class='input-group date' id='FromDate'>
+                                        <input type='text' class="form-control" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-3">
+                                    @Html.Label("To Date")
+                                    <div class='input-group date' id='ToDate'>
+                                        <input type='text' class="form-control" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-12">
+                                    @Html.Label("Options")
+                                    <input type="radio" name="Options" value="MaterialIssue" checked>Material Issue &nbsp;&nbsp;&nbsp;&nbsp;
+                                    <input type="radio" name="Options" value="Item"> Item &nbsp;&nbsp;&nbsp;&nbsp;
+                                    <input type="radio" name="Options" value="FromStore"> Project &nbsp;&nbsp;&nbsp;&nbsp;
+                                    <input type="radio" name="Options" value="ToStore"> To Store &nbsp;&nbsp;&nbsp;&nbsp;
+                                </div>
+                            </div>
+                        </div>                        
+                        <div class="row">
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-3">
+                                    @Html.Label("Store")
+                                    @Html.DropDownList("ddlStore", new SelectList(string.Empty, "Value", "Text"), "Select Store", new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-3">
+                                    @Html.Label("Issue No")
+                                    @Html.TextBox("IssueNo", "", new { @class = "form-control" })
+                                    @Html.Hidden("IssueId")
+                                </div>
+                            </div>
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-3">
+                                    @Html.Label("Item Name")
+                                    @Html.TextBox("ItemName", "", new { @class = "form-control" })
+                                    @Html.Hidden("ItemId")
+                                </div>
+                            </div>
+                           
+                        </div>
+                        
+                        <br>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <button type="button" class="btn btn-success" id="btnPrint">Show</button>
+                                <button type="button" class="btn btn-success" id="btnReset">Reset</button>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <iframe id="iframeReportViewer" style="width:100%;height:300px"></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="IssueModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div id="Issuegrid"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>  
+    <div id="ItemModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div id="Itemgrid"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<div>
+    <script>
+        var $IssueGrid;
+        var $ItemGrid;
+        function ReportValidationCheck() {
+            if ($("#selMasters").val() == "111") {
+                url = "../../Reports/ReportViewer.aspx?reportid=" + $("#selMasters").val() + "&issueid=" + $("#IssueId").val();
+            }
+            else if ($("#selMasters").val() == "112") {
+                var storeid = $("#ddlStore").val();
+                if (storeid == "" || storeid == "Select" || storeid == undefined)
+                    storeid = 0;
+                var fstoreid = 0, tstoreid = 0;
+                if ($("[name='Options']:checked").val() == "FromStore") {
+                    fstoreid = storeid;
+                }
+                else if ($("[name='Options']:checked").val() == "ToStore") {
+                    tstoreid = storeid;
+                }
+                else {
+                    fstoreid = tstoreid = 0;
+                }
+
+                url = "../../Reports/ReportViewer.aspx?reportid=" + $("#selMasters").val() + "&fromdate=" + $("#FromDate").data('date') + "&todate=" + $("#ToDate").data('date') + "&fstoreid=" + fstoreid + "&tstoreid=" + tstoreid;
+            }
+            else if ($("#selMasters").val() == "113") {
+                url = "../Reports/ReportViewer.aspx?reportid=" + $("#selMasters").val() + "&issueid=" + $("#IssueId").val();
+            }
+            else if ($("#selMasters").val() == "114") {
+                var itemid = $("#ItemId").val();
+                if (itemid == "" || itemid == undefined)
+                    itemid = 0;
+
+                url = "../../Reports/ReportViewer.aspx?reportid=" + $("#selMasters").val() + "&fromdate=" + $("#FromDate").data('date') + "&todate=" + $("#ToDate").data('date') + "&itemid=" + itemid;
+            }
+            else if ($("#selMasters").val() == "115") {
+                var storeid = $("#ddlStore").val();
+                if (storeid == "" || storeid == undefined)
+                    storeid = 0;
+
+                url = "../../Reports/ReportViewer.aspx?reportid=" + $("#selMasters").val() + "&fromdate=" + $("#FromDate").data('date') + "&todate=" + $("#ToDate").data('date') + "&storeid=" + storeid;
+            }
+            else if ($("#selMasters").val() == "206") {
+                var fDate = $("#FromDate").data('date');
+                var tDate = $("#ToDate").data('date');
+                if ((fDate != undefined && fDate.length > 0) || (tDate != undefined && tDate.length > 0))
+                    url = "../../Reports/ReportViewer.aspx?reportid=" + $("#selMasters").val() + "&fromdate=" + $("#FromDate").data('date') + "&todate=" + $("#ToDate").data('date');
+                else
+                    url = "../../Reports/ReportViewer.aspx?reportid=" + $("#selMasters").val();
+            }
+            else if ($("#selMasters").val() == "207") {
+                var storeid = $("#ddlStore").val();
+                if (storeid == "" || storeid == "Select" || storeid == undefined)
+                    storeid = 0;
+                url = "../../Reports/ReportViewer.aspx?reportid=" + $("#selMasters").val() + "&fromdate=" + $("#FromDate").data('date') + "&todate=" + $("#ToDate").data('date') + "&storeid=" + storeid;
+            }
+            else {
+                url = "";
+            }
+            //url = "../Reports/ReportViewer.aspx";
+            var myframe = document.getElementById("iframeReportViewer");
+            if (myframe != null) {
+                if (myframe.src) {
+                    myframe.src = url;
+                }
+                else if (myframe.contentWindow != null && myframe.contentWindow.location != null) {
+                    myframe.contentWindow.location = url;
+                }
+                else {
+                    myframe.setAttribute('src', url);
+                }
+                return false;
+            }
+        }
+        function LoadIssueGrid() {
+            $.ajax({
+                url: "/MaterialIssue/AllMaterialIssueforAuthorization",
+                cache: false,
+                async: true,
+                method: "GET",
+                dataType: "JSON",
+                data: { fromdate: $("#FromDate").data('date'), todate: $("#ToDate").data('date'), StoreId: $("#ddlStore").val() },
+                success: function (response) {
+                    $("#IssueModal").modal('toggle');
+                    $IssueGrid.pqGrid("option", "dataModel.data", response.records);
+                    $IssueGrid.pqGrid("refreshDataAndView");
+                }
+            });
+        }
+        function LoadItemGrid() {
+            $.ajax({
+                url: "/ItemMaster/ActiveItemMasters",
+                cache: false,
+                async: true,
+                method: "GET",
+                dataType: "JSON",
+                success: function (response) {
+                    $Itemgrid.pqGrid("option", "dataModel.data", response);
+                    $Itemgrid.pqGrid("refreshDataAndView");
+                }
+            });
+        }
+        function ClearForm() {
+            $("#IssueId").val("");
+            $("#IssueNo").val("");
+            $("#ItemName").val("");
+            $("#ItemId").val("");
+
+            $('#FromDate').data("DateTimePicker").disable();
+            $('#ToDate').data("DateTimePicker").disable();
+            $("#IssueNo").prop('disabled', true);
+            $("#ddlStore").prop('disabled', true);
+            $("#ItemName").prop('disabled', true);
+            $('input:radio[name="Options"][value="MaterialIssue"]').prop('checked', true);
+            ResetDate("FromDate");
+            ResetDate("ToDate");
+        }
+        $(document).ready(function () {
+            var dataM = { location: "local", sorting: 'local' };
+            var colM = [
+                { title: "", dataIndx: "ID", dataType: "integer", hidden: true },
+                {
+                    title: "Item Name", dataIndx: "Name", width: 400,
+                    filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                },
+                {
+                    title: "Category", dataIndx: "itemtypename", width: 150, dataType: "date", filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                }
+            ];
+
+            var setM = {
+                height: 400,
+                sortable: false,
+                numberCell: { show: false },
+                hoverMode: 'cell',
+                showTop: false,
+                resizable: false,
+                draggable: false,
+                wrap: false,
+                editable: false,
+                columnBorders: true,
+                filterModel: { on: true, mode: "AND", header: true },
+                colModel: colM,
+                dataModel: dataM,
+                resizable: true,
+                virtualX: true,
+                pageModel: { type: "local", rPP: 20 },
+                rowClick: function (evt, ui) {
+                    $("#ItemModal").modal('toggle');
+                    if (ui.rowData) {
+                        var rowIndx = parseInt(ui.rowIndx);
+                        var record = ui.rowData;
+                        $("#ItemId").val(record.ID);
+                        $("#ItemName").val(record.Name);
+                    }
+                }
+            };
+            $Itemgrid = $("#Itemgrid").pqGrid(setM);
+        });
+        $(document).ready(function () {
+            var dataM = { location: "local", sorting: 'local' };
+            var colM = [
+                { title: "", dataIndx: "IssueId", dataType: "integer", hidden: true },
+                {
+                    title: "IssueNo", dataIndx: "IssueNo", width: 300,
+                    filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                },
+                { title: "IssueDate", dataIndx: "strIssueDate", width: 100, dataType: "string" }
+            ];
+
+            var setM = {
+                height: 400,
+                sortable: false,
+                numberCell: { show: false },
+                hoverMode: 'cell',
+                showTop: false,
+                resizable: false,
+                draggable: false,
+                wrap: false,
+                editable: false,
+                columnBorders: true,
+                filterModel: { on: true, mode: "AND", header: true },
+                colModel: colM,
+                dataModel: dataM,
+                virtualX: true,
+                virtualY: true,
+                pageModel: { type: "local", rPP: 20 },
+                rowClick: function (evt, ui) {
+                    $("#IssueModal").modal('toggle');
+                    if (ui.rowData) {
+                        var rowIndx = parseInt(ui.rowIndx);
+                        var record = ui.rowData;
+                        $("#IssueId").val(record.IssueId);
+                        $("#IssueNo").val(record.IssueNo);
+                    }
+                }
+            };
+            $IssueGrid = $("#Issuegrid").pqGrid(setM);
+        });
+
+        $(document).ready(function () {
+            ClearForm();
+            LoadItemGrid();
+            $('#btnReset').on('click', function () {
+                ClearForm();
+            });
+            $('#btnPrint').on('click', function () {
+                if ($("#selMasters").val() == "111") {
+                    if ($("#IssueNo").val() == "") {
+                        ShowAlert("error", "Please Select Issue No");
+                        return;
+                    }
+                }
+                else if ($("#selMasters").val() == "112") {
+                    if ($("[name='Options']:checked").val() == "FromStore" || $("[name='Options']:checked").val() == "ToStore") {
+                        if ($("#ddlStore").val() == "" || $("#ddlStore").val() == "Select") {
+                            ShowAlert("error", "Please Select Store");
+                            return;
+                        }
+                    }
+                }
+                else if ($("#selMasters").val() == "114") {
+                    if ($("#ItemName").val() == "") {
+                        ShowAlert("error", "Please Select Item");
+                        return;
+                    }
+                }
+                else if ($("#selMasters").val() == "115") {
+                    if ($("#ddlStore").val() == "") {
+                        ShowAlert("error", "Please Select Store");
+                        return;
+                    }
+                }
+                ReportValidationCheck();
+            });
+
+            $.ajax({
+                type: "GET",
+                url: "/Master/AllStores",
+                datatype: "Json",
+                async: true,
+                success: function (data) {
+                    $.each(data, function (index, value) {
+                        $('#ddlStore').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                    });
+                }
+            });
+
+            $('#IssueNo').on('click', function () {
+                LoadIssueGrid();
+            });
+
+            $('#ItemName').on('click', function () {
+                $("#ItemModal").modal('toggle');
+            });
+            $('#selMasters').change(function () {
+                ClearForm();
+                if ($("#selMasters").val() == "111") {
+                    $('#FromDate').data("DateTimePicker").enable();
+                    $('#ToDate').data("DateTimePicker").enable();
+                    $("#IssueNo").prop('disabled', false);
+                    $("#ddlStore").prop('disabled', false);
+                    $('input:radio[name="Options"][value="MaterialIssue"]').prop('checked', true);
+                }
+                else if ($("#selMasters").val() == "112") {
+                    $("input[type=radio]").attr('disabled', true);
+                    $('#FromDate').data("DateTimePicker").enable();
+                    $('#ToDate').data("DateTimePicker").enable();
+                    if ($("[name='AuthCancel']:checked").val() == "FromStore" || $("[name='AuthCancel']:checked").val() == "ToStore") {
+                        $("#ddlStore").prop('disabled', false);
+                    }
+                }
+                else if ($("#selMasters").val() == "114") {
+                    $('input:radio[name="Options"][value="Item"]').prop('checked', true);
+                    $("#ItemName").prop('disabled', false);
+                    $('#FromDate').data("DateTimePicker").enable();
+                    $('#ToDate').data("DateTimePicker").enable();
+                }
+                else if ($("#selMasters").val() == "115") {
+                    $("input[type=radio]").attr('disabled', true);
+                    $("#ItemName").prop('disabled', true);
+                    $("#IssueNo").prop('disabled', true);
+                    $('#FromDate').data("DateTimePicker").enable();
+                    $('#ToDate').data("DateTimePicker").enable();
+                    $("#ddlStore").prop('disabled', false);
+                }
+                else if ($("#selMasters").val() == "206") {
+                    $("input[type=radio]").attr('disabled', true);
+                    $("#ItemName").prop('disabled', true);
+                    $("#IssueNo").prop('disabled', true);
+                    $('#FromDate').data("DateTimePicker").enable();
+                    $('#ToDate').data("DateTimePicker").enable();
+                    $("#ddlStore").prop('disabled', true);
+                }
+                else if ($("#selMasters").val() == "207") {
+                    $("input[type=radio]").attr('disabled', true);
+                    $("#ItemName").prop('disabled', true);
+                    $("#IssueNo").prop('disabled', true);
+                    $('#FromDate').data("DateTimePicker").enable();
+                    $('#ToDate').data("DateTimePicker").enable();
+                    $("#ddlStore").prop('disabled', false);
+                }
+
+            });
+
+            $('input[type=radio][name=Options]').change(function () {
+                if ($("[name='Options']:checked").val() == "FromStore" || $("[name='Options']:checked").val() == "ToStore") {
+                    $("#ddlStore").prop('disabled', false);
+                }
+                else {
+                    $("#ddlStore").prop('disabled', true);
+                }
+            });
+            $('input[type=radio][name=Options]').change(function () {
+                if ($("[name='Options']:checked").val() == "Item") {
+                    $("#ItemName").prop('disabled', false);
+                }
+                else {
+                    $("#ItemName").prop('disabled', true);
+                }
+            });
+        });
+    </script>
+</div>

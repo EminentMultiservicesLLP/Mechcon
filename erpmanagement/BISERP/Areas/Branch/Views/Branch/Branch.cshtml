@@ -1,0 +1,57 @@
+﻿@model BISERP.Models.UserMangement.MenuUserRightsModel
+@{
+    ViewBag.Title = "Branch";
+    Layout = "~/Areas/Branch/Views/Shared/_BranchLayout.cshtml";
+}
+@using (Html.BeginForm())
+{
+    var loadingFirstTime = true;
+    <div id="content">
+        <div id="content-tab">
+            <ul class="nav nav-tabs" id="tabs">
+
+                @foreach (var item in Model.Child)
+                {
+                    var activeClass = (loadingFirstTime ? "active" : "");
+                    <li class="@activeClass">
+                        <a class="tabs" href="#" id="@item.PageName">@item.MenuName</a>
+                    </li>
+                    loadingFirstTime = false;
+                }
+            </ul>
+        </div>
+        <div id="MasterPlaceHolder" style="height:100%">
+            <div id="MasterPlaceHolder" style="height:100%">
+                <div id="summaryGrid" style="height:350px; width:auto;"></div>
+            </div>
+        </div>
+
+    </div>
+}
+<script type="text/javascript">
+    var $SummaryGrid;
+    function LoadFormData(selectedID) {
+        $.get('/Branch/Branch/' + selectedID, function (data) {
+            $('#MasterPlaceHolder').html(data);
+            $('#MasterPlaceHolder').fadeIn('fast');
+        });
+    }
+
+    function LoadDefaultTab() {
+        if ($('.tabs') != undefined && $('.tabs').length > 0) {
+            var curElement = $('.tabs')[0];
+            var selectedID = curElement.id;
+            LoadFormData(selectedID);
+        }
+    }
+
+    $(function () {
+        $('.tabs').click(function () {
+            var selectedID = this.id;
+            clearTabSelection($(this));
+            LoadFormData(selectedID);
+        });
+
+        LoadDefaultTab();
+    });
+</script>

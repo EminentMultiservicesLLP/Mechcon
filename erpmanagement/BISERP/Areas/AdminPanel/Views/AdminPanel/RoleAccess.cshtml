@@ -1,0 +1,350 @@
+﻿<h5 class="page-header orangeDottedBottomBorder">User Access</h5>
+<div class="panel-group">
+    <div class="panel panel-default">
+        <div class="panel-groupingBoder">
+            <div class="panel-heading">
+                <div class="panel-title">
+                    <a class="collapsediv" data-toggle="collapse" href="#SearchDetails">
+                        User
+                    </a>
+                </div>
+            </div>
+            <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                <div class="panel-body">
+                    <div class="fill">
+                        <div class="row">
+                            <div class="col-md-2" @*style="display:none"*@>
+                                @Html.Label("Select User", new { @class = "required" })
+                                @Html.DropDownList("ddlUser", new SelectList(string.Empty, "Value", "Text"), "-- Select User --", new { @class = " form-control" })
+                            </div>
+                            <div class="col-md-2">
+                                <br />
+                                <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                            </div>
+
+                        </div>
+                        <div class="divider"></div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <h5>Parent Menu List</h5>
+                                <div id="ParentMenuGrid"></div>
+                            </div>
+                            <div class="col-md-4">
+                                <h5>Child Menu List</h5>
+                                <div id="ChildMenuGrid"></div>
+                            </div>
+                            <div class="col-md-4">
+                                <h5>Form List</h5>
+                                <div id="FormGrid"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+
+        $.ajax({
+            type: "GET",
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            url: "/RoleAccess/GetUsers",
+            success: function (data) {
+                $.each(data.data,
+                    function (index, value) {
+                        $('#ddlUser').append('<option value="' + value.UserId + '">' + value.UserName + '</option>');
+                    });
+            }
+        });
+        GetAllParentMenu();
+    });
+
+    var parentMenu = [];
+    var childMenus = [];
+    var colParentGrid = [
+        {
+            dataIndx: "MenuId", title: "", editable: false, hidden: true
+        },
+        //{
+        //    //custom title.
+        //    title: "",
+        //    dataIndx: "Status",
+        //    maxWidth: 25,
+        //    minWidth: 25,
+        //    menuIcon: false,
+        //},
+        {
+            title: "Menu Name", dataIndx: "MenuName", dataType: "string", width: 80, editable: false,
+        },
+    ]
+
+    var ParentMenugridOptions = gridDefaultOptions
+    ParentMenugridOptions.filterModel = { on: true, mode: "AND", header: false };
+    ParentMenugridOptions.height = 350;
+    ParentMenugridOptions.showTop = false;
+    ParentMenugridOptions.showBottom = false;
+    ParentMenugridOptions.title = 'Menu';
+    ParentMenugridOptions.colModel = colParentGrid;
+    ParentMenugridOptions.rowClick = function (evt, ui) {
+        if (ui.rowData) {
+            var data = ui.rowData;
+            ClearParamGrid('ChildMenuGrid');
+            ClearParamGrid('FormGrid');
+            GetAllChildMenu(data.MenuId);
+        }
+    }
+    ParentMenugridOptions.dataModel = { location: 'local', sorting: "local", };
+
+    $("#ParentMenuGrid").pqGrid(ParentMenugridOptions);
+
+    function GetAllParentMenu() {
+        var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();//{ "__RequestVerificationToken": antiForgeryToken },
+        ajaxCall("/RoleAccess/GetParentMenu", { "__RequestVerificationToken": antiForgeryToken }, {}, "GET", LoadParentMenu, function (response) { ajaxCallFailed(response, response.message); }, true, ["ParentMenuGrid"]);
+    }
+    function LoadParentMenu(response) {
+        if (response.success === true) {
+            response.data.forEach((menu) => {
+                parentMenu.push(menu);
+            })
+        }
+        else
+            ShowAlert("error", response.message);
+    }
+    /******* End */
+
+    /**** Start - Child Menu Grid */
+    var colChildGrid = [
+        { dataIndx: "ParentMenuId", title: "", editable: false, hidden: true },
+        { dataIndx: "ChildMenuId", title: "", editable: false, hidden: true },
+        {
+            //custom title.
+            title: "",
+            dataIndx: "State",
+            maxWidth: 25,
+            minWidth: 25,
+            menuIcon: false,
+            type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false, editor: true,
+            dataType: 'bool',
+            cb: {
+                all: false, //header checkbox to affect checkboxes on all pages.
+                header: true //for header checkbox.
+            },
+        },
+        {
+            title: "Menu Name", dataIndx: "ChildMenuName", dataType: "string", width: 80, editable: false,
+
+        },
+    ]
+
+    var ChildMenugridOptions = {
+        width: 'auto',
+        maxWidth: '100%',
+        autofill: true,
+        numberCell: { show: true },
+        hoverMode: 'row',
+        showTop: false,
+        showTitle: false,
+        showBottom: false,
+        scrollModel: { autoFit: true },
+        filterModel: { on: true, mode: "AND", header: false },
+        draggable: false,
+        hwrap: false,
+        wrap: false,
+        editable: true,
+        columnBorders: true,
+        menuIcon: true,
+        selectionModel: { type: 'cell', mode: 'single', cbHeader: false },
+        pageModel: { type: "local" }
+    }
+    ChildMenugridOptions.height = 350;
+    ChildMenugridOptions.title = 'Menu';
+    ChildMenugridOptions.colModel = colChildGrid;
+    ChildMenugridOptions.check = function (evt, ui) {
+        var menuIdx = childMenus.findIndex((obj => obj.MenuId === ui.rowData.ChildMenuId));
+        childMenus[menuIdx].State = ui.rowData.State;
+        if (childMenus[menuIdx].State === true) {
+            BindFormGrid(ui.rowData.ParentMenuId, ui.rowData.ChildMenuId);
+        }
+    }
+    ChildMenugridOptions.rowClick = function (evt, ui) {
+        if (ui.rowData.State === true) {
+            BindFormGrid(ui.rowData.ParentMenuId, ui.rowData.ChildMenuId);
+        }
+    }
+    ChildMenugridOptions.dataModel = { location: 'local', sorting: "local", };
+
+    $("#ChildMenuGrid").pqGrid(ChildMenugridOptions);
+    /********* End - Child Menu Grid *********** */
+
+    /***** Start - Child Menu */
+    function GetAllChildMenu(menuid) {
+        var filteredChildMenu = jQuery.grep(childMenus, function (n) {
+            return (n.ParentMenuId === menuid && n.IsActionMenu === false);
+        });
+
+        if (filteredChildMenu.length > 0) {
+            var childGridData = [];
+            filteredChildMenu.forEach(function (childData) {
+                childGridData.push({ ChildMenuName: childData.MenuName, ChildMenuId: childData.MenuId, ParentMenuId: childData.ParentMenuId, SubMenuId: childData.SubMenuId,State: childData.State })
+            });
+            $("#ChildMenuGrid").pqGrid("hideLoading");
+            $("#ChildMenuGrid").pqGrid("option", "dataModel.data", childGridData);
+            $("#ChildMenuGrid").pqGrid("refreshDataAndView");
+        } else {
+            BindFormGrid(menuid);
+        }
+
+    }
+
+    /** End - Child Menu **/
+
+
+    /***** Start - Form grid */
+    var colFormGrid = [
+        { dataIndx: "ParentMenuId", title: "", editable: false, hidden: true },
+        { dataIndx: "ChildMenuId", title: "", editable: false, hidden: true },
+        {
+            //custom title.
+            title: "",
+            dataIndx: "State",
+            maxWidth: 25,
+            minWidth: 25,
+            menuIcon: false,
+            type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false, editor: true,
+            dataType: 'bool',
+            cb: {
+                all: false, //header checkbox to affect checkboxes on all pages.
+                header: true //for header checkbox.
+            },
+        },
+        {
+            title: "Menu Name", dataIndx: "ChildMenuName", dataType: "string", width: 80, editable: false,
+
+        },
+    ]
+
+    //var FormgridOptions = gridDefaultOptions
+    var FormgridOptions = {
+        width: 'auto',
+        maxWidth: '100%',
+        autofill: true,
+        numberCell: { show: true },
+        hoverMode: 'row',
+        showTop: false,
+        showTitle: false,
+        showBottom: false,
+        scrollModel: { autoFit: true },
+        draggable: false,
+        hwrap: false,
+        wrap: false,
+        editable: true,
+        columnBorders: true,
+        menuIcon: true,
+        selectionModel: { type: 'cell', mode: 'single', cbHeader: true },
+        pageModel: { type: null, rPP: 100 }
+
+    }
+    FormgridOptions.height = 350;
+    FormgridOptions.showTop = false;
+    FormgridOptions.showBottom = false;
+    FormgridOptions.title = 'Form';
+    FormgridOptions.colModel = colFormGrid;
+    FormgridOptions.dataModel = { location: 'local', sorting: "local", };
+    FormgridOptions.check = function (evt, ui) {
+        var menuIdx = childMenus.findIndex((obj => obj.MenuId === ui.rowData.ChildMenuId));
+        childMenus[menuIdx].State = ui.rowData.State;
+    }
+
+    $("#FormGrid").pqGrid(FormgridOptions);
+    /***** Start - Form End grid */
+
+    $('#ddlUser').change(function () {
+        if ($("#ddlUser").prop('selectedIndex') > 0) {
+            ClearParamGrid('ChildMenuGrid');
+            ClearParamGrid('FormGrid');
+            $("#ParentMenuGrid").pqGrid("option", "dataModel.data", parentMenu);
+            $("#ParentMenuGrid").pqGrid("refreshDataAndView");
+            PqGridRefreshClick($("#ParentMenuGrid"));
+            loadChildMenu();
+        }
+    });
+
+    function loadChildMenu() {
+        if ($("#ddlUser").prop('selectedIndex') > 0) {
+            childMenus = [];
+            var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+            ajaxCall("/RoleAccess/GetUserAccess", { "__RequestVerificationToken": antiForgeryToken }, { UserId: $("#ddlUser").val() }, "GET",
+                loadSuccess_ChildMenu, function (response) { ajaxCallFailed(response, response.message); }, true);
+        }
+        else { ShowAlert("error", "Please select Role from list"); }
+
+    };
+
+    function loadSuccess_ChildMenu(response) {
+        if (response.success == true) {
+            if (response.data != undefined) {
+                $.each(response.data, function (index, value) {
+                    childMenus.push(value);
+                });
+            }
+        }
+        else
+            ShowAlert("error", "Failed to Load Child Menu access ");
+    }
+
+    function BindFormGrid(MenuId, SubMenuId) {
+        var filteredChildMenu = jQuery.grep(childMenus, function (n) {
+            return (n.ParentMenuId === MenuId && n.IsActionMenu === true && n.SubMenuId === SubMenuId);
+        });
+        var formGridData = [];
+        filteredChildMenu.forEach(function (childData) {
+            formGridData.push({ ChildMenuName: childData.MenuName, ChildMenuId: childData.MenuId, ParentMenuId: childData.ParentMenuId, State: childData.State })
+        });
+        $("#FormGrid").pqGrid("hideLoading");
+        $("#FormGrid").pqGrid("option", "dataModel.data", formGridData);
+        $("#FormGrid").pqGrid("refreshDataAndView");
+    }
+
+    $("#btnSave").click(function () {
+        if ($('#ddlUser').prop('selectedIndex') > 0) {
+            $("#btnSave").prop('disabled', true);
+            var menuData = [], formData = [];
+            childMenus.forEach(function (menu) {
+                if (menu.State === true) menuData.push(menu)
+            });
+            parentMenu.forEach(function (parent) {
+                menuData.push({ MenuId: parent.MenuId, MenuName: parent.MenuName, ParentMenuId: 0, State: true })
+            });
+            var Data = { //Passing data
+                UserId: $("#ddlUser").val(),
+                UserAccess: menuData,
+            };
+            var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+            ajaxCall("/RoleAccess/UserMenuAccess", { "__RequestVerificationToken": antiForgeryToken }, JSON.stringify({ accessData: Data }), "POST",
+                function (msg) {
+                    if (msg.success === true) {
+                        ShowAlert("success", msg.message);
+                        ClearForm();
+                    }
+                    else {
+                        ShowAlert("error", msg.message);
+                    }
+                    $("#btnSave").prop('disabled', false);
+                },
+                function (response) { ajaxCallFailed(response, response.message); }, true);
+
+        }
+        else { ShowAlert("error", "Please select User from list"); }
+    });
+
+
+    function ClearForm() {
+        ClearAllControl("SearchDetails");
+    }
+</script>
+

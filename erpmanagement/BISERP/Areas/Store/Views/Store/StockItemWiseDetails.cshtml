@@ -1,0 +1,273 @@
+﻿@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        Details
+                    </div>
+                </div>
+                <div class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <fieldset>
+                            <legend></legend>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-2">
+                                        @Html.Label("Project")
+                                        @Html.DropDownList("ddlStores", new SelectList(string.Empty, "Value", "Text"), "Select Store", new { @class = "wrapperdropdown-content form-control" })
+                                    </div>
+                                </div>
+
+                                @*<div class="form-group form-horizontal">
+                                    <div class="col-sm-2">
+                                        @Html.Label("To Store")
+                                        @Html.DropDownList("ddlToStores", new SelectList(string.Empty, "Value", "Text"), "Select Store", new { @class = "wrapperdropdown-content form-control" })
+                                    </div>
+                                </div>*@
+
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-2">
+                                        @Html.Label("Item Type")
+                                        @Html.DropDownList("ddlItemtype", new SelectList(string.Empty, "Value", "Text"), "Select Category ", new { @class = "wrapperdropdown-content form-control" })
+                                        @*@Html.CheckBox("Show in Details")
+                                            @Html.Label("Show in Details")*@
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-2">
+                                        @Html.Label("FromDate")
+                                        <div class='input-group date'>
+                                            <input type='text' id='FromDate' class="form-date-control" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-2">
+                                        @Html.Label("ToDate")
+                                        <div class='input-group date'>
+                                            <input type='text' id='ToDate' class="form-date-control" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-2">
+                                        <button type="button" id="btnDispRecords" class="btn btn-primary">Display Records</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <fieldset>
+                        <legend></legend>
+
+                        <div class="row">
+                            <div class="container fill">
+                                @*<table id="grid"></table>*@
+                                <div id="grid" />
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        @*<button type="button" class="btn btn-success">Filter</button>
+            <button type="button" class="btn btn-success">Export To Excel</button>
+            <button type="button" class="btn btn-success">Row Summary</button>*@
+       
+    </div>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#FromDate').datepicker({
+                defaultDate: new Date(),
+                dateFormat: 'dd-M-yy',
+                yearRange: '2015:2099',
+                showOn: "button",
+                buttonImage: "../../Content/images/calendar.gif",
+                buttonImageOnly: true,
+                changeMonth: true,
+                changeYear: true
+            }).datepicker("setDate", new Date());
+            $('#ToDate').datepicker({
+                defaultDate: new Date(),
+                dateFormat: 'dd-M-yy',
+                yearRange: '2015:2099',
+                showOn: "button",
+                buttonImage: "../../Content/images/calendar.gif",
+                buttonImageOnly: true,
+                changeMonth: true,
+                changeYear: true
+            }).datepicker("setDate", new Date());
+
+
+            $.ajax({
+                type: "GET",
+                url: "/Master/AllStores",
+                datatype: "Json",
+                success: function (data) {
+                    $.each(data, function (index, value) {
+                        $('#ddlStores').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                    });
+                }
+            });
+
+            //$.ajax({
+            //    type: "GET",
+            //    url: "/Master/AllStores",
+            //    datatype: "Json",
+            //    success: function (data) {
+            //        $.each(data, function (index, value) {
+            //            $('#ddlToStores').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+            //        });
+            //    }
+            //});
+
+        });
+        $(document).ready(function () {
+            $('select#ddlStores').change(function () {
+                var storeId = $(this).val();
+                $.ajax({
+                    type: "GET",
+                    url: "/Master/GetItemTypeByStoreId",
+                    data: { storeId: storeId },
+                    datatype: "Json",
+                    success: function (data) {
+                        $("#ddlItemtype").html("");
+                        $('#ddlItemtype').append('<option value="' + "0" + '">' + "All" + '</option>');
+                        $.each(data, function (index, value) {
+                            $('#ddlItemtype').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                        });
+                    }
+                });
+            });
+        });
+        function ClearForm() {
+            $("#ddlStores").val("");
+            $("#ddlItemtype").html("");
+            //ClearParamGrid("grid");
+            var getData = $ItemListGrid.pqGrid("option", "dataModel.data");
+            $.each(getData, function (key, value) {
+                $ItemListGrid.pqGrid("deleteRow", { rowIndx: 0 });
+            });
+        }
+        $("#btnAdd").on("click", ClearForm);
+        $(document).ready(function () {
+            var colIL = [
+                    //{ title: "", dataIndx: "state", align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false },
+                    { title: "", dataIndx: "ItemID", dataType: "integer", hidden: true },
+                    {
+                        title: "ItemName", dataIndx: "ItemName", dataType: "string", width: 180,
+                        filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                    },
+
+                    { title: "ItemTypeName", dataIndx: "ItemType", dataType: "string", width: 100 },
+                //    { title: "BatchName", dataIndx: "BatchName", dataType: "string", width: 100 },
+
+                    { title: "Opening Stock", dataIndx: "OpeningBalance", dataType: "double", width: 100, align: "left" },
+                    { title: "Received Stock", dataIndx: "QtyReceived", dataType: "double", width: 100, align: "left" },
+                    { title: "Issued Stock", dataIndx: "QtyIssued", dataType: "double", width: 100, align: "left" },
+                    { title: "Balance Stock", dataIndx: "BalanceQty", dataType: "double", width: 100, align: "left" },
+            ];
+
+            var dataIL = {
+                location: 'local',
+                sorting: 'local',
+            };
+            var setIL = {
+                height: 370,
+                sortable: false,
+                colModel: colIL,
+                dataModel: dataIL,
+                numberCell: { show: false },
+                selectionModel: { type: 'none' },
+                showTitle: false,
+                showBottom: true,
+                toolbar: exportToExcelToolbar,
+                scrollModel: { autoFit: true },
+                filterModel: { on: true, mode: "AND", header: true },
+                hoverMode: 'cell',
+                editor: { type: 'textbox' },
+                showTop: true,
+                resizable: true,
+                editable: false,
+                virtualX: true,
+                virtualY: true,
+                editModel: {
+                    saveKey: $.ui.keyCode.ENTER
+                },
+                draggable: false,
+                wrap: false,
+                pageModel: { type: "local", rPP: 20 },
+            };
+
+            $ItemListGrid = $("#grid").pqGrid(setIL);
+        });
+        $('#btnDispRecords').on('click', function () {
+            var getData = $ItemListGrid.pqGrid("option", "dataModel.data");
+            $.each(getData, function (key, value) {
+                $ItemListGrid.pqGrid("deleteRow", { rowIndx: 0 });
+            });
+            if ($("#ddlStores").val() == "") {
+                ShowAlert("error", "Please Select Store");
+                return;
+            }
+            if ($("#ddlItemtype").val() == "") {
+                ShowAlert("error", "Please  Select ItemType ");
+                return;
+            }
+            
+            var storeId = $("#ddlStores").val();
+            //var IssueTo = $("#ddlToStores").val();
+            //if (IssueTo == "" || IssueTo == undefined)
+            //{ IssueTo = 0 }
+
+            var itemtypId = $("#ddlItemtype").val();
+            $.ajax({
+                type: "GET",
+                url: "/StockRegister/GetStoreWiseItemstockData/",
+                data: { storeId: storeId, itemTypeId: itemtypId, FromDate: $("#FromDate").val(), ToDate: $("#ToDate").val() },
+                datatype: "Json",
+                beforeSend: function () {
+                    //$ItemListGrid = $("#Itemgrid").pqGrid(setIL);
+                    $ItemListGrid.pqGrid("showLoading");
+                },
+                complete: function () {
+                    $ItemListGrid.pqGrid("hideLoading");
+                },
+                success: function (response) {
+                    $ItemListGrid.pqGrid("hideLoading");
+                    $ItemListGrid.pqGrid("option", "dataModel.data", response.records);
+                    $ItemListGrid.pqGrid("refreshDataAndView");
+                },
+                error: function (request, status, error) {
+                    $ItemListGrid.pqGrid("hideLoading");
+                    ClearParamGridByObject($ItemListGrid);
+                    ShowAlert("error", "Error while loading Itemlist");
+                    return;
+                }
+            });
+        });
+        $('#btnReport').on('click', function () {
+            var storeId = $("#ddlStores").val();
+            var itemtypId = $("#ddlItemtype").val();
+            $.ajax({
+                type: "GET",
+                url: "/StockRegister/StoreWisestockReport/",
+                data: { StoreId: storeId, ItemTypeId: itemtypId },
+                datatype: "Json",
+                success: function (response) {
+                    $ItemListGrid.pqGrid("option", "dataModel.data", response.records);
+                    $ItemListGrid.pqGrid("refreshDataAndView");
+                }
+            });
+        });
+    </script>
+}

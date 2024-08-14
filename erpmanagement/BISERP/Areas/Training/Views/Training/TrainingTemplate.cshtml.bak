@@ -1,0 +1,280 @@
+﻿@model BISERP.Areas.Training.Models.TrainingTempHeaderModel
+
+
+    @using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <fieldset>
+        <div id="content">
+
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-groupingBoder">
+                        <div class="panel-heading">
+                            <div class="panel-title">
+                               Training Template
+                            </div>
+                        </div>
+                        <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                            <div class="panel-body">
+                                <fieldset>
+                                    <div class="row">
+                                        <div class="col-md-1">
+                                            @Html.Label("Training Type")
+                                        </div>
+                                        <div class="col-md-2">
+                                            @Html.DropDownList("ddlTrainingType", new SelectList(string.Empty, "Value", "Text"), "Select Traning Type", new { @class = "wrapperdropdown-content form-control" })
+                                           
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-1">
+                                            @Html.Label("Select Slot")
+                                        </div>
+                                        <div class="col-md-2">
+                                            @Html.DropDownList("ddlSlot", new SelectList(string.Empty, "Value", "Text"), "Select Slot", new {@class = "wrapperdropdown-content form-control"})
+                                            @Html.HiddenFor(m=>m.SlotId)
+                                        </div>
+
+                                    </div>
+                                    <div class="row ">
+                                        <div class="col-md-1">
+                                            @Html.Label("Trainig Name")
+                                        </div>
+                                        <div class="col-md-2">
+                                            @Html.TextBoxFor(model => model.TrainingName)
+                                        </div>
+                                        <div class="col-md-1">
+                                            @Html.Label("Trainig Code")
+                                        </div>
+                                        <div class="col-md-2">
+                                            @Html.TextBoxFor(model => model.TrainingCode)
+                                            
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <button type="button" id="btnAdd" class="btn btn-success">Add</button>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </div>
+                        </div>
+                        <div id="collapse3" class="panel-collapse collapse in" aria-expanded="true">
+                            <div class="panel-body">
+                                <div class="panel-groupingBoder">
+                                    <div class="row">
+                                        <div id="content">
+                                                <div id="content-tab">
+                                                    <ul id="tabs" class="nav nav-tabs" data-tabs="tabs">
+
+                                                        <li class="active">
+                                                            <a href="#tab1" data-toggle="tab">Day1</a>
+                                                        </li>
+                                                        <li class="active">
+                                                            <a href="#tab1" data-toggle="tab">Day2</a>
+                                                        </li>
+                                                        <li class="active">
+                                                            <a href="#tab1" data-toggle="tab">Day3</a>
+                                                        </li>
+                                                        <li class="active">
+                                                            <a href="#tab1" data-toggle="tab">Day4</a>
+                                                        </li>
+                                                    </ul>
+                                                   <div id="my-tab-content" class="tab-content">
+                                                   
+                                                       <div class="tab-pane active" id="tabDay1">
+                                                           
+                                                       </div>
+                                                  </div>
+                                                </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+    <script type="text/javascript">
+
+
+        function handleException(request,
+            message,
+            error) {
+            var msg = "";
+            msg += "Code: " + request.status + "\n";
+            msg += "Text: " + request.statusText + "\n";
+            if (request.responseJSON != null) {
+                msg += "Message" +
+                    request.responseJSON.Message +
+                    "\n";
+            }
+            alert(msg);
+        }
+
+        $.ajax({
+            type: "GET",
+            url: "/TrainingType/AllTrainingType",
+            datatype: "Json",
+            success: function(data) {
+                $.each(data,
+                    function(index, value) {
+                        $('#ddlTrainingType')
+                            .append('<option value="' + value.TypeId + '">' + value.TrainingType + '</option>');
+                    });
+            }
+        });
+
+        //$.ajax({
+        //    type: "GET",
+        //    url: "/Slot/AllSlot",
+        //    datatype: "Json",
+        //    success: function (data) {
+        //        $.each(data, function (index, value) {
+        //            $('#ddlSlot').append('<option value="' + value.SlotId+ '">' + value.SlotName + '</option>');
+        //        });
+        //    }
+        //});
+
+<<<<<<< .mine
+
+        $('select#ddlTrainingType')
+            .change(function() {
+                Fillslot();
+||||||| .r622
+         
+    $('select#ddlTrainingType').change(function () {
+        Fillslot();
+    });
+ 
+    function Fillslot() {
+        
+        var trainigtypeid = $("#ddlTrainingType").val();
+        if (trainigtypeid.length > 0)
+            $.ajax({
+                type: "GET",
+                url: '/Slot/GetTraniningWiseSlot',
+                data: { TrainingTypeId: trainigtypeid },
+                datatype: "Json",
+                success: function (data) {
+                    
+                    $("#ddlSlot").html("");
+                    InsertDefaultSelect($('#ddlSlot'));
+                    $.each(data, function (index, value) {
+                        $('#ddlSlot').append('<option value="' + value.SlotId + value.NoOfDays + '">' + value.TraniningSlotCode + '</option>');
+                    });
+                }
+=======
+         
+    $('select#ddlTrainingType').change(function () {
+        Fillslot();
+    });
+ 
+    function Fillslot() {
+        var trainigtypeid = $("#ddlTrainingType").val();
+        if (trainigtypeid.length > 0)
+            $.ajax({
+                type: "GET",
+                url: '/Slot/GetTraniningWiseSlot',
+                data: { TrainingTypeId: trainigtypeid },
+                datatype: "Json",
+                success: function (data) {
+                    $("#ddlSlot").html("");
+                    InsertDefaultSelect($('#ddlSlot'));
+                    $.each(data, function (index, value) {
+                        $('#ddlSlot').append('<option value="' + value.SlotId + value.NoOfDays + value.NoOfSlot+'">' + value.TraniningSlotCode + '</option>');
+                    });
+                }
+>>>>>>> .r635
+            });
+<<<<<<< .mine
+||||||| .r622
+    }
+    $(document).ready(function () {
+        $("#collapse3").hide();
+    });
+   
+=======
+    }
+    //$(document).ready(function () {
+    //    $("#collapse3").hide();
+    //});
+   
+>>>>>>> .r635
+
+<<<<<<< .mine
+        function Fillslot() {
+            
+            var trainigtypeid = $("#ddlTrainingType").val();
+            if (trainigtypeid.length > 0)
+                $.ajax({
+                    type: "GET",
+                    url: '/Slot/GetTraniningWiseSlot',
+                    data: { TrainingTypeId: trainigtypeid },
+                    datatype: "Json",
+                    success: function(data) {
+                        $("#ddlSlot").html("");
+                        InsertDefaultSelect($('#ddlSlot'));
+                        $.each(data,
+                            function(index, value) {
+                                $('#ddlSlot')
+                                    .append('<option value="' + value.SlotId + ";" + value.NoOfDays + ";" + value.NoOfSlot + '">' + value.SlotName + '</option>');
+                                //$('#ddlSlot').append('<option value="' + value.SlotId + value.NoOfDays + value.NoOfSlot + '">' + value.TraniningSlotCode + '</option>');
+                            });
+                    }
+                });
+        }
+
+        $(document)
+            .ready(function() {
+                //$("#collapse3").hide();
+||||||| .r622
+    $(document).ready(function () {
+        $("#btnAdd").click(function () {
+            
+            $("#collapse3").show();
+            $.ajax({
+                type: "GET",
+                url: "/Training/SlotTemplate",
+                data: { SlotId: $("#ddlSlot").val()},
+                datatype: "Json",
+                success: function (data) {
+                }
+=======
+   
+    $("#btnAdd").click(function () {
+        
+            var SlotId = $("#ddlSlot").val();
+            $.ajax({
+                type: "GET",
+                url: '/Training/SlotTemplate',
+                data: { SlotId: SlotId },
+                datatype: "Json",              
+                success: function (data) {
+                    alert("hi");
+                }
+>>>>>>> .r635
+            });
+
+
+        $(document)
+            .ready(function () {
+                $("#btnAdd")
+                    .click(function () {
+                        debugger ;
+                        var arr = $('#ddlSlot').val();
+
+                        var url = '@Url.Action("GetTemplatedaysSlot", "TrainingTemplate", new { slotDtl = "PARAMETER" })';
+                        url =url.replace("PARAMETER", arr);
+                        $("#tabDay1").load(url, arr);
+                    });
+        });
+
+
+    </script>
+}

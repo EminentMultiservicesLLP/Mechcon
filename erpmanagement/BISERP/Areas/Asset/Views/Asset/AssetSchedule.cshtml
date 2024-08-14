@@ -1,0 +1,583 @@
+﻿@model BISERP.Areas.Asset.Models.AssetScheduleModel
+@Scripts.Render("~/bundles/jquerymodels")
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        Entry Form
+                    </div>
+                </div>
+
+                <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <fieldset>
+                            <legend></legend>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                                    <a data-toggle="collapse" class="btn btn-success" id="btnAdd">Reset</a>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.Label("Branch", new { @class = "required" })
+                                        @Html.DropDownList("ddlBranch", new SelectList(string.Empty, "Value", "Text"), "Select Branch", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.AssetCode, new { @class = "required" })
+                                        @Html.TextBoxFor(m => m.AssetCode, "", new { @class = "form-control" })
+                                        @Html.HiddenFor(m => m.AssetId)
+                                        @Html.Hidden("AssetLocationId")
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.ItemName, new { @class = "required" })
+                                        @Html.TextBoxFor(m => m.ItemName, "", new { @class = "form-control", @readonly = "true" })
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-2">
+                                        @Html.LabelFor(m => m.IsFrequency)
+                                        @Html.CheckBoxFor(m => m.IsFrequency)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.Label("Serial No")
+                                        @Html.TextBox("SerialNo", "", new { @class = "form-control", @readonly = "true" })
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.Label("Model")
+                                        @Html.TextBox("ModelNo", "", new { @class = "form-control", @readonly = "true" })
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.Label("Floor")
+                                        @Html.TextBox("Floor", "", new { @class = "form-control", @readonly = "true" })
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.Label("Room")
+                                        @Html.TextBox("Room", "", new { @class = "form-control", @readonly = "true" })
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <fieldset>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.MaintenanceTypeId, new { @class = "required" })
+                                        @Html.DropDownList("ddlMaintenanceType", new SelectList(string.Empty, "Value", "Text"), "Select ", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.StartDate)
+                                        <div class='input-group date'>
+                                            <input type='text' id='StartDate' class="form-date-control" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.ToDate)
+                                        <div class='input-group date'>
+                                            <input type='text' id="ToDate" class="form-date-control" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-2">
+                                        @Html.LabelFor(m => m.NoOfTimes)
+                                        @Html.TextBoxFor(m => m.NoOfTimes, "", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="form-group">
+                                        <button type="button" class="btn btn-primary" id="btnSchedule">Show</button>
+                                    </div>
+                                </div>
+                           </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+
+                <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <fieldset>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <button type="button" class="btn btn-primary" id="btnAddrow">Add</button>
+                                        <button type="button" class="btn btn-primary" id="btnRemoverow">Remove</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <fieldset>
+                            <legend></legend>
+                            <div class="row">
+                                <div class="container fill">
+                                    <div id="grid"></div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div title="Select Items" id="ItemModal" style="display: none;">
+        <div id="Itemgrid"></div>
+    </div>
+    <div id="AssetModal" title="Select Asset" style="display: none;">
+        <div id="Assetgrid"></div>
+    </div>
+    <script type="text/javascript">
+        $(function () {
+            $('#StartDate').datepicker({
+                defaultDate: new Date(),
+                dateFormat: 'dd-M-yy',
+                yearRange: '2015:2099',
+                showOn: "button",
+                buttonImage: "../../Content/images/calendar.gif",
+                buttonImageOnly: true,
+                changeMonth: true,
+                changeYear: true
+            });
+
+            $('#ToDate').datepicker({
+                defaultDate: new Date(),
+                dateFormat: 'dd-M-yy',
+                yearRange: '2015:2099',
+                showOn: "button",
+                buttonImage: "../../Content/images/calendar.gif",
+                buttonImageOnly: true,
+                changeMonth: true,
+                changeYear: true
+            });
+        });
+        var $AssetDetailGrid;
+        var setIID, colIID, dataIID;
+        var colIL, dataIL, setIL;
+        function ClearForm() {
+            $("#ScheduleId").val("");
+            $("#ddlBranch").val("");
+            $("#AssetCode").val("");
+            $("#AssetId").val("");
+            $("#ItemName").val("");
+            $("#SerialNo").val("");
+            $("#ModelNo").val("");
+            $("#Floor").val("");
+            $("#Room").val("");
+            $("#ddlMaintenanceType").val("");
+            $("#NoOfTimes").val("");
+            ClearParamGrid("grid");
+        }
+
+        function LoadAssetGrid() {
+            var BranchId = $("#ddlBranch").val();
+            if (BranchId == undefined || BranchId == "") BranchId = 0
+            $("#AssetModal").dialog({
+                height: 500,
+                width: 700,
+                modal: true,
+                open: function (evt, ui) {
+                    $.ajax({
+                        url: "/Asset/AssetSchedule/GetBranchAssetsforschedule",
+                        cache: false,
+                        async: true,
+                        method: "GET",
+                        dataType: "JSON",
+                        data: { BranchId: BranchId },
+                        success: function (response) {
+                            $("#Assetgrid").pqGrid("option", "dataModel.data", response);
+                            $("#Assetgrid").pqGrid("refreshDataAndView");
+                        }
+                    });
+                },
+                close: function (event, ui) {
+                },
+                show: {
+                    effect: "blind",
+                    duration: 500
+                }
+            });
+        }
+        function getRowIndx() {
+            var arr = $("#grid").pqGrid('selection', { type: 'row', method: 'getSelection' });
+            if (arr && arr.length > 0) {
+                return arr[0].rowIndx;
+            }
+            else {
+                alert("Select a row.");
+                return null;
+            }
+        }
+        (function ($) {
+            $("#StartDate").datepicker().datepicker('disable');
+            $("#ToDate").datepicker().datepicker('disable');
+            $("#NoOfTimes").prop('disabled', true);
+            $("#btnSchedule").prop('disabled', true);
+            $("#btnAddrow").prop('disabled', false);
+            $("#btnRemoverow").prop('disabled', false);
+            $('#IsFrequency').change(function () {
+                if ($(this).is(':checked')) {
+                    $("#StartDate").datepicker().datepicker('enable');
+                    $("#ToDate").datepicker().datepicker('enable');
+                    $("#NoOfTimes").prop('disabled', false);
+                    $("#btnSchedule").prop('disabled', false);
+                    $("#btnAddrow").prop('disabled', true);
+                    $("#btnRemoverow").prop('disabled', true);
+                } else {
+                    $("#StartDate").datepicker().datepicker('disable');
+                    $("#ToDate").datepicker().datepicker('disable');
+                    $("#NoOfTimes").prop('disabled', true);
+                    $("#btnSchedule").prop('disabled', true);
+                    $("#btnAddrow").prop('disabled', false);
+                    $("#btnRemoverow").prop('disabled', false);
+                }
+            });
+
+
+            $("#btnRemoverow").click(function () {
+                var rowIndx = getRowIndx();
+                if (rowIndx == null) {
+                    return;
+                }
+                $("#grid").pqGrid("deleteRow", { rowIndx: rowIndx });
+            });
+            $("#btnAddrow").click(function () {
+                if ($("#ddlMaintenanceType").val() == "") {
+                    ShowAlert("error", "Please Select Maintenance Type");
+                    return;
+                }
+                var dataMGrid = [];
+                var getData = $("#grid").pqGrid("option", "dataModel.data");
+
+                $.each(getData, function (key, value) {
+                    var grdData = {
+                        'strScheduleDate': value.strScheduleDate, 'MaintenanceType': value.MaintenanceType, 'ToDo': value.ToDo, 'Remark': value.Remark,
+                        'MaintenanceTypeId':$("#ddlMaintenanceType").val()
+                    };
+                    dataMGrid.push(grdData);
+                });
+                var gridData = { 'ScheduleDate': '', 'MaintenanceType': $("#ddlMaintenanceType :selected").text(), 'ToDo': '', 'Remark': '', 'MaintenanceTypeId': $("#ddlMaintenanceType").val() };
+                dataMGrid.push(gridData);
+
+                $("#grid").pqGrid("option", "dataModel.data", dataMGrid);
+                $("#grid").pqGrid("refreshDataAndView");
+
+                var colM = $("#grid").pqGrid("option", "colModel");
+                colM[2].editable = true;
+                $("#grid").pqGrid("option", "colModel", colM);
+            });
+            $('#btnSchedule').on('click', function () {
+                if ($("#ddlMaintenanceType").val() == "") {
+                    ShowAlert("error", "Please Select Maintenance Type");
+                    return;
+                }
+                var start = $("#StartDate").datepicker("getDate");
+                var end = $("#ToDate").datepicker("getDate");
+                var totalDays = (end - start) / (1000 * 60 * 60 * 24);
+
+                var frequency = parseInt($("#NoOfTimes").val());
+                var dates = new Array(frequency);
+
+                var frequencyDays = totalDays / frequency;
+
+                start.setDate(start.getDate() + (frequencyDays));
+                dates[0] = start.toISOString().substr(0, 10);
+
+                for (var i = 1, l = frequency; i < l; i++) {
+                    start.setDate(start.getDate() + (frequencyDays));
+                    dates[i] = start.toISOString().substr(0, 10);
+                }
+                
+                var dataMGrid = [];
+                $.each(dates, function (key, value) {
+                    var grdData = {
+                        'ScheduleDate': value, 'MaintenanceType': $("#ddlMaintenanceType :selected").text(), 'MaintenanceTypeId': $("#ddlMaintenanceType").val()
+                    };
+                    dataMGrid.push(grdData);
+                });
+
+
+                $("#grid").pqGrid("option", "dataModel.data", dataMGrid);
+                $("#grid").pqGrid("refreshDataAndView");
+
+                var colM = $("#grid").pqGrid("option", "colModel");
+                colM[2].editable = false;
+                $("#grid").pqGrid("option", "colModel", colM);
+            });
+
+            $.ajax({
+                type: "GET",
+                url: "/Master/AllBranches",
+                datatype: "Json",
+                async: true,
+                success: function (data) {
+                    $.each(data, function (index, value) {
+                        $('#ddlBranch').append('<option value="' + value.BranchID + '">' + value.BranchName + '</option>');
+                    });
+                }
+            });
+
+            $.ajax({
+                type: "GET",
+                url: "/MaintainanceType/AllActiveMaintainanceType",
+                datatype: "Json",
+                async: true,
+                success: function (data) {
+                    $.each(data, function (index, value) {
+                        $('#ddlMaintenanceType').append('<option value="' + value.MaintainanceTypeId + '">' + value.MaintainanceType + '</option>');
+                    });
+                }
+            });
+
+            var dateEditor = function (ui) {
+                var $inp = ui.$cell.find("input"),
+                    grid = this,
+                    validate = function (that) {
+                        var valid = grid.isValid({
+                            dataIndx: ui.dataIndx,
+                            value: $inp.val(),
+                            rowIndx: ui.rowIndx
+                        }).valid;
+                        if (!valid) {
+                            that.firstOpen = false;
+                        }
+                    };
+
+                $inp.on("input", function (evt) {
+                    validate(this);
+                })
+                .datepicker({
+                    changeMonth: true,
+                    changeYear: true,
+                    showAnim: '',
+                    onSelect: function () {
+                        this.firstOpen = true;
+                        validate(this);
+                    },
+                    beforeShow: function (input, inst) {
+                        return !this.firstOpen;
+                    },
+                    onClose: function () {
+                        this.focus();
+                    }
+                });
+            }
+            //$(document).ready(function () {
+            colIID = [
+                    { title: "", dataIndx: "AssetId", width: 10, dataType: "integer", hidden: true },
+                    { title: "", dataIndx: "ItemId", width: 10, dataType: "integer", hidden: true },
+                    { title: "", dataIndx: "MaintenanceTypeId", width: 10, dataType: "integer", hidden: true },
+                    {
+                        title: "Schedule Date", width: 150, dataIndx: "ScheduleDate", dataType: 'date',
+                        format: 'dd-mm-yy',
+                        editor: {
+                            type: 'textbox',
+                            init: dateEditor
+                        },
+                        validations: [
+                            { type: 'regexp', value: '^[0-9]{2}/[0-9]{2}/[0-9]{4}$', msg: 'Not in dd/mm/yyyy format' }
+                        ]
+                    },
+                    { title: "Maintenance Type", dataIndx: "MaintenanceType", width: 150, dataType: "string", editable: false },
+                    { title: "To Do", dataIndx: "ToDo", width: 300, dataType: "string", editable: true },
+                    { title: "Remark", dataIndx: "Remark", width: 150, dataType: "string", editable: true }
+            ];
+            dataIID = {
+                location: 'local',
+                sorting: 'local',
+                paging: 'local',
+                dataType: 'JSON'
+            };
+
+            setIID = {
+                height: '300',
+                maxheight: '400',
+                title: "Schedules",
+                sortable: false,
+                numberCell: { show: false },
+                selectionModel: { type: 'row' },
+                hoverMode: 'cell',
+                editor: { type: 'textbox' },
+                showTop: true,
+                resizable: true,
+                editModel: {
+                    saveKey: $.ui.keyCode.ENTER
+                },
+                draggable: false,
+                virtualX: true,
+                virtualY: true,
+                colModel: colIID,
+                dataModel: dataIID,
+                pageModel: { type: "local", rPP: 50 },
+            };
+            $AssetDetailGrid = $("#grid").pqGrid(setIID);
+
+            /*************** Asset Grid  **********/
+            dataList = { location: 'local', sorting: 'local', paging: 'local', dataType: 'JSON' };
+            var setAssetCol = [
+                   { dataIndx: "AssetId", hidden: true },
+                   { title: "AssetCode", dataIndx: "AssetCode", width: 100, dataType: "string", filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } },
+                   { title: "Item Name", dataIndx: "ItemName", width: 200, dataType: "string", filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } },
+                   { title: "Serial No", dataIndx: "SerialNo", width: 90 },
+                   { title: "Model No", dataIndx: "ModelNo", width: 80 },
+            ];
+            setAssetList = {
+                width: "auto", //auto width
+                height: "100%-30", //height in %age
+                selectionModel: { type: 'cell' },
+                autoSizeInterval: 0,
+                scrollModel: { autoFit: true },
+                dragColumns: { enabled: false },
+                hoverMode: 'cell',
+                editor: { type: 'textbox' },
+                filterModel: { on: true, mode: "AND", header: true },
+                selectionModel: { type: 'row' },
+                showTop: false,
+                resizable: true,
+                virtualX: true,
+                colModel: setAssetCol,
+                dataModel: dataList,
+                toggle: function (evt, ui) {
+                    if (ui.state == 'max') {
+                        $(".ui-dialog,.ui-widget-overlay").css('position', 'static');
+                    }
+                    else {
+                        $(".ui-dialog,.ui-widget-overlay").css('position', 'absolute');
+                    }
+                },
+                cellClick: function (evt, ui) {
+                    if (ui.rowData) {
+                        var rowIndx = parseInt(ui.rowIndx);
+                        var record = ui.rowData;
+                        $("#AssetId").val(record.AssetId);
+                        $("#AssetCode").val(record.AssetCode);
+                        $("#ItemName").val(record.ItemName);
+                        $("#SerialNo").val(record.SerialNo);
+                        $("#ModelNo").val(record.ModelNo);
+                        ClosePopupWindow("AssetModal");
+
+                        $.ajax({
+                            type: "GET",
+                            url: "/AssetLocation/GetAssetLocations",
+                            datatype: "Json",
+                            async: true,
+                            data: { AssetId: record.AssetId },
+                            success: function (data) {
+                                $("#AssetLocationId").val(data.AssetLocationId);
+                                $("#Floor").val(data.Floor);
+                                $("#Room").val(data.Room);
+                            }
+                        });
+                    }
+                },
+                pageModel: { type: "local", rPP: 20 }
+            };
+            $("#Assetgrid").pqGrid(setAssetList);
+
+
+            $("#btnAdd").on("click", ClearForm);
+            $("#btnSave").click(function () {
+                if ($("#ddlBranch").val() == "") {
+                    ShowAlert("error", "Please Select Branch");
+                    return;
+                }
+                if ($("#AssetId").val() == "") {
+                    ShowAlert("error", "Please Select Asset Code");
+                    return;
+                }
+                var items = $AssetDetailGrid.pqGrid("getData", { dataIndx: ['ScheduleDate', 'MaintenanceType', 'ToDo', 'Remark', 'MaintenanceTypeId'] });
+                var dataMGrid = [];
+                
+                $.each(items, function (key, value) {
+                    var grdData = {
+                        'ScheduleDate': value.ScheduleDate, 'MaintenanceType': value.MaintenanceType, 'ToDo': value.ToDo, 'Remark': value.Remark,
+                        'MaintenanceTypeId': value.MaintenanceTypeId, 'IsFrequency': $("#IsFrequency").prop('checked')
+                    };
+                    dataMGrid.push(grdData);
+                });                
+                var griditems = JSON.stringify({
+                    ScheduleId: $("#ScheduleId").val(),
+                    AssetId: $("#AssetId").val(),
+                    IsFrequency: $("#IsFrequency").prop('checked'),
+                    MaintenanceTypeId: $("#ddlMaintenanceType").val(),
+                    StartDate: $("#StartDate").val(),
+                    ToDate: $("#ToDate").val(),
+                    NoOfTimes: $("#NoOfTimes").val(),
+                    schDetails: dataMGrid
+                });
+
+                $.ajax(
+                {
+                    type: "POST", //HTTP POST Method
+                    traditional: true,
+                    contentType: 'application/json; charset=utf-8',
+                    url: '/AssetSchedule/SaveAssetSchedule', // Controller/View
+                    data: griditems,
+                    success: function (msg) {
+                        if (msg.success) {
+                            ShowAlert("success", "Asset Schedule saved successfully.");
+                            ClearForm();
+                        }
+                        else {
+                            ShowAlert("error", msg.Message);
+                        }
+                    },
+                    error: function (jqXHR, exception) {
+                    }
+                });
+            });
+
+            $('#AssetCode').on('click', function () {
+                if ($("#ddlBranch").val() == "" || $("#ddlBranch").val() == undefined) {
+                    ShowAlert("error", "Please Select Branch");
+                    return;
+                }
+                LoadAssetGrid();
+            });
+        })(jQuery);
+       
+    </script>
+}

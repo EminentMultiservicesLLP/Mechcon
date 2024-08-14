@@ -1,0 +1,215 @@
+﻿@model BISERP.Areas.Store.Models.Master.StoreUnitLinkingModel
+<script type="text/javascript">
+    function LoadUnitstore() {
+        $.ajax({
+            type: "GET",
+            url: "/Master/UnitStores",
+            datatype: "Json",
+            success: function (data) {
+                $.each(data, function (index, value) {
+                    $('#ddlUnitStore').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                });
+            }
+        });
+        
+    }
+    $(document).ready(function () {
+        LoadUnitstore();
+        $.ajax({
+            type: "GET",
+            url: "/Master/SubStores",
+            datatype: "Json",
+            success: function (data) {
+                $.each(data, function (index, value) {
+                    $('#ddlParentStore').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                });
+            }
+        });
+
+        grid = $("#grid").jsGrid({
+            width: "100%",
+            height: "300px",
+            filtering: true, //will display top 1st row as filter
+            selecting: true,
+            inserting: false, //false will not allow inserting new entry
+            editing: false, //false will not allow exisiting data entry
+            sorting: true,
+            autoload: true, //this statement require to load data using ajax call
+            paging: true,
+            pageSize: 10,
+
+            controller: {
+                loadData: function (filter) {
+                    var d = $.Deferred();
+                    $.ajax({
+                        type: 'GET',
+                        url: '@Url.Action("AllStoreunit", "StoreUnitLinking")',
+                        dataType: "json",
+                        data: { SubStore: filter.StoreName, UnitStore: filter.UnitStore },
+                        success: function (data) {
+                            d.resolve(data.unitStore);
+                        },
+                        error: function (e) {
+                            ShowAlert("error", "Server Error! Please Contact administrator!");
+                        }
+                    });
+                    return d.promise();
+                },
+                deleteItem: function (item) {
+                    var d = $.Deferred();
+                    $.ajax(
+                    {
+                        type: "POST", //HTTP POST Method  
+                        dataType: "json",
+                        url: '/StoreUnitLinking/SaveStoreunit', // Controller/View   
+                        data: item,
+                        success: function (msg) {
+                            if (msg.success) {
+                                ShowAlert( "success", "Unit Store deleted successfully.");
+                            } else {
+                                ShowAlert( "error", msg.Message);
+                            }
+                        },
+                    }).done(function (insertedItem) {
+                        d.resolve(insertedItem.data);
+
+                    });
+                    return d.promise();
+                }
+            },
+            fields: [
+                { name: "ID", visible: false, width: 0 },
+                { name: "StoreId", visible: false, width: 0 },
+                { name: "ParentId", visible: false, width: 0 },
+                { name: "StoreName", title: "Sub Store", type: "text", width: 100 },
+                { name: "UnitStore", title: "Unit Store", type: "text", width: 100 },                
+                { name: "Deactive", title: "Deactive", type: "checkbox", filtering: false, width: 20, visible: false },
+                //{ name: "StoreId", title: "UnitStore", type: "select", items: UnitStorelist, valueField: "ID", textField: "Name", validate: "required", filtering: false, width: 50 },
+                //{ name: "ParentId", title: "StoreName", type: "select", items: Storelist, valueField: "ID", textField: "Name", validate: "required", filtering: false, width: 50 },
+                //{ name: "Deactive", title: "Deactive", type: "checkbox", filtering: false, width: 10 },
+                { type: "control", editButton: false, width: 10 }
+            ],
+            //rowClick: function (args) {
+            //    var data = args.item;
+            //    $("#ID").val(data.ID);
+            //    $("#ddlUnitStore").val(data.StoreId);
+            //    $("#ddlParentStore").val(data.ParentId);
+            //    $("#Deactive").prop('checked', data.Deactive);
+            //}
+        });
+    });
+    $(document).ready(function () {
+        $("#btnSave").click(function () {
+            if ($("#ddlUnitStore").val() == "") {
+                ShowAlert("error", "Select Unit Store");
+                return;
+            }
+            if ($("#ddlParentStore").val() == "") {
+                ShowAlert("error", "Please Select Parent Store");
+                return;
+            }
+
+            var storeUnit = JSON.stringify({ 
+                ID: $("#ID").val(),
+                StoreId: $("#ddlUnitStore").val(),
+                ParentId: $("#ddlParentStore").val(),
+                Deactive: $("#Deactive").prop('checked')
+            });
+            $.ajax(
+            {
+                type: "POST", //HTTP POST Method
+                traditional: true,
+                contentType: 'application/json; charset=utf-8',
+                url: '/StoreUnitLinking/SaveStoreunit', // Controller/View
+                data: storeUnit,
+                success: function (msg) {
+                    if (msg.success) {
+                            var data = args.item;
+                            $("#ID").val("");
+                            $("#ddlUnitStore").html("");
+                            $("#ddlParentStore").val("");
+                            $("#Deactive").prop('checked', true);
+
+                            $("#grid").jsGrid("loadData");
+                            LoadUnitstore();
+                        ShowAlert("success", "Unit Store saved successfully.");
+                    }
+                    else {
+                        ShowAlert("error", msg.Message);
+                    }
+                }
+            });
+        });
+    });
+
+    </script>
+    @using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <fieldset>
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-groupingBoder">
+                    <div class="panel-heading">
+                        <div class="panel-title">
+                            <h4>
+                                <a class="collapsediv" data-toggle="collapse" href="#SearchDetails" style="color:white">
+                                    Unit Store Details
+                                </a>
+                            </h4>
+                        </div>
+                    </div>
+                    <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                        <div class="panel-body">
+                            <div class="container fill">
+                                <table id="grid"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-groupingBoder">
+                    <div class="panel-heading">
+                        <div class="panel-title">
+                            <label id="lblItemEntryHeader">Unit Store Linking</label>
+                        </div>
+                    </div>
+                    <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                        <div class="panel-body">                           
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                                    <button type="button" class="btn btn-success" id="btnReset">Reset</button>
+                                    <a data-toggle="collapse" class="btn btn-success" href="#SearchDetails">Show Search</a>
+                                </div>
+                            </div>
+                            <br />
+                            <div class="row">                               
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(model => model.ParentId, new { @class = "required" })
+                                        @Html.DropDownList("ddlParentStore", new SelectList(string.Empty, "Value", "Text"), "Sub Store", new { @class = "wrapperdropdown-content form-control" })
+                                    </div>
+                                </div>   
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(model => model.StoreId, new { @class = "required" })
+                                        @Html.DropDownList("ddlUnitStore", new SelectList(string.Empty, "Value", "Text"), "Unit Store", new { @class = "wrapperdropdown-content form-control" })
+                                        @Html.HiddenFor(model => model.ID)
+                                    </div>
+                                </div>
+                                @*<div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(model => model.Deactive)
+                                        <br />
+                                        @Html.CheckBoxFor(model => model.Deactive)
+                                    </div>
+                                </div>*@                             
+                            </div>                        
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+}

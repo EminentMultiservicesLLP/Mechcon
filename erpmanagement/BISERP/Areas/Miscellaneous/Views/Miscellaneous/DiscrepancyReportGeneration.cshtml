@@ -1,0 +1,398 @@
+﻿
+<script>
+
+    $(function () {
+        $(".datepicker").datepicker({
+            showOn: "button",
+            buttonImage: "/Content/images/calendar.gif",
+            buttonImageOnly: true,
+            buttonText: "Select date",
+            'changeMonth': true,
+            'changeYear': true,
+            'yearRange': '2021:2030',
+            "format": "dd-M-yyyy",
+            todayBtn: "linked",
+            pickerPosition: "bottom-left",
+            "todayHighlight": true,
+            autoclose: true,
+        }).datepicker("setDate", new Date());
+        $("#anim").change(function () {
+            $(".datepicker").datepicker("option", "showAnim", "fadeIn");
+        });
+    });
+</script>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <h5 class="page-header orangeDottedBottomBorder"> DESCREPENCY REPORT GENERATION </h5>
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <a class="collapsediv" data-toggle="collapse" href="#collapse2" style="color:white">
+                            Entry Form
+                        </a>
+                    </div>
+                </div>
+                <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+
+                        <div class="submit-row">
+                            <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                            <button type="button" class="btn btn-primary" id="btnReset">Reset</button>
+                            @*<button type="button" class="btn btn-warning">Report</button>*@
+                        </div>
+                        <fieldset class="fieldsetCustom">
+                            <legend class="legendCustom"> Dicrepancy Report Generation Form</legend>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    @Html.Label("Date")
+                                    @Html.TextBox("Date", "", new { @class = "form-control datepicker", @readonly = "true" })
+                                </div>
+
+                                <div class="col-sm-2">
+                                    @Html.Label("Discrepancy No")
+                                    @Html.TextBox("DNO", "", new { @class = "form-control", @readonly = "true" })
+                                </div>
+                                <div class="col-sm-2">
+                                    @Html.Label("Project")
+                                    @Html.DropDownList("ddlStores", new SelectList(string.Empty, "Value", "Text"), "Select Project", new { @class = "form-control" })
+                                </div>
+
+                                <div class="col-sm-4">
+                                    @Html.Label("Remarks")
+                                    @Html.TextArea("Remarks", new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="fill">
+                                <div class="submit-row">
+                                    <button type="button" class="btn btn-primary" id="btnViewItem">Add Item</button>
+                                    <button type="button" class="btn btn-primary" id="btnRemoveItem">Remove Item</button>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+           
+        </div>
+    </div>
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <a class="collapsediv" data-toggle="collapse" href="#SearchItemDetails" style="color:white">
+                            Item Details Grid
+                        </a>
+                    </div>
+                </div>
+                <div id="SearchItemDetails" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <div id="grid"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div id="ItemModal" title="Select Item" style="display: none;">
+        <div id="Itemgrid"></div>
+        <button type="button" class="btn btn-primary" id="btnAddItem">Add</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+    </div>
+
+}
+
+    <script type="text/javascript">
+        var $ReportGrid;
+        var $ItemDetailsGrid;
+        $(document).ready(function () {
+            $.ajax({
+                type: "GET",
+                url: "/Master/AllStores",
+                datatype: "Json",
+                success: function (data) {
+                    $.each(data, function (index, value) {
+                        $('#ddlStores').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                    });
+                }
+            });
+
+            var colID = [
+                //{
+                //    dataIndx: "state", Width: 10, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                //    editor: false, dataType: 'bool',
+                //    title: "<input type='checkbox' />",
+                //    cb: { select: true, all: false, header: true }
+                //},
+                { title: "", dataIndx: "ItemID", width: 10, dataType: "integer", hidden: true },
+                { title: "", dataIndx: "BatchId", width: 10, dataType: "integer", hidden: true },
+                { title: "Item Name & Description", dataIndx: "ItemName", width: 670, dataType: "string", resizable: false, editable: false },
+                { title: "BatchName", dataIndx: "BatchName", width: 140, dataType: "string", resizable: false, editable: false },
+                { title: "Quantity", dataIndx: "Quantity", width: 150, resizable: false, dataType: "string", editable: false },
+                { title: "PhysicalQty", dataIndx: "PhysicalQty", width: 150, dataType: "float", resizable: false },
+                {
+                    title: "ShortQuantity", dataIndx: "ShortQuantity", width: 150, dataType: "float", resizable: false, editable: false,
+                    formula: function (ui) {
+                        var rd = ui.rowData;
+                        var difference = rd.Quantity - rd.PhysicalQty;
+                        if (difference > 0)
+                            return difference;
+                        else
+                            return 0;
+                    }
+                },
+                {
+                    title: "SurPlusQuantity", dataIndx: "SurPlusQuantity", width: 150, resizable: false, dataType: "float", editable: false,
+                    formula: function (ui) {                     
+                        var rd = ui.rowData;
+                        var difference = rd.PhysicalQty - rd.Quantity;
+                        if (difference > 0)
+                            return difference;
+                        else
+                            return 0;
+                    }
+                },
+                { title: "Reason", dataIndx: "Reason", width: 100, dataType: "string", resizable: false }
+            ];
+            var dataID = {
+                location: 'local',
+                sorting: 'local',
+                paging: 'local',
+                dataType: 'JSON'
+            };
+
+            var setID = {
+                virtualX: true,
+                virtualY: true,
+                height: '300',
+                maxheight: '400',
+                // title: "Material Indent Item Details",
+                sortable: false,
+                numberCell: { show: false },
+                selectionModel: { type: 'row' },
+                hoverMode: 'cell',
+                editor: { type: 'textbox' },
+                showTop: true,
+                resizable: true,
+                editModel: {
+                    saveKey: $.ui.keyCode.ENTER
+                },
+                cellSave: function (evt, ui) {
+                    this.refreshRow(ui);
+                },
+                draggable: false,
+                colModel: colID,
+                dataModel: dataID,
+                formulas:[
+                    ["ShortQuantity", function (rd) {
+                        var difference = rd.Quantity - rd.PhysicalQty;
+                    if (difference > 0)
+                        return difference;
+                    else
+                        return 0;
+                }],
+                ["SurPlusQuantity", function (rd) {
+                   var difference = rd.PhysicalQty - rd.Quantity;
+                    if (difference > 0)
+                        return difference;
+                    else
+                        return 0;
+                }]
+                ],
+
+                pageModel: { type: "local", rPP: 20 },
+                postRenderInterval: -1
+            };
+            $ReportGrid = $("#grid").pqGrid(setID);
+
+            var colIID = [
+                {
+                    dataIndx: "state", minWidth: 25, maxWidth: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                    editor: false, dataType: 'bool',
+                    title: "<input type='checkbox' />",
+                    cb: { select: true, all: false, header: true }
+                },
+                { title: "", dataIndx: "ID", width: 10, dataType: "integer", editable: false, hidden: true },
+                { title: "", dataIndx: "BatchId", width: 10, dataType: "integer", editable: false, hidden: true },
+                { title: "Code", dataIndx: "Code", width: 100, dataType: "string", hidden: true },
+                { title: "ItemName", dataIndx: "Name", width: '45%', dataType: "string", editable: false, filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } },
+                { title: "UnitName", dataIndx: "UnitName", width: '20%', dataType: "string", editable: false },
+                { title: "BatchName", dataIndx: "BatchName", width: '20%', dataType: "string", editable: false },
+                { title: "ExpiryDate", dataIndx: "ExpiryDate", width: 120, dataType: "string", hidden: true },
+                { title: "Qty", dataIndx: "CurrentQty", width: '10%', dataType: "float", editable: false }
+            ];
+            var dataIID = {
+                location: 'local',
+                sorting: 'local',
+                paging: 'local',
+                dataType: 'JSON'
+            };
+
+            var setIID = {
+                height: '400',
+                sortable: false,
+                numberCell: { show: false },
+                selectionModel: { type: 'row' },
+                hoverMode: 'cell',
+                editor: { type: 'textbox' },
+                sortIndx: ["Name"],
+                showTop: true,
+                resizable: true,
+                editModel: {
+                    saveKey: $.ui.keyCode.ENTER
+                },
+                filterModel: { on: true, mode: "AND", header: true },
+                virtualX: true,
+                virtualY: true,
+                draggable: false,
+                colModel: colIID,
+                dataModel: dataIID,
+                pageModel: { type: "local", rPP: 20 },
+            };
+            $ItemDetailsGrid = $("#Itemgrid").pqGrid(setIID);
+        });
+
+        $(document).ready(function () {
+            $('#btnViewItem').on('click', function () {
+                if ($("#ddlStores").val() == "") {
+                    ShowAlert("error", "Please Select Store");
+                    return;
+                }
+                var searchStoreId = $("#ddlStores").val();
+                $("#ItemModal").dialog({
+                    height: 500,
+                    width: 700,
+                    modal: true,
+                    open: function (evt, ui) {
+                        $.ajax({
+                            type: "GET",
+                            url: "/ItemMaster/GetStoreItemStock/",
+                            data: { StoreId: searchStoreId },
+                            datatype: "Json",
+                            beforeSend: function () {
+                                // $ItemDetailsGrid = $("#Itemgrid").pqGrid(setIID);
+                                $ItemDetailsGrid.pqGrid("showLoading");
+                            },
+                            complete: function () {
+                                $ItemDetailsGrid.pqGrid("hideLoading");
+                            },
+                            success: function (result) {
+
+                                if (result.success) {
+                                    $ItemDetailsGrid.pqGrid("hideLoading");
+                                    $ItemDetailsGrid.pqGrid("option", "dataModel.data", result.items);
+                                    $ItemDetailsGrid.pqGrid("refreshView");
+                                    $ItemDetailsGrid.pqGrid("refresh");
+                                } else {
+                                    ClearParamGrid('Itemgrid');
+                                    ShowAlert("error", result.Messsage);
+                                    return;
+                                }
+                            },
+                            error: function (request, status, error) {
+                                $ItemDetailsGrid.pqGrid("hideLoading");
+                                ShowAlert("error", "Error while loading Itemlist");
+                                ClearParamGrid("Itemgrid");
+                                return;
+                            }
+                        });
+
+                    }
+                });
+            });
+        });
+        $("#ddlStores").change(function () {
+            ClearParamGrid("grid");
+        });
+        $(document).ready(function () {
+            $('#btnAddItem').on('click', function () {
+                
+                ClosePopupWindow("ItemModal");
+                $("#Itemgrid").pqGrid("reset", { filter: true });
+                var getData = $("#Itemgrid").pqGrid("option", "dataModel.data");
+                var selectedItems = jLinq.from(getData).equals("state", true).select();
+
+                var dataMGrid = [];
+                var getMainGridData = $ReportGrid.pqGrid("option", "dataModel.data");
+                $.each(getMainGridData, function (key, value) {
+                    var grdData = {
+                        'ItemID': value.ItemID, 'BatchId': value.BatchId, 'ItemName': value.ItemName, 'BatchName': value.BatchName,
+                        'Quantity': value.Quantity, 'PhysicalQty': value.PhysicalQty, 'ShortQuantity': 0,
+                        'SurPlusQuantity':0, 'Reason': value.Reason, 'state': true
+                    };
+                    dataMGrid.push(grdData);
+                });
+
+                $.each(selectedItems, function (key, value) {
+                    var grdData = {
+                        'ItemID': value.ID, 'BatchId': value.BatchId, 'ItemName': value.Name, 'BatchName': value.BatchName,
+                        'Quantity': value.CurrentQty, 'state': true
+                    };
+                    dataMGrid.push(grdData);
+                });
+
+                $ReportGrid.pqGrid("option", "dataModel.data", dataMGrid);
+                $ReportGrid.pqGrid("refreshDataAndView");
+            });
+        });
+       
+        $('#btnRemoveItem').on('click', function () {
+
+            var getData = $ReportGrid.pqGrid("option", "dataModel.data");
+            var selectedItems = jLinq.from(getData).equals("state", true).select();
+
+            $.each(selectedItems, function (key, value) {
+                var obj = $ReportGrid.pqGrid("getRowIndx", { rowData: value });
+                var rowIndx = obj.rowIndx;
+                $ReportGrid.pqGrid("deleteRow", { rowIndx: rowIndx });
+            });
+            
+        });
+        $(document).ready(function () {
+            $("#btnReset").click(function () {
+                ClearForm();
+            });
+            $("#btnSave").click(function () {
+                if ($("#ddlStores").val() == "") {
+                    ShowAlert("error", 'Please Select Store');
+                    return;
+                }
+                var items = $ReportGrid.pqGrid("getData", { dataIndx: ['ItemID', 'BatchId', 'Quantity', 'PhysicalQty', 'ShortQuantity', 'SurPlusQuantity', 'Reason'] });
+                var grn = JSON.stringify({ //Passing data
+                    StoreId: $("#ddlStores").val(),
+                    DiscrepancyDate: $("#Date").val(),
+                    Remarks: $("#Remarks").val(),
+                    Discrepancydetails: items
+                });
+                $.ajax({
+                    type: "POST", //HTTP POST Method
+                    traditional: true,
+                    contentType: 'application/json; charset=utf-8',
+                    url: '/Discrepancy/SaveDiscrepancy', // Controller/View
+                    data: grn,
+                    success: function (msg) {
+                        if (msg.success) {
+                            ClearForm();
+                            ShowAlert("success", "Generated Discrepancy No : " + msg.Message);
+                        }
+                        else {
+                            ShowAlert("error", "Falied to Save! " + msg.Message);
+                        }
+                    },
+                    error: function (jqXHR, exception) {
+                        Notify("Falied to Save", "error", "Error while saving Discrepancy.");
+                    }
+                });
+            });
+        });
+        function ClearForm() {
+            $("#ddlStores").val(""),
+                $("#Remarks").val(""),
+                ClearParamGrid("grid");
+        }
+    </script>

@@ -1,0 +1,508 @@
+﻿@model BISERP.Areas.Store.Models.Store.GRNVendorModel
+<script>
+    $(function () {
+        $(".datepicker").datepicker({
+            showOn: "button",
+            buttonImage: "",
+            buttonImageOnly: true,
+            buttonText: "",
+            dateFormat: "dd-MM-yy"
+        }).datepicker("setDate", new Date());
+        $("#anim").change(function () {
+            $(".datepicker").datepicker("option", "showAnim", "fadeIn");
+        });
+    });
+</script>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <a class="collapsediv" data-toggle="collapse" href="#SearchDetails" style="color:white">
+                            Search Details
+                        </a>
+                    </div>
+                </div>
+                <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <div class="container fill">
+                            <div id="searchgrid"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        Entry Form
+                    </div>
+                </div>
+                <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <fieldset>
+                            <legend></legend>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <button type="button" class="btn btn-success" id="btnReset">Reset</button>
+                                    <button type="button" class="btn btn-success" id="btnAuthorize">Save</button>
+                                    <a data-toggle="collapse" class="btn btn-success" href="#SearchDetails">Show/Hide top Search Panel</a>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.StoreId)
+                                        @Html.TextBoxFor(m => m.StoreName, new { @readonly = "true", @class = "form-control" })
+                                        @Html.HiddenFor(m => m.StoreId)
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.VendorID)
+                                        @Html.TextBoxFor(m => m.VendorName, new { @readonly = "true", @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.GRNNo)
+                                        @Html.TextBoxFor(m => m.GRNNo, new { @readonly = "true", @class = "form-control" })
+                                        @Html.HiddenFor(m => m.ID)
+                                        @Html.HiddenFor(m => m.GrnTypeID)
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.GRNDate)
+                                        @Html.TextBoxFor(m => m.GRNDate, new Dictionary<string, object> { { "class", "form-control" }, { "readonly", "true" } })
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.DCNo)
+                                        @Html.TextBoxFor(m => m.DCNo, new { @readonly = "true", @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.DCDate)
+                                        @Html.TextBoxFor(m => m.DCDate, new Dictionary<string, object> { { "class", "form-control" }, { "readonly", "true" } })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.InwardNo)
+                                        @Html.TextBoxFor(m => m.InwardNo, new { @readonly = "true", @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="form-group  form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.InwardDate)
+                                        @Html.TextBoxFor(m => m.InwardDate, new Dictionary<string, object> { { "class", "form-control" }, { "readonly", "true" } })
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.InvoiceNo)
+                                        @Html.TextBoxFor(m => m.InvoiceNo, new { @readonly = "true", @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.InvoiceDate)
+                                        @Html.TextBoxFor(m => m.InvoiceDate, new Dictionary<string, object> { { "class", "form-control" }, { "readonly", "true" } })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.Label("Status", new { @class = "required" })
+                                        @Html.RadioButton("AuthCancel", "Authorized", true)  Authorized
+                                        @Html.RadioButton("AuthCancel", "Cancel")Cancel
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.AuthorizedDate)
+                                        @Html.TextBoxFor(m => m.AuthorizedDate, new { @class = "AuthorizedDate form-control datepicker", @disabled = "true" })
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-groupingBoder">
+                <div class="row">
+                    <div class="container fill">
+                        <div id="grid"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-groupingBoder">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-sm-8">
+                            <div class="row">
+                                <div class="col-sm-1">
+                                    @Html.LabelFor(m => m.Preparedby)
+                                </div>
+                                <div class="col-sm-2">
+                                    @Html.TextBoxFor(m => m.Preparedby, new { @readonly = "true", @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-1">
+                                    @Html.LabelFor(m => m.Notes)
+                                </div>
+                                <div class="col-sm-2">
+                                    @Html.TextAreaFor(m => m.Notes, new { @readonly = "true", @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-1">
+                                    @Html.LabelFor(m => m.GrnPaymentType)
+                                </div>
+                                <div class="col-sm-2 ">
+                                    @Html.RadioButton("PaymentMode", "Cash")  Cash
+                                    @Html.RadioButton("PaymentMode", "Credit") Credit
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <table align="right">
+                                <tr>
+                                    <td>Gross Amount</td>
+                                    <td>
+                                        @Html.TextBoxFor(m => m.Amount, new Dictionary<string, object> { { "Id", "GrossAmount" }, { "readonly", "true" }, { "class", "form-control" } })
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Tax</td>
+                                    <td>
+                                        @Html.TextBoxFor(m => m.TotalTaxamt, new Dictionary<string, object> { { "Id", "TaxAmount" }, { "readonly", "true" }, { "class", "form-control" } })
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Other Charges</td>
+                                    <td>
+                                        @Html.TextBoxFor(m => m.TotalOtherAmt, new Dictionary<string, object> { { "Id", "OtherCharges" }, { "readonly", "true" }, { "class", "form-control" } })
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Discount</td>
+                                    <td>
+                                        @Html.TextBoxFor(m => m.TotalDisc, new Dictionary<string, object> { { "Id", "Discount" }, { "readonly", "true" }, { "class", "form-control" } })
+                                    </td>
+                                </tr>
+                                @*<tr>
+                                        <td>CR Note Amount</td>
+                                        <td>
+                                            @Html.TextBoxFor(m => m.CrNoteAmt, new Dictionary<string, object> { { "Id", "CR_Note_Amount" }, { "readonly", "true" }, { "class", "form-control" } })
+                                        </td>
+                                    </tr>*@
+                                <tr>
+                                    <td>Grand Total</td>
+                                    <td>
+                                        @Html.TextBoxFor(m => m.TotalAmount, new Dictionary<string, object> { { "Id", "GrandTotal" }, { "readonly", "true" }, { "class", "form-control" } })
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Rounding Off</td>
+                                    <td>
+                                        @Html.TextBoxFor(m => m.TotalAmount, new Dictionary<string, object> { { "Id", "Rounding_Off" }, { "readonly", "true" }, { "class", "form-control" } })
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        var $DetailsGrid;
+        //var grid;
+        var $SearchGrid
+        function LoadSearchGrid() {
+            $.ajax({
+                url: "/GRNVendor/GRNForAuthorization",
+                cache: false,
+                async: true,
+                method: "GET",
+                dataType: "JSON",
+                success: function (response) {
+                    $SearchGrid.pqGrid("option", "dataModel.data", response.records);
+                    var column = $SearchGrid.pqGrid("getColumn", { dataIndx: "VendorName" });
+                    var filter = column.filter;
+                    filter.cache = null;
+                    filter.options = $SearchGrid.pqGrid("getData", { dataIndx: ["VendorName"] });
+
+                    var column = $SearchGrid.pqGrid("getColumn", { dataIndx: "StoreName" });
+                    var filter = column.filter;
+                    filter.cache = null;
+                    filter.options = $SearchGrid.pqGrid("getData", { dataIndx: ["StoreName"] });
+
+                    $SearchGrid.pqGrid("refreshDataAndView");
+                }
+            });
+        }
+        function ClearForm() {
+            $('#StoreName').val("");
+            $("#StoreId").val();
+            $('#GRNNo').val("");
+            $('#GrnTypeID').val("");
+            $('#GRNDate').val("");
+            $('#VendorName').val("");
+            $('#DCNo').val("");
+            $('#DCDate').val("");
+            $('#InwardNo').val("");
+            $('#InwardDate').val("");
+            $('#InvoiceNo').val("");
+            $('#InvoiceDate').val("");
+            $('#Preparedby').val("");
+            $('#Notes').val("");
+            $('#GrossAmount').val("");
+            $('#TaxAmount').val("");
+            $('#OtherCharges').val("");
+            $('#Discount').val("");
+            //$('#CR_Note_Amount').val("");
+            $('#GrandTotal').val("");
+            $('#Rounding_Off').val("");
+            ClearParamGrid("grid");
+        }
+        $(document).ready(function () {
+            $.ajax({
+                type: "GET",
+                url: "/Master/AllStores",
+                datatype: "Json",
+                success: function (data) {
+                    $.each(data, function (index, value) {
+                        $('#ddlSearchStores').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                    });
+                }
+            });
+
+            $('#btnReset').on('click', function () {
+                ClearForm();
+            });
+
+            $('#btnAuthorize').on('click', function () {
+                var authorize = false;
+                var cancel = false;
+                if ($("[name='AuthCancel']:checked").val() == "Authorized")
+                    authorize = true;
+                else
+                    cancel = true;
+
+                var getData = $("#grid").pqGrid("option", "dataModel.data");
+
+                var grn = JSON.stringify({ //Passing data
+                    ID: $("#ID").val(), //Reading text box values using Jquery
+                    Authorized: authorize,
+                    StoreId: $("#StoreId").val(),
+                    Cancelled: cancel,
+                    AuthorizedDate: $("#AuthorizedDate").val(),
+                    GrnTypeID: $("#GrnTypeID").val(),
+                    GRNDetails: getData
+                });
+
+                $.ajax(
+                {
+                    type: "POST", //HTTP POST Method
+                    traditional: true,
+                    contentType: 'application/json; charset=utf-8',
+                    url: '/GRNVendor/AuthCancelGRN', // Controller/View
+                    data: grn,
+                    success: function (msg) {
+                        if ($("[name='AuthCancel']:checked").val() == "Authorized")
+                            ShowAlert("success", "GRN authorized successfully to system.");
+                        else
+                            ShowAlert("Cancelled", "success", "GRN cancelled successfully.");
+                        ClearForm();
+                        LoadSearchGrid();
+                    },
+                    error: function (jqXHR, exception) {
+                        ShowAlert("error", "Failed to authorize/cancel");
+                    }
+                });
+            });
+        });
+
+        $(document).ready(function () {
+            var dataSearchGrid = { location: "local", sorting: 'local' };
+            var colSearchGrid = [
+                { title: "", dataIndx: "ID", dataType: "integer", hidden: true },
+                { title: "", dataIndx: "GrnTypeID", dataType: "integer", hidden: true },
+                { title: "", dataIndx: "Storeid", dataType: "integer", hidden: true },
+                { title: "", dataIndx: "PoID", dataType: "integer", hidden: true },
+                { title: "", dataIndx: "SupplierID", dataType: "integer", hidden: true },
+                { title: "", dataIndx: "strDCDate", dataType: "date", hidden: true },
+                { title: "", dataIndx: "strInvoiceDate", dataType: "date", hidden: true },
+                { title: "", dataIndx: "strInwardDate", dataType: "date", hidden: true },
+                { title: "", dataIndx: "strPODate", dataType: "date", hidden: true },
+                { title: "", dataIndx: "InvoiceNo", dataType: "string", hidden: true },
+                { title: "", dataIndx: "PONo", dataType: "string", hidden: true },
+                { title: "", dataIndx: "Amount", dataType: "double", hidden: true },
+                { title: "", dataIndx: "Transporter", dataType: "string", hidden: true },
+                { title: "", dataIndx: "VehicleNo", dataType: "string", hidden: true },
+                { title: "", dataIndx: "Amount", dataType: "double", hidden: true },
+                { title: "", dataIndx: "TotalTaxamt", dataType: "double", hidden: true },
+                { title: "", dataIndx: "TotalFORE", dataType: "double", hidden: true },
+                { title: "", dataIndx: "TotalExciseAmt", dataType: "double", hidden: true },
+                { title: "", dataIndx: "TotalDisc", dataType: "double", hidden: true },
+                { title: "", dataIndx: "InwardNo", dataType: "double", hidden: true },
+                { title: "", dataIndx: "GrnPaymentType", dataType: "string", hidden: true },
+                { title: "", dataIndx: "CrNoteAmt", dataType: "double", hidden: true },
+                { title: "", dataIndx: "TotalOtherAmt", dataType: "double", hidden: true },
+                { title: "", dataIndx: "TotalAmount", dataType: "double", hidden: true },
+                { title: "", dataIndx: "TotalDisc", dataType: "double", hidden: true },
+                { title: "", dataIndx: "GRNType", dataType: "string", hidden: true },
+                { title: "", dataIndx: "Notes", dataType: "string", hidden: true },
+                {
+                    title: "GRN Number", dataIndx: "GRNNo", width: 400,
+                    filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                },
+                {
+                    title: "GRN Date", dataIndx: "strGRNDate", width: 200, dataType: "string"
+                },
+                {
+                    title: "StoreName", dataIndx: "StoreName", width: 200, dataType: "string",
+                    filter: {
+                        type: "select",
+                        condition: 'equal',
+                        prepend: { '': '--Select--' },
+                        valueIndx: "StoreName",
+                        labelIndx: "StoreName",
+                        listeners: ['change']
+                    }
+                },
+                {
+                    title: "Manufacturer", dataIndx: "VendorName", width: 200, dataType: "string",
+                    filter: {
+                        type: "select",
+                        condition: 'equal',
+                        prepend: { '': '--Select--' },
+                        valueIndx: "VendorName",
+                        labelIndx: "VendorName",
+                        listeners: ['change']
+                    }
+                },
+                {
+                    title: "DC Number", dataIndx: "DCNo", width: 200, dataType: "date", hidden: true
+                }
+
+            ];
+            var setSearchGrid = {
+                width: '100%',
+                height: 250,
+                sortable: false,
+                numberCell: { show: false },
+                showTop: false,
+                resizable: true,
+                scrollModel: { autoFit: true },
+                draggable: false,
+                wrap: false,
+                editable: false,
+                columnBorders: true,
+                filterModel: { on: true, mode: "AND", header: true },
+                selectionModel: { type: 'row', mode: 'single' },
+                colModel: colSearchGrid,
+                dataModel: dataSearchGrid,
+                pageModel: { type: "local", rPP: 50 },
+                rowClick: function (evt, ui) {
+                    ClearParamGrid("grid");
+                    if (ui.rowData) {
+                        var rowIndx = parseInt(ui.rowIndx);
+                        var record = ui.rowData;
+                        $("#ID").val(record.ID), $("#GRNNo").val(record.GRNNo), $("#GrnTypeID").val(record.GrnTypeID), $("#GRNDate").val(record.strGRNDate),
+                        $("#DCNo").val(record.DCNo), $("#DCDate").val(record.strDCDate), $("#InvoiceNo").val(record.InvoiceNo), $("#InvoiceDate").val(record.strInvoiceDate),
+                        $("#InwardNo").val(record.InwardNo), $("#InwardDate").val(record.strInwardDate), $("#StoreName").val(record.StoreName), $("#StoreId").val(record.StoreId), $("#VendorName").val(record.VendorName),
+                        $("#Notes").val(record.Notes), $('input:radio[name="PaymentMode"][value="' + record.GrnPaymentType + '"]').prop('checked', true); $("[name='']").prop('checked', true),
+                        $("#GrossAmount").val(record.Amount), $("#TaxAmount").val(record.TotalTaxamt), $("#OtherCharges").val(record.TotalOtherAmt), $("#Discount").val(record.TotalDisc),
+                        $("#CR_Note_Amount").val(record.CrNoteAmt), $("#Rounding_Off").val(record.Roundoff), $("#GrandTotal").val(record.TotalAmount)
+
+                        $.ajax({
+                            type: "GET",
+                            url: "/GRNVendor/GRNDetails/",
+                            data: { GRNId: record.ID },
+                            datatype: "Json",
+                            async: true,
+                            success: function (data) {
+                                $DetailsGrid.pqGrid("option", "dataModel.data", data);
+                                $DetailsGrid.pqGrid("refreshDataAndView");
+                            }
+                        });
+                    }
+                }
+            }
+            $SearchGrid = $("#searchgrid").pqGrid(setSearchGrid);
+            LoadSearchGrid();
+        });
+        $(document).ready(function () {
+            colIID = [
+                {
+                    dataIndx: "state", Width: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                    editor: false, dataType: 'bool',
+                    title: "<input type='checkbox' />",
+                    cb: { select: true, all: false, header: true }
+                },
+                { title: "", dataIndx: "ID", width: 10, dataType: "integer", editable: false, resizable: false, hidden: true },
+                { title: "", dataIndx: "ItemID", width: 10, dataType: "integer", editable: false, resizable: false, hidden: true },
+                { title: "", dataIndx: "GrnID", width: 10, dataType: "integer", editable: false, resizable: false, hidden: true },
+                { title: "", dataIndx: "Status", width: 10, dataType: "string", editable: false, resizable: false, hidden: true },
+                { title: "", dataIndx: "PackSizeId", width: 200, dataType: "integer", resizable: false, editable: false, hidden: true },
+                { title: "Amount", dataIndx: "Amount", width: 150, dataType: "double", resizable: false, editable: false, hidden: true },
+                { title: "ItemCode", dataIndx: "ItemCode", width: 150, dataType: "string", resizable: false, editable: false },
+                { title: "ItemName", dataIndx: "ItemName", width: 150, resizable: false, dataType: "string", editable: false },
+                { title: "BatchNo", dataIndx: "BatchName", width: 150, dataType: "float", resizable: false, editable: false },
+                { title: "Expiry Date", dataIndx: "strExpiryDate", width: 150, dataType: "DateTime", resizable: false, editable: false },
+                { title: "Qty", dataIndx: "Qty", width: 150, dataType: "double", resizable: false, editable: false },
+                { title: "Free Qty", dataIndx: "FreeQty", width: 150, dataType: "double", resizable: false, editable: false },
+                { title: "Rate", dataIndx: "Rate", width: 150, dataType: "double", resizable: false, editable: false },
+                { title: "Mrp", dataIndx: "MRP", width: 150, dataType: "double", resizable: false, editable: false },
+            ];
+
+            dataIID = {
+                location: 'local',
+                sorting: 'local',
+                paging: 'local',
+                dataType: 'JSON'
+            };
+
+            setIID = {
+                width: '100%',
+                height: '350',
+                maxheight: '400',
+                title: "GRN Details",
+                sortable: false,
+                numberCell: { show: false },
+                selectionModel: { type: 'row' },
+                hoverMode: 'cell',
+                editor: { type: 'textbox' },
+                showTop: true,
+                resizable: true,
+                editModel: {
+                    saveKey: $.ui.keyCode.ENTER
+                },
+                draggable: false,
+                colModel: colIID,
+                dataModel: dataIID,
+                pageModel: { type: "local", rPP: 20 },
+            };
+            $DetailsGrid = $("#grid").pqGrid(setIID);
+        });
+    </script>
+
+}

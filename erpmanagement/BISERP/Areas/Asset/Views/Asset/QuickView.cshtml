@@ -1,0 +1,368 @@
+﻿@model BISERP.Areas.Transport.Models.DriverScheduleModel
+<script>
+    $(function () {
+        $(".datepicker").datepicker({
+            showOn: "button",
+            buttonImage: "",
+            buttonImage: "/Content/images/calendar.gif",
+            buttonImageOnly: true,
+            buttonText: "",
+            dateFormat: "dd-MM-yy ",
+        }).datepicker("setDate", new Date());
+        $("#anim").change(function () {
+            $(".datepicker").datepicker("option", "showAnim", "fadeIn");
+        });
+    });
+</script>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <a class="collapsediv" data-toggle="collapse" href="#SearchDetails" style="color:white">
+                            QuickView
+                        </a>
+                    </div>
+                </div>
+                <br />
+                <div class="panel-groupingBoder">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="col-sm-1">
+                                @Html.Label("Due In")
+                            </div>
+                            <div class="col-sm-1">
+                                <select id="ddlDueDays" class="wrapperdropdown-content form-control">
+                                    <option class="wrapperdropdown-content" value="0"> Select </option>
+                                    <option class="wrapperdropdown-content" value="1">  Today  </option>
+                                    <option class="wrapperdropdown-content" value="3">3</option>
+                                    <option class="wrapperdropdown-content" value="4">7</option>
+                                    <option class="wrapperdropdown-content" value="10">10</option>
+                                    <option class="wrapperdropdown-content" value="20">20</option>
+                                    <option class="wrapperdropdown-content" value="30">30</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-1">
+                                <button type="button" id="btnSearch" class="btn btn-success">Search</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-groupingBoder">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="col-sm-5">
+                                <div id="AMCgrid"></div>
+                            </div>
+                            <div class="col-sm-5">
+                                <div id="CMCgrid"></div>
+                            </div>
+                        </div>                        
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="col-sm-5">
+                                <div id="OtherDetailgrid"></div>
+                            </div>
+                            <div class="col-sm-5">
+                                <div id="Requestgrid"></div>
+                            </div>
+                        </div>                        
+                    </div>
+                    <br />
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        var $Insurancegrid;
+        var $Requestgrid;
+        var $AMCgrid;
+        var $OtherDetailgrid;
+        var $CMCgrid;
+        function LoadPermitDetailGrid() {
+            $.ajax({
+                url: "/PermitDetails/PermitDetailsNotification",
+                cache: false,
+                async: true,
+                method: "GET",
+                dataType: "JSON",
+                data: { DueDays: $("#ddlDueDays").val() },
+                beforeSend: function () {
+                    $PermitDetailgrid.pqGrid("showLoading");
+                },
+                complete: function () {
+                    $PermitDetailgrid.pqGrid("hideLoading");
+                },
+                success: function (response) {
+                    $PermitDetailgrid.pqGrid("hideLoading");
+                    $PermitDetailgrid.pqGrid("option", "dataModel.data", response);
+                    $PermitDetailgrid.pqGrid("refreshDataAndView");
+                }
+            });
+        }
+        function LoadRequestGrid() {
+            $.ajax({
+                url: "/RequestRegister/GetRequestNotification",
+                cache: false,
+                async: true,
+                method: "GET",
+                dataType: "JSON",
+                data: { DueDays: $("#ddlDueDays").val() },
+                beforeSend: function () {
+                    $Requestgrid.pqGrid("showLoading");
+                },
+                complete: function () {
+                    $Requestgrid.pqGrid("hideLoading");
+                },
+                success: function (response) {
+                    $Requestgrid.pqGrid("hideLoading");
+                    $Requestgrid.pqGrid("option", "dataModel.data", response);
+                    $Requestgrid.pqGrid("refreshDataAndView");
+                }
+            });
+        }
+        function LoadOtherDetailGrid() {
+            $.ajax({
+                url: "/AssetSchedule/OtherDetailNotification",
+                cache: false,
+                async: true,
+                method: "GET",
+                dataType: "JSON",
+                data: { DueDays: $("#ddlDueDays").val() },
+                beforeSend: function () {
+                    $OtherDetailgrid.pqGrid("showLoading");
+                },
+                complete: function () {
+                    $OtherDetailgrid.pqGrid("hideLoading");
+                },
+                success: function (response) {
+                    $OtherDetailgrid.pqGrid("hideLoading");
+                    $OtherDetailgrid.pqGrid("option", "dataModel.data", response);
+                    $OtherDetailgrid.pqGrid("refreshDataAndView");
+                }
+            });
+        }
+        function LoadAMcGrid() {
+            $.ajax({
+                url: "/AssetSchedule/AMCNotification",
+                cache: false,
+                async: true,
+                method: "GET",
+                dataType: "JSON",
+                data: { DueDays: $("#ddlDueDays").val() },
+                beforeSend: function () {
+                    $AMCgrid.pqGrid("showLoading");
+                },
+                complete: function () {
+                    $AMCgrid.pqGrid("hideLoading");
+                },
+                success: function (response) {
+                    $AMCgrid.pqGrid("hideLoading");
+                    $AMCgrid.pqGrid("option", "dataModel.data", response);
+                    $AMCgrid.pqGrid("refreshDataAndView");
+                }
+            });
+        }
+        function LoadCMCGrid() {
+            $.ajax({
+                url: "/AssetSchedule/CMCNotification",
+                cache: false,
+                async: true,
+                method: "GET",
+                dataType: "JSON",
+                data: { DueDays: $("#ddlDueDays").val() },
+                beforeSend: function () {
+                    $CMCgrid.pqGrid("showLoading");
+                },
+                complete: function () {
+                    $CMCgrid.pqGrid("hideLoading");
+                },
+                success: function (response) {
+                    $CMCgrid.pqGrid("hideLoading");
+                    $CMCgrid.pqGrid("option", "dataModel.data", response);
+                    $CMCgrid.pqGrid("refreshDataAndView");
+                }
+            });
+        }
+        $(document).ready(function () {
+            $("#btnSearch").click(function () {
+                ClearParamGrid("AMCgrid");
+                ClearParamGrid("CMCgrid");
+                ClearParamGrid("OtherDetailgrid");
+                LoadCMCGrid();
+                LoadRequestGrid();
+                LoadAMcGrid();
+                LoadOtherDetailGrid();
+            });
+        });
+        $(document).ready(function () {
+            var dataM = { location: "local", sorting: 'local' };
+            var colM = [
+                    { title: "", dataIndx: "InsuranceId", dataType: "integer", hidden: true },
+                    { title: "", dataIndx: "VehicleId", dataType: "integer", hidden: true },
+                    { title: "Vehicle No", dataIndx: "VehicleNo", width: 140 },
+                    { title: "Tax No", dataIndx: "GreenTaxNo", width: 140 },
+                    { title: "Expiry Date", dataIndx: "strExpiryDate", width: 150 },
+            ];
+
+            var setM = {
+                height: 200,
+                sortable: false,
+                numberCell: { show: false },
+                hoverMode: 'cell',
+                showTop: true,
+                resizable: false,
+                draggable: false,
+                wrap: false,
+                editable: false,
+                columnBorders: true,
+                title: "Green Tax Notification",
+                toolbar: exportToExcelToolbar,
+                colModel: colM,
+                dataModel: dataM,
+                virtualX: true,
+                virtualY: true,
+                scrollModel: { autoFit: true }                
+            };
+            $GreenTaxgrid = $("#GreenTaxgrid").pqGrid(setM);
+          //  LoadGreenTaxgrid();
+        });
+        $(document).ready(function () {
+            var dataM = { location: "local", sorting: 'local' };
+            var colM = [
+                    { title: "", dataIndx: "RequestId", dataType: "integer", hidden: true },
+                    { title: "RequestCode", dataIndx: "RequestCode", width: 140 },
+                    { title: "RequisitionStatus", dataIndx: "StrRequisitionStatus", width: 150 },
+                    { title: "MaintenanceStatus", dataIndx: "StrMaintenanceStatus", width: 150 },
+                    { title: "RequiredDate", dataIndx: "StrRequiredDate", width: 140 },
+                 
+            ];
+
+            var setM = {
+                height: 200,
+                sortable: false,
+                numberCell: { show: false },
+                hoverMode: 'cell',
+                showTop: true,
+                resizable: false,
+                draggable: false,
+                wrap: false,
+                editable: false,
+                columnBorders: true,
+                scrollModel: { autoFit: true },
+                title: "Request Notification",
+                toolbar: exportToExcelToolbar,
+                colModel: colM,
+                dataModel: dataM,
+                virtualX: true,
+                virtualY: true
+            };
+            $Requestgrid = $("#Requestgrid").pqGrid(setM);
+            LoadRequestGrid();
+        });
+        $(document).ready(function () {
+            var dataM = { location: "local", sorting: 'local' };
+            var colM = [
+                    { title: "", dataIndx: "AssetId", dataType: "integer", hidden: true },
+                    { title: "", dataIndx: "ScheduleId", dataType: "integer", hidden: true },
+                    { title: "Asset Code", dataIndx: "AssetCode", width: 140 },
+                    { title: "Asset Name", dataIndx: "ItemName", width: 140 },
+                    { title: "Expiry Date", dataIndx: "StrScheduleDate", width: 150 },
+            ];
+
+            var setM = {
+                height: 200,
+                sortable: false,
+                numberCell: { show: false },
+                hoverMode: 'cell',
+                showTop: true,
+                resizable: false,
+                draggable: false,
+                wrap: false,
+                editable: false,
+                columnBorders: true,
+                scrollModel: { autoFit: true },
+                title: "AMC Notification",
+                toolbar: exportToExcelToolbar,
+                colModel: colM,
+                dataModel: dataM,
+                virtualX: true,
+                virtualY: true
+            };
+            $AMCgrid = $("#AMCgrid").pqGrid(setM);
+            LoadAMcGrid();
+        });
+        $(document).ready(function () {
+            var dataM = { location: "local", sorting: 'local' };
+            var colM = [
+                    { title: "", dataIndx: "AssetId", dataType: "integer", hidden: true },
+                    { title: "", dataIndx: "ScheduleId", dataType: "integer", hidden: true },
+                    { title: "Asset Code", dataIndx: "AssetCode", width: 140 },
+                    { title: "Asset Name", dataIndx: "ItemName", width: 140 },
+                    { title: "Expiry Date", dataIndx: "StrScheduleDate", width: 150 },
+            ];
+
+            var setM = {
+                height: 200,
+                sortable: false,
+                numberCell: { show: false },
+                hoverMode: 'cell',
+                showTop: true,
+                resizable: false,
+                draggable: false,
+                wrap: false,
+                editable: false,
+                columnBorders: true,
+                scrollModel: { autoFit: true },
+                title: "CMC Notification",
+                toolbar: exportToExcelToolbar,
+                colModel: colM,
+                dataModel: dataM,
+                virtualX: true,
+                virtualY: true
+            };
+            $CMCgrid = $("#CMCgrid ").pqGrid(setM);
+            LoadCMCGrid();
+        });
+        $(document).ready(function () {
+            var dataM = { location: "local", sorting: 'local' };
+            var colM = [
+                 { title: "", dataIndx: "AssetId", dataType: "integer", hidden: true },
+                    { title: "", dataIndx: "ScheduleId", dataType: "integer", hidden: true },
+                    { title: "Asset Code", dataIndx: "AssetCode", width: 140 },
+                    { title: "Asset Name", dataIndx: "ItemName", width: 140 },
+                    { title: "MaintainanceType", dataIndx: "MaintenanceType", width: 150 },
+                    { title: "Expiry Date", dataIndx: "StrScheduleDate", width: 150 },
+            ];
+
+            var setM = {
+                height: 200,
+                sortable: false,
+                numberCell: { show: false },
+                hoverMode: 'cell',
+                showTop: true,
+                resizable: false,
+                draggable: false,
+                wrap: false,
+                editable: false,
+                columnBorders: true,
+                scrollModel: { autoFit: true },
+                title: "OtherMaintainanceType Detail Notification",
+                toolbar: exportToExcelToolbar,
+                colModel: colM,
+                dataModel: dataM,
+                virtualX: true,
+                virtualY: true
+            };
+            $OtherDetailgrid = $("#OtherDetailgrid").pqGrid(setM);
+            LoadOtherDetailGrid();
+        });
+    </script>
+}

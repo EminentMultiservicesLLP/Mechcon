@@ -1,0 +1,239 @@
+﻿@model BISERP.Areas.Masters.Models.UnitMasterModel
+
+@{
+    ViewBag.Title = "Unit Master";
+}
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <h5 class="page-header orangeDottedBottomBorder">Unit Master</h5>
+    @* new addition 2024 *@
+    <div id="SearchGridModal" class="modal fade" role="dialog" data-backdrop="false">
+        <div class="modal-dialog find-search-grid-modal">
+            <div class="modal-content gridmodal-content">
+                <div class="modal-header gridmodal-header">
+                    <button type="button" class="close" onclick="closeModal()">&times;</button>
+                    <h4 class="modal-title">Unit Details</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="fill">
+                        <div id="grid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <a class="collapsediv" data-toggle="collapse" href="#ItemTypeCreate">
+                            Unit Master
+                        </a>
+                    </div>
+                </div>
+                <div id="ItemTypeCreate" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <div class="fill">
+                            <div class="submit-row">
+                                <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                                <button type="button" class="btn btn-primary" id="btnreset" onclick="Clearform()">Reset</button>
+                                <button type="button" class="btn btn-info" id="btnSearch">Find</button>
+                            </div>
+                            <fieldset class="fieldsetCustom">
+                                <legend class="legendCustom">Create Unit</legend>
+                                <div class="row">
+                                    <div class="col-sm-2">
+                                        <label for="UnitCode" class="required">Unit Code</label>
+                                        <input class="form-control" placeholder="Unit Code" id="UnitCode" type="text" />
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label for="UnitName" class="required">Unit Name</label>
+                                        <input class="form-control" placeholder="Unit Name" id="UnitName" type="text" />
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <br />
+                                        <label for="Deactive">Deactive</label>
+                                        <input type="checkbox" id="Deactive" name="Deactive">
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<script type="text/javascript">
+    var tempID = 0;
+    var grid;
+    grid = $("#grid").jsGrid({
+        width: "100%",
+        height: "400px",
+        filtering: true, //will display top 1st row as filter
+        selecting: true,
+        sorting: true,
+        //inserting: true, // false will not allow inserting new entry
+        //editing: true,// false will not allow exisiting data entry
+        //autoload: true, // this statement require to load data using ajax call
+        paging: true,
+        pageSize: 20,
+
+        controller: {
+            loadData: function (filter) {
+                var d = $.Deferred();
+                $.ajax({
+                    type: 'GET',
+                    @*url: '@Url.Action("AllUnits", "UnitMaster")',*@
+                    url: "/UnitMaster/AllUnits",
+                    dataType: "json",
+                    data: { SearchName: filter.UnitName, Searchcode: filter.UnitCode },
+                    success: function (data) {
+                        if (data.success) {
+                            d.resolve(data.records);
+                        } else {
+                            ShowAlert("error", data.Massage);
+                            $(".jsgrid-load-panel").hide();
+                        }
+                    },
+                    error: function (e) {
+                        ShowAlert("error", "No Record Found");
+                    }
+                });
+                return d.promise();
+            },
+            //insertItem: function (item) {
+            //    var d = $.Deferred();
+            //    $.ajax(
+            //    {
+            //        type: "POST", //HTTP POST Method
+            //        dataType: "json",
+            //        url: '/UnitMaster/SaveUnit', // Controller/View
+            //        data: item,
+            //        success: function (msg) {
+            //            if (msg.success) {
+            //                ShowAlert("success", "Unit Master added successfully to system.");
+            //            } else {
+            //                ShowAlert("error", msg.Message);
+            //                $(".jsgrid-load-panel").hide();
+            //            }
+            //        },
+            //    }).done(function (item) {
+            //        //  d.resolve(insertedItem.data);
+            //        $("#grid").jsGrid("loadData");
+            //    });
+
+            //},
+            //updateItem: function (item) {
+            //    var d = $.Deferred();
+            //    $.ajax(
+            //    {
+            //        type: "POST", //HTTP POST Method
+            //        dataType: "json",
+            //        url: '/UnitMaster/updateunit', // Controller/View
+            //        data: item,
+            //        success: function (msg) {
+            //            if (msg.success) {
+            //                ShowAlert("success", "Unit Master updated successfully to system.");
+            //            } else {
+            //                ShowAlert("error", msg.Message);
+            //            }
+            //        },
+            //    }).done(function (insertedItem) {
+            //        d.resolve(insertedItem.data);
+            //        $("#grid").jsGrid("loadData");
+
+            //    });
+            //    return d.promise();
+            //}
+        },
+        fields: [
+            { name: "ID", visible: false, width: 0 },
+            { name: "UnitCode", title: "Code", type: "text", autosearch: true, validate: { validator: "required", message: "code is missing! Please enter the code ", }, width: 20 },
+            { name: "UnitName", title: "Name", type: "text", validate: "required", autosearch: true, validate: { validator: "required", message: "name is missing! Please enter the name" }, },
+            { name: "Deactive", title: "Deactive", type: "checkbox", filtering: false, width: 10, inserting: false },
+            //{ type: "control", deleteButton: false, width: 10 }
+        ],
+        rowClick: function (args) {
+            var data = args.item;
+            tempID = data.ID;
+            $("#UnitCode").val(data.UnitCode);
+            $("#UnitName").val(data.UnitName);
+            $("#Deactive").prop('checked', data.Deactive);
+            closeModal();
+        }
+    });
+    $("#btnSave").click(function () {
+        if ($("#UnitCode").val() == "") {
+            ShowAlert("error", "Code is missing! Please enter the code");
+            return;
+        }
+        if ($("#UnitName").val() == "") {
+            ShowAlert("error", "Name is missing! Please enter the Name");
+            return;
+        }
+        let items = JSON.stringify({ //Passing data
+            ID: tempID,
+            UnitCode: $("#UnitCode").val(),
+            UnitName: $("#UnitName").val(),
+            Deactive: $("#Deactive").prop('checked'),
+        });
+        if (tempID == 0) {
+            $.ajax({
+                type: "POST", //HTTP POST Method
+                traditional: true,
+                contentType: 'application/json; charset=utf-8',
+                url: '/UnitMaster/SaveUnit', // Controller/View
+                data: items,
+                success: function (msg) {
+                    if (msg.success) {
+                        ShowAlert("success", "Unit added successfully to system.");
+                        Clearform();
+                    }
+                    else {
+                        ShowAlert("error", msg.Message);
+                    }
+                }
+            });
+        } else {
+            $.ajax({
+                type: "POST", //HTTP POST Method
+                traditional: true,
+                contentType: 'application/json; charset=utf-8',
+                url: '/UnitMaster/updateunit', // Controller/View
+                data: items,
+                success: function (msg) {
+                    if (msg.success) {
+                        ShowAlert("success", "Unit updated successfully to system.");
+                        Clearform();
+                    }
+                    else {
+                        ShowAlert("error", msg.Message);
+                    }
+                }
+            });
+        }
+
+    });
+
+    $("#btnSearch").on('click', function () {
+        $("#SearchGridModal").modal('show');
+        $("#grid").jsGrid("loadData");
+    });
+
+    function Clearform() {
+        tempID = 0;
+        $("#UnitCode").val("");
+        $("#UnitName").val("");
+        $("#Deactive").prop('checked', false);
+        $("#grid").jsGrid("loadData");
+    }
+
+    function closeModal() {
+        $("#SearchGridModal").modal('hide');
+    }
+</script>

@@ -1,0 +1,1535 @@
+﻿@model BISERP.Areas.Purchase.Models.RequestForQuoteModel
+@*@Scripts.Render("~/bundles/jquerymodels")*@
+
+<script>
+    $(function () {
+        $(".datepicker").datepicker({
+            showOn: "button",
+            buttonImage: "/Content/images/calendar.gif",
+            buttonImageOnly: true,
+            buttonText: "Select date",
+            'changeMonth': true,
+            'changeYear': true,
+            'yearRange': '2021:2030',
+            "format": "dd-M-yyyy",
+            todayBtn: "linked",
+            pickerPosition: "bottom-left",
+            "todayHighlight": true,
+            autoclose: true,
+        }).datepicker("setDate", new Date());
+        $("#anim").change(function () {
+            $(".datepicker").datepicker("option", "showAnim", "fadeIn");
+        });
+    });
+
+
+</script>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <h5 class="page-header orangeDottedBottomBorder">Request For Quote</h5>
+    @* new addition 2024 *@
+    <div id="SearchGridModal" class="modal fade" role="dialog" data-backdrop="false">
+        <div class="modal-dialog find-search-grid-modal">
+            <div class="modal-content gridmodal-content">
+                <div class="modal-header gridmodal-header">
+                    <button type="button" class="close" onclick="closeModal()">&times;</button>
+                    <h4 class="modal-title">Search Details</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="fill">
+                        <div id="RFQSearchGrid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="ReportModal" class="modal fade" role="dialog" data-backdrop="false">
+        <div class="modal-dialog find-search-grid-modal">
+            <div class="modal-content gridmodal-content">
+                <div class="modal-header gridmodal-header">
+                    <button type="button" class="close" onclick="closeModal()">&times;</button>
+                    <h4 class="modal-title">Report</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="fill">
+                        <iframe id="iframeReportViewer" style="width:100%;height:400px"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <a class="collapsediv" data-toggle="collapse" href="#collapse2" style="color:white">
+                            Entry Form
+                        </a>
+                    </div>
+                </div>
+                <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <div class="submit-row">
+                            <div class="col-sm-6" style="text-align:start">
+                                <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                                <button type="button" class="btn btn-primary" id="btnAdd">Reset</button>
+                            </div>
+                            <div class="col-sm-6" style="text-align:end">
+                                <button type="button" class="btn btn-info" id="btnSearch">Find</button>
+                                <a data-toggle="collapse" class="btn btn-warning" id="btnExport" href="#ReportPreview">Report</a>
+                            </div>
+                        </div>
+
+                        <fieldset class="fieldsetCustom">
+                            <legend class="legendCustom"> Request For Quote Form</legend>
+                            <div class="row">
+
+                                <div class="col-sm-2">
+                                    @Html.LabelFor(m => m.IndentDate)
+                                    @Html.TextBoxFor(model => model.IndentDate, new { @class = "form-control datepicker", @readonly = "true" })
+                                    @Html.HiddenFor(model => model.IndentId)
+                                    @Html.HiddenFor(model => model.IndentNumber)
+                                </div>
+                                <div class="col-sm-2">
+                                    @Html.LabelFor(model => model.IndentNature)
+                                    <select id="IndentNature" class="wrapper-dropdown form-control">
+                                        <option class="wrapperdropdown-content" value="0" selected="selected">Normal</option>
+                                        <option class="wrapperdropdown-content" value="1">Against Purchase Req</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-2">
+                                    @Html.LabelFor(model => model.Storeid)
+                                    @Html.DropDownList("ddlStores", new SelectList(string.Empty, "Value", "Text"), "Select Project", new { @class = "wrapperdropdown-content form-control" })
+
+                                </div>
+                                <div class="col-sm-2">
+                                    @Html.LabelFor(model => model.ItemCategoryId)
+                                    @Html.DropDownList("ddlItemtype", new SelectList(string.Empty, "Value", "Text"), "", new { @class = "wrapperdropdown-content form-control" })
+                                </div>
+                                <div class="col-sm-2">
+                                    @Html.Label("Purchase-Req No")
+                                    @Html.TextBoxFor(m => m.IndentNo, "", new Dictionary<string, object> { { "class", "form-control" } })
+                                    @Html.HiddenFor(m => m.Indent_Id)
+                                </div>
+                                <div class="col-sm-2">
+                                    @Html.LabelFor(m => m.QuotationDeadLine)
+                                    @Html.TextBoxFor(model => model.QuotationDeadLine, new { @class = "form-control datepicker" })
+                                </div>
+                            </div>
+                            <br />
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    @Html.LabelFor(m => m.RequiredDate)
+                                    @Html.TextBoxFor(model => model.RequiredDate, new { @class = "form-control datepicker" })
+
+                                </div>
+
+                                <div class="col-sm-4">
+                                    @Html.LabelFor(m => m.Remarks)
+                                    @Html.TextAreaFor(model => model.Remarks, new { @class = "form-control" })
+                                </div>
+                                <div class="col-sm-6">
+                                    <fieldset class="fieldsetCustom">
+                                        <legend class="legendCustom">Project Budget Details</legend>
+                                        <div class="row">
+                                            <div class="col-sm-4">
+                                                @Html.Label("Proposed:")
+                                                @Html.TextBox("BudgetCost", null, new { @class = "form-control" })
+                                            </div>
+                                            <div class="col-sm-4">
+                                                @Html.Label("Utilized:")
+                                                @Html.TextBox("UtilizedBudget", null, new { @class = "form-control" })
+                                            </div>
+                                            <div class="col-sm-4">
+                                                @Html.Label("Balance:")
+                                                @Html.TextBox("BalanceDue", null, new { @class = "form-control" })
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <div class="submit-row">
+                            <button type="button" class="btn btn-primary" data-target="#ItemModal" id="btnViewItem">Add Item</button>
+                            <button type="button" class="btn btn-danger" data-toggle="modal" id="btnRemoveItem">Remove Item</button>
+                            <button type="button" class="btn btn-primary" id="btnShowAttachments">View Files</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <a class="collapsediv" data-toggle="collapse" href="#SearchItemDetails" style="color:white">
+                            Item Details Grid
+                        </a>
+                    </div>
+                </div>
+                <div id="SearchItemDetails" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <div id="grid"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <a class="collapsediv" data-toggle="collapse" href="#content" style="color:white">
+                            Add Terms
+                        </a>
+                    </div>
+                </div>
+                <div id="content">
+                    <div id="content-tab">
+                        <ul id="tabs" class="nav nav-tabs" data-tabs="tabs" style="padding: 1px;">
+                            <li class="active tab"><a href="#tab1" data-toggle="tab" style="margin: 0;">Delivery Terms</a></li>
+                            <li><a href="#tab2" data-toggle="tab" style="margin: 0;">Payment Terms</a></li>
+                        </ul>
+                        <fieldset class="fieldsetCustom">
+                            <div id="my-tab-content" class="tab-content" style="border:none">
+                                <div class="tab-pane active" id="tab1">
+                                    <br>
+                                    <div class="form-group" align="left">
+                                        <button type="button" class="btn btn-primary" id="btnViewDelTerms">Add Term</button>
+                                        <button type="button" class="btn btn-danger" id="btnRemoveDelTerms">Remove Term</button>
+                                    </div>
+                                    <div id="DeliveryTermgrid"></div>
+                                </div>
+                                <div class="tab-pane" id="tab2">
+                                    <br>
+                                    <div class="form-group" align="left">
+                                        <button type="button" class="btn btn-primary" id="btnViewPayTerms">Add Term</button>
+                                        <button type="button" class="btn btn-danger" id="btnRemovePayTerms">Remove Term</button>
+                                    </div>
+                                    <div id="PaymentTermgrid"></div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div title="Select Items" id="ItemModal" style="display: none;">
+        <div id="Itemgrid"></div>
+        <div style="margin-top:5px;">
+            <button type="button" class="btn btn-primary" id="btnAddItem">Add</button>
+            <button type="button" class="btn btn-primary" id="btnCloseItem">Close</button>
+        </div>
+    </div>
+    <div id="IndentModal" title="Purchase Indent" style="display: none;">
+        <div id="PIGrid"></div>
+    </div>
+    <div id="ConfirmModal" style="display: none;">
+        <div> Please Enter Template Name</div>
+        <div style="margin-top: 5px;">
+            <input type="text" id="IndentTemplateName" />
+            <button type="button" class="btn btn-primary" id="btnSaveTemplate">Save</button>
+            <button type="button" class="btn btn-primary" id="btnCancelTemplate">Cancel</button>
+        </div>
+    </div>
+    <div id="IndentTemplateModal" title="Indent Template" style="display: none;">
+        <div id="IndentTemplateGrid"></div>
+    </div>
+
+
+
+
+    /////
+    <div id="SupplierModal" title="Select Items" style="display: none;">
+        <div id="Suppliergrid"></div>
+    </div>
+
+    <div id="DeliveryItemModal" title="Select Delivery Terms" style="display: none;">
+        <div id="SearchDeliveryTermgrid"></div>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" id="btnAddDeliveryTerm">Add</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+    </div>
+
+    <div id="PaymentItemModal" title="Select Payment Terms" style="display: none;">
+        <div id="SearchPaymentTermgrid"></div>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" id="btnAddPaymentTerm">Add</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+    </div>
+
+    @*The Modal*@
+    <div id="ViewModal" class="modal slideModal">
+        @*Modal content*@
+        <div class="modal-content slideContent">
+            <span class="close slideClose" onclick="closeImageModal()"> &#x2715 </span>
+            <div id="slideshow-container">
+                <!--Slidshow-->
+            </div>
+            <div>
+                <a class="prev slide-prev" onclick="plusSlides(-1)">❮</a>
+                <a class="next slide-next" onclick="plusSlides(1)">❯</a>
+            </div>
+        </div>
+    </div>
+
+    @* RequiredDate *@
+    <div class="modal" id="RequiredDatePopUpModel" role="dialog" data-backdrop="false">
+        <div class="modal-dialog">
+            <div class="modal-content" style="width:650px;height:100%;display:inline-block;">
+                <div class="modal-header" style="min-height: 51.43px; padding: 15px; border-bottom: 1px solid #e5e5e5;">
+                    <div class="col-sm-8 col-md-8">
+                        <h4 class="modal-title"><b>Select Required Date</b></h4>
+                    </div>
+                    <div class="col-sm-4 col-md-4">
+                        <button type="button" class="close" data-dismiss="modal" style="align-content:flex-end">&times;</button>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-6 col-lg-4">
+                            <label for="RequiredDateM">Required Date</label>
+                            <input class="form-control datepicker" name="RequiredDateM" id="RequiredDateM" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="padding: 10px; text-align: right; border-top: 1px solid #e5e5e5;">
+                    <button type="button" class="save btn btn-success" data-dismiss="modal" style="align-content:flex-end" onclick="setRequiredDate()">Set</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+<script type="text/javascript">
+    var appSetting = '@BISERP.Common.Constants.ScandocUrl';
+    var $RFQSearchGrid;
+    var $PurchaseItemDetailsGrid;
+    var $ItemListGrid, $PIGrid, $IndentTemplateGrid;
+    var colSearchGrid, dataSearchGrid, setSearchGrid;
+    var setIID, colIID, dataIID;
+    var colIL, dataIL, setIL;
+
+
+
+    $(document).ready(function () {
+        $("#IndentNo").prop('disabled', true);
+        $("#btnShowAttachments").hide();
+        $("#BudgetCost").prop('disabled', true); $("#BalanceDue").prop('disabled', true); $("#UtilizedBudget").prop('disabled', true);
+        $.ajax({
+            type: "GET",
+            url: "/Master/AllStores",
+            datatype: "Json",
+            success: function (data) {
+                $.each(data, function (index, value) {
+                    $('#ddlStores').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                });
+            }
+        });
+
+        loadMappedItemType(0);
+        function loadMappedItemType(id) {
+            id == 1 ? id = 0 : id;
+            $.ajax({
+                type: "GET",
+                url: "/StorewiseItemTypeMapping/StorewiseItemTypeItems/",
+                data: { StoreId: id },
+                datatype: "Json",
+                success: function (response) {
+                    var data = [];
+                    if (id != 0) {
+                        data = response.records.filter(item => item.Select == true);
+                    } else {
+                        data = response.records;
+                    }
+                    $('#ddlItemtype').empty();
+                    $('#ddlItemtype').append('<option value>' + 'Select Item Type' + '</option>');
+                    $.each(data, function (index, value) {
+                        $('#ddlItemtype').append('<option value="' + value.ItemTypeID + '">' + value.Name + '</option>');
+                    });
+                }
+            });
+        }
+
+        $('#ddlStores').change(function () {
+            loadMappedItemType($('#ddlStores').val());
+        });
+
+        $('#ddlItemtype').change(function () {
+            if ($('#ddlStores').val() === "" || $('#ddlStores').val() === undefined) {
+                ShowAlert("error", "please Select Project");
+
+            }
+            if ($('#ddlItemtype').val() === "" || $('#ddlItemtype').val() === undefined) {
+                ShowAlert("error", "please Select Item Type");
+
+            }
+            $('#BudgetCost').val("0");
+            $('#UtilizedBudget').val("0");
+            $('#BalanceDue').val("0");
+            getProjectBudget();
+        });
+        function getProjectBudget() {
+            $.ajax({
+                type: "GET",
+                url: "/StoreMaster/GetProjectBudget",
+                data: { storeId: $("#ddlStores").val(), ID: $("#ddlItemtype").val() },
+                datatype: "Json",
+                success: function (data) {
+                    $('#BudgetCost').val(data.records[0].BudgetCost);
+                    $('#UtilizedBudget').val(data.records[0].UtilizedBudget);
+                    calculateBalnce();
+                }
+            });
+        }
+        function calculateBalnce() {
+
+            var balance = 0, utilzed = $('#UtilizedBudget').val(), budgetCost = $('#BudgetCost').val();
+            if ($('#UtilizedBudget').val() === "" || $('#UtilizedBudget').val() === undefined) {
+                utilzed = 0;
+            }
+            balance = budgetCost - utilzed;
+            $('#BalanceDue').val(balance);
+        }
+
+
+    });
+
+    $('#IndentNature').change(function () {
+        ClearFormOnIndentNatureChange();
+        if ($('#IndentNature').val() === "1") {
+            $("#btnViewItem").hide();
+            $("#ddlStores").prop('disabled', true);
+            $("#IndentNo").prop('disabled', false);
+            $("#ddlItemtype").prop('disabled', true);
+            $("#btnShowAttachments").show();
+        } else {
+            $("#btnViewItem").show();
+            $("#ddlStores").prop('disabled', false);
+            $("#ddlItemtype").prop('disabled', false);
+            $("#IndentNo").prop('disabled', true);
+            $("#btnShowAttachments").hide();
+        }
+    });
+
+    function ClearFormOnIndentNatureChange() {
+        $("#IndentId").val("");
+        $("#IndentDate").datepicker().datepicker("setDate", new Date());
+        $("#ddlStores").val("");
+        $("#ddlItemtype").val("");
+        $("#Remarks").val("");
+        ClearParamGrid("grid");
+        $("#files").val("");//files Indent_Id
+        $("#IndentNo").prop('disabled', true);
+        $("#IndentNo").val("");
+        $("#Indent_Id").val("");
+        //$("#SupplierName").val("");
+        //$("#SupplierID").val("");
+        $("#RequiredDate").datepicker().datepicker("setDate", new Date());
+    }
+
+    function ClearForm() {
+        $("#IndentId").val("");
+        $("#IndentDate").datepicker().datepicker("setDate", new Date());
+        $("#IndentNature").val(0);
+        $("#ddlStores").val("");
+        $("#ddlItemtype").val("");
+        $("#Remarks").val("");
+        ClearParamGrid("grid");
+        $("#files").val("");//files
+        $("#IndentNo").prop('disabled', true);
+        $("#IndentNo").val("");
+        $("#Indent_Id").val("");
+        $('#UtilizedBudget').val("");
+        $('#BudgetCost').val("");
+        $('#BalanceDue').val("");
+        $("#IndentNature").prop('disabled', false);
+        $("#ddlStores").prop('disabled', false);
+        $("#ddlItemtype").prop('disabled', false);
+        $("#QuotationDeadLine").datepicker().datepicker("setDate", new Date());
+        $("#RequiredDate").datepicker().datepicker("setDate", new Date());
+        //$("#preApproveImg").empty(); $("#appendImg").empty(); $("#files").val(null);
+        //$("#SupplierName").val("");
+        //$("#SupplierID").val("");
+        ClearParamGrid("DeliveryTermgrid");
+        ClearParamGrid("PaymentTermgrid");
+        $("#btnViewItem").show();
+        $("#btnShowAttachments").hide();
+    }
+
+    function LoadRFQSearchGrid() {
+        $.ajax({
+            url: "/RequestForQuote/GetAllRequestForQuote",
+            cache: false,
+            async: true,
+            method: "GET",
+            dataType: "JSON",
+            beforeSend: function () {
+                $RFQSearchGrid.pqGrid("showLoading");
+            },
+            complete: function () {
+                $RFQSearchGrid.pqGrid("hideLoading");
+            },
+            success: function (response) {
+                let unauthorised = response.mimodel.filter(req => req.Status === 'Request');
+                $RFQSearchGrid.pqGrid("hideLoading");
+                $RFQSearchGrid.pqGrid("option", "dataModel.data", unauthorised);
+                $RFQSearchGrid.pqGrid("refreshDataAndView");
+            },
+            error: function (response) {
+                $RFQSearchGrid.pqGrid("hideLoading");
+                $RFQSearchGrid.pqGrid("option", "dataModel.data", []);
+                $RFQSearchGrid.pqGrid("refreshDataAndView");
+            }
+        });
+    }
+
+    $('#btnCloseItem').on('click', function () {
+        ClosePopupWindow("ItemModal");
+    });
+
+
+    $(document).ready(function () {
+
+        dataSearchGrid = { location: "local" };
+        colSearchGrid = [
+            { title: "", dataIndx: "IndentId", dataType: "integer", hidden: true },
+            { title: "", dataIndx: "IndentNature", dataType: "string", hidden: true },
+            { title: "", dataIndx: "ItemCategoryId", dataType: "integer", hidden: true },
+            { title: "", dataIndx: "Storeid", dataType: "integer", hidden: true },
+            {
+                title: "RFQ No", dataIndx: "IndentNumber", width: "18%",
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            },
+            {
+                title: "RFQ Date", dataIndx: "strIndentDate", width: "16%",
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            },
+            {
+                title: "Project Code", dataIndx: "StoreName", width: "17%", dataType: "string",
+                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            },
+            {
+                title: "Item Type", dataIndx: "ItemCategory", width: "17%",
+                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            },
+            {
+                title: "RFQ-Nature", dataIndx: "strIndentNature", width: "16%", dataType: "string",
+                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            },
+            {
+                title: "Created-By", dataIndx: "InsertedByName", width: "16%", dataType: "string",
+                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            }
+        ];
+
+        setSearchGrid = {
+            width: '100%',
+            height: 400,
+            sortable: false,
+            numberCell: { show: false },
+            hoverMode: 'cell',
+            showTop: true,
+            title: "List Purchase Request",
+            resizable: true,
+            scrollModel: { autoFit: true },
+            draggable: false,
+            wrap: false,
+            editable: false,
+            filterModel: { on: true, mode: "AND", header: true },
+            selectionModel: { type: 'row', subtype: 'incr', cbHeader: true, cbAll: true },
+            colModel: colSearchGrid,
+            dataModel: dataSearchGrid,
+            pageModel: { type: "local", rPP: 100 },
+            rowClick: function (evt, ui) {
+                ClearParamGrid("grid");
+                var record = ui.rowData;
+                $("#IndentId").val(record.IndentId);
+                $("#IndentNature").val(record.IndentNature);
+                $("#IndentDate").val(record.strIndentDate);
+                $("#QuotationDeadLine").val(record.strQuotationDeadLine);
+                $("#ddlStores").val(record.Storeid);
+                $("#ddlItemtype").val(record.ItemCategoryId);
+                $("#Remarks").val(record.Remarks);
+                $("#BudgetCost").val(0);
+                $("#UtilizedBudget").val(0);
+                $("#BalanceDue").val(0);
+                $("#RequiredDate").val(record.RequiredDate);
+                $("#IndentNature").prop('disabled', true);
+                $("#ddlStores").prop('disabled', true);
+                $("#ddlItemtype").prop('disabled', true);
+
+                //viewAttachments(record.IndentId);
+                $.ajax({
+                    type: "GET",
+                    url: "/StoreMaster/GetProjectBudget",
+                    data: { storeId: $("#ddlStores").val(), ID: $("#ddlItemtype").val() },
+                    datatype: "Json",
+                    success: function (data) {
+                        $('#BudgetCost').val(data.records[0].BudgetCost);
+                        $('#UtilizedBudget').val(data.records[0].UtilizedBudget);
+                        calculateBalnce();
+                    }
+                });
+                function calculateBalnce() {
+
+                    var balance = 0, utilzed = $('#UtilizedBudget').val(), budgetCost = $('#BudgetCost').val();
+                    if ($('#UtilizedBudget').val() === "" || $('#UtilizedBudget').val() === undefined) {
+                        utilzed = 0;
+                    }
+                    balance = budgetCost - utilzed;
+                    $('#BalanceDue').val(balance);
+                }
+                $.ajax({
+                    type: "GET",
+                    url: "/RequestForQuote/GetRequestForQuoteById/",
+                    data: { IndentId: record.IndentId },
+                    datatype: "Json",
+                    beforeSend: function () {
+                        $PurchaseItemDetailsGrid.pqGrid("showLoading");
+                    },
+                    complete: function () {
+                        $PurchaseItemDetailsGrid.pqGrid("hideLoading");
+                    },
+                    success: function (data) {
+                        $PurchaseItemDetailsGrid.pqGrid("hideLoading");
+                        $PurchaseItemDetailsGrid.pqGrid("option", "dataModel.data", data.IndentDetails);
+                        $PurchaseItemDetailsGrid.pqGrid("refreshDataAndView");
+                        var dataTerms = [];
+                        $.each(data.RFQDeliveryTerms, function (index, value) {
+                            var grdData = { 'DelTermID': value.DelTermID, 'DeliveryTermCode': value.DeliveryTermCode, 'DeliveryTermDesc': value.DeliveryTermDesc, 'state': true }
+                            dataTerms.push(grdData);
+                        });
+                        $DeliveryTermgrid.pqGrid("option", "dataModel.data", dataTerms);
+                        $DeliveryTermgrid.pqGrid("refreshDataAndView");
+
+                        dataTerms = [];
+                        $.each(data.RFQPaymenterms, function (index, value) {
+                            var grdData = { 'PayTermID': value.PayTermID, 'PaymentTermCode': value.PaymentTermCode, 'PaymentTermDesc': value.PaymentTermDesc, 'state': true }
+                            dataTerms.push(grdData);
+                        });
+                        $PaymentTermgrid.pqGrid("option", "dataModel.data", dataTerms);
+                        $PaymentTermgrid.pqGrid("refreshDataAndView");
+                    },
+                    error: function (request, status, error) {
+                        $PurchaseItemDetailsGrid.pqGrid("hideLoading");
+                        ShowAlert("error", "Error while loading list");
+                        return;
+                    }
+                });
+                closeModal();
+            }
+        }
+
+        $RFQSearchGrid = $("#RFQSearchGrid").pqGrid(setSearchGrid);
+    });
+
+    $(document).ready(function () {
+
+        var dateEditor = function (ui) {
+            var $cell = ui.$cell,
+                rowData = ui.rowData,
+                dataIndx = ui.dataIndx,
+                cls = ui.cls,
+                dc = $.trim(rowData[dataIndx]);
+            $cell.css('padding', '0');
+
+            var $inp = $("<input type='text' name='" + dataIndx + "' class='" + cls + " pq-date-editor' />")
+                .appendTo($cell)
+                .val(dc).datepicker({
+                    changeMonth: true,
+                    changeYear: true,
+                    changeDate: true,
+                    //onClose: function () {
+                    //    $inp.focus();
+                    //   // $.datepicker._hideDatepicker;
+                    //}
+                })
+                .on('changeDate', function (e) {
+                    $(this).focus();
+                    return $.datepicker.formatDate('dd-M-yy', e.date);
+                    this.hidePopover
+                })
+        }
+
+        colIID = [
+            { dataIndx: "state", maxWidth: 25, minWidth: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false, editor: false, dataType: 'bool', title: "<input type='checkbox' />", cb: { select: true, all: false, header: true } },
+            { title: "", dataIndx: "IndentDetailId", width: 10, dataType: "integer", hidden: true },
+            { title: "", dataIndx: "ItemId", width: 10, dataType: "integer", hidden: true },
+            { title: "", dataIndx: "ThreeMonthsIssuence", width: 10, dataType: "integer", hidden: true },
+            { title: "", dataIndx: "ThreeMonthsConsumption", width: 10, dataType: "integer", hidden: true },
+            { title: "", dataIndx: "ItemRate", width: 10, dataType: "double", hidden: true },
+            { title: "", dataIndx: "VatOn", width: 10, dataType: "string", hidden: true },
+            { title: "", dataIndx: "packsizeid", width: 10, dataType: "integer", hidden: true },
+            { title: "ItemCode", dataIndx: "ItemCode", width: '8%', dataType: "string", hidden: true },
+            { title: "Item Name & Description", dataIndx: "ItemName", width: '37%', dataType: "string", editable: false },
+            { title: "Description", dataIndx: "DescriptiveName", minWidth: '20%', dataType: "string", editable: true, editor: { type: "textarea", attr: "rows=5" }, hidden: true },
+            { title: "HSN/SAC Code", dataIndx: "HSNCode", width: '5%', align: 'center', editable: false },
+            { title: "Unit", dataIndx: "UnitName", width: '5%', dataType: "string", editable: false },
+            { title: "PackSize", dataIndx: "PackSize", width: 90, dataType: "string", editable: false, hidden: true },
+            { title: "Current Stock", dataIndx: "CurrentQty", width: '5%', align: 'center', dataType: "double", editable: false },
+            { title: "Qty", dataIndx: "ItemQty", width: '5%', align: 'center', dataType: "double", editable: true },
+            { title: "Pending Qty", dataIndx: "PendingQty", width: 60, dataType: "double", hidden: true },
+            { title: "", editable: false, minWidth: 30, sortable: false, align: 'center', render: function (ui) { return '<button type="button" onclick="addRequiredDate(' + ui.rowIndx + ');"></button>';}},
+            { title: "RequiredDate", dataIndx: "ItemsRequiredDate", width: 90, editable: true, dataType: 'string', format: 'dd-M-yy', editor: { type: dateEditor }, hidden: false, render: function (ui) { return ui.formatVal; }, validations: [{ type: 'regexp', value: '[0-9]{2}/[0-9]{2}/[0-9]{4}', msg: 'Not in dd-MM-yy format' }]},
+            { title: "Indent Remark", dataIndx: "IndentRemark", width: '38%', dataType: "string", editable: true, editor: { type: "textarea", attr: "rows=5" } }
+        ];
+
+        dataIID = {
+            location: 'local',
+            sorting: 'local',
+            paging: 'local',
+            dataType: 'JSON'
+        };
+        setIID = {
+            height: '300',
+            maxheight: '400',
+            title: "RFQ Item Details",
+            sortable: false,
+            numberCell: { show: false },
+            selectionModel: { type: 'row' },
+            hoverMode: 'cell',
+            editor: { type: 'textbox' },
+            showTop: true,
+            resizable: true,
+            virtualX: true,
+            virtualY: true,
+            editModel: {
+                saveKey: "",
+                keyEnter: true
+            },
+            draggable: false,
+            colModel: colIID,
+            dataModel: dataIID,
+            pageModel: { type: "local", rPP: 50 },
+            wrap: false
+        };
+
+        $PurchaseItemDetailsGrid = $("#grid").pqGrid(setIID);
+    });
+
+    // Function to handle the 'Add Required Date' button click
+    function addRequiredDate(rowIndex) {
+        selectedRequiredDate_RowIndx = rowIndex;
+        $("#RequiredDatePopUpModel").modal("show");
+        const gridData = $("#grid").pqGrid("option", "dataModel.data");
+        $("#RequiredDateM").datepicker("setDate", gridData[selectedRequiredDate_RowIndx].ItemsRequiredDate);
+    }
+
+    // Function to set the required date in the grid
+    function setRequiredDate() {
+        const gridData = $("#grid").pqGrid("option", "dataModel.data");
+        gridData[selectedRequiredDate_RowIndx].ItemsRequiredDate = $("#RequiredDateM").val();
+        $PurchaseItemDetailsGrid.pqGrid("refreshDataAndView");
+    }
+
+    $(document).ready(function () {
+        colIL = [
+            { dataIndx: "state", maxWidth: 25, minWidth: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false, editor: false, dataType: 'bool', title: "<input type='checkbox' />", cb: { select: true, all: false, header: true } },
+            { title: "Item Name & Description", dataIndx: "Name", width: '95%', dataType: "string", editable: false, filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } },
+            { title: "Description", dataIndx: "DescriptiveName", width: '50%', dataType: "string", filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }, hidden: true },
+            { title: "HSN/SAC Code", dataIndx: "HSNCode", width: "22%", editable: false, hidden: true },
+            { title: "Unit Name", dataIndx: "UnitName", width: '23%', dataType: "string", editable: false, hidden: true },
+            { title: "Pending Stock", dataIndx: "PendingStock", width: 120, dataType: "float", hidden: true },
+            { dataIndx: "ID", dataType: "integer", editable: false, hidden: true },
+            { dataIndx: "LastPORate", dataType: "integer", editable: false, hidden: true },
+            { title: "Purchase Rate", dataIndx: "PurchaseRate", minWidth: 90, dataType: "float", editable: false, hidden: true },
+            { title: "VAT", dataIndx: "VAT", width: 70, dataType: "string", editable: false, hidden: true },
+            { title: "Current Stock", dataIndx: "CurrentQty", minWidth: 90, dataType: "float", editable: true, hidden: true },
+            { title: "", dataIndx: "Code", width: 70, dataType: "string", editable: false, hidden: true },
+            { title: "StandardRate", dataIndx: "StandardRate", width: 70, dataType: "float", editable: false, hidden: true },
+            { title: "", dataIndx: "VatOn", width: 70, dataType: "string", editable: false, hidden: true },
+            { title: "", dataIndx: "PackSizeID", width: 70, dataType: "integer", editable: false, hidden: true },
+            { title: "", dataIndx: "PackSize", width: 70, dataType: "string", editable: false, hidden: true }
+        ];
+
+        dataIL = {
+            location: 'local',
+            sorting: 'local',
+            paging: 'local',
+            dataType: 'JSON'
+        };
+
+        setIL = {
+            width: '100%',
+            height: 400,
+            sortable: false,
+            numberCell: { show: false },
+            filterModel: { on: true, mode: "AND", header: true },
+            selectionModel: { type: 'row' },
+            hoverMode: 'cell',
+            editor: { type: 'textbox' },
+            showTop: false,
+            resizable: true,
+            editModel: {
+                saveKey: $.ui.keyCode.ENTER
+            },
+            draggable: false,
+            wrap: false,
+            virtualX: true,
+            virtualY: true,
+            colModel: colIL,
+            dataModel: dataIL,
+            pageModel: { type: "local", rPP: 20 },
+        };
+
+        $ItemListGrid = $("#Itemgrid").pqGrid(setIL);
+
+        $('#btnViewItem').on('click', function () {
+
+            if ($("#ddlStores").val() === "") {
+                ShowAlert("error", "Please Select Project");
+                return;
+            }
+            if ($("#ddlItemtype").val() === "" || $("#ddlItemtype").val() === undefined) {
+                ShowAlert("error", "Please Select Item Type");
+                return;
+            }
+            $("#ddlItemtype").prop('disabled', true);
+            var searchStoreId = $("#ddlStores").val();
+            var searchItemType = $("#ddlItemtype").val();
+            $("#ItemModal").dialog({
+                height: 500,
+                width: 700,
+                modal: true,
+                open: function (evt, ui) {
+                    $.ajax({
+                        type: "GET",
+                        url: "/ItemMaster/GetItemsByStoreItemType/",
+                        data: { StoreId: searchStoreId, ItemTypeId: searchItemType },
+                        datatype: "Json",
+                        beforeSend: function () {
+                            $ItemListGrid.pqGrid("showLoading");
+                        },
+                        complete: function () {
+                            $ItemListGrid.pqGrid("hideLoading");
+                        },
+                        success: function (data) {
+                            ClearParamGrid('Itemgrid');
+                            if (data.success) {
+                                $ItemListGrid.pqGrid("hideLoading");
+                                $ItemListGrid.pqGrid("option", "dataModel.data", data.items);
+                                $ItemListGrid.pqGrid("refreshDataAndView");
+                                return;
+                            } else {
+                                ClearParamGrid('Itemgrid');
+                                ShowAlert("error", data.Messsage);
+                                return;
+                            }
+                        },
+                        error: function (request, status, error) {
+                            $ItemListGrid.pqGrid("hideLoading");
+                            ClearParamGrid('Itemgrid');
+                            ShowAlert("error", "Server error! Please Contact Administrator");
+                            return;
+                        }
+                    });
+                },
+                close: function (event, ui) {
+                    $(this).dialog("destroy");
+                },
+                show: {
+                    effect: "blind",
+                    duration: 500
+                }
+            });
+        });
+    });
+
+    $('#btnRemoveItem').on('click', function () {
+
+        var getData = $PurchaseItemDetailsGrid.pqGrid("option", "dataModel.data");
+        var selectedItems = jLinq.from(getData).equals("state", true).select();
+
+        $.each(selectedItems, function (key, value) {
+            var obj = $PurchaseItemDetailsGrid.pqGrid("getRowIndx", { rowData: value });
+            var rowIndx = obj.rowIndx;
+            $PurchaseItemDetailsGrid.pqGrid("deleteRow", { rowIndx: rowIndx });
+        });
+    });
+
+    $('#btnAddItem').on('click', async function () {
+        ClosePopupWindow("ItemModal");
+        $("#Itemgrid").pqGrid("reset", { filter: true });
+        var getData = $("#Itemgrid").pqGrid("option", "dataModel.data");
+        var selectedItems = jLinq.from(getData).equals("state", true).select();
+
+        const itemDetails = await getSelectedItemDetails(selectedItems, $("#ddlStores").val());
+
+        var dataMGrid = [];
+        var getMainGridData = $PurchaseItemDetailsGrid.pqGrid("option", "dataModel.data");
+        $.each(getMainGridData, function (key, value) {
+            var grdData = {
+                'IndentDetailId': value.IndentDetailId, 'ItemId': value.ItemId,
+                'ItemName': value.ItemName, 'ItemCode': value.ItemCode,
+                'UnitName': value.UnitName, 'CurrentQty': value.CurrentQty, 'HSNCode': value.HSNCode,
+                'OrderUnitID': value.OrderUnitID, 'ItemRate': value.ItemRate, 'DescriptiveName': value.DescriptiveName,
+                'VatOn': value.VatOn, 'packsizeid': value.packsizeid, 'PackSize': value.PackSize, 'state': true, 'ItemQty': value.ItemQty, 'ItemsRequiredDate': value.ItemsRequiredDate
+            };
+            dataMGrid.push(grdData);
+        });
+
+        $.each(itemDetails, function (key, value) {
+            var grdData = {
+                'IndentDetailId': 0, 'ItemId': value.ID,
+                'ItemName': value.Name, 'ItemCode': value.Code,
+                'UnitName': value.UnitName, 'CurrentQty': value.CurrentQty, 'HSNCode': value.HSNCode,
+                'OrderUnitID': value.OrderUnitID, 'ItemRate': value.StandardRate, 'DescriptiveName': value.DescriptiveName,
+                'VatOn': value.VatOn, 'packsizeid': value.PackSizeID, 'PackSize': value.PackSize, 'state': true, 'ItemQty': 0, 'ItemsRequiredDate': $("#RequiredDate").val()
+            };
+            dataMGrid.push(grdData);
+        });
+        $PurchaseItemDetailsGrid.pqGrid("option", "dataModel.data", dataMGrid);
+        $PurchaseItemDetailsGrid.pqGrid("refreshDataAndView");
+    });
+
+    $("#btnAdd").on("click", ClearForm);
+
+    $("#btnSave").click(function () {
+
+        //var items = $("#grid").pqGrid("getData", { dataIndx: ['ItemId', 'IndentDetailId', 'PackSize', 'packsizeid', 'CurrentQty', 'OrderingUnit', 'state', 'ItemQty', 'DescriptiveName', 'ItemsRequiredDate', 'IndentRemark'] });
+        var items = $("#grid").pqGrid("getData", { dataIndx: ['ItemId', 'IndentDetailId', 'PackSize', 'packsizeid', 'ItemQty', 'state', 'CurrentQty', 'ItemName', 'DescriptiveName', 'IndentRemark', 'ItemsRequiredDate'] });
+
+        // Array of month names
+        var monthNames = [
+            "Jan", "Feb", "Mar",
+            "Apr", "May", "Jun", "Jul",
+            "Aug", "Sep", "Oct",
+            "Nov", "Dec"
+        ];
+        for (i = 0; i < items.length; i++) {
+            let curDate = new Date(items[i].ItemsRequiredDate);
+
+            // Get the day, month, and year components
+            var day = curDate.getDate();
+            var monthIndex = curDate.getMonth();
+            var year = curDate.getFullYear();
+            // Format the day to have leading zeros if necessary
+            if (day < 10) {
+                day = '0' + day;
+            }
+            var formattedDate = day + '-' + monthNames[monthIndex] + '-' + year;
+            items[i].ItemsRequiredDate = formattedDate;
+        }
+
+        if (items != undefined) {
+            var selectedItemsMainGrid = jLinq.from(items).equals("state", true).select();
+
+            if (selectedItemsMainGrid.length > 0) {
+
+                if (jLinq.from(selectedItemsMainGrid).lessEquals("ItemQty", 0).or(undefined).count() > 0) {
+                    ShowAlert("error", "Please Enter ItemQty for selected items");
+                    return;
+                }
+
+                if (jLinq.from(selectedItemsMainGrid).empty("ItemQty").or(undefined).count() > 0) {
+                    ShowAlert("error", "Please Enter Quantity for selected items");
+                    return;
+                }
+            }
+            else {
+                ShowAlert("error", "Please Select at least one Item before saving.");
+                return;
+            }
+        }
+
+        if ($("#BudgetCost").val() === "0" || $("#BudgetCost").val() === undefined) {
+            ShowAlert("error", "Please Enter Proposed Budget for the Project and Category in Project Master");
+            return;
+        }
+
+        //if ($("#SupplierID").val() == undefined || $("#SupplierID").val() === "" || $("#SupplierID").val() === "0") {
+        //    ShowAlert("error", "Please Select Supplier!");
+        //    return;
+        //}
+
+        let getDelData = $DeliveryTermgrid.pqGrid("option", "dataModel.data");
+        let delgridData = jLinq.from(getDelData).equals("state", true).select();
+
+        let getPayData = $PaymentTermgrid.pqGrid("option", "dataModel.data");
+        let paygridData = jLinq.from(getPayData).equals("state", true).select();
+
+
+        var items = JSON.stringify({
+            IndentId: $("#IndentId").val(), //Reading text box values using Jquery
+            IndentDate: $("#IndentDate").val(),
+            IndentNature: $("#IndentNature").val(),
+            QuotationDeadLine: $("#QuotationDeadLine").val(),
+            PurchaseIndentId: $("#Indent_Id").val(),
+            Storeid: $("#ddlStores").val(),
+            //SupplierID: $("#SupplierID").val(),
+            //SupplierName: $("#SupplierName").val(),
+            ItemCategoryId: $("#ddlItemtype").val(),
+            Remarks: $("#Remarks").val(),
+            IndentNumber: $("#IndentNumber").val(),
+            StoreName: $("#ddlStores option:selected").text(),
+            RequiredDate: $("#RequiredDate").val(),
+            IndentDetails: selectedItemsMainGrid,
+            RFQDeliveryTerms: delgridData,
+            RFQPaymenterms: paygridData,
+        });
+        $.ajax(
+            {
+                type: "POST", //HTTP POST Method
+                traditional: true,
+                contentType: 'application/json; charset=utf-8',
+                url: '/RequestForQuote/SaveRequestForQuote', // Controller/View
+                data: items,
+                success: function (msg) {
+
+                    if (msg.success) {
+                        if ($("#IndentId").val() == "") {
+                            ShowAlert("success", "Request No : " + msg.Message + " generated successfully.");
+                        }
+                        else {
+                            ShowAlert("success", "Request updated successfully.");
+                        }
+                        ClearForm();
+                    }
+                    else {
+                        ShowAlert("error", msg.Message);
+                    }
+                },
+                error: function (jqXHR, exception) {
+                    ShowAlert("error", "Server Error! Please contact administrator");
+                }
+            });
+    });
+    /********* Delivery Term Search Grid *********/
+    $(document).ready(function () {
+        var dataModel = {
+            location: "local"
+        }
+        var colDelM = [
+            {
+                dataIndx: "state", Width: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                editor: false, dataType: 'bool',
+                title: "<input type='checkbox' />",
+                cb: { select: true, all: false, header: true }
+            },
+            { title: "", dataIndx: "TermID", dataType: "integer", hidden: true },
+            {
+                title: "Code", dataIndx: "DeliveryTermCode", width: 150, editable: false,
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            },
+            {
+                title: "Name", dataIndx: "DeliveryTermDesc", width: 450, editable: false,
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            }
+        ];
+        var DelM = {
+            width: '100%',
+            height: 400,
+            sortable: false,
+            numberCell: { show: false },
+            hoverMode: 'cell',
+            showTop: false,
+            resizable: true,
+            scrollModel: { autoFit: true },
+            draggable: false,
+            wrap: false,
+            columnBorders: true,
+            selectionModel: { type: 'row' },
+            colModel: colDelM,
+            dataModel: dataModel,
+            filterModel: { on: true, mode: "AND", header: true },
+            pageModel: { type: "local", rPP: 20 },
+            virtualX: true,
+            virtualY: true,
+        };
+        $SearchDeliveryTermgrid = $("#SearchDeliveryTermgrid").pqGrid(DelM);
+    });
+    /********* Delivery Term Grid *********/
+    $(document).ready(function () {
+        $('#btnViewDelTerms').on('click', function () {
+            //$("#DeliveryItem").modal('toggle');
+            LoadSearchDeliveryTermgrid();
+        });
+        $('#btnRemoveDelTerms').on('click', function () {
+            var getData = $DeliveryTermgrid.pqGrid("option", "dataModel.data");
+            var selectedItems = jLinq.from(getData).equals("state", true).select();
+
+            $.each(selectedItems, function (key, value) {
+                var obj = $DeliveryTermgrid.pqGrid("getRowIndx", { rowData: value });
+                var rowIndx = obj.rowIndx;
+                $DeliveryTermgrid.pqGrid("deleteRow", { rowIndx: rowIndx });
+            });
+        });
+
+        var dataDelM = { location: "local", sorting: 'local' }
+        var colDelM = [
+            {
+                dataIndx: "state", Width: 15, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                editor: false, dataType: 'bool',
+                title: "<input type='checkbox' />",
+                cb: { select: true, all: false, header: true }
+            },
+            { title: "", dataIndx: "DelTermID", dataType: "integer", hidden: true },
+            { title: "Code", dataIndx: "DeliveryTermCode", width: 200, editable: false },
+            { title: "Name", dataIndx: "DeliveryTermDesc", width: 400, editable: false }
+        ];
+        var DelM = {
+            width: '100%',
+            height: 250,
+            sortable: false,
+            numberCell: { show: false },
+            hoverMode: 'cell',
+            showTop: false,
+            resizable: true,
+            scrollModel: { autoFit: true },
+            draggable: false,
+            wrap: false,
+            columnBorders: true,
+            selectionModel: { type: 'row' },
+            colModel: colDelM,
+            dataModel: dataDelM,
+            pageModel: { type: "local", rPP: 20 }
+        };
+        $DeliveryTermgrid = $("#DeliveryTermgrid").pqGrid(DelM);
+    });
+    /********* Payment Term Search Grid *********/
+    $(document).ready(function () {
+        var dataPayM = { location: "local" }
+        var colPayM = [
+            {
+                dataIndx: "state", Width: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                editor: false, dataType: 'bool',
+                cb: { select: true, all: false, header: true }
+            },
+            { title: "", dataIndx: "TermID", dataType: "integer", hidden: true },
+            {
+                title: "Code", dataIndx: "PaymentTermCode", width: 150, editable: false,
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            },
+            {
+                title: "Name", dataIndx: "PaymentTermDesc", width: 450, editable: false,
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+
+            }
+        ];
+        var DelM = {
+            width: '100%',
+            height: 400,
+            sortable: false,
+            numberCell: { show: false },
+            hoverMode: 'cell',
+            showTop: false,
+            resizable: true,
+            scrollModel: { autoFit: true },
+            draggable: false,
+            wrap: false,
+            columnBorders: true,
+            filterModel: { on: true, mode: "AND", header: true },
+            selectionModel: { type: 'none', subtype: 'incr', cbHeader: true, cbAll: true },
+            colModel: colPayM,
+            dataModel: dataPayM,
+            pageModel: { type: "local", rPP: 20 },
+            virtualX: true,
+            virtualY: true,
+        };
+        $SearchPaymentTermgrid = $("#SearchPaymentTermgrid").pqGrid(DelM);
+    });
+    /********* Payment Term Grid *********/
+    $(document).ready(function () {
+        $('#btnViewPayTerms').on('click', function () {
+            //$("#PaymentItem").modal('toggle');
+            LoadSearchPaymentTermgrid();
+        });
+        $('#btnRemovePayTerms').on('click', function () {
+            var getData = $PaymentTermgrid.pqGrid("option", "dataModel.data");
+            var selectedItems = jLinq.from(getData).equals("state", true).select();
+            $.each(selectedItems, function (key, value) {
+                var obj = $PaymentTermgrid.pqGrid("getRowIndx", { rowData: value });
+                var rowIndx = obj.rowIndx;
+                $PaymentTermgrid.pqGrid("deleteRow", { rowIndx: rowIndx });
+            });
+        });
+        var dataDelM = { location: "local", sorting: 'local' }
+        var colDelM = [
+            {
+                dataIndx: "state", Width: 15, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                editor: false, dataType: 'bool',
+                title: "<input type='checkbox' />",
+                cb: { select: true, all: false, header: true }
+            },
+            { title: "", dataIndx: "PayTermID", dataType: "integer", hidden: true },
+            {
+                title: "Code", dataIndx: "PaymentTermCode", width: 200, editable: false
+
+            },
+            {
+                title: "Name", dataIndx: "PaymentTermDesc", width: 400, editable: false
+            }
+        ];
+        var DelM = {
+            width: '100%',
+            height: 250,
+            sortable: false,
+            numberCell: { show: false },
+            hoverMode: 'cell',
+            showTop: false,
+            resizable: true,
+            scrollModel: { autoFit: true },
+            draggable: false,
+            wrap: false,
+            columnBorders: true,
+            selectionModel: { type: 'row' },
+            colModel: colDelM,
+            dataModel: dataDelM,
+            pageModel: { type: "local", rPP: 20 },
+        };
+        $PaymentTermgrid = $("#PaymentTermgrid").pqGrid(DelM);
+    });
+
+
+    function LoadSearchDeliveryTermgrid() {
+        $("#DeliveryItemModal").dialog({
+            height: 500,
+            width: 700,
+            modal: true,
+            open: function (evt, ui) {
+                $.ajax({
+                    type: "GET",
+                    url: "/DeliveryTerm/GetActiveDeliveryTerms",
+                    datatype: "Json",
+                    success: function (data) {
+                        $SearchDeliveryTermgrid.pqGrid("option", "dataModel.data", data.records);
+                        $SearchDeliveryTermgrid.pqGrid("refreshDataAndView");
+                    }
+                });
+            }
+        });
+    }
+    function LoadSearchPaymentTermgrid() {
+        $("#PaymentItemModal").dialog({
+            height: 500,
+            width: 700,
+            modal: true,
+            open: function (evt, ui) {
+                $.ajax({
+                    type: "GET",
+                    url: "/PaymentTermMaster/GetActivePaymentTerm",
+                    datatype: "Json",
+                    success: function (data) {
+                        $SearchPaymentTermgrid.pqGrid("option", "dataModel.data", data.records);
+                        $SearchPaymentTermgrid.pqGrid("refreshDataAndView");
+                    }
+                });
+            }
+
+        });
+    }
+
+    /********* Add Button Click Events *********/
+    $(document).ready(function () {
+        $('#btnAddDeliveryTerm').on('click', function () {
+            ClosePopupWindow("DeliveryItemModal");
+            var getData = $SearchDeliveryTermgrid.pqGrid("option", "dataModel.data");
+            var selectedItems = jLinq.from(getData).equals("state", true).select();
+
+            var colM = $DeliveryTermgrid.pqGrid("option", "colModel");
+            colM[2].editable = true;
+            colM[3].editable = true;
+            $DeliveryTermgrid.pqGrid("option", "colModel", colM);
+            $.each(selectedItems, function (key, value) {
+                $DeliveryTermgrid.pqGrid("addRow", { newRow: { 'DelTermID': value.TermID, 'DeliveryTermCode': value.DeliveryTermCode, 'DeliveryTermDesc': value.DeliveryTermDesc, 'state': true } })
+            });
+            colM[2].editable = false;
+            colM[3].editable = false;
+            $DeliveryTermgrid.pqGrid("option", "colModel", colM);
+            //$DeliveryTermgrid.pqGrid("selection", { type: 'row', method: 'selectAll' });
+        });
+        $('#btnAddPaymentTerm').on('click', function () {
+            ClosePopupWindow("PaymentItemModal");
+            var getData = $SearchPaymentTermgrid.pqGrid("option", "dataModel.data");
+            var selectedItems = jLinq.from(getData).equals("state", true).select();
+            var colM = $PaymentTermgrid.pqGrid("option", "colModel");
+            colM[2].editable = true;
+            colM[3].editable = true;
+            $PaymentTermgrid.pqGrid("option", "colModel", colM);
+            $.each(selectedItems, function (key, value) {
+                $PaymentTermgrid.pqGrid("addRow", { newRow: { 'PayTermID': value.TermID, 'PaymentTermCode': value.PaymentTermCode, 'PaymentTermDesc': value.PaymentTermDesc, 'state': true } })
+            });
+            colM[2].editable = false;
+            colM[3].editable = false;
+            $PaymentTermgrid.pqGrid("option", "colModel", colM);
+            //$PaymentTermgrid.pqGrid("selection", {type: 'row', method: 'selectAll' });
+        });
+    });
+
+
+    $("#content-tab").tabs({  //Refreshing grids on tab change
+        activate: function (event, ui) {
+            let tabIndx = ui.newTab.index();
+            tabIndx == "0" ? $DeliveryTermgrid.pqGrid("refreshDataAndView") : $PaymentTermgrid.pqGrid("refreshDataAndView");
+        }
+    });
+
+    $(document).ready(function () {
+        var dataM = { location: "local", sorting: 'local' };
+        var colM = [
+            { title: "", dataIndx: "IndentId", dataType: "integer", hidden: true },
+            { title: "", dataIndx: "Storeid", dataType: "integer", hidden: true },
+            {
+                title: "Request No", dataIndx: "IndentNumber", width: "15%",
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            },
+            {
+                title: "Request Date", dataIndx: "strIndentDate", width: "14%",
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            },
+            {
+                title: "Project Code", dataIndx: "StoreName", width: "15%", dataType: "string",
+                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            },
+            {
+                title: "IndentNature", dataIndx: "strIndentNature", width: "14%", dataType: "string",
+                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            },
+            {
+                title: "Created-By", dataIndx: "InsertedByName", width: "14%", dataType: "string",
+                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            },
+            {
+                title: "Verified-By", dataIndx: "VerifiedByName", width: "14%", dataType: "string",
+                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            },
+            {
+                title: "Authorized-By", dataIndx: "AuthorizedByName", width: "14%", dataType: "string",
+                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            },
+        ];
+
+        var setM = {
+            height: "100%-30",
+            sortable: false,
+            numberCell: { show: false },
+            hoverMode: 'cell',
+            showTop: false,
+            resizable: false,
+            draggable: false,
+            wrap: false,
+            editable: false,
+            columnBorders: true,
+            filterModel: { on: true, mode: "AND", header: true },
+            colModel: colM,
+            dataModel: dataM,
+            virtualX: true,
+            virtualY: true,
+            pageModel: { type: "local", rPP: 20 },
+            rowClick: function (evt, ui) {
+                ClearParamGrid("grid");
+                ClosePopupWindow("IndentModal");
+                if (ui.rowData) {
+                    var rowIndx = parseInt(ui.rowIndx);
+                    var record = ui.rowData;
+                    $("#Indent_Id").val(record.IndentId);
+                    $("#IndentNo").val(record.IndentNumber);
+                    $("#FromStoreId").val(record.Indent_ToStoreID);
+                    $("#ddlStores").val(record.Storeid);
+                    $("#ddlItemtype").val(record.ItemCategoryId);
+                    $.ajax({
+                        type: "GET",
+                        url: "/StoreMaster/GetProjectBudget",
+                        data: { storeId: record.Storeid, ID: record.ItemCategoryId },
+                        datatype: "Json",
+                        success: function (data) {
+                            $('#BudgetCost').val(data.records[0].BudgetCost);
+                            $('#UtilizedBudget').val(data.records[0].UtilizedBudget);
+                            calculateBalnce();
+                        }
+                    });
+                    function calculateBalnce() {
+                        var balance = 0, utilzed = $('#UtilizedBudget').val(), budgetCost = $('#BudgetCost').val();
+                        if ($('#UtilizedBudget').val() === "" || $('#UtilizedBudget').val() === undefined) {
+                            utilzed = 0;
+                        }
+                        balance = budgetCost - utilzed;
+                        $('#BalanceDue').val(balance);
+                    }
+                    $.ajax({
+                        type: "GET",
+                        url: "/PurchaseIndent/PurchaseIndentItems/",
+                        data: { IndentId: record.IndentId },
+                        datatype: "Json",
+                        beforeSend: function () {
+                            $("#grid").pqGrid("showLoading");
+                        },
+                        complete: function () {
+                            $("#grid").pqGrid("hideLoading");
+                        },
+                        success: function (data) {
+                            let updatedArrayOfObjects = data.map(obj => {
+                                return { ...obj, ItemQty: obj.AuthorisedQty };
+                            });
+                            $("#grid").pqGrid("hideLoading");
+                            $("#grid").pqGrid("option", "dataModel.data", updatedArrayOfObjects);
+                            $("#grid").pqGrid("refreshDataAndView");
+                        },
+                        error: function (request, status, error) {
+                            $("#grid").pqGrid("hideLoading");
+                            ShowAlert("error", "Error while loading list");
+                            return;
+                        }
+                    });
+                }
+            }
+        };
+        $PIGrid = $("#PIGrid").pqGrid(setM);
+
+    });
+
+    $("#IndentNo").on("click", function () {
+        LoadPRGrid();
+    });
+
+    function LoadPRGrid() {
+        $("#IndentModal").dialog({
+            height: 500,
+            width: 1000,
+            modal: true,
+            open: function (evt, ui) {
+                $.ajax({
+                    type: "GET",
+                    cache: false,
+                    async: true,
+                    url: "/PurchaseIndent/AuthorizedPurchaseIndent",
+                    datatype: "Json",
+                    data: { StoreId: 0 },
+                    beforeSend: function () {
+                        $PIGrid.pqGrid("showLoading");
+                    },
+                    complete: function () {
+                        $PIGrid.pqGrid("hideLoading");
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            $PIGrid.pqGrid("hideLoading");
+                            $PIGrid.pqGrid("option", "dataModel.data", response.records);
+                        } else {
+                            ClearParamGrid('Indentgrid');
+                            ShowAlert("error", "Data not found");
+                        }
+                            $PIGrid.pqGrid("refreshDataAndView");
+                    },
+                    error: function (request, status, error) {
+                        $PIGrid.pqGrid("hideLoading");
+                        ShowAlert("error", "Server error! Please Contact Administrator");
+                        return;
+                    }
+                });
+            },
+            close: function (event, ui) {
+                $(this).dialog("destroy");
+            },
+            show: {
+                effect: "blind",
+                duration: 500
+            }
+        });
+    }
+
+    //*******************Image View********************//
+    $("#btnShowAttachments").click(function () {
+        var PurchaseIndentId = $("#Indent_Id").val();
+        if (PurchaseIndentId === "" || PurchaseIndentId === 0) {
+            ShowAlert("error", "Please Select Request");
+            return;
+        }
+        $.ajax({
+            type: "GET",
+            url: "/ScanDoc/ScanDoc/GetScanDocUrl",
+            data: { FileId: PurchaseIndentId, ScanDocSubTypeId: 9 },
+            datatype: "Json",
+            success: function (data) {
+                if (data != '') {
+                    ViewSlideShow(data, 'slideshow-container', appSetting);
+                }
+                else {
+                    ShowAlert("error", "No Documents Found")
+                }
+            }
+        });
+    })
+
+    /////*********Image Slide Show in Modal**********************//
+    let ImgIndex = 1;
+
+    function plusSlides(n) {
+        showGallary(ImgIndex += n);
+    }
+    function showGallary(n) {
+        let i;
+        let ImgSlides = document.getElementsByClassName("imgSlide");
+        let video = document.getElementById("video");
+        if (n > ImgSlides.length) { ImgIndex = 1 }
+        if (n < 1) { ImgIndex = ImgSlides.length }
+        for (i = 0; i < ImgSlides.length; i++) {
+            ImgSlides[i].style.display = "none";
+        }
+        ImgSlides[ImgIndex - 1].style.display = "block";
+        if (video) {
+            video.play();
+        }
+    }
+
+    function closeImageModal() {
+        $("#slideshow-container").empty();
+        $("#ViewModal").css('display', 'none');
+    }
+    //***********Close SlideShow Modal*********************////
+
+    $("#btnSearch").on('click', function () {
+        $("#SearchGridModal").modal('show');
+        LoadRFQSearchGrid();
+    });
+
+    function closeModal() {
+        $("#SearchGridModal").modal('hide');
+        $("#ReportModal").modal('hide');
+    }
+
+    // REPORT
+    $('#btnExport').on('click', function () {
+        if ($("#IndentId").val() === "" || $("#IndentId").val() === 0) {
+            ShowAlert("error", "Please Select Request");
+            return;
+        }
+        $("#ReportModal").modal('show');
+        var indentId = $("#IndentId").val();
+
+        var type = "PROVISIONAL";
+
+        ReportValidationCheck(indentId, type);
+    });
+
+    function ReportValidationCheck(indentId, RFQType) {
+        var url = "";
+        url = "../../Reports/ReportViewer.aspx?reportid=" + 238 + "&indentId=" + indentId + "&RFQType=" + RFQType;
+        var myframe = document.getElementById("iframeReportViewer");
+        if (myframe != null) {
+            if (myframe.src) {
+                myframe.src = url;
+            }
+            else if (myframe.contentWindow != null && myframe.contentWindow.location != null) {
+                myframe.contentWindow.location = url;
+            }
+            else {
+                myframe.setAttribute('src', url);
+            }
+            return false;
+        }
+    }
+</script>

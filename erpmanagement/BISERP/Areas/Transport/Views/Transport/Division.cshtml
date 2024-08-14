@@ -1,0 +1,118 @@
+﻿@model BISERP.Areas.Transport.Models.Master.DivisionMasterModel
+
+<script type="text/javascript">
+    var grid;
+
+    $(document).ready(function () {
+        grid = $("#grid").jsGrid({
+            width: "100%",
+            height: "400px",
+            filtering: true, //will display top 1st row as filter
+            selecting: true,
+            inserting: true, // false will not allow inserting new entry
+            editing: true,// false will not allow exisiting data entry
+            sorting: true,
+            autoload: true, // this statement require to load data using ajax call
+            paging: true,
+            pageSize: 20,
+
+            controller: {
+
+                loadData: function (filter) {
+                    var d = $.Deferred();
+                    $.ajax({
+                        type: 'GET',
+                        url: '/DivisionMaster/AllDivision',
+                        dataType: "json",
+                        data: { SearchName: filter.DivisionName },
+                        success: function (data) {
+                            d.resolve(data.records);
+                        },
+                        error: function (e) {
+                            ShowAlert("error", "Server Error! Please Contact administrator!");
+                        }
+                    });
+                    return d.promise();
+                },
+                insertItem: function (item) {
+                    var d = $.Deferred();
+                    $.ajax(
+                    {
+                        type: "POST", //HTTP POST Method
+                        dataType: "json",
+                        url: '/DivisionMaster/SaveDivision', // Controller/View
+                        data: item,
+                        success: function (msg) {
+                            if (msg.success) {
+                                ShowAlert("success", "Division Master added successfully to system.");
+                            } else {
+                                ShowAlert("error", msg.Message);
+                            }
+                        },
+                    }).done(function (item) {
+                        //  d.resolve(insertedItem.data);
+                        $("#grid").jsGrid("loadData");
+                    });
+
+                },
+                updateItem: function (item) {
+                    var d = $.Deferred();
+                    $.ajax(
+                    {
+                        type: "POST", //HTTP POST Method
+                        dataType: "json",
+                        url: '/DivisionMaster/updateDivision', // Controller/View
+                        data: item,
+                        success: function (msg) {
+                            if (msg.success) {
+                                ShowAlert("success", "Division Master updated successfully to system.");
+                            } else {
+                                ShowAlert("error", msg.Message);
+                            }
+                        },
+                    }).done(function (insertedItem) {
+                        d.resolve(insertedItem.data);
+                        $("#grid").jsGrid("loadData");
+
+                    });
+                    return d.promise();
+                }
+            },
+            fields: [
+                { name: "DivisionId", visible: false, width: 0 },
+                { name: "DivisionName", title: "Name", type: "text", validate: "required", autosearch: true, validate: { validator: "required", message: "name is missing! Please enter the name" }, },
+                { name: "Deactive", title: "Deactive", type: "checkbox", filtering: false, width: 10, inserting: false },
+                { type: "control", deleteButton: false, width: 10 }
+            ],
+        });
+    });
+
+</script>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <fieldset>
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-groupingBoder">
+                    <div class="panel-heading">
+                        <div class="panel-title">
+                            <h4>
+                                Division Details
+                            </h4>
+                        </div>
+                    </div>
+                    <div class="panel-collapse collapse in" aria-expanded="true">
+                        <div class="panel-body">
+                            <div class="container fill">
+                                <div id="grid" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </fieldset>
+
+}

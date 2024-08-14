@@ -1,0 +1,484 @@
+﻿@model BISERP.Areas.Store.Models.Master.ManufacturerMasterModel
+<script type="text/javascript">
+    var grid;
+
+    //function Search() {
+    //    $("#ManufacturerName").val("");
+    //    $("#ManufacturerCode").val("");
+    //    $("#Deactive").prop('checked', false);
+
+    //    var searchName = $("#SearchName").val();
+    //    var searchcode = $("#SearchCode").val();
+    //    grid.reload({ SearchName: searchName, SearchCode: searchcode });
+    //}
+    $(document).ready(function () {
+        grid = $("#grid").jsGrid({
+            width: "100%",
+            height: "320px",
+            filtering: true, //will display top 1st row as filter
+            selecting: true,
+
+            inserting: false, // false will not allow inserting new entry
+            editing: false,// false will not allow exisiting data entry
+            sorting: true,
+            autoload: true, // this statement require to load data using ajax call
+            paging: true,
+            pageSize: 20,
+
+            controller: {
+                loadData: function (filter) {
+                    var d = $.Deferred();
+                    $.ajax({
+                        type: 'GET',
+                        url: '@Url.Action("AllManufacturers", "ManufacturerMaster")',
+                        dataType: "json",
+                        data: { SearchName: filter.Name, SearchCode: filter.Code },
+                        success: function (data) {
+                            d.resolve(data.records);
+                        },
+                        error: function (e) {
+                            ShowAlert("error", "Server Error! Please Contact administrator!");
+                        }
+                    });
+                    return d.promise();
+                },
+            },
+            fields: [
+                { name: "ID", visible: false, width: 0 },
+                { name: "Code", title: "Code", type: "text", validate: "required", width: 20 },
+                { name: "Name", title: "Name", type: "text", validate: "required" },
+                { name: "Deactive", title: "Deactive", type: "checkbox", filtering: false, width: 10 },
+                { name: "Society", visible: false, width: 0 },
+                { name: "Street", visible: false, width: 0 },
+                { name: "Landmark", visible: false, width: 0 },
+                { name: "Village", visible: false, width: 0 },
+                { name: "City", visible: false, width: 0 },
+                { name: "Pincode", visible: false, width: 0 },
+                { name: "State", visible: false, width: 0 },
+                { name: "Country", visible: false, width: 0 },
+                { name: "ContactPerson", visible: false, width: 0 },
+                { name: "Designation", visible: false, width: 0 },
+                { name: "BankName", visible: false, width: 0 },
+                { name: "AccountNo", visible: false, width: 0 },
+                { name: "BankBranch", visible: false, width: 0 },
+                { name: "Phone1", visible: false, width: 0 },
+                { name: "Phone2", visible: false, width: 0 },
+                { name: "Webaddress", visible: false, width: 0 },
+                { name: "Emailaddress", visible: false, width: 0 },
+                { name: "Note", visible: false, width: 0 },
+                { type: "control", editButton: false, deleteButton: false, clearFilterButton: true, modeSwitchButton: true, width: 10 }
+
+            ],
+            /********** Row Selection Event you can use in suupplier***********/
+            rowClick: function (args) {
+                //var date1 = ToJavaScriptDate(data.DateOfAssociation);
+                var data = args.item;
+                $("#ID").val(data.ID);
+                $("#Name").val(data.Name);
+                $("#Code").val(data.Code);
+                $("#Society").val(data.Society);
+                $("#Street").val(data.Street);
+                $("#Landmark").val(data.Landmark);
+                $("#Village").val(data.Village);
+                $("#State").val(data.State);
+                $("#City").val(data.City);
+                $("#Pincode").val(data.Pincode);
+                $("#Country").val(data.Country);
+                $("#ContactPerson").val(data.ContactPerson);
+                $("#Designation").val(data.Designation);
+                $("#BankName").val(data.BankName);
+                $("#AccountNo").val(data.AccountNo);
+                $("#BankBranch").val(data.BankBranch);
+                $("#Phone1").val(data.Phone1);
+                $("#Phone2").val(data.Phone2);
+                $("#Mobile").val(data.Mobile);
+                $("#Webaddress").val(data.Webaddress);
+                $("#Emailaddress").val(data.Emailaddress);
+                $("#Note").val(data.Note);
+                $("#Deactive").prop('checked', data.Deactive);
+                $("#Deactive").attr("disabled", false);
+            },
+
+        });
+
+    });
+
+
+    //$(document).ready(function () {
+    //    grid = $("#grid").grid({
+    //        dataKey: "ID",
+    //        uiLibrary: "bootstrap",
+    //        columns: [
+    //            { field: "ID", title: "ID", width: 50, sortable: false, hidden: true },
+    //            { field: "Code", title: "Code", sortable: false },
+    //            { field: "Name", title: "Name", sortable: false },
+    //            { field: "Society", title: "Society", sortable: false, hidden: true },
+    //            { field: "Street", title: "Street", sortable: false, hidden: true },
+    //            { field: "Landmark", title: "Landmark", sortable: false, hidden: true },
+    //            { field: "Village", title: "Village", sortable: false, hidden: true },
+    //            { field: "City", title: "City", sortable: false, hidden: true },
+    //            { field: "Pincode", title: "Pincode", sortable: false, hidden: true },
+    //            { field: "State", title: "State", sortable: false, hidden: true },
+    //            { field: "Country", title: "Country", sortable: false, hidden: true },
+    //            { field: "ContactPerson", title: "ContactPerson", sortable: false, hidden: true },
+    //            { field: "Designation", title: "Designation", sortable: false, hidden: true },
+    //            { field: "BankName", title: "BankName", sortable: false, hidden: true },
+    //            { field: "AccountNo", title: "AccountNo", sortable: false, hidden: true },
+    //            { field: "BankBranch", title: "BankBranch", sortable: false, hidden: true },
+    //            { field: "Phone1", title: "Phone1", sortable: false, hidden: true },
+    //            { field: "Phone2", title: "Phone2", sortable: false, hidden: true },
+    //            { field: "Mobile", title: "Mobile", sortable: false, hidden: true },
+    //            { field: "Webaddress", title: "Webaddress", sortable: false, hidden: true },
+    //            { field: "Emailaddress", title: "Emailaddress", sortable: false, hidden: true },
+    //            { field: "Note", title: "Note", sortable: false, hidden: true },
+    //            { field: "Deactive", title: "Deactive", type: "checkbox", enable: false, readonly: true }
+    //        ],
+    //        pager: { enable: true, limit: 5, sizes: [2, 5, 10, 20] },
+
+    //    });
+    //    grid.on('cellDataBound', function (e, $wrapper, id, column, record) {
+    //        if ('Deactive' === column.field) {
+    //            $wrapper.find('input[type="checkbox"]').prop("checked", record.Deactive);
+    //        }
+    //    });
+    //    grid.on('rowSelect', function (e, $row, id, record) {
+    //        var data = grid.getById(id);
+    //        $("#ID").val(data.ID);
+    //        $("#Name").val(data.Name);
+    //        $("#Code").val(data.Code);
+    //        $("#Society").val(data.Society);
+    //        $("#Street").val(data.Street);
+    //        $("#Landmark").val(data.Landmark);
+    //        $("#Village").val(data.Village);
+    //        $("#State").val(data.State);
+    //        $("#City").val(data.City);
+    //        $("#Pincode").val(data.Pincode);
+    //        $("#Country").val(data.Country);
+    //        $("#ContactPerson").val(data.ContactPerson);
+    //        $("#Designation").val(data.Designation);
+    //        $("#BankName").val(data.BankName);
+    //        $("#AccountNo").val(data.AccountNo);
+    //        $("#BankBranch").val(data.BankBranch);
+    //        $("#Phone1").val(data.Phone1);
+    //        $("#Phone2").val(data.Phone2);
+    //        $("#Mobile").val(data.Mobile);
+    //        $("#Webaddress").val(data.Webaddress);
+    //        $("#Emailaddress").val(data.Emailaddress);
+    //        $("#Note").val(data.Note);
+    //        $("#Deactive").prop('checked', data.Deactive);
+    //    });
+    //    $("#btnFind").on("click", Search);
+    //});
+
+    $(document).ready(function () {
+        $("#btnSave").click(function () {
+            if ($("#Code").val() == "") {
+                ShowAlert("error", "code is missing! Please enter the code");
+                return;
+            }
+            if ($("#Name").val() == "") {
+                ShowAlert("error", "Name is missing! Please enter the Name");
+                return;
+            }
+            $.ajax(
+            {
+                type: "POST", //HTTP POST Method
+                url: '/ManufacturerMaster/SaveManufacturer', // Controller/View
+                data: { //Passing data
+                    ID: $("#ID").val(),
+                    Name: $("#Name").val(),
+                    Code: $("#Code").val(),
+                    Society: $("#Society").val(),
+                    Street: $("#Street").val(),
+                    Landmark: $("#Landmark").val(),
+                    Village: $("#Village").val(),
+                    State: $("#State").val(),
+                    City: $("#City").val(),
+                    Pincode: $("#Pincode").val(),
+                    Country: $("#Country").val(),
+                    ContactPerson: $("#ContactPerson").val(),
+                    Designation: $("#Designation").val(),
+                    BankName: $("#BankName").val(),
+                    AccountNo: $("#AccountNo").val(),
+                    BankBranch: $("#BankBranch").val(),
+                    Phone1: $("#Phone1").val(),
+                    Phone2: $("#Phone2").val(),
+                    Mobile: $("#Mobile").val(),
+                    Webaddress: $("#Webaddress").val(),
+                    Emailaddress: $("#Emailaddress").val(),
+                    Note: $("#Note").val(),
+                    Deactive: $("#Deactive").prop('checked')
+                },
+                success: function (msg) {
+                    if (msg.success) {
+
+                        $("#ID").val(""), $("#Name").val(""), $("#Code").val(""), $("#Society").val(""), $("#Street").val(""), $("#Landmark").val(""), $("#Village").val(""), $("#State").val(""), $("#City").val(""),
+                        $("#Pincode").val(""), $("#Country").val(""), $("#ContactPerson").val(""), $("#Designation").val(""), $("#BankName").val(""), $("#AccountNo").val(""), $("#BankBranch").val(""), $("#Phone1").val(""),
+                        $("#Phone2").val(""), $("#Mobile").val(""), $("#Webaddress").val(""), $("#Emailaddress").val(""), $("#Note").val(""), $("#Deactive").prop('checked', false)
+                        $("#grid").jsGrid("loadData");
+                        ShowAlert("success", "Manufacturer Master record added successfully to system.");
+                    }
+                    else {
+                        ShowAlert("error", msg.Message);
+                    }
+                }
+            });
+        });
+    });
+    function ClearForm()
+    {
+        $("#ID").val(""), $("#Name").val(""), $("#Code").val(""), $("#Society").val(""), $("#Street").val(""), $("#Landmark").val(""), $("#Village").val(""), $("#State").val(""), $("#City").val(""),
+        $("#Pincode").val(""), $("#Country").val(""), $("#ContactPerson").val(""), $("#Designation").val(""), $("#BankName").val(""), $("#AccountNo").val(""), $("#BankBranch").val(""), $("#Phone1").val(""),
+        $("#Phone2").val(""), $("#Mobile").val(""), $("#Webaddress").val(""), $("#Emailaddress").val(""), $("#Note").val(""), $("#Deactive").prop('checked', false)
+    }
+    $(document).ready(function () {
+        $("#btnAdd").click(function () {
+            ClearForm();
+        });
+    });
+</script>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+
+    <fieldset style="border:none">
+        <legend><h4>Manufacturer Master</h4></legend>
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-groupingBoder">
+                    <div class="panel-heading">
+                        <div class="panel-title">
+                            Search Details
+                        </div>
+                    </div>
+                    <div class="panel-collapse collapse in" aria-expanded="true">
+                        <div class="panel-body">
+                            <div class="container fill">
+                                <div id="grid"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-groupingBoder">
+                    <div class="panel-heading">
+                        <div class="panel-title">
+                            Entry Form
+                        </div>
+                    </div>
+
+                    <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                        <div class="panel-body">
+                            <fieldset>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        @*<a data-toggle="collapse" class="btn btn-success" href="#collapse1">Search</a>*@
+                                        <button type="button" id="btnSave" class="btn btn-success">Save</button>
+                                        <button type="button" id="btnAdd" class="btn btn-success">Reset</button>
+                                        @*<button type="button" class="btn btn-success">Report</button>*@
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-md-1">
+                                        @Html.LabelFor(model => model.Code, new { @class = "required" })
+                                    </div>
+                                    <div class="col-md-2">
+                                        @Html.TextBoxFor(model => model.Code, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.Code)
+                                        @Html.HiddenFor(model => model.ID)
+                                    </div>
+                                    <div class="col-md-1">
+                                        @Html.LabelFor(model => model.Name, new { @class = "required" })
+                                    </div>
+                                    <div class="col-md-2">
+                                        @Html.TextBoxFor(model => model.Name, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.Name)
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-2">
+                                            @Html.LabelFor(model => model.Deactive)
+                                            @Html.CheckBoxFor(model => model.Deactive, new { @disabled = "disabled" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <b>Address</b>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-1">
+                                        @Html.LabelFor(model => model.Society)
+                                    </div>
+                                    <div class="col-md-2">
+                                        @Html.TextBoxFor(model => model.Society, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.Society)
+                                    </div>
+                                    <div class="col-md-1">
+                                        @Html.LabelFor(model => model.Street)
+                                    </div>
+                                    <div class="col-md-2">
+                                        @Html.TextBoxFor(model => model.Street, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.Street)
+                                    </div>
+                                    <div class="col-md-1">
+                                        @Html.LabelFor(model => model.Landmark)
+                                    </div>
+                                    <div class="col-md-2">
+                                        @Html.TextBoxFor(model => model.Landmark, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.Landmark)
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-1">
+                                        @Html.LabelFor(model => model.Village)
+                                    </div>
+                                    <div class="col-md-2">
+                                        @Html.DropDownListFor(x => x.Village, new SelectList(Model.Villages, "ID", "VillageName"), "Select", new { @class = "wrapperdropdown-content form-control" })
+                                        @Html.ValidationMessageFor(model => model.Village)
+                                    </div>
+                                    <div class="col-md-1">
+                                        @Html.LabelFor(model => model.City)
+                                    </div>
+                                    <div class="col-md-2">
+                                        @Html.DropDownListFor(x => x.City, new SelectList(Model.Cities, "ID", "CityName"), "Select", new { @class = "wrapperdropdown-content form-control" })
+                                        @Html.ValidationMessageFor(model => model.City)
+                                    </div>
+                                    <div class="col-md-1">
+                                        @Html.LabelFor(model => model.Pincode)
+                                    </div>
+                                    <div class="col-md-2">
+                                        @Html.TextBoxFor(model => model.Pincode, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.Pincode)
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-1">
+                                        @Html.LabelFor(model => model.State)
+                                    </div>
+                                    <div class="col-md-2">
+                                        @Html.DropDownListFor(x => x.State, new SelectList(Model.States, "ID", "StateName"), "Select", new { @class = "wrapperdropdown-content form-control" })
+                                        @Html.ValidationMessageFor(model => model.State)
+                                    </div>
+                                    <div class="col-md-1">
+                                        @Html.LabelFor(model => model.Country)
+                                    </div>
+                                    <div class="col-md-2">
+                                        @Html.DropDownListFor(x => x.Country, new SelectList(Model.Countries, "ID", "CountryName"), "Select", new { @class = "wrapperdropdown-content form-control" })
+                                        @Html.ValidationMessageFor(model => model.Country)
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <b>Contact Person Details</b>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-1">
+                                        @Html.LabelFor(model => model.ContactPerson)
+                                    </div>
+                                    <div class="col-md-2">
+                                        @Html.TextBoxFor(model => model.ContactPerson, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.ContactPerson)
+                                    </div>
+                                    <div class="col-md-1">
+                                        @Html.LabelFor(model => model.Designation)
+                                    </div>
+                                    <div class="col-md-2">
+                                        @Html.TextBoxFor(model => model.Designation, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.Designation)
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <b>Bank Information</b>
+                                    </div>
+                                    <div class="col-md-1">
+                                        @Html.LabelFor(model => model.BankName)
+                                    </div>
+                                    <div class="col-md-2">
+                                        @Html.TextBoxFor(model => model.BankName, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.BankName)
+                                    </div>
+                                    <div class="col-md-1">
+                                        @Html.LabelFor(model => model.AccountNo)
+                                    </div>
+                                    <div class="col-md-2">
+                                        @Html.TextBoxFor(model => model.AccountNo, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.AccountNo)
+                                    </div>
+                                    <div class="col-md-1">
+                                        @Html.LabelFor(model => model.BankBranch)
+                                    </div>
+                                    <div class="col-md-2">
+                                        @Html.TextBoxFor(model => model.BankBranch, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.BankBranch)
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            <b>Contact Information</b>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-1">
+                                        @Html.LabelFor(model => model.Phone1)
+                                    </div>
+                                    <div class="col-md-2">
+                                        @Html.TextBoxFor(model => model.Phone1, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.Phone1)
+                                    </div>
+                                    <div class="col-md-1">
+                                        @Html.LabelFor(model => model.Phone2)
+                                    </div>
+                                    <div class="col-md-2">
+                                        @Html.TextBoxFor(model => model.Phone2, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.Phone2)
+                                    </div>
+                                    <div class="col-md-1">
+                                        @Html.LabelFor(model => model.Mobile)
+                                    </div>
+                                    <div class="col-md-2">
+                                        @Html.TextBoxFor(model => model.Mobile, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.Mobile)
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-1">
+                                        @Html.LabelFor(model => model.Webaddress)
+                                    </div>
+                                    <div class="col-md-2">
+                                        @Html.TextBoxFor(model => model.Webaddress, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.Webaddress)
+                                    </div>
+                                    <div class="col-md-1">
+                                        @Html.LabelFor(model => model.Emailaddress)
+                                    </div>
+                                    <div class="col-md-2">
+                                        @Html.TextBoxFor(model => model.Emailaddress, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.Emailaddress)
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-1">
+                                        @Html.LabelFor(model => model.Note)
+                                    </div>
+                                    <div class="col-md-7">
+                                        @Html.TextAreaFor(model => model.Note, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.Note)
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+
+}

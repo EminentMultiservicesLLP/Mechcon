@@ -1,0 +1,547 @@
+﻿@model BISERP.Areas.Store.Models.Store.PurchaseReturnModel
+<script>
+    $(function () {
+        $(".datepicker").datepicker({
+            showOn: "button",
+            buttonImage: "/Content/images/calendar.gif",
+            buttonImageOnly: true,
+            buttonText: "Select date",
+            'changeMonth': true,
+            'changeYear': true,
+            'yearRange': '2021:2030',
+            "format": "dd-MM-yyyy",
+            todayBtn: "linked",
+            pickerPosition: "bottom-left",
+            "todayHighlight": true,
+            autoclose: true,
+        }).datepicker("setDate", new Date());
+        $("#anim").change(function () {
+            $(".datepicker").datepicker("option", "showAnim", "fadeIn");
+        });
+    });
+</script>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <h5 class="page-header orangeDottedBottomBorder"> PURCHASE RETURN</h5>
+    <div class="panel-group">
+        <div class="panel panel-default">
+            @*<div class="panel-groupingBoder">
+                    <div class="panel-heading">
+                        <div class="panel-title">
+                            Search Filter
+                        </div>
+                    </div>
+                    <div id="collapse1" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <div class="row ">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <div class="col-sm-2">
+                                            @Html.Label("Store Name")
+                                        </div>
+                                        <div class="col-sm-2">
+                                            @Html.DropDownList("ddlSearchStores", new SelectList(string.Empty, "Value", "Text"), "Select Store", new { @class = "wrapperdropdown-content" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-1">
+                                            @Html.Label("GRN No")
+                                        </div>
+                                        <div class="col-sm-2">
+                                            @Html.Editor("GRN No")
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-1">
+                                        <a href="" class="btn btn-primary" type="button">
+                                            Find
+                                            <span class="glyphicon glyphicon-search"></span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>*@
+            @*<div class="panel-groupingBoder">
+                    <div class="panel-heading">
+                        <div class="panel-title">
+                            Search Details
+                        </div>
+                    </div>
+                    <div class="panel-collapse collapse in" aria-expanded="true">
+                        <div class="panel-body">
+                            <div class="container fill">
+                                <table id="searchgrid"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>*@
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <a class="collapsediv" data-toggle="collapse" href="#collapse2" style="color: white">
+                            Entry Form
+                        </a>
+                    </div>
+                </div>
+                <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <fieldset class="fieldsetCustom">
+                            <legend class="legendCustom"> Purchase Return Form</legend>
+                            <div class="submit-row">
+                                @*<a data-toggle="collapse" class="btn btn-success" href="#collapse1">Show/Hide top Search Panel</a>*@
+                                <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                                <button type="button" class="btn btn-primary" id="btnReset">Reset</button>
+                            </div>
+                            <fieldset class="fieldsetCustom">
+                                <br>
+                                <div class="row">
+                                    <div class="col-sm-2">
+                                        @Html.LabelFor(model => model.StoreId)
+                                        @Html.DropDownList("ddlStores", new SelectList(string.Empty, "Value", "Text"), "Select Project", new { @class = "wrapperdropdown-content form-control" })
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.LabelFor(m => m.Grnno)
+                                        @Html.TextBoxFor(model => model.Grnno, "", new Dictionary<string, object> { { "class", "form-control" } })
+                                        @Html.HiddenFor(m => m.GrnID)
+                                    </div>
+
+                                    <div class="col-sm-2">
+                                        @Html.Label("Supplier")
+                                        @Html.TextBoxFor(model => model.Supplier, new { @readonly = "readonly", @class = "form-control" })
+                                        @Html.HiddenFor(m => m.supplierid)
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.Label("Return No")
+                                        @Html.TextBoxFor(model => model.PRNo, new { @readonly = "readonly", @class = "form-control" })
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.Label("Return Date")
+                                        @Html.TextBoxFor(model => model.PRDate, new { @class = "form-control datepicker" })
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.Label("Remark")
+                                        @Html.TextAreaFor(model => model.Remark, new { @class = "form-control " })
+                                    </div>
+                                </div>
+                                <div class="submit-row">
+                                    @*<a href="" class="btn btn-primary" type="button" id="btnRemove">Remove Item</a>*@
+                                    <button type="button" class="btn btn-danger" id="btnRemove">Remove Item</button>
+                                </div>
+                            </fieldset>
+                            <fieldset>
+                                <div id="grid"></div>
+                            </fieldset>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @*<div id="PurchaseModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+
+                    <div class="modal-body">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div id="Indentgrid"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div >
+            </div>
+        </div>*@
+
+    <div title="GRN" id="PurchaseModal" style="display: none;">
+        <div id="Indentgrid"></div>
+        @*<div style="margin-top:5px;">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>*@
+    </div>
+}
+<script type="text/javascript">
+    var selectedRowIndx = null;
+    $(document).ready(function () {
+        $.ajax({
+            type: "GET",
+            url: "/Master/AllStores",
+            datatype: "Json",
+            success: function (data) {
+                $.each(data, function (index, value) {
+                    $('#ddlStores').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                    $('#ddlSearchStores').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                });
+            }
+        });
+    });
+    function LoadGRNgrid() {
+        $("#PurchaseModal").dialog({
+            height: 470,
+            width: 700,
+            modal: true,
+            open: function (evt, ui) {
+                $.ajax({
+                    type: "GET",
+                    url: "/PurchaseReturn/PurchaseGrn",
+                    datatype: "Json",
+                    data: { StoreID: $("#ddlStores").val() },
+                    beforeSend: function () {
+                        // $SearchGrid = $("#Indentgrid").pqGrid(setM);
+                        $SearchGrid.pqGrid("showLoading");
+                    },
+                    complete: function () {
+                        $SearchGrid.pqGrid("hideLoading");
+                    },
+                    success: function (data) {
+                        if (data.success) {
+                            //$("#PurchaseModal").modal('toggle'); //commented by shashi
+                            $SearchGrid.pqGrid("hideLoading");
+                            $SearchGrid.pqGrid("option", "dataModel.data", data.mimodel);
+                            $SearchGrid.pqGrid("refreshDataAndView");
+                        } else {
+                            ClearParamGrid('Indentgrid');
+                            ShowAlert("error", data.Messsage);
+                        }
+                    },
+                    error: function (request, status, error) {
+                        //ClearParamGrid("Itemgrid");
+                        $SearchGrid.pqGrid("hideLoading");
+                        ShowAlert("error", "Error while loading list");
+                        return;
+                    }
+                });
+            }
+        });
+    }
+    $(document).ready(function () {
+
+        $('#Grnno').on('click', function () {
+            if ($("#ddlStores").val() == "") {
+                ShowAlert("error", "Please Select Store");
+                return;
+            }
+            LoadGRNgrid();
+        });
+    });
+    var grid;
+    var $ReturnDetailsGrid;
+    var $SearchGrid;
+    //function Search() {
+    //    grid.reload({ searchString: $("#search").val() });
+    //}
+
+    //$(document).ready(function () {
+    //    grid = $("#grid").grid({
+    //        dataKey: "ID",
+    //        uiLibrary: "bootstrap",
+    //        columns: [
+    //            { field: "ID", width: 10, sortable: false, hidden: true },
+    //            { field: "ItemName", width: 40, title: "Item Name", sortable: true, priority: 1 },
+    //            { field: "UnitName", width: 20, title: "UnitName", sortable: true, priority: 2 },
+    //            { field: "GrnQty", width: 20, title: "GrnQty", priority: 3 },
+    //            { field: "GrnFreeQty", width: 20, title: "GrnFreeQty", priority: 4 },
+    //            { field: "StockQty", width: 30, title: "StockQty", priority: 5 },
+    //            { field: "BatchName", width: 20, title: "BatchName", priority: 6 },
+    //            { field: "RetPaidQty", width: 20, title: "RetPaidQty", priority: 7 },
+    //            { field: "RetFreeQty", width: 20, title: "RetFreeQty", priority: 8 },
+    //            { field: "Reason", width: 20, title: "Reason", priority: 9 },
+    //            { field: "ActualLendingRate", width: 20, title: "ActualLendingRate", priority: 10 },
+    //            { field: "Amount", width: 20, title: "Amount", priority: 11 }
+    //        ],
+    //        selectionMethod: 'checkbox',
+    //        pager: { enable: true, limit: 5, sizes: [2, 5, 10, 20] }
+    //    });
+    //    $("#btnSearch").on("click", Search);
+    //});
+
+    //$(document).ready(function () {
+    //    var grid = $("#searchgrid").grid({
+    //        dataKey: "ID",
+    //        uiLibrary: "bootstrap",
+    //        columns: [
+    //            { field: "ID", width: 10, sortable: false, hidden: true },
+    //            { field: "GRNNo", width: 80, title: "GRN No", sortable: true, priority: 2 },
+    //            { field: "GRNDate", width: 50, title: "GRN Date", sortable: true, priority: 3 },
+    //            { field: "StoreName", width: 50, title: "Store", sortable: true, priority: 4 },
+    //            { field: "Supplier", width: 50, title: "Supplier", sortable: true, priority: 5 }
+    //        ],
+    //        selectionMethod: 'checkbox',
+    //        pager: { enable: true, limit: 10, sizes: [2, 5, 10, 20] }
+    //    });
+    //});
+    colIID = [
+
+        { title: "", dataIndx: "PrdtID", width: 10, dataType: "integer", editable: false, resizable: false, hidden: true },
+        { title: "", dataIndx: "ItemID", width: 10, dataType: "integer", editable: false, resizable: false, hidden: true },
+        { title: "", dataIndx: "BatchID", width: 10, dataType: "integer", editable: false, resizable: false, hidden: true },
+        { title: "Item Name & Description", dataIndx: "ItemName", width: "35%", dataType: "string", resizable: false, editable: false },
+        { title: "UnitName", dataIndx: "UnitName", width: "14%", dataType: "string", resizable: false, editable: false },
+        { title: "GrnQty", dataIndx: "GrnQty", width: "7%", resizable: false, dataType: "string", editable: false },
+        { title: "GrnFreeQty", dataIndx: "GrnFreeQty", width: "7%", dataType: "float", resizable: false, editable: false, hidden: true },
+        { title: "Stock Qty", dataIndx: "StockQty", width: "7%", dataType: "string", resizable: false, editable: false },
+        { title: "BatchName", dataIndx: "Batch", width: "11%", dataType: "string", resizable: false, editable: false },
+        { title: "Ret Qty", dataIndx: "Qty", width: "7%", resizable: false, dataType: "double", editable: true },
+        { title: "RetFreeQty", dataIndx: "FreeQty", width: "7%", resizable: false, dataType: "double", editable: true, hidden: true },
+        { title: "Reason", dataIndx: "Reason", width: "11%", dataType: "string", type: 'textarea', resizable: false, editable: true },
+        { title: "ActualLendingRate", dataIndx: "ActualLandingRate", width: "7%", resizable: false, dataType: "double", editable: true, hidden: true },
+        {
+            title: "Amount", dataIndx: "Amount", width: "7%", dataType: "double", resizable: false, editable: false,
+            format: '##,###.00'
+        },
+        { title: "", dataIndx: "Mrp", width: 150, resizable: false, dataType: "double", editable: true, hidden: true },
+        { title: "", dataIndx: "Rate", width: 100, dataType: "double", resizable: false, align: "left", editable: false, hidden: true },
+        { title: "VatOn", dataIndx: "VatOn", width: 150, resizable: false, dataType: "string", editable: false, hidden: true },
+        { title: "Vat", dataIndx: "Vat", width: 100, dataType: "string", resizable: false, align: "left", editable: false, hidden: true },
+        { title: "", dataIndx: "TaxRate", width: 100, dataType: "double", resizable: false, align: "left", editable: false, hidden: true },
+        { title: "", dataIndx: "TaxAmount", width: 150, resizable: false, dataType: "double", editable: true, hidden: true },
+        { title: "", dataIndx: "Discount", width: 100, dataType: "double", resizable: false, align: "left", editable: false, hidden: true },
+        { title: "", dataIndx: "LandingRate", width: 150, resizable: false, dataType: "double", editable: true, hidden: true },
+        { title: "", dataIndx: "Grndtlid", width: 100, dataType: "int", resizable: false, align: "left", editable: false, hidden: true }
+    ];
+    dataIID = {
+        location: 'local',
+        sorting: 'local',
+        paging: 'local',
+        dataType: 'JSON'
+    };
+
+    setIID = {
+        height: '300',
+        maxheight: '400',
+        title: "Purchase Return  Details",
+        sortable: false,
+        numberCell: { show: false },
+        selectionModel: { type: 'row' },
+        numberCell: { show: false },
+        virtualX: true,
+        virtualY: true,
+        hoverMode: 'cell',
+        editor: { type: 'textbox' },
+        showTop: true,
+        resizable: true,
+        editModel: {
+            saveKey: $.ui.keyCode.ENTER
+        },
+        cellSave: function (evt, ui) {
+            this.refreshRow(ui);
+        },
+        draggable: false,
+        colModel: colIID,
+        dataModel: dataIID,
+        formulas: [
+            ["Amount", function (rd) {
+                return rd.Qty ?? 0 * rd.ActualLandingRate ?? 0;
+            },]
+        ],
+        pageModel: { type: "local", rPP: 20 },
+        rowClick: function (evt, ui) {
+            selectedRowIndx = ui.rowIndx;
+        }
+    };
+    $ReturnDetailsGrid = $("#grid").pqGrid(setIID);
+
+    $(document).ready(function () {
+        var dataM = { location: "local", sorting: 'local' };
+        var colM = [
+            { title: "", dataIndx: "GrnID", dataType: "integer", hidden: true },
+            { title: "", dataIndx: "supplierid", dataType: "integer", hidden: true },
+            {
+                title: "GRN No", dataIndx: "Grnno", width: '35%', align: "center",
+                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'], width: 230 }
+            },
+            {
+                title: "GRN Date", dataIndx: "StrGrndate", width: "35%", dataType: "date", align: "center"
+            },
+            {
+                title: "StoreName", dataIndx: "Store", width: '30%', dataType: "string",
+                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }, hidden: true
+            },
+            {
+                title: "Supplier", dataIndx: "Supplier", width: '30%', dataType: "string", align: "center"
+            },
+        ];
+
+        var setM = {
+            width: '100%',
+            height: 400,
+            sortable: false,
+            numberCell: { show: false },
+            hoverMode: 'cell',
+            showTop: false,
+            resizable: false,
+            //scrollModel: { autoFit: true },
+            draggable: false,
+            wrap: false,
+            editable: false,
+            columnBorders: true,
+            filterModel: { on: true, mode: "AND", header: true },
+            colModel: colM,
+            dataModel: dataM,
+            pageModel: { type: "local", rPP: 20 },
+            rowClick: function (evt, ui) {
+                ClearParamGrid("grid");
+                // $("#PurchaseModal").modal('toggle');
+                ClosePopupWindow("PurchaseModal");
+
+
+                if (ui.rowData) {
+                    var rowIndx = parseInt(ui.rowIndx);
+                    var record = ui.rowData;
+                    $("#GrnID").val(record.GrnID);
+                    $("#Grnno").val(record.Grnno);
+                    $("#Supplier").val(record.Supplier);
+                    $("#supplierid").val(record.supplierid);
+                    //$("#IndentType").val(data.Indent_Type);
+
+                    $.ajax({
+                        type: "GET",
+                        url: "/PurchaseReturn/PurchaseGrndt/",
+                        data: { GrnID: record.GrnID },
+                        datatype: "Json",
+                        async: true,
+                        beforeSend: function () {
+                            $ReturnDetailsGrid.pqGrid("showLoading");
+                        },
+                        complete: function () {
+                            $ReturnDetailsGrid.pqGrid("hideLoading");
+                        },
+                        success: function (data) {
+                            var dataMGrid = [];
+                            $.each(data, function (index, value) {
+                                var grdData = {
+
+                                    'ItemID': value.ItemID,
+                                    'ItemName': value.ItemName,
+                                    'UnitName': value.UnitName,
+                                    'GrnQty': value.GrnQty,
+                                    'GrnFreeQty': value.GrnFreeQty,
+                                    'StockQty': value.StockQty,
+                                    'BatchID': value.BatchID,
+                                    'Batch': value.Batch,
+                                    'ActualLandingRate': value.ActualLandingRate,
+                                    'Mrp ': value.Mrp,
+                                    'Rate': value.Rate,
+                                    'VatOn': value.VatOn,
+                                    'Vat': value.Vat,
+                                    'TaxRate ': value.TaxRate,
+                                    'TaxAmount': value.TaxAmount,
+                                    'Discount': value.Discount,
+                                    'LandingRate ': value.LandingRate,
+                                    'Grndtlid': value.Grndtlid,
+                                }
+                                dataMGrid.push(grdData);
+                            });
+                            $ReturnDetailsGrid.pqGrid("hideLoading");
+                            $ReturnDetailsGrid.pqGrid("option", "dataModel.data", dataMGrid);
+                            try {
+                                $ReturnDetailsGrid.pqGrid("refreshDataAndView");
+                            }
+                            catch (e) { $("#grid").pqGrid("refreshDataAndView"); }
+                        },
+                        error: function (request, status, error) {
+                            $ReturnDetailsGrid.pqGrid("hideLoading");
+                            ShowAlert("error", "Error while loading Itemlist");
+                            return;
+                        }
+                        //success: function (data) {
+                        //    $DetailsGrid.pqGrid("option", "dataModel.data", data);
+                        //    $DetailsGrid.pqGrid("refreshDataAndView");
+                        //}
+                    });
+                }
+            }
+        };
+        $SearchGrid = $("#Indentgrid").pqGrid(setM);
+
+    });
+
+    $("#btnSave").on('click', function () {
+
+        if ($("#Grnno").val() == "") {
+            ShowAlert("error", "Please Select GRN No.");
+            return;
+        }
+        DisableClick("btnSave");
+        var gridData = $ReturnDetailsGrid.pqGrid("getData", { dataIndx: ['PrdtID', 'ItemID', 'BatchID', 'Qty', 'FreeQty', 'Reason', 'ActualLandingRate', 'Mrp', 'Rate', 'VatOn', 'Vat', 'TaxRate', 'TaxAmount', 'Discount', 'LandingRate', 'Grndtlid', 'Amount', 'GrnQty', 'GrnFreeQty', 'ItemName', 'Batch'] });
+
+        var mIssueData = JSON.stringify({ //Passing data
+            ID: $("#ID").val(),
+            GrnID: $("#GrnID").val(),
+            PRNo: $("#PRNo").val(),
+            PRDate: $("#PRDate").val(),
+            supplierid: $("#supplierid").val(),
+            StoreId: $("#ddlStores").val(),
+            Remark: $("#Remark").val(),
+            Supplier: $("#Supplier").val(),
+            Grnno: $("#Grnno").val(),
+            Store: $("#Store").val(),
+            PurchaseReturnDt: gridData
+        });
+        $.ajax({
+            type: "POST", //HTTP POST Method
+            traditional: true,
+            contentType: 'application/json; charset=utf-8',
+            url: '/PurchaseReturn/SavePurchaseReturn', // Controller/View
+            data: mIssueData,
+            success: function (msg) {
+                if (msg.success == true) {
+                    ClearForm();
+                    //LoadGRNgrid();
+                    ShowAlert("success", "Generated Return No : " + msg.Message);
+                    //Notify("Saved Successfully", "success", "ReturnNo: " + msg.responseText + " generated successfully.", 5000);
+                }
+                else {
+                    ShowAlert("error", "Falied to Save! " + msg.Message);
+                    // Notify("Falied to save", "error", msg.responseText, 5000);
+                }
+
+            },
+            error: function (jqXHR, exception) {
+                Notify("Falied to Save", "error", "Error while saving GRN.");
+
+            }
+
+        });
+    });
+
+    function ClearForm() {
+        $("#ID").val("");
+        $("#GrnID").val("");
+        $("#Grnno").val("");
+        $("#PRNo").val("");
+        $("#PRDate").datepicker().datepicker("setDate", new Date());
+        $("#Supplier").val("");
+        $("#supplierid").val("");
+        $("#ddlStores").val("");
+        // $("#ReturnNo").val("");
+
+        ClearParamGrid("grid");
+    }
+    $("#btnReset").on("click", ClearForm);
+    $('#btnRemove').on('click', function () {
+        if (selectedRowIndx == null) {
+            return;
+        }
+        $("#grid").pqGrid("deleteRow", { rowIndx: selectedRowIndx });
+        selectedRowIndx = null;
+    });
+
+    //$('#btnRemove').on('click', function () {
+    //    var getData = $ReturnDetailsGrid.pqGrid("option", "dataModel.data");
+    //    var selectedItems = jLinq.from(getData).equals("state", true).select();
+
+    //    $.each(selectedItems, function (key, value) {
+    //        var obj = $ReturnDetailsGrid.pqGrid("getRowIndx", { rowData: value });
+    //        var rowIndx = obj.rowIndx;
+    //        $ReturnDetailsGrid.pqGrid("deleteRow", { rowIndx: rowIndx });
+    //    });
+    //});
+
+</script>

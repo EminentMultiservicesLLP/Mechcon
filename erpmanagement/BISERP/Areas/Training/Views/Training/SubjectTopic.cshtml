@@ -1,0 +1,123 @@
+﻿@model BISERP.Areas.Training.Models.SubjectTopicModel
+
+<script type="text/javascript">
+    var grid;
+
+    $(document).ready(function () {
+        $.ajax({
+            type: "GET",
+            url: "/SubjectMaster/AllActiveSubject",
+        }).done(function (data) {
+            Subjectlist = data;
+
+            grid = $("#grid").jsGrid({
+                width: "100%",
+                height: "400px",
+                filtering: true,
+                selecting: true,
+                inserting: true,
+                editing: true,
+                sorting: true,
+                autoload: true,
+                paging: true,
+                pageSize: 20,
+
+                controller: {
+
+                    loadData: function (filter) {
+                        var d = $.Deferred();
+                        $.ajax({
+                            type: 'GET',
+                            url: '/SubjectTopic/AllSubjectTopic',
+                            dataType: "json",
+                            data: { SearchName: filter.TopicName, SearchCode: filter.TopicCode },
+                            success: function (data) {
+                                d.resolve(data);
+                            },
+                            error: function (e) {
+                                ShowAlert("error", "Server Error! Please Contact administrator!");
+                            }
+                        });
+                        return d.promise();
+                    },
+                    insertItem: function (item) {
+                        var d = $.Deferred();
+                        $.ajax(
+                        {
+                            type: "POST",
+                            dataType: "json",
+                            url: '/SubjectTopic/SaveSubjectTopic', // Controller/View
+                            data: item,
+                            success: function (msg) {
+                                if (msg.success) {
+                                    ShowAlert("success", "Subject Topic Master added successfully to system.");
+                                } else {
+                                    ShowAlert("error", msg.Message);
+                                }
+                            },
+                        }).done(function (item) {
+                            $("#grid").jsGrid("loadData");
+                        });
+
+                    },
+                    updateItem: function (item) {
+                        var d = $.Deferred();
+                        $.ajax(
+                        {
+                            type: "POST", //HTTP POST Method
+                            dataType: "json",
+                            url: '/SubjectTopic/UpdateSubjectTopic', // Controller/View
+                            data: item,
+                            success: function (msg) {
+                                if (msg.success) {
+                                    ShowAlert("success", "Subject Topic Master updated successfully to system.");
+                                } else {
+                                    ShowAlert("error", msg.Message);
+                                }
+                            },
+                        }).done(function (insertedItem) {
+                            d.resolve(insertedItem.data);
+                            $("#grid").jsGrid("loadData");
+
+                        });
+                        return d.promise();
+                    }
+                },
+                fields: [
+                    { name: "TopicId", visible: false, width: 0 },
+                    { name: "TopicCode", title: "Code", type: "text", validate: "required", autosearch: true, validate: { validator: "required", message: "Code is missing! Please enter the Code" }, },
+                    { name: "TopicName", title: "Topic Name", type: "text", validate: "required", autosearch: true, validate: { validator: "required", message: "Topic is missing! Please enter the Topic Name" }, },
+                    { name: "SubjectId", title: "SubjectName", type: "select", items: Subjectlist, valueField: "SubjectId", textField: "SubjectName", validate: "required", filtering: false, width: 50 },
+                    { name: "Deactive", title: "Deactive", type: "checkbox", filtering: false, width: 10, inserting: false },
+                    { type: "control", deleteButton: false, width: 10 }
+                ],
+            });
+        });
+    });
+</script>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <fieldset>
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-groupingBoder">
+                    <div class="panel-heading">
+                        <div class="panel-title">
+                            <h4>
+                                Subject Topic Master
+                            </h4>
+                        </div>
+                    </div>
+                    <div class="panel-collapse collapse in" aria-expanded="true">
+                        <div class="panel-body">
+                            <div class="container fill">
+                                <div id="grid" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+}

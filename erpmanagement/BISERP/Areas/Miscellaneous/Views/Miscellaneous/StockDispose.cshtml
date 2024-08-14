@@ -1,0 +1,365 @@
+﻿@model BISERP.Areas.Miscellaneous.Models.StockDisposeModel
+<script>
+    $(function () {
+        $(".datepicker").datepicker({
+            showOn: "button",
+            buttonImage: "/Content/images/calendar.gif",
+            buttonImageOnly: true,
+            buttonText: "Select date",
+            'changeMonth': true,
+            'changeYear': true,
+            'yearRange': '2021:2099',
+            "format": "dd-M-yyyy",
+            todayBtn: "linked",
+            pickerPosition: "bottom-left",
+            "todayHighlight": true,
+            autoclose: true,
+        }).datepicker("setDate", new Date());
+        $("#anim").change(function () {
+            $(".datepicker").datepicker("option", "showAnim", "fadeIn");
+        });
+    });
+</script>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <h5 class="page-header orangeDottedBottomBorder"> STOCK DISPOSE </h5>
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <a class="collapsediv" data-toggle="collapse" href="#collapse2" style="color:white">
+                            Entry Form
+                        </a>
+                    </div>
+                </div>
+                <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+
+                        <div class="submit-row">
+                            <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                            <button type="button" class="btn btn-primary" id="btnReset">Reset</button>
+                            <button type="button" class="btn btn-warning" id="btnReset">Report</button>
+                        </div>
+                        <fieldset class="fieldsetCustom">
+                            <legend class="legendCustom"> Stock Dispose Form</legend>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    @Html.Label("DisposeDate")
+                                    @Html.TextBoxFor(model => model.DisposeDate, new { @class = "form-control datepicker" })
+                                    @Html.HiddenFor(model => model.DisposeId)
+                                </div>
+
+                                <div class="col-sm-3">
+                                    @Html.LabelFor(model => model.StoreId)
+                                    @Html.DropDownList("ddlStores", new SelectList(string.Empty, "Value", "Text"), "Select Store", new { @class = "wrapperdropdown-content form-control" })
+                                </div>
+                            </div>
+                            <div class="fill">
+                                <div class="submit-row">
+                                    <button type="button" class="btn btn-primary" data-target="#ItemModal" id="btnViewItem">Add Item</button>
+                                    <button type="button" class="btn btn-primary" id="btnRemoveItem">Remove Item</button>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <a class="collapsediv" data-toggle="collapse" href="#SearchItemDetails" style="color:white">
+                            Item Details Grid
+                        </a>
+                    </div>
+                </div>
+                <div id="SearchItemDetails" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <div id="grid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div title="" id="ItemModal" style="display: none;">
+        <div id="Itemgrid"></div>
+        <div style="margin-top:5px;">
+            <button type="button" class="btn btn-primary" data-dismiss="modal" id="btnAddItem">Add</button>
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $.ajax({
+                type: "GET",
+                url: "/Master/AllStores",
+                datatype: "Json",
+                success: function (data) {
+                    $.each(data, function (index, value) {
+                        $('#ddlStores').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                    });
+                }
+            });
+        });
+        var grid;
+        var $DetailsGrid;
+        var $ItemListGrid;
+
+        $(document).ready(function () {
+            var colIL = [
+                // { title: "", dataIndx: "ConsumptionId", dataType: "integer", hidden: true },
+                {
+                    dataIndx: "state", Width: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                    editor: false, dataType: 'bool',
+                    title: "<input type='checkbox' />",
+                    cb: { select: true, all: false, header: true }
+                },
+                { title: "", dataIndx: "ItemID", dataType: "integer", hidden: true },
+                { title: "", dataIndx: "BatchID", dataType: "integer", hidden: true },
+                { title: "ItemName", dataIndx: "ItemName", dataType: "string", width: 230, editing: false },
+                { title: "UnitName", dataIndx: "Unit", dataType: "string", width: 200, editing: false },
+                { title: "BatchName", dataIndx: "Batch", dataType: "string", width: 200, editing: false },
+                { title: "BatchQty", dataIndx: "CurrentQty", dataType: "double", width: 200, editing: false },
+                { title: "Qty to Discard", dataIndx: "DisposedQuantity", dataType: "double", width: 200 },
+                { title: "Reason to Discard", dataIndx: "Reason", dataType: "string", width: 430 },
+            ];
+
+            var dataIL = {
+                location: 'local',
+                sorting: 'local',
+            };
+
+            var setIL = {
+                width: '100%',
+                height: '300',
+                maxheight: '400',
+                sortable: false,
+                colModel: colIL,
+                dataModel: dataIL,
+                numberCell: { show: false },
+                selectionModel: { type: 'row' },
+                hoverMode: 'cell',
+                editor: { type: 'textbox' },
+                showTop: false,
+                resizable: true,
+                editable: true,
+                virtualX: true,
+                editModel: {
+                    saveKey: $.ui.keyCode.ENTER
+                },
+                draggable: false,
+                wrap: false,
+                pageModel: { type: "local", rPP: 20 },
+            };
+
+            $DetailsGrid = $("#grid").pqGrid(setIL);
+        });
+
+        $(document).ready(function () {
+            var colIL = [
+                {
+                    dataIndx: "state", Width: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                    editor: false, dataType: 'bool',
+                    title: "<input type='checkbox' />",
+                    cb: { select: true, all: false, header: true }
+                },
+
+                { title: "", dataIndx: "ID", dataType: "integer", hidden: true },
+                { title: "", dataIndx: "BatchId", dataType: "integer", hidden: true },
+                { title: "ItemName", dataIndx: "Name", dataType: "string", width: 150, filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } },
+                { title: "Batch", dataIndx: "BatchName", dataType: "string", width: 80 },
+                { title: "Store", dataIndx: "StoreName", dataType: "string", width: 80 },
+                { title: "UnitName", dataIndx: "UnitName", dataType: "string", width: 80 },
+                { title: "Qty", dataIndx: "CurrentQty", dataType: "double", width: 150 },
+            ];
+
+            var dataIL = {
+                location: 'local',
+                sorting: 'local',
+            };
+
+            setIL = {
+                width: '100%',
+                height: 400,
+                sortable: false,
+                numberCell: { show: false },
+                selectionModel: { type: 'row' },
+                pasteModel: { on: false },
+                hoverMode: 'cell',
+                editor: { type: 'textbox' },
+                filterModel: { on: true, mode: "AND", header: true },
+                showTop: false,
+                resizable: true,
+                virtualX: true,
+                editModel: {
+                    saveKey: $.ui.keyCode.ENTER
+                },
+                draggable: false,
+                wrap: false,
+                colModel: colIL,
+                dataModel: dataIL,
+                pageModel: { type: "local", rPP: 20 },
+            };
+
+            $ItemListGrid = $("#Itemgrid").pqGrid(setIL);
+        });
+
+        $(document).ready(function () {
+
+            $('#btnViewItem').on('click', function () {
+                if ($("#ddlStores").val() == "") {
+                    ShowAlert("error", 'Please Select Store');
+                    return;
+                }
+
+                var searchStoreId = $("#ddlStores").val();
+                $("#ItemModal").dialog({
+                    height: 500,
+                    width: 700,
+                    modal: true,
+                    open: function (evt, ui) {
+                        $.ajax({
+                            type: "GET",
+                            url: "/ItemMaster/GetStoreItemStock/",
+                            data: { StoreId: searchStoreId },
+                            datatype: "Json",
+                            beforeSend: function () {
+                                $ItemListGrid = $("#Itemgrid").pqGrid(setIL);
+                                $ItemListGrid.pqGrid("showLoading");
+                            },
+                            complete: function () {
+                                $ItemListGrid.pqGrid("hideLoading");
+                            },
+                            success: function (result) {
+                                if (result.success) {
+                                    // $("#ItemModal").modal('toggle');
+                                    $ItemListGrid.pqGrid("hideLoading");
+                                    $ItemListGrid.pqGrid("option", "dataModel.data", result.items);
+                                    $ItemListGrid.pqGrid("refreshView");
+                                    $ItemListGrid.pqGrid("refresh");
+                                } else {
+                                    ClearParamGrid('Itemgrid');
+                                    ShowAlert("error", result.Messsage);
+                                    return;
+                                }
+                            },
+                            error: function (request, status, error) {
+                                ClearParamGrid("Itemgrid");
+                                $ItemListGrid.pqGrid("hideLoading");
+                                ShowAlert("error", "Error while loading Itemlist");
+                                return;
+                            }
+                        });
+                    }
+                });
+            });
+        });
+        $(document).ready(function () {
+            $('#btnAddItem').on('click', function () {                
+               
+                ClosePopupWindow("ItemModal");
+                $ItemListGrid.pqGrid("reset", { filter: true });
+                var getData = $ItemListGrid.pqGrid("option", "dataModel.data");
+                var selectedItems = jLinq.from(getData).equals("state", true).select();
+                
+                var dataMGrid = [];
+                var getMainGridData = $DetailsGrid.pqGrid("option", "dataModel.data");
+                $.each(getMainGridData, function (key, value) {
+                    var grdData = {
+                        'DisposeDetailId': value.DisposeDetailId,
+                        'ItemName': value.ItemName,
+                        'Batch': value.Batch,
+                        'CurrentQty': value.CurrentQty,
+                        'Unit': value.Unit,
+                        'BatchID': value.BatchID,
+                        'ItemID': value.ItemID,
+                        'DisposedQuantity': value.DisposedQuantity,
+                        'state': true
+                    };
+                    dataMGrid.push(grdData);
+                });
+
+                $.each(selectedItems, function (key, value) {
+                    var grdData = {
+                        'DisposeDetailId': 0, 'ItemID': value.ID, 'ItemName': value.Name, 'Batch': value.BatchName, 'Unit': value.UnitName,
+                        'CurrentQty': value.CurrentQty, 'BatchID': value.BatchId, 'DisposedQuantity': 0, 'state': true
+                    };
+                    dataMGrid.push(grdData);
+                });
+
+                $DetailsGrid.pqGrid("option", "dataModel.data", dataMGrid);
+                $DetailsGrid.pqGrid("refreshDataAndView");
+            });
+        });
+        $('#btnSave').on('click', function () {
+            DisableClick("btnSave");
+            var items = $DetailsGrid.pqGrid("getData", { dataIndx: ['ItemID', 'BatchID', 'DisposedQuantity', 'Reason', 'CurrentQty'] });
+            var grn = JSON.stringify({ //Passing data
+                DisposeId: $("#DisposeId").val(),
+                StoreId: $("#ddlStores").val(),
+                DisposeDate: $("#DisposeDate").val(),
+                StockDisposedt: items
+            });
+            $.ajax({
+                type: "POST", //HTTP POST Method
+                traditional: true,
+                contentType: 'application/json; charset=utf-8',
+                url: '/StockDispse/Savedispose', // Controller/View
+                data: grn,
+                success: function (msg) {
+                    if (msg.success) {
+                        ClearForm();
+                        ShowAlert("success", "Generated Dispose No : " + msg.Message);
+                    }
+                    else {
+                        ShowAlert("error", "Falied to Save! " + msg.Message);
+                    }
+                },
+                error: function (jqXHR, exception) {
+                    Notify("Falied to Save", "error", "Error while saving Dispose.");
+                }
+            });
+        });
+        function getRowIndx() {
+            var arr = $DetailsGrid.pqGrid('selection', { type: 'row', method: 'getSelection' });
+            if (arr && arr.length > 0) {
+                return arr[0].rowIndx;
+            }
+            else {
+                ShowAlert("error", "Select a row.");
+                return null;
+            }
+        }
+        $('#btnRemoveItem').on('click', function () {
+
+            var getData = $DetailsGrid.pqGrid("option", "dataModel.data");
+            var selectedItems = jLinq.from(getData).equals("state", true).select();
+
+            $.each(selectedItems, function (key, value) {
+                var obj = $DetailsGrid.pqGrid("getRowIndx", { rowData: value });
+                var rowIndx = obj.rowIndx;
+                $DetailsGrid.pqGrid("deleteRow", { rowIndx: rowIndx });
+            });
+
+        });
+        function ClearForm() {          
+            $("#DisposeId").val("");
+            $("#ddlStores").val("");
+            ClearParamGrid("grid");
+        }
+      
+    </script>
+}

@@ -1,0 +1,325 @@
+﻿@model BISERP.Areas.Training.Models.BatchModel
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <fieldset>
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-groupingBoder">
+                    <div class="panel-heading">
+                        <div class="panel-title">
+                            <h4>
+                                <a class="collapsediv" data-toggle="collapse" href="#SearchDetails" style="color:white">
+                                    Batch Details
+                                </a>
+                            </h4>
+                        </div>
+                    </div>
+                    <div class="panel-collapse collapse in" aria-expanded="true" id="SearchDetails">
+                        <div class="panel-body">
+                            <div class="container fill">
+                                <div id="grid" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <br>
+        <div class="panel-groupingBoder">
+            <div class="panel-heading">
+                <div class="panel-title">
+                    Entry Form
+                </div>
+            </div>
+            <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                <div class="panel-body">
+                    <fieldset>
+
+                        <div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <button type="button" id="btnSave" class="btn btn-success">Save</button>
+                                    <button type="button" id="btnAdd" class="btn btn-success">Reset</button>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="form-group form-horizontal">
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.CentreId, new { @class = "required" })
+                                    @Html.DropDownList("ddlCentre", new SelectList(string.Empty, "Value", "Text"), "Select Centre", new { @class = "wrapperdropdown-content form-control" })
+                                    @Html.HiddenFor(model => model.BatchId)
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.BatchTypeId, new { @class = "required" })
+                                    @Html.DropDownList("ddlBatchType", new SelectList(string.Empty, "Value", "Text"), "Select Batch Type", new { @class = "wrapperdropdown-content form-control" })
+                                </div>
+                                <div class="col-sm-2">
+                                    @Html.LabelFor(m => m.StartDate, new { @class = "required" })
+                                    <div class='input-group date'>
+                                        <input type='text' id='StartDate' class="form-date-control" />
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    @Html.LabelFor(m => m.EndDate, new {@class = "required"})
+                                    <div class='input-group date'>
+                                        <input type='text' id="ToDate" class="form-date-control"/>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    @Html.LabelFor(m => m.NoOfSlot, "Period/Day", new { @class = "required" })
+                                    <div class='input-group date'>
+                                        <input type='text' id="noOfSlot" class="form-control" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(model => model.TrainingTypeId, new { @class = "required" })
+                                @Html.DropDownList("ddlTrainingType", new SelectList(string.Empty, "Value", "Text"), "Select Training Type", new { @class = "wrapperdropdown-content form-control" })
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(model => model.GradeId, new { @class = "required" })
+                                @Html.DropDownList("ddlGrade", new SelectList(string.Empty, "Value", "Text"), "Select Grade", new { @class = "wrapperdropdown-content form-control" })
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(model => model.BatchQty, new { @class = "required" })
+                                @Html.TextBoxFor(model => model.BatchQty, new { @class = "form-control" })
+                            </div>
+                            <div class="col-sm-2">
+                                @Html.LabelFor(model => model.Deactive)
+                                @Html.CheckBoxFor(model => model.Deactive, new { @disabled = "disabled" })
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+    <script type="text/javascript">
+    var grid;
+    $('#StartDate').datepicker({
+        defaultDate: new Date(),
+        dateFormat: 'dd-M-yy',
+        yearRange: '2015:2099',
+        showOn: "button",
+        buttonImage: "../../Content/images/calendar.gif",
+        buttonImageOnly: true,
+        changeMonth: true,
+        changeYear: true
+    });
+
+    $('#ToDate').datepicker({
+        defaultDate: new Date(),
+        dateFormat: 'dd-M-yy',
+        yearRange: '2015:2099',
+        showOn: "button",
+        buttonImage: "../../Content/images/calendar.gif",
+        buttonImageOnly: true,
+        changeMonth: true,
+        changeYear: true
+    });
+    $(document).ready(function () {
+        grid = $("#grid").jsGrid({
+            width: "100%",
+            height: "320px",
+            filtering: true, 
+            selecting: true,
+
+            inserting: false,
+            editing: false,
+            sorting: true,
+            autoload: true,
+            paging: true,
+            pageSize: 20,
+
+            controller: {
+                loadData: function (filter) {
+                    var d = $.Deferred();
+                    $.ajax({
+                        type: 'GET',
+                        url: '@Url.Action("GetAllBatch", "BatchMaster")',
+                        dataType: "json",
+                        data: { SearchName: filter.Name, SearchCode: filter.Code },
+                        success: function (data) {
+                            d.resolve(data);
+                        },
+                        error: function (e) {
+                            ShowAlert("error", "Server Error! Please Contact administrator!");
+                        }
+                    });
+                    return d.promise();
+                },
+            },
+
+            fields: [
+                { name: "BatchId", visible: false, width: 0 },
+                { name: "CentreId", visible: false, width: 0 },
+                { name: "BatchTypeId", visible: false, width: 0 },
+                { name: "strStartDate", visible: false, width: 0 },
+                { name: "strEndDate", visible: false, width: 0 },
+                { name: "BatchQty", visible: false, width: 0 },
+                { name: "TrainingTypeId", visible: false, width: 0 },
+                { name: "GradeId", visible: false, width: 0 },                
+
+                { name: "Centre", title: "Centre", type: "text", validate: "required", width: 70 },
+                { name: "strStartDate", title: "Start Date", type: "text", validate: "required", width: 50 },
+                { name: "strEndDate", title: "End Date", type: "text", validate: "required", width: 50 },
+                { name: "BatchType", title: "BatchType", type: "text", validate: "required", width: 70 },
+                { name: "TrainingType", title: "TrainingType", type: "text", validate: "required", width: 70 },
+                { name: "Grade", title: "Grade", type: "text", validate: "required", width: 70 },
+                { name: "Deactive", title: "Deactive", type: "checkbox", filtering: false, width: 10 },                
+                { type: "control", editButton: false, deleteButton: false, clearFilterButton: true, modeSwitchButton: true, width: 10 }
+            ],
+            /********** Row Selection Event you can use in suupplier***********/
+            rowClick: function (args) {                
+                var data = args.item;
+                $("#BatchId").val(data.BatchId);
+                $("#ddlCentre").val(data.CentreId); $("#ddlBatchType").val(data.BatchTypeId);
+                $("#Deactive").prop('checked', data.Deactive);
+                $("#StartDate").val(data.strStartDate); $("#ToDate").val(data.strEndDate); $("#ddlTrainingType").val(data.TrainingTypeId);
+                $("#ddlGrade").val(data.GradeId); $("#BatchQty").val(data.BatchQty); $("#noOfSlot").val(data.NoOfSlot);
+                $("#Deactive").prop('checked', data.Deactive);
+                $("#Deactive").attr("disabled", false);
+            },
+
+        });
+
+    });
+
+    $(document).ready(function () {
+        $("#btnSave").click(function () {
+            if ($("#ddlCentre").val() == "") {
+                ShowAlert("error", "Please Select Centre");
+                return;
+            }
+            if ($("#ddlBatchType").val() == "") {
+                ShowAlert("error", "Please Select Batch Type");
+                return;
+            }
+            if ($("#StartDate").val() == "") {
+                ShowAlert("error", "Please Select Start Date");
+                return;
+            }
+            if ($("#ToDate").val() == "") {
+                ShowAlert("error", "Please Select To Date");
+                return;
+            }
+            if ($("#noOfSlot").val().trim().length == 0 && $.isNumber($("#noOfSlot").val()) == false) {
+                $("#noOfSlot").val("0");
+                ShowAlert("error", "Please enter No of slot per Day");
+                return;
+            }
+            if ($("#ddlTrainingType").val() == "") {
+                ShowAlert("error", "Please Select Training Type");
+                return;
+            }
+            if ($("#ddlGrade").val() == "") {
+                ShowAlert("error", "Please Select Grade");
+                return;
+            }
+            if ($("#BatchQty").val() == "") {
+                ShowAlert("error", "Please Select Batch Quantity");
+                return;
+            }
+            $.ajax(
+            {
+                type: "POST", //HTTP POST Method
+                url: '/BatchMaster/SaveBatchMaster', // Controller/View
+                data: { //Passing data
+                    BatchId: $("#BatchId").val(), //Reading text box values using Jquery
+                    CentreId: $("#ddlCentre").val(),
+                    BatchTypeId: $("#ddlBatchType").val(),
+                    StartDate: $("#StartDate").val(),
+                    EndDate: $("#ToDate").val(),
+                    BatchQty: $("#BatchQty").val(),
+                    TrainingTypeId: $("#ddlTrainingType").val(),
+                    GradeId: $("#ddlGrade").val(),
+                    Deactive: $("#Deactive").prop('checked'),
+                    NoOfSlot:$("#noOfSlot").val()
+                },
+                success: function (msg) {
+                    if (msg.success) {
+                    ClearForm();
+
+                    $("#grid").jsGrid("loadData");
+                    ShowAlert( "success", "Batch Master record added successfully to system.");
+                    }
+                    else {
+                        ShowAlert( "error", msg.Message);
+                    }
+                },
+
+            });
+        });
+    });
+    $.ajax({
+        type: "GET",
+        url: "/Grade/AllGrades",
+        datatype: "Json",
+        success: function (data) {
+            $.each(data, function (index, value) {
+                $('#ddlGrade').append('<option value="' + value.GradeId + '">' + value.Name + '</option>');
+            });
+        }
+    });
+
+    $.ajax({
+        type: "GET",
+        url: "/TrainingType/AllActiveTrainingType",
+        datatype: "Json",
+        success: function (data) {
+            $.each(data, function (index, value) {
+                $('#ddlTrainingType').append('<option value="' + value.TypeId + '">' + value.TrainingType + '</option>');
+            });
+        }
+    });
+    $.ajax({
+        type: "GET",
+        url: "/BatchType/AllActiveBatchType",
+        datatype: "Json",
+        success: function (data) {
+            $.each(data, function (index, value) {
+                $('#ddlBatchType').append('<option value="' + value.BatchTypeId + '">' + value.BatchType + '</option>');
+            });
+        }
+    });
+    $.ajax({
+        type: "GET",
+        url: "/Training/Training/GetAllTrainingCentre",
+        datatype: "Json",
+        success: function (data) {
+            $.each(data, function (index, value) {
+                $('#ddlCentre').append('<option value="' + value.TrainingCentreId + '">' + value.TrainingCentre + '</option>');
+            });
+        }
+    });
+    function ClearForm() {
+        $("#BatchId").val(""), //Reading text box values using Jquery
+        $("#ddlCentre").val(""),
+        $("#ddlBatchType").val(""),
+        $("#BatchQty").val(""),
+        $("#ddlTrainingType").val(""),
+        $("#ddlGrade").val(""),
+        $("#noOfSlot").val("0"),
+        $("#StartDate").val(""),
+        $("#ToDate").val(""),
+        $("#Deactive").prop('checked', false),
+        $("#Deactive").attr("disabled", true);
+    }
+
+    $(document).ready(function () {
+        $("#btnAdd").click(function () {
+            ClearForm();
+        });
+    });
+
+</script>
+}

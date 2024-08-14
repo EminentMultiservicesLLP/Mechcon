@@ -1,0 +1,62 @@
+﻿@model BISERP.Areas.Store.Models.Store.MaterialIssueModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+    <div style="width: 95%; margin: 10px;">
+        <div align="center">
+            <h2>Material Issue Acceptance</h2>
+        </div>
+        <table style="padding: 2px;">
+            <tr>
+                <td style="text-align: left">Issue No:@Model.IssueNo</td>
+            </tr>
+            <tr>
+               <td style="text-align: left">Issue Date:@Model.strIssueDate</td>
+                <td style="text-align: left">Accepted Date:@DateTime.Now.ToString("dd-MMM-yyyy")</td>
+            </tr>
+            <tr>
+                <td style="align-content: stretch;">
+                    <u>Issue Requested by</u>: <b>@Model.FromStore</b> &emsp; &emsp; <u>Issue Requested to</u>:<b>@Model.ToStore</b>
+                </td>
+            </tr>
+            <tr style="height: 20px" />
+            <tr>
+                <td style="align-content: center">
+                    <table style="padding: 5px;" border="1">
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Available Stock</th>
+                            <th>Issued Quantity</th>
+                            <th>Accepted Quantity</th>
+                            <th>Status</th>
+                        </tr>
+                        @foreach (var menu in Model.MaterialIssueDt)
+                        {
+                            <tr>
+                                <td>@menu.ItemName</td>
+                                <td>@menu.Item_Stock</td>
+                                <td>@menu.IssuedQuantity</td>
+                                <td>@menu.AuthorisedQuantity</td>
+                                <td>@menu.Strauthorized</td>
+                            </tr>
+                        }
+                    </table>
+                </td>
+            </tr>
+        </table>
+        <div style="align-content:flex-end">
+            <br />
+            <br />
+            <u style="color: red;"><b>Note:</b></u> *** This is an automatically generated email, please do not reply ***
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,230 @@
+﻿@model BISERP.Areas.Transport.Models.RoadTaxModel
+<script>
+    $(function () {
+        $(".datepicker").datepicker({
+            showOn: "button",
+            buttonImage: "/Content/images/calendar.gif",
+            buttonImageOnly: true,
+            buttonText: "Select date",
+            dateFormat: "dd-MM-yy"
+        }).datepicker("setDate", new Date());
+        $("#anim").change(function () {
+            $(".datepicker").datepicker("option", "showAnim", "fadeIn");
+        });
+    });
+</script>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <a class="collapsediv" data-toggle="collapse" href="#SearchDetails" style="color:white">
+                            Search Details
+                        </a>
+                    </div>
+                </div>
+                <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <div class="container fill">
+                            <div id="searchgrid"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        Entry Form
+                    </div>
+                </div>
+
+                <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                                <a data-toggle="collapse" class="btn btn-success" id="btnAdd">Reset</a>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-3">
+                                    @Html.LabelFor(m => m.IssueDate)
+                                    @Html.TextBoxFor(model => model.IssueDate, new { @class = "form-control datepicker" })
+                                    @Html.HiddenFor(model => model.IssueDate)
+                                </div>
+                            </div>
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-3">
+                                    @Html.LabelFor(m => m.ExpiryDate)
+                                    @Html.TextBoxFor(model => model.ExpiryDate, new { @class = "form-control datepicker" })
+                                    @Html.HiddenFor(model => model.ExpiryDate)
+                                </div>
+                            </div>                            
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-2">
+                                    @Html.LabelFor(model => model.Deactive)
+                                    @Html.CheckBoxFor(model => model.Deactive, new { @disabled = "disabled" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-3">
+                                    @Html.LabelFor(m => m.TaxNo)
+                                    @Html.TextBoxFor(model => model.TaxNo, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.TaxNo)
+                                </div>
+                            </div>
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-3">
+                                    @Html.LabelFor(m => m.VehicleNo)
+                                    @Html.TextBoxFor(model => model.VehicleNo, new { @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-3">
+                                    @Html.LabelFor(m => m.Amount)
+                                    @Html.TextBoxFor(model => model.Amount, new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-3">
+                                    @Html.LabelFor(m => m.ReminderDays)
+                                    @Html.TextBoxFor(model => model.ReminderDays, new { @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        var $SearchGrid;        
+        var setIID, colIID, dataIID;
+        var colIL, dataIL, setIL;
+        function ClearForm() {
+            $("#RoadTaxId").val("");
+            $("#IssueDate").datepicker().datepicker("setDate", new Date());
+            $("#ExpiryDate").datepicker().datepicker("setDate", new Date());
+            $("#TaxNo").val("");
+            $("#Amount").val("");
+            $("#ReminderDays").val("");
+            $("#Deactive").prop('checked', false);
+        }
+        function LoadSearchGrid() {
+            $.ajax({
+                url: "/RoadTax/AllRoadTax",
+                cache: false,
+                async: true,
+                method: "GET",
+                dataType: "JSON",
+                success: function (response) {
+                    $SearchGrid.pqGrid("option", "dataModel.data", response.mimodel);
+                    $SearchGrid.pqGrid("refreshDataAndView");
+                }
+            });
+        }
+        (function ($) {
+
+            /********* Build Search Grid *********/
+            var dataSearchGrid = { location: "local", sorting: 'local' };
+            var colSearchGrid = [
+                    { title: "", dataIndx: "RoadTaxId", dataType: "integer", hidden: true },
+                    { title: "", dataIndx: "VehicleId", dataType: "integer", hidden: true },
+                    {
+                        title: "Tax No", dataIndx: "TaxNo", width: 400,
+                        filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                    },
+                    {
+                        title: "Vehicle No", dataIndx: "VehicleNo", width: 400,
+                        filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                    },
+                    {
+                        title: "Issue Date", dataIndx: "strIssueDate", width: 200, dataType: "date"
+                    },
+                    {
+                        title: "Expiry Date", dataIndx: "strExpiryDate", width: 200, dataType: "date"
+                    },
+            ];
+            var setSearchGrid = {
+                height: 250,
+                sortable: false,
+                numberCell: { show: false },
+                showTop: false,
+                resizable: true,
+                scrollModel: { autoFit: true },
+                draggable: false,
+                wrap: false,
+                editable: false,
+                columnBorders: true,
+                selectionModel: { type: 'row', subtype: 'incr', cbHeader: true, cbAll: true },
+                filterModel: { on: true, mode: "AND", header: true },
+                colModel: colSearchGrid,
+                dataModel: dataSearchGrid,
+                pageModel: { type: "local", rPP: 20 },
+                virtualX: true,
+                virtualY: true,
+                rowClick: function (evt, ui) {
+                    
+                }
+            }
+            $SearchGrid = $("#searchgrid").pqGrid(setSearchGrid);
+            LoadSearchGrid();
+
+            $("#btnAdd").on("click", ClearForm);
+
+            $("#btnSave").click(function () {
+                if ($("#ddlFromStore").val() == $("#ddlToStore").val()) {
+                    ShowAlert("error", "project and To Store Cannot be Same");
+                    return;
+                }
+                
+                var items = JSON.stringify({
+                    RoadTaxId: $("#RoadTaxId").val(),
+                    VehicleId: $("#VehicleId").val(), //Reading text box values using Jquery
+                    TaxNo: $("#TaxNo").val(),
+                    Amount: $("#Amount").val(),
+                    IssueDate: $("#IssueDate").val(),
+                    ExpiryDate: $("#ExpiryDate").val(),
+                    ReminderDays: $("#ReminderDays").val(),
+                    Deactive: $("#Deactive").prop('checked')
+                });
+
+                $.ajax(
+                {
+                    type: "POST", //HTTP POST Method
+                    traditional: true,
+                    contentType: 'application/json; charset=utf-8',
+                    url: '/RoadTax/SaveRoadTax', // Controller/View
+                    data: items,
+                    success: function (msg) {
+                        if (msg.success) {
+                            if ($("#Indent_Id").val() == "") {
+                                ShowAlert("success", "Data saved successfully.");
+                            }
+                            else {
+                                ShowAlert("success", "Data updated successfully");
+                            }
+                            ClearForm();
+                            LoadSearchGrid();
+                        }
+                        else {
+                            ShowAlert("error", msg.Message);
+                        }
+                    },
+                    error: function (jqXHR, exception) {
+                    }
+                });
+            });
+        })(jQuery);
+    </script>
+}

@@ -1,0 +1,55 @@
+﻿@model BISERP.Areas.Store.Models.Store.PurchaseReturnModel
+@{
+    Layout = null;
+}
+<html>
+<head>
+    <title></title>
+
+</head>
+<body>
+<div style="width: 95%; margin: 10px;">
+    <div align="center">
+        <h2>New Purchase Return</h2>
+    </div>
+    <table>
+        <tr>
+            <td style="text-align: left">GRN NO:<b>@Model.Grnno</b></td>
+        </tr>
+        <tr>
+            <td style="text-align: left">Return Date:<b>@DateTime.Now.ToString("dd-MMM-yyyy")</b></td>
+        </tr>
+        <tr>
+            <td style="text-align: left">Supplier:<b>@Model.Supplier</b></td>
+        </tr>
+        
+        <tr style="height: 20px" />
+        <tr>
+            <td style="align-content: center">
+                <table style="padding: 5px;" border="1">
+                    <tr>
+                        <th>Item Name</th>
+                        <th>Batch</th>
+                        <th>Qty</th>
+                        <th>FreeQty</th>
+                        <th>ActualLandingRate</th>
+                        <th>Amount</th>
+                    </tr>
+                    @foreach (var menu in Model.PurchaseReturnDt)
+                    {
+                        <tr>
+                            <td>@menu.ItemName</td>
+                            <td>@menu.Batch</td>
+                            <td>@menu.Qty</td>
+                            <td>@menu.FreeQty</td>
+                            <td>@menu.ActualLandingRate</td>
+                            <td>@menu.Amount</td>
+                        </tr>
+                    }
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

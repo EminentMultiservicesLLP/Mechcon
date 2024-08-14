@@ -1,0 +1,419 @@
+﻿@model BISERP.Areas.Asset.Models.VendorModel
+<script type="text/javascript">
+    var grid;
+    $(".datepicker").datepicker({
+        showOn: "button",
+        buttonImage: "/Content/images/calendar.gif",
+        buttonImageOnly: true,
+        buttonText: "Select date",
+        dateFormat: "dd-MM-yy"
+    }).datepicker("setDate", new Date());
+    $("#anim").change(function () {
+        $(".datepicker").datepicker("option", "showAnim", "fadeIn");
+    });
+    $(document).ready(function () {
+        grid = $("#grid").jsGrid({
+            width: "100%",
+            height: "320px",
+            filtering: true, //will display top 1st row as filter
+            selecting: true,
+
+            inserting: false, // false will not allow inserting new entry
+            editing: false,// false will not allow exisiting data entry
+            sorting: true,
+            autoload: true, // this statement require to load data using ajax call
+            paging: true,
+            pageSize: 20,
+
+            controller: {
+                
+                loadData: function (filter) {
+                    
+                    var d = $.Deferred();
+                    $.ajax({
+                        type: 'GET',
+                        url: '@Url.Action("AllVendor", "Vendor")',
+                        dataType: "json",
+                        data: { SearchName: filter.VendorName, SearchCode: filter.VendorCode },
+                        success: function (data) {
+                            d.resolve(data);
+                        },
+                        error: function (e) {
+                            ShowAlert("error", "Record Not Found");
+                        }
+                    });
+                    return d.promise();
+                },
+            },
+
+            fields: [
+                { name: "VendorId", visible: false, width: 0 },
+                { name: "VendorCode", title: "Code", type: "text", validate: "required", width: 20 },
+                { name: "VendorName", title: "Name", type: "text", validate: "required" },
+                { name: "Deactive", title: "Deactive", type: "checkbox", filtering: false, width: 10 },
+                { name: "Address", visible: false, width: 0 },
+                { name: "Society", visible: false, width: 0 },
+                { name: "Street", visible: false, width: 0 },
+                { name: "landmark", visible: false, width: 0 },
+                { name: "Village", visible: false, width: 0 },
+                { name: "City", visible: false, width: 0 },
+                { name: "State", visible: false, width: 0 },
+                { name: "Country", visible: false, width: 0 },
+                { name: "ContactPerson", visible: false, width: 0 },
+                { name: "ContactDesignation", visible: false, width: 0 },
+                { name: "Pin", visible: false, width: 0 },
+                { name: "Fax", visible: false, width: 0 },
+                { name: "Phone1", visible: false, width: 0 },
+                { name: "Phone2", visible: false, width: 0 },
+                { name: "CellPhone", visible: false, width: 0 },
+                { name: "Email", visible: false, width: 0 },
+                { name: "Web", visible: false, width: 0 },
+               
+                { type: "control", editButton: false, deleteButton: false, clearFilterButton: true, modeSwitchButton: true, width: 10 }
+
+            ],
+            /********** Row Selection Event you can use in suupplier***********/
+            rowClick: function (args) {
+                //var date1 = ToJavaScriptDate(data.DateOfAssociation);
+                var data = args.item;
+                $("#VendorId").val(data.VendorId);
+                $("#VendorCode").val(data.VendorCode); $("#VendorName").val(data.VendorName); $("#Deactive").prop('checked', data.Deactive); $("#Address").val(data.Address); $("#Society").val(data.Society); $("#Street").val(data.Street);
+                $("#ddlVillage").val(data.Village); $("#ddlCity").val(data.City); $("#Pin").val(data.Pin); $("#ddlState").val(data.State); $("#ddlCountry").val(data.Country); $("#Street").val(data.Street);
+                $("#landmark").val(data.landmark); $("#ContactPerson").val(data.ContactPerson); $("#ContactDesignation").val(data.ContactDesignation); $("#Fax").val(data.Fax); $("#Phone1").val(data.Phone1);
+                $("#Phone2").val(data.Phone2); $("#CellPhone").val(data.CellPhone); $("#Email").val(data.Email); $("#Web").val(data.Web);
+                $("#Deactive").attr("disabled", false);
+                $(this).is(":checked") ? selectItem(item) : unselectItem(item);
+            },
+
+        });
+
+    });
+
+    $(document).ready(function () {
+        $("#btnSave").click(function () {
+            if ($("#Code").val() == "") {
+                ShowAlert("error", "code is missing! Please enter the code");
+                return;
+            }
+            if ($("#Name").val() == "") {
+                ShowAlert("error", "Name is missing! Please enter the Name");
+                return;
+            }
+
+
+            $.ajax(
+            {
+                type: "POST", //HTTP POST Method
+                url: '/Vendor/SaveVendor', // Controller/View
+                data: { //Passing data
+                    VendorId: $("#VendorId").val(), //Reading text box values using Jquery
+                    VendorName: $("#VendorName").val(),
+                    VendorCode: $("#VendorCode").val(),
+                    Address: $("#Address").val(),
+                    Society: $("#Society").val(),
+                    Street: $("#Street").val(),
+                    Village: $("#ddlVillage").val(),
+                    City: $("#ddlCity").val(),
+                    Pin: $("#Pin").val(),
+                    State: $("#ddlState").val(),
+                    State: $("#ddlState").val(),
+                    Country: $("#ddlCountry").val(),
+                    landmark: $("#landmark").val(),
+                    ContactPerson: $("#ContactPerson").val(),
+                    ContactDesignation: $("#ContactDesignation").val(),
+                    Fax: $("#Fax").val(),
+                    Phone1: $("#Phone1").val(),
+                    Phone2: $("#Phone2").val(),
+                    CellPhone: $("#CellPhone").val(),
+                    Web: $("#Web").val(),
+                    Email: $("#Email").val(),
+               
+                    Deactive: $("#Deactive").prop('checked')
+                },
+                success: function (msg) {
+                    if (msg.success) {
+                    ClearForm();
+
+                    $("#grid").jsGrid("loadData");
+                    ShowAlert("success", "Vendor Master record added successfully to system.");
+                    }
+                    else {
+                        ShowAlert( "error", msg.Message);
+                    }
+                },
+
+            });
+        });
+    });
+    $.ajax({
+        type: "GET",
+        url: "/Master/AllCities",
+        datatype: "Json",
+        success: function (data) {
+            $.each(data, function (index, value) {
+                $('#ddlCity').append('<option value="' + value.ID + '">' + value.CityName + '</option>');
+            });
+        }
+    });
+
+    $.ajax({
+        type: "GET",
+        url: "/Master/AllVillages",
+        datatype: "Json",
+        success: function (data) {
+            $.each(data, function (index, value) {
+                $('#ddlVillage').append('<option value="' + value.ID + '">' + value.VillageName + '</option>');
+            });
+        }
+    });
+    $.ajax({
+        type: "GET",
+        url: "/Master/AllStates",
+        datatype: "Json",
+        success: function (data) {
+            $.each(data, function (index, value) {
+                $('#ddlState').append('<option value="' + value.ID + '">' + value.StateName + '</option>');
+            });
+        }
+    });
+    $.ajax({
+        type: "GET",
+        url: "/Master/AllCountry",
+        datatype: "Json",
+        success: function (data) {
+            $.each(data, function (index, value) {
+                $('#ddlCountry').append('<option value="' + value.ID + '">' + value.CountryName + '</option>');
+            });
+        }
+    });
+    function ClearForm() {
+        $("#VendorId").val(""); $("#VendorName").val(""); $("#VendorCode").val(""); $("#Deactive").prop('checked', false); $("#Society").val(""); $("#Street").val(""); $("#landmark").val(""); $("#ddlVillage").val(""); $("#ddlCity").val(""); $("#Pincode").val("");
+        $("#ddlState").val(""); $("#ddlCountry").val(""); $("#ContactPerson").val(""); $("#ContactDesignation").val(""); $("#Phone1").val(""); $("#Phone2").val(""); $("#CellPhone").val(""); $("#Fax").val(""); $("#Web").val(""); $("#Email").val("");
+        $("#Deactive").attr("disabled", true); $("#Pin").val("");
+    }
+
+    $(document).ready(function () {
+        $("#btnAdd").click(function () {
+            ClearForm();
+        });
+    });
+
+</script>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <fieldset>
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-groupingBoder">
+                    <div class="panel-heading">
+                        <div class="panel-title">
+                            <h4>
+                                <a class="collapsediv" data-toggle="collapse" href="#SearchDetails" style="color:white">
+                                    Vendor Details
+                                </a>
+                            </h4>
+                        </div>
+                    </div>
+                    <div class="panel-collapse collapse in" aria-expanded="true" id="SearchDetails">
+                        <div class="panel-body">
+                            <div class="container fill">
+                                <div id="grid" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <br>
+        <div class="panel-groupingBoder">
+            <div class="panel-heading">
+                <div class="panel-title">
+                    Entry Form
+                </div>
+            </div>
+            <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                <div class="panel-body">
+                    <fieldset>
+
+                        <div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <button type="button" id="btnSave" class="btn btn-success">Save</button>
+                                    <button type="button" id="btnAdd" class="btn btn-success">Reset</button>
+                                    @*<button type="button" class="btn btn-success">Report</button>*@
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-md-1">
+                                @Html.LabelFor(model => model.VendorCode, new { @class = "required" })
+                            </div>
+                            <div class="col-md-2">
+                                @Html.TextBoxFor(model => model.VendorCode, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.VendorCode)
+                                @Html.HiddenFor(model => model.VendorId)
+                            </div>
+                            <div class="col-md-1">
+                                @Html.LabelFor(model => model.VendorName, new { @class = "required" })
+                            </div>
+                            <div class="col-md-2">
+                                @Html.TextBoxFor(model => model.VendorName, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.VendorName)
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-2">
+                                    @Html.LabelFor(model => model.Deactive)
+                                    @Html.CheckBoxFor(model => model.Deactive, new { @disabled = "disabled" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <b>Address</b>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-1">
+                                @Html.LabelFor(model => model.Society)
+                            </div>
+                            <div class="col-md-2">
+                                @Html.TextBoxFor(model => model.Society, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.Society)
+                            </div>
+                            <div class="col-md-1">
+                                @Html.LabelFor(model => model.Street)
+                            </div>
+                            <div class="col-md-2">
+                                @Html.TextBoxFor(model => model.Street, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.Street)
+                            </div>
+                            <div class="col-md-1">
+                                @Html.LabelFor(model => model.landmark)
+                            </div>
+                            <div class="col-md-2">
+                                @Html.TextBoxFor(model => model.landmark, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.landmark)
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-1">
+                                @Html.LabelFor(model => model.Village)
+                            </div>
+                            <div class="col-md-2">
+                                @Html.DropDownList("ddlVillage", new SelectList(string.Empty, "Value", "Text"), "Select Village", new { @class = "wrapperdropdown-content form-control" })
+                                @Html.ValidationMessageFor(model => model.Village)
+                            </div>
+                            <div class="col-md-1">
+                                @Html.LabelFor(model => model.City)
+                            </div>
+                            <div class="col-md-2">
+                                @Html.DropDownList("ddlCity", new SelectList(string.Empty, "Value", "Text"), "Select City", new { @class = "wrapperdropdown-content form-control" })
+                                @Html.ValidationMessageFor(model => model.City)
+                            </div>
+                            <div class="col-md-1">
+                                @Html.LabelFor(model => model.Pin)
+                            </div>
+                            <div class="col-md-2">
+                                @Html.TextBoxFor(model => model.Pin, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.Pin)
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-1">
+                                @Html.LabelFor(model => model.State)
+                            </div>
+                            <div class="col-md-2">
+                                @Html.DropDownList("ddlState", new SelectList(string.Empty, "Value", "Text"), "Select State ", new { @class = "wrapperdropdown-content form-control" })
+                                @Html.ValidationMessageFor(model => model.State)
+                            </div>
+                            <div class="col-md-1">
+                                @Html.LabelFor(model => model.Country)
+                            </div>
+                            <div class="col-md-2">
+                                @*@Html.TextBoxFor(model => model.Country)*@
+                                @Html.DropDownList("ddlCountry", new SelectList(string.Empty, "Value", "Text"), "Select Country ", new { @class = "wrapperdropdown-content form-control" })
+                                @Html.ValidationMessageFor(model => model.Country)
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <b>Contact Person Details</b>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-1">
+                                @Html.LabelFor(model => model.ContactPerson)
+                            </div>
+                            <div class="col-md-2">
+                                @Html.TextBoxFor(model => model.ContactPerson, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.ContactPerson)
+                            </div>
+                            <div class="col-md-1">
+                                @Html.LabelFor(model => model.ContactDesignation)
+                            </div>
+                            <div class="col-md-2">
+                                @Html.TextBoxFor(model => model.ContactDesignation, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.ContactDesignation)
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-1">
+                                @Html.LabelFor(model => model.Phone1)
+                            </div>
+                            <div class="col-md-2">
+                                @Html.TextBoxFor(model => model.Phone1, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.Phone1)
+                            </div>
+                            <div class="col-md-1">
+                                @Html.LabelFor(model => model.Phone2)
+                            </div>
+                            <div class="col-md-2">
+                                @Html.TextBoxFor(model => model.Phone2, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.Phone2)
+                            </div>
+                            <div class="col-md-1">
+                                @Html.LabelFor(model => model.CellPhone)
+                            </div>
+                            <div class="col-md-2">
+                                @Html.TextBoxFor(model => model.CellPhone, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.CellPhone)
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-1">
+                                @Html.LabelFor(model => model.Fax)
+                            </div>
+                            <div class="col-md-2">
+                                @Html.TextBoxFor(model => model.Fax, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.Fax)
+                            </div>
+                            <div class="col-md-1">
+                                @Html.LabelFor(model => model.Web)
+                            </div>
+                            <div class="col-md-2">
+                                @Html.TextBoxFor(model => model.Web, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.Web)
+                            </div>
+                            <div class="col-md-1">
+                                @Html.LabelFor(model => model.Email)
+                            </div>
+                            <div class="col-md-2">
+                                @Html.TextBoxFor(model => model.Email, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.Email)
+                            </div>
+                        </div>
+                    
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+
+    </fieldset>
+
+}

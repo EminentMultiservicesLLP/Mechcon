@@ -1,0 +1,186 @@
+﻿@model BISERP.Areas.Masters.Models.ProjectTCMasterModel
+
+@{
+    ViewBag.Title = "ProjectTC  Master";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <h5 class="page-header orangeDottedBottomBorder"> Project T & C Master</h5>
+    <fieldset>
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-groupingBoder">
+                    <div class="panel-heading">
+                        <div class="panel-title">
+                            <label id="EntryHeader"> Project T & C Entry Form</label>
+                        </div>
+                    </div>
+                    <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                        <div class="panel-body">
+                            <div class="fill">
+                                <div class="submit-row">
+                                    <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                                    <button type="button" class="btn btn-primary" id="btnReset">Reset</button>
+                                    <button type="button" class="btn btn-info" id="btnSearch">Find</button>
+                                </div>
+                                <fieldset class="fieldsetCustom">
+                                    <legend class="legendCustom">Create Project T & C</legend>
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            @Html.LabelFor(model => model.ProjectTCCode, new { @class = "required" })
+                                            @Html.TextBoxFor(model => model.ProjectTCCode, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.ProjectTCCode)
+                                        </div>
+                                        <div class="col-sm-6">
+                                            @Html.LabelFor(model => model.ProjectTCDesc, new { @class = "required" })
+                                            @Html.TextAreaFor(model => model.ProjectTCDesc, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.ProjectTCDesc)
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <br />
+                                            @Html.CheckBoxFor(model => model.Deactive)
+                                            @Html.LabelFor(model => model.Deactive)
+                                            @Html.ValidationMessageFor(model => model.Deactive)
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+
+    <div id="SearchGridModal" class="modal fade" role="dialog" data-backdrop="false">
+        <div class="modal-dialog find-search-grid-modal">
+            <div class="modal-content gridmodal-content">
+                <div class="modal-header gridmodal-header">
+                    <button type="button" class="close" onclick="closeModal()">&times;</button>
+                    <h4 class="modal-title">Project T & C Details</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="fill">
+                        <div id="grid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<script type="text/javascript">
+    var grid;
+    var tempProjectTCID = 0;
+
+    function loadGridData() {
+        grid = $("#grid").jsGrid({
+            width: "100%",
+            height: "500px",
+            filtering: true, //will display top 1st row as filter
+            selecting: true,
+            inserting: false, // false will not allow inserting new entry
+            editing: false,// false will not allow exisiting data entry
+            sorting: true,
+            autoload: false, // this statement require to load data using ajax call
+            paging: true,
+            pageSize: 20,
+
+            controller: {
+                loadData: function (filter) {
+                    var d = $.Deferred();
+                    $.ajax({
+                        type: 'GET',
+                        url: "/ProjectTCMaster/AllProjectTC",
+                        dataType: "json",
+                        data: { searchProjectTC: filter.ProjectTCDesc, searchCode: filter.ProjectTCCode },
+                        success: function (data) {
+                            if (data.success)
+                                d.resolve(data.records);
+                            else {
+                                ShowAlert("error", data.Messsage);
+                                $(".jsgrid-load-panel").hide();
+                            }
+                        },
+                        error: function (e) {
+                            ShowAlert("error", "No Record Found");
+                        }
+                    });
+                    return d.promise();
+                }
+            },
+            fields: [
+                { name: "ProjectTCID", visible: false, width: 0 },
+                { name: "ProjectTCCode", title: "Code", type: "text", validate: { validator: "required", message: "code is missing! Please enter the code " }, width: 20 },
+                { name: "ProjectTCDesc", title: "Description", type: "textarea", validate: { validator: "required", message: "Description is missing! Please enter the Description " } },
+                { name: "Deactive", title: "Deactive", type: "checkbox", filtering: false, width: 10, inserting: false },
+            ],
+            rowClick: function (args) {
+                var data = args.item;
+                tempProjectTCID = data.ProjectTCID;
+                $("#ProjectTCCode").val(data.ProjectTCCode);
+                $("#ProjectTCDesc").val(data.ProjectTCDesc);
+                $("#Deactive").prop('checked', data.Deactive);
+                $("#SearchGridModal").modal('hide');
+            }
+        });
+    }
+
+    $("#btnSave").on('click', function () {
+        if ($("#ProjectTCCode").val() == "") {
+            ShowAlert("error", "Code is missing! Please enter the code");
+            return;
+        }
+        if ($("#ProjectTCDesc").val() == "") {
+            ShowAlert("error", "Description is missing! Please enter the Description");
+            return;
+        }
+        var item = JSON.stringify({ //Passing data
+            ProjectTCID: tempProjectTCID, //$("#ProjectTCID").val(), //Reading text box values using Jquery
+            ProjectTCCode: $("#ProjectTCCode").val(),
+            ProjectTCDesc: $("#ProjectTCDesc").val(),
+            Deactive: $("#Deactive").prop('checked')
+        });
+
+        $.ajax(
+            {
+                type: "POST", //HTTP POST Method
+                traditional: true,
+                contentType: 'application/json; charset=utf-8',
+                url: '/ProjectTCMaster/SaveProjectTC', // Controller/View
+                data: item,
+                success: function (msg) {
+                    if (msg.success) {
+                        tempProjectTCID == 0 || tempProjectTCID == "" ? ShowAlert("success", "Project T & C  added successfully.") : ShowAlert("success", "Project T & C  updated successfully.");
+                        $("#grid").jsGrid("loadData");
+                        Clearform();
+                    } else {
+                        ShowAlert("error", msg.Message);
+                    }
+                },
+            })
+    })
+
+    $("#btnSearch").on('click', function () {
+        loadGridData();
+        $("#grid").jsGrid("loadData");
+        $("#SearchGridModal").modal('show');
+    });
+
+    function closeModal() {
+        $("#SearchGridModal").modal('hide');
+    }
+
+    function Clearform() {
+        tempProjectTCID = 0;
+        $("#ProjectTCCode").val("");
+        $("#ProjectTCDesc").val("");
+        $("#Deactive").prop('checked', false);
+    }
+
+    $('#btnReset').on('click', function () {
+        Clearform();
+    });
+</script>

@@ -1,0 +1,615 @@
+﻿@model BISERP.Areas.Asset.Models.WarrantyMaintenanceModel
+@Scripts.Render("~/bundles/jquerymodels")
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <a class="collapsediv" data-toggle="collapse" href="#SearchDetails" style="color:white">
+                            Search Details
+                        </a>
+                    </div>
+                </div>
+                <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-3">
+                                    @Html.Label("From Date")
+                                    <div class='input-group date'>
+                                        <input type='text' id='SearchFromDate' class="form-date-control" />
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    @Html.Label("To Date")
+                                    <div class='input-group date'>
+                                        <input type='text' id='SearchToDate' class="form-date-control" />
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    @Html.Label("Branch")
+                                    @Html.DropDownList("ddlSearchBranch", new SelectList(string.Empty, "Value", "Text"), "Select Branch", new { @class = "wrapperdropdown-content form-control" })
+                                </div>
+                                <div class="col-sm-1">
+                                    <button type="button" class="btn btn-primary" id="btnFind">
+                                        Find
+                                        <span class="glyphicon glyphicon-search"></span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div id="searchgrid"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        Entry Form
+                    </div>
+                </div>
+
+                <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                                <a data-toggle="collapse" class="btn btn-success" id="btnAdd">Reset</a>
+                            </div>
+                        </div>
+                        <br>
+                        <fieldset>
+                            <legend>Requisition Detail</legend>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.Label("Branch", new { @class = "required" })
+                                        @Html.TextBox("Branch", "", new { @class = "form-control", @readonly = "true" })
+                                    </div>
+                                    <div class="col-sm-3">
+                                        @Html.Label("Requisition No", new { @class = "required" })
+                                        @Html.TextBox("RequisitionNo", "", new { @class = "form-control", @readonly = "true" })
+                                        @Html.Hidden("RequisitionId")
+                                    </div>
+                                    <div class="col-sm-3">
+                                        @Html.Label("Requested Date")
+                                        @Html.TextBox("RequestedDate", "", new { @class = "form-control", @readonly = "true" })
+                                    </div>
+                                    <div class="col-sm-3">
+                                        @Html.Label("RequestedBy")
+                                        @Html.TextBox("RequestedBy", "", new { @class = "form-control", @readonly = "true" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.Label("Asset Code")
+                                        @Html.TextBox("AssetCode", "", new { @class = "form-control", @readonly = "true" })
+                                        @Html.Hidden("AssetId")
+                                        @Html.Hidden("AssetLocationId")
+                                    </div>
+                                    <div class="col-sm-3">
+                                        @Html.Label("Serial No")
+                                        @Html.TextBox("SerialNo", "", new { @class = "form-control", @readonly = "true" })
+                                    </div>
+                                    <div class="col-sm-3">
+                                        @Html.Label("Model")
+                                        @Html.TextBox("ModelNo", "", new { @class = "form-control", @readonly = "true" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.Label("Nature Of Problem")
+                                        @Html.TextBox("ProblemNature", "", new { @class = "form-control", @readonly = "true" })
+                                    </div>
+                                    <div class="col-sm-3">
+                                        @Html.Label("Complaint")
+                                        @Html.TextBox("Complaint", "", new { @class = "form-control", @readonly = "true" })
+                                    </div>
+                                    <div class="col-sm-3">
+                                        @Html.Label("Remark")
+                                        @Html.TextBox("Remark", "", new { @class = "form-control", @readonly = "true" })
+                                    </div>
+                                    <div class="col-sm-3">
+                                        @Html.Label("Required Date")
+                                        @Html.TextBox("RequiredDate", "", new { @class = "form-control", @readonly = "true" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        <button type="button" class="btn btn-primary" id="btnAddItem">View Attachment</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+
+                <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <fieldset>
+                            <legend>Cost Estimate</legend>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.Code)
+                                        @Html.TextBoxFor(m => m.Code, "", new { @class = "form-control", @readonly = "true" })
+                                        @Html.Hidden("WarrantyId")
+                                    </div>
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.MaintenanceDate)
+                                        <div class='input-group date'>
+                                            <input type='text' id='MaintenanceDate' class="form-date-control" />
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.MaintenanceTime)
+                                        <div class='input-group date'>
+                                            <input type='text' id='MaintenanceTime' class="form-date-control" />
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.MaintenanceType)
+                                        @Html.DropDownList("ddlMaintenanceType", new SelectList(string.Empty, "Value", "Text"), "Select ", new { @class = "form-control" })
+                                    </div>                                                                       
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.DownTime)
+                                        @Html.TextBoxFor(m => m.DownTime, "", new { @class = "form-control" })
+                                    </div>
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.Days)
+                                        @Html.TextBoxFor(m => m.Days, "", new { @class = "form-control" })
+                                    </div> 
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.MaintenanceCost)
+                                        @Html.TextBoxFor(m => m.MaintenanceCost, "", new { @class = "form-control" })
+                                    </div>
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.ActualFault)
+                                        @Html.TextBoxFor(m => m.ActualFault, "", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>                            
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+     <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <fieldset>
+                            <legend>Spare Part Details</legend>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <button type="button" class="btn btn-primary" data-target="#ItemModal" id="btnViewItem">Add Item</button>
+                                    <button type="button" class="btn btn-primary" data-target="#ItemModal" id="btnRemoveItem">Remove Item</button>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <fieldset>
+                            <legend></legend>
+                            <div class="row">
+                                <div class="container fill">
+                                    <div id="MainItemGrid"></div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+      <div title="View Attachments" id="ViewModal" style="display: none;">
+        <div class="col-sm-10">
+            <ul id="displayImages" class="attachment" style="max-height: 150px; overflow-y: scroll;" />
+        </div>
+    </div>
+    <script type="text/javascript">
+        var appSetting = '@BISERP.Common.Constants.ScandocUrl'
+        $(function () {
+            $('#MaintenanceDate').datepicker({
+                defaultDate: new Date(),
+                dateFormat: 'dd-M-yy',
+                yearRange: '2015:2099',
+                showOn: "button",
+                buttonImage: "../../Content/images/calendar.gif",
+                buttonImageOnly: true,
+                changeMonth: true,
+                changeYear: true
+            }).datepicker("setDate", new Date());
+            $('#SearchFromDate').datepicker({
+                defaultDate: new Date(),
+                dateFormat: 'dd-M-yy',
+                yearRange: '2015:2099',
+                showOn: "button",
+                buttonImage: "../../Content/images/calendar.gif",
+                buttonImageOnly: true,
+                changeMonth: true,
+                changeYear: true
+            }).datepicker("setDate", new Date());
+            $('#SearchToDate').datepicker({
+                defaultDate: new Date(),
+                dateFormat: 'dd-M-yy',
+                yearRange: '2015:2099',
+                showOn: "button",
+                buttonImage: "../../Content/images/calendar.gif",
+                buttonImageOnly: true,
+                changeMonth: true,
+                changeYear: true
+            }).datepicker("setDate", new Date());
+            $("#MaintenanceDate").datepicker().datepicker('disable');
+
+            $('#MaintenanceTime').timepicker();
+            $('#MaintenanceTime').timepicker('setTime', new Date());
+        });
+        var $SearchGrid;
+        var setIID, colIID, dataIID;
+        var colIL, dataIL, setIL;
+        function ClearForm() {
+            $("#WarrantyId").val("");
+            $("#Branch").val("");
+            $("#RequisitionId").val("");
+            $("#RequisitionNo").val("");
+            $("#RequestedBy").val("");
+            $("#AssetCode").val("");
+            $("#SerialNo").val("");
+            $("#ModelNo").val("");
+            $("#NatureOfPrb").val("");
+            $("#Complaint").val("");
+            $("#Remark").val("");
+            $("#TechRemark").val("");
+            $("#RequiredDate").val("");
+            $("#ddlMaintenanceType").val("");
+            $("#DownTime").val("");
+            $("#Days").val("");
+            $("#MaintenanceCost").val("");
+            $("#ActualFault").val("");
+
+            $("#MaintenanceDate").datepicker().datepicker("setDate", new Date());
+            $('#MaintenanceTime').timepicker('setTime', new Date());
+            ClearParamGrid("MainItemGrid");
+        }
+
+        function LoadSearchGrid() {
+            var branchid = $("#ddlSearchBranch").val();
+            if (branchid == "" || branchid == undefined) branchid = 0;
+            $.ajax({
+                url: "/RequestRegister/GetRequestRegister",
+                cache: false,
+                async: true,
+                method: "GET",
+                data: { fromdate: $("#SearchFromDate").val(), todate: $("#SearchToDate").val(), BranchId: branchid, Status: 2 },
+                dataType: "JSON",
+                success: function (response) {
+                    $("#searchgrid").pqGrid("option", "dataModel.data", response);
+                    $("#searchgrid").pqGrid("refreshDataAndView");
+                }
+            });
+        }
+        
+        function getRowIndx() {
+            var arr = $("#MainItemGrid").pqGrid('selection', { type: 'row', method: 'getSelection' });
+            if (arr && arr.length > 0) {
+                return arr[0].rowIndx;
+            }
+            else {
+                alert("Select a row.");
+                return null;
+            }
+        }
+        (function ($) {
+            $('#btnFind').on('click', function () {
+                LoadSearchGrid();
+            });
+            $('#btnRemoveItem').on('click', function () {
+                var rowIndx = getRowIndx();
+                if (rowIndx == null) {
+                    return;
+                }
+                $("#MainItemGrid").pqGrid("deleteRow", { rowIndx: rowIndx });
+            });
+
+            $.ajax({
+                type: "GET",
+                url: "/Master/AllBranches",
+                datatype: "Json",
+                async: true,
+                success: function (data) {
+                    $.each(data, function (index, value) {                        
+                        $('#ddlSearchBranch').append('<option value="' + value.BranchID + '">' + value.BranchName + '</option>');
+                    });
+                }
+            });
+
+            $.ajax({
+                type: "GET",
+                url: "/MaintainanceType/AllActiveMaintainanceType",
+                datatype: "Json",
+                async: true,
+                success: function (data) {
+                    $.each(data, function (index, value) {
+                        $('#ddlMaintenanceType').append('<option value="' + value.MaintainanceTypeId + '">' + value.MaintainanceType + '</option>');
+                    });
+                }
+            });
+
+            dataRList = { location: 'local', sorting: 'local', paging: 'local', dataType: 'JSON' };
+            var setRCol = [
+                   { dataIndx: "RequestId", dataType: "int", hidden: true },
+                   { dataIndx: "AssetId", dataType: "int", hidden: true },
+                   { title: "RequestNo", dataIndx: "RequestCode", width: 100, dataType: "string", filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } },
+                   { title: "RequestedDate", dataIndx: "RequestedDate", width: 100, dataType: "DateTime", hidden: true },
+                   { title: "RequestedDate", dataIndx: "StrRequestedDate", width: 100, dataType: "string" },
+                   { title: "AssetCode", dataIndx: "AssetCode", width: 100, dataType: "string", hidden: true },
+                   { title: "SerialNo", dataIndx: "SerialNo", width: 100, dataType: "string", hidden: true },
+                   { title: "Description", dataIndx: "Description", width: 100, dataType: "string", hidden: true },
+                   { title: "Complaint", dataIndx: "Complaint", width: 100, dataType: "string", hidden: true },
+                   { title: "ProblemNature", dataIndx: "ProblemNature", width: 100, dataType: "string", hidden: true },
+                   { title: "RequiredDate", dataIndx: "RequiredDate", width: 100, dataType: "DateTime", hidden: true },
+                   { title: "StrRequiredDate", dataIndx: "StrRequiredDate", width: 100, dataType: "string", hidden: true },
+                   { title: "Remark", dataIndx: "Remark", width: 100, dataType: "string", hidden: true },
+                   { title: "RequestedBy", dataIndx: "RequestedBy", width: 100, dataType: "int", hidden: true },
+                   { title: "UserName", dataIndx: "UserName", width: 100, dataType: "string", hidden: true },
+            ];
+            setRList = {
+                width: "auto", //auto width
+                height: "100%-30", //height in %age
+                selectionModel: { type: 'cell' },
+                autoSizeInterval: 0,
+                scrollModel: { autoFit: true },
+                dragColumns: { enabled: false },
+                hoverMode: 'cell',
+                editor: { type: 'textbox' },
+                filterModel: { on: true, mode: "AND", header: true },
+                showTop: false,
+                resizable: true,
+                virtualX: true,
+                colModel: setRCol,
+                dataModel: dataRList,
+                cellClick: function (evt, ui) {
+                    if (ui.rowData) {
+                        ClosePopupWindow("RequisitionModal");
+                        var rowIndx = parseInt(ui.rowIndx);
+                        var record = ui.rowData;
+                        $("#RequisitionId").val(record.RequestId);
+                        $("#AssetId").val(record.AssetId);
+                        $("#RequisitionNo").val(record.RequestCode);
+
+                        $("#AssetCode").val(record.AssetCode);
+                        $("#SerialNo").val(record.SerialNo);
+                        $("#ModelNo").val(record.ModelNo);
+                        $("#EquipmentDescription").val(record.Description);
+                        $("#Complaint").val(record.Complaint);
+                        $("#ProblemNature").val(record.ProblemNature);
+
+                        $("#Remark").val(record.Remark);
+                        $("#RequestedBy").val(record.UserName);
+
+                        $('#RequestedDate').val(record.StrRequestedDate);
+                        $('#RequiredDate').val(record.StrRequiredDate);
+                    }
+                },
+                pageModel: { type: "local", rPP: 20 }
+            };
+            $("#grid").pqGrid(setRList);
+
+            $("#btnAdd").on("click", ClearForm);
+            $("#btnSave").click(function () {
+                if ($("#RequisitionId").val() == "") {
+                    ShowAlert("error", "Please Select Requisition No");
+                    return;
+                }
+                var items = $("#MainItemGrid").pqGrid("getData", { dataIndx: ['ItemName', 'Qty', 'Cost'] });
+                
+                var griditems = JSON.stringify({
+                    RequisitionId: $("#RequisitionId").val(),
+                    MaintenanceDate: $("#MaintenanceDate").val(), 
+                    MaintenanceTime: $("#MaintenanceTime").val(),
+                    DownTime: $("#DownTime").val(),
+                    Days: $("#Days").val(),
+                    MaintenanceCost: $("#MaintenanceCost").val(),
+                    ActualFault: $("#ActualFault").val(),
+                    MaintenanceType: $("#MaintenanceType").val(),
+                    spareparts: items
+                });
+                console.log(griditems);
+                $.ajax(
+                {
+                    type: "POST", //HTTP POST Method
+                    traditional: true,
+                    contentType: 'application/json; charset=utf-8',
+                    url: '/WarrantyMaintenance/SaveWarrantyMaintenance', // Controller/View
+                    data: griditems,
+                    success: function (msg) {
+                        if (msg.success) {
+                            ShowAlert("success", "Warranty Order No : " + msg.Message);
+                            ClearForm();
+                        }
+                        else {
+                            ShowAlert("error", msg.Message);
+                        }
+                    },
+                    error: function (jqXHR, exception) {
+                    }
+                });
+            });
+
+            var dataSearchGrid = { location: "local", sorting: 'local' };
+            var colSearchGrid = [
+                    { title: "", dataIndx: "AssetId", dataType: "integer", hidden: true },
+                    { title: "", dataIndx: "RequestId", dataType: "integer", hidden: true },
+                    { title: "Request No", dataIndx: "RequestCode", width: 200 },
+                    { title: "Request Date", dataIndx: "StrRequestedDate", width: 100, dataType: "date" },
+                    { title: "Requested By", dataIndx: "UserName", width: 100, dataType: "string" },
+                    { title: "Priority", dataIndx: "Priority", width: 100, dataType: "string" },
+                    { title: "BranchId", dataIndx: "BranchId", dataType: "string", hidden: true },
+                    { title: "AssetCode", dataIndx: "AssetCode", dataType: "string", hidden: true },
+                    { title: "SerialNo", dataIndx: "SerialNo", dataType: "string", hidden: true },
+                    { title: "ModelNo", dataIndx: "ModelNo", dataType: "string", hidden: true },
+                    { title: "Description", dataIndx: "Description", dataType: "string", hidden: true },
+                    { title: "Complaint", dataIndx: "Complaint", dataType: "string", hidden: true },
+                    { title: "ProblemNature", dataIndx: "ProblemNature", dataType: "string", hidden: true },
+                    { title: "ProblemNature", dataIndx: "ProblemNature", dataType: "string", hidden: true },
+                    { title: "Remark", dataIndx: "Remark", dataType: "string", hidden: true },
+                    { title: "StrRequiredDate", dataIndx: "StrRequiredDate", dataType: "string", hidden: true },
+                    { title: "AssetLocationId", dataIndx: "AssetLocationId", width: 100, dataType: "int", hidden: true },
+            ];
+            var setSearchGrid = {
+                width: '100%',
+                height: 250,
+                sortable: false,
+                numberCell: { show: false },
+                showTop: false,
+                resizable: true,
+                scrollModel: { autoFit: true },
+                draggable: false,
+                wrap: false,
+                editable: false,
+                columnBorders: true,
+                selectionModel: { type: 'row', subtype: 'incr', cbHeader: true, cbAll: true },
+                filterModel: { on: false },
+                colModel: colSearchGrid,
+                dataModel: dataSearchGrid,
+                pageModel: { type: "local", rPP: 20 },
+                rowClick: function (evt, ui) {                    
+                    if (ui.rowData) {
+                        var rowIndx = parseInt(ui.rowIndx);
+                        var record = ui.rowData;
+                        $("#RequisitionId").val(record.RequestId);
+                        $("#AssetLocationId").val(record.AssetLocationId);
+                        $("#AssetId").val(record.AssetId);
+                        $("#Branch").val(record.BranchName);
+                        $("#RequisitionNo").val(record.RequestCode);
+                        $("#AssetCode").val(record.AssetCode);
+                        $("#SerialNo").val(record.SerialNo);
+                        $("#ModelNo").val(record.ModelNo);
+                        $("#EquipmentDescription").val(record.Description);
+                        $("#Complaint").val(record.Complaint);
+                        $("#ProblemNature").val(record.ProblemNature);
+                        $("#Remark").val(record.Remark);
+                        $("#RequestedBy").val(record.UserName);
+                        $('#RequestedDate').val(record.StrRequestedDate);
+                        $('#RequiredDate').val(record.StrRequiredDate);
+                    }
+                }
+            }
+            $SearchGrid = $("#searchgrid").pqGrid(setSearchGrid);
+
+            var MaincolItemList = [
+                   { dataIndx: "ConsumptionId", hidden: true },                   
+                   { title: "Item Name", dataIndx: "ItemName", width: 200, dataType: "string" },
+                   { title: "Qty", dataIndx: "Qty", width: 90, dataType: "float", editable: true },
+                   { title: "Cost", dataIndx: "Cost", width: 90, dataType: "float", editable: true },
+            ];
+            var dataMGrid = {
+                location: 'local',
+                sorting: 'local',
+                data: []
+            };
+            var setMainItemList = {
+                showTop: false,
+                editModel: {
+                    saveKey: $.ui.keyCode.ENTER
+                },
+                trackModel: { on: true, dirtyClass: 'pq-cell-dirty' },
+                colModel: MaincolItemList,
+                dataModel: dataMGrid,
+                wrap: false,
+                virtualX: true,
+                virtualY: true,
+                height: 'flex',
+                wrap: false,
+                hwrap: false,
+                scrollModel: { autoFit: true },
+                pageModel: { type: "local", rPP: 50 },
+                selectionModel: { type: 'row' },
+            };
+            $("#MainItemGrid").pqGrid(setMainItemList);
+
+            $('#btnViewItem').on('click', function () {
+                var dataMGrid = [];
+                var getData = $("#MainItemGrid").pqGrid("option", "dataModel.data");
+
+                $.each(getData, function (key, value) {
+                    var grdData = {
+                        'ItemName':value.ItemName, 'Qty': value.Qty, 'Cost': value.Cost
+                    };
+                    dataMGrid.push(grdData);
+                });
+                var gridData = { 'ItemName': '', 'Qty': '', 'Cost': '' };
+                dataMGrid.push(gridData);
+
+                $("#MainItemGrid").pqGrid("option", "dataModel.data", dataMGrid);
+                $("#MainItemGrid").pqGrid("refreshDataAndView");
+            });
+
+            $("#btnAddItem").click(function () {
+                $("#displayImages").html("");
+                ViewAttachments();
+            });
+        })(jQuery);
+        function DisplayUploadedImages(objectName, FileDetail) {
+            
+            var newImageLI = '<li>';
+            newImageLI = newImageLI + '<a class="title" id="' + FileDetail.FileId + '" href= "' + appSetting + FileDetail.FilePath + '" target="_blank"> ' + FileDetail.FileNames + '</a>';
+            newImageLI = newImageLI + '<a href="javascript:void(0);" data-id="' + FileDetail.FileId + '"  class="deleteItem" onclick="Deletefile(' + FileDetail.FileId + ');return false;">X</a>';
+            newImageLI = newImageLI + "</li>";
+
+            $("#" + objectName).append(newImageLI);
+        }
+        function ViewAttachments() {
+            var AssetLocationId = $("#AssetLocationId").val();
+            $("#ViewModal").dialog({
+                height: 400,
+                width: 700,
+                modal: true,
+                open: function (evt, ui) {
+                    $.ajax({
+                        type: "GET",
+                        url: "/ScanDoc/ScanDoc/GetScanDocUrl",
+                        data: { FileId: AssetLocationId, ScanDocSubTypeId: 7 },
+                        datatype: "Json",
+                        success: function (data) {
+                            $.each(data, function (key, value) {
+                                DisplayUploadedImages("displayImages", value);
+                            });
+                        }
+                    });
+                },
+                close: function (event, ui) {
+                },
+                show: {
+                    effect: "blind",
+                    duration: 500
+                }
+            });
+        }
+    </script>
+}

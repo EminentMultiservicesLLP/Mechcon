@@ -1,0 +1,39 @@
+﻿@using (Html.BeginForm())
+{ 
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="row">
+                <div class="col-sm-12">
+                   <h3 style="margin-left: 10px; color: black; ">This is the form You can send the mail status of DashBoard.</h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <h4 style="margin-left:10px;color:blue">To Send Mail Press E-Mail Button.</h4>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <button type="button" class="btn btn-success" id="btnEmail" style="margin-left:10px">E-Mail</button><br /><br />
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<script type="text/javascript">
+    $('#btnEmail').on('click', function () {
+        /*mail id of vijay sir is : vbhosale@mechcon.co.in*/
+        $.ajax({
+            type: "GET",
+            url: "/EMailTab/SendMailStatusOfDashBoard",
+            datatype: "Json",
+            data: { tomailId: "vbhosale@mechcon.co.in" },
+            async: true,
+            success: function (data) {
+                ShowAlert('success', 'Mail Send');
+            }
+        });
+    });
+</script>

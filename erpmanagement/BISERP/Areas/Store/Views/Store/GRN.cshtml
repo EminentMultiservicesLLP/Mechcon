@@ -1,0 +1,1964 @@
+﻿@model BISERP.Areas.Store.Models.Store.GRNModel
+@Scripts.Render("~/bundles/jquerymodels")
+<script>
+    $(function () {
+        $('#GRNDate').datetimepicker({
+            format: 'DD-MMM-YYYY',
+            extraFormats: ['DD-MM-YYYY', 'DD-MM-YY'],
+            defaultDate: new Date()
+        });
+        $('#DCDate').datetimepicker({
+            format: 'DD-MMM-YYYY',
+            extraFormats: ['DD-MM-YYYY', 'DD-MM-YY'],
+            defaultDate: new Date()
+        });
+        $('#InwardDate').datetimepicker({
+            format: 'DD-MMM-YYYY',
+            extraFormats: ['DD-MM-YYYY', 'DD-MM-YY'],
+            defaultDate: new Date()
+        });
+        $('#InvoiceDate').datetimepicker({
+            format: 'DD-MMM-YYYY',
+            extraFormats: ['DD-MM-YYYY', 'DD-MM-YY'],
+            defaultDate: new Date()
+        });
+        //$('#PODate').datetimepicker({
+        //    format: 'DD-MMM-YYYY',
+        //    extraFormats: ['DD-MM-YYYY', 'DD-MM-YY'],
+        //    defaultDate: new Date()
+        //});
+    });
+    $(function () {
+        $(function () {
+            $(".nonEditdatepicker").datepicker({
+                showOn: "button",
+                buttonImage: "",
+                buttonImageOnly: true,
+                buttonText: "",
+                dateFormat: "dd-MM-yy"
+            }).datepicker("setDate", new Date());
+        });
+        $(".datepicker").datepicker({
+            showOn: "button",
+            buttonImage: "/Content/images/calendar.gif",
+            buttonImageOnly: true,
+            buttonText: "Select date",
+            dateFormat: "dd-MM-yy"
+        }).datepicker("setDate", new Date());
+        $("#anim").change(function () {
+            $(".datepicker").datepicker("option", "showAnim", "fadeIn");
+            $(".nonEditdatepicker").datepicker("option", "showAnim", "fadeIn");
+        });
+    });
+
+
+</script>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <h5 class="page-header orangeDottedBottomBorder">GRN FORM </h5>
+    @* new addition 2024 *@
+    <div id="SearchGridModal" class="modal fade" role="dialog" data-backdrop="false">
+        <div class="modal-dialog find-search-grid-modal">
+            <div class="modal-content gridmodal-content">
+                <div class="modal-header gridmodal-header">
+                    <button type="button" class="close" onclick="closeModal()">&times;</button>
+                    <h4 class="modal-title">Details</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="fill">
+                        <div id="searchgrid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="ReportModal" class="modal fade" role="dialog" data-backdrop="false">
+        <div class="modal-dialog find-search-grid-modal">
+            <div class="modal-content gridmodal-content">
+                <div class="modal-header gridmodal-header">
+                    <button type="button" class="close" onclick="closeModal()">&times;</button>
+                    <h4 class="modal-title">Report</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="fill">
+                        <iframe id="iframeReportViewer" style="width:100%;height:400px"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        Entry Form
+                    </div>
+                </div>
+                <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <div class="" style="padding: 3px">
+                            <div class="submit-row">
+                                <div class="col-sm-6" style="text-align:start">
+                                    <button type="button" class="btn btn-success" id="btnSaveGRN">Save</button>
+                                    <a data-toggle="collapse" class="btn btn-primary" id="btnAddGRN">Reset</a>
+                                </div>
+                                <div class="col-sm-6" style="text-align:end">
+                                    <button type="button" class="btn btn-info" id="btnSearch">Find</button>
+                                    <a data-toggle="collapse" id="btnPrint" class="btn btn-warning" href="#ReportPreview">Report</a>
+                                </div>
+                            </div>
+                            <fieldset class="fieldsetCustom">
+                                <div class="row">
+                                    <div class="col-sm-2" hidden>
+                                        @Html.LabelFor(m => m.GRNNo)
+                                        @Html.TextBoxFor(m => m.GRNNo, new { @class = "form-control" })
+                                        @Html.HiddenFor(m => m.ID)
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.LabelFor(m => m.GRNDate)
+                                        <div class='input-group date' id='GRNDate'>
+                                            <input type='text' class="form-control" />
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                        @*@Html.TextBoxFor(m => m., new { @class = "form-control nonEditdatepicker", @readonly = "true" })*@
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.LabelFor(m => m.GrnTypeID, new { @class = "required" })
+                                        <select id="GrnTypeID" class="form-control wrapper-dropdown">
+                                            <option class=" wrapperdropdown-content" value="1" selected="selected">Against PO</option>
+                                            @*<option class=" wrapperdropdown-content" value="0">Against Vendor </option>*@
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.LabelFor(m => m.StoreId, "Project", new { @class = "required" })
+                                        @Html.DropDownList("ddlStores", new SelectList(string.Empty, "Value", "Text"), "--Select Project--", new { @class = "wrapperdropdown-content form-control" })
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.LabelFor(m => m.PONo)
+                                        @Html.TextBox("PONo", "", new Dictionary<string, object> { { "class", "form-control" } })
+                                        @Html.HiddenFor(model => model.PoID)
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.LabelFor(m => m.DCNo, new { @class = "required" })
+                                        @Html.TextBoxFor(m => m.DCNo, new { @class = "form-control" })
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.LabelFor(m => m.DCDate)
+                                        <div class='input-group date' id='DCDate'>
+                                            <input type='text' class="form-control" />
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-2">
+                                        @Html.LabelFor(m => m.InwardNo, new { @class = "required" })
+                                        @Html.TextBoxFor(m => m.InwardNo, new { @class = "form-control" })
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.LabelFor(m => m.InwardDate)
+                                        <div class='input-group date' id='InwardDate'>
+                                            <input type='text' class="form-control" />
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-2">
+                                        @Html.LabelFor(m => m.InvoiceNo)
+                                        @Html.TextBoxFor(m => m.InvoiceNo, new { @class = "form-control" })
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.LabelFor(m => m.InvoiceDate)
+                                        <div class='input-group date' id='InvoiceDate'>
+                                            <input type='text' class="form-control" />
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.LabelFor(m => m.VehicleNo)
+                                        @Html.TextBoxFor(m => m.VehicleNo, new { @class = "form-control" })
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.LabelFor(m => m.Transporter)
+                                        @Html.TextBoxFor(m => m.Transporter, new { @class = "form-control" })
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-2">
+                                        @Html.LabelFor(m => m.PODate)
+                                        @Html.TextBoxFor(m => m.PODate, new { @class = "form-control" })
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.LabelFor(m => m.SupplierID, new { @class = "" })
+                                        @Html.TextBox("SupplierName", "", new Dictionary<string, object> { { "class", "form-control" } })
+                                        @Html.HiddenFor(m => m.SupplierID)
+                                    </div>
+                                    <div class="col-sm-2" hidden>
+                                        @Html.LabelFor(m => m.VendorId, new { @class = "required" })
+                                        @Html.TextBox("Vendor", "", new Dictionary<string, object> { { "class", "form-control" } })
+                                        @Html.HiddenFor(m => m.VendorId)
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.Label("Upload")
+                                        <input type='file' id="files" multiple accept=".jpg,.jpeg,.png,.pdf" class="form-control btn-primary uploadup" />
+                                    </div>
+                                    <div class="col-lg-2 col-md-4 col-sm-8"><ul class="list" id="preApproveImg"> </ul></div>
+                                    <div class="col-lg-2 col-md-4 col-sm-8"><ul class="list" id="appendImg"> </ul></div>
+                                </div>
+                            </fieldset>
+                            <div class="submit-row">
+                                <button type="button" class="btn btn-primary" id="btnShowItems">Add Item</button>
+                                <button class="btn btn-danger" type="button" id="btnRemoveItem">Remove Item</button>
+                                <button type="button" class="btn btn-primary" id="btnShowAttachments">View upload</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel-groupingBoder">
+        <div id="grid"></div>
+    </div>
+    @*<div class="panel-groupingBoder">
+        <div class="panel-body">*@
+    <fieldset class="fieldsetCustom">
+        <div class="row">
+            <div class="col-sm-8">
+                <div class="row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(m => m.Preparedby)
+                    </div>
+                    <div class="col-sm-2">
+                        <strong>@Html.Encode(User.Identity.Name)</strong>
+                        @*@Html.TextBoxFor(m => m.Preparedby, new { @class = "form-control" })*@
+                    </div>
+                    <div class="col-sm-3">
+                        @Html.CheckBoxFor(model => model.Warranty)
+                        @Html.Label("Warranty Certificate")
+                    </div>
+                    <div class="col-sm-3">
+                        @Html.CheckBoxFor(model => model.Service)
+                        @Html.Label("Test Certificate")
+                    </div>
+                </div><br />
+                <div class="row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(m => m.Notes)
+                    </div>
+                    <div class="col-sm-2">
+                        @Html.TextAreaFor(m => m.Notes, new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="row" style="display: none">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(m => m.GrnPaymentType)
+                    </div>
+                    <div class="col-sm-2">
+                        @Html.RadioButton("PaymentMode", "Cash")  Cash
+                        @Html.RadioButton("PaymentMode", "Credit") Credit
+                    </div>
+                </div>
+                @*<div class="row">
+                        <div class="form-group">
+                            <div class="col-sm-2">
+                                @Html.Label("Amount by MRP")
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-sm-2">
+                                @Html.Label("GRN Amount")
+                            </div>
+                        </div>
+                    </div>*@
+            </div>
+            <div class="col-sm-4" style="display: none">
+                <table align="right">
+                    <tr>
+                        <td>Gross Amount</td>
+                        <td>
+                            @Html.TextBoxFor(m => m.Amount, new Dictionary<string, object> { { "Id", "GrossAmount" }, { "readonly", "true" }, { "class", "form-control" } })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Tax</td>
+                        <td>
+                            @Html.TextBoxFor(m => m.TotalTaxamt, new Dictionary<string, object> { { "Id", "TaxAmount" }, { "readonly", "true" }, { "class", "form-control" } })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Other Charges</td>
+                        <td>
+                            @Html.TextBoxFor(m => m.TotalOtherAmt, new Dictionary<string, object> { { "Id", "OtherCharges" }, { "readonly", "true" }, { "class", "form-control" } })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Discount</td>
+                        <td>
+                            @Html.TextBoxFor(m => m.TotalDisc, new Dictionary<string, object> { { "Id", "Discount" }, { "readonly", "true" }, { "class", "form-control" } })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>@Html.Label("P & F %")</td>
+                        <td>@Html.TextBoxFor(model => model.BED, new { @class = "form-control", style = "width: 75px" })</td>
+                        <td><input readonly="readonly" class="form-control readonly" id="BedAmt" name="BedAmt" style="margin-left:-75px " /></td>
+                    </tr>
+                    <tr>
+                        <td>@Html.Label("Frieght %")</td>
+                        <td>
+                            @Html.TextBoxFor(model => model.Edu, new { @class = "form-control", style = "width: 75px" })
+
+                        </td>
+                        <td><input readonly="readonly" class="form-control readonly" id="educessamt" name="educessamt" style="margin-left:-75px " /></td>
+                    </tr>
+                    <tr style="display:none">
+                        <td>@Html.Label("SHE Cess %")</td>
+                        <td> @Html.TextBoxFor(model => model.SHECess, new { @class = "form-control", style = "width: 75px" }) </td>
+                        <td><input readonly="readonly" class="form-control readonly" id="Shecessamt" name="Shecessamt" style="margin-left:-75px " /></td>
+                    </tr>
+                    @*<tr>
+                            <td>CR Note Amount</td>
+                            <td>
+                                @Html.TextBoxFor(m => m.CrNoteAmt, new Dictionary<string, object> { { "Id", "CR_Note_Amount" }, { "readonly", "true" }, { "class", "form-control" } })
+                            </td>
+                        </tr>*@
+                    <tr>
+                        <td>Grand Total</td>
+                        <td>
+                            @Html.TextBoxFor(m => m.TotalAmount, new Dictionary<string, object> { { "Id", "GrandTotal" }, { "readonly", "true" }, { "class", "form-control" } })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Rounding Off</td>
+                        <td>
+                            @Html.TextBoxFor(m => m.TotalAmount, new Dictionary<string, object> { { "Id", "Rounding_Off" }, { "readonly", "true" }, { "class", "form-control" } })
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </fieldset>
+    @*</div>
+        </div>*@
+    <div title="Select Items" id="ItemModal" style="display: none;">
+        <div id="Itemgrid"></div>
+        <div style="margin-top:5px;">
+            <button type="button" class="btn btn-primary" id="btnAddItem">Add</button>
+            <button type="button" class="btn btn-primary" id="btnCloseItem">Close</button>
+        </div>
+    </div>
+    <div id="POModal" title="Select PO" style="display: none;">
+        <div id="POgrid"></div>
+    </div>
+    <div id="SupplierModal" title="Select Items" style="display: none;">
+        <div id="Suppliergrid"></div>
+    </div>
+    <div id="VendorModal" title="Select Vendor" style="display: none;">
+        <div id="vendorgrid"></div>
+    </div>
+    <div id="popup-dialog-crud" style="display:none;">
+        <form id="crud-form">
+            <div id="Taxgrid"></div>
+        </form>
+    </div>
+
+
+    @*The Modal*@
+    <div id="ViewModal" class="modal slideModal">
+        @*Modal content*@
+        <div class="modal-content slideContent">
+            <span class="close slideClose" onclick="closeImageModal()"> &#x2715 </span>
+            <div id="slideshow-container">
+                <!--Slidshow-->
+            </div>
+            <div>
+                <a class="prev slide-prev" onclick="plusSlides(-1)">❮</a>
+                <a class="next slide-next" onclick="plusSlides(1)">❯</a>
+            </div>
+        </div>
+    </div>
+}
+<script type="text/javascript">
+    var $POgrid;
+    var $grid;
+    var $Suppliergrid;
+    var $Taxgrid;
+    var $SearchGrid;
+    var $Itemgrid, $Vendor;
+    var grndate, storeName;
+    var selectedItemRowIndx = null;
+    $("#Vendor").prop('disabled', true);
+    $("#GrnTypeID").prop('disabled', true);
+    function ClearForm() {
+        $("#ID").val(""); $("#GRNNo").val(""); $("#DCNo").val(""); $("#InvoiceNo").val(""); $("#InwardNo").val(""); $("#PoID").val("");
+        $("#GrnTypeID").val(1); $("#ddlStores").val(""); $("#SupplierID").val(""); $("#VehicleNo").val(""); $("#Transporter").val(""); $("#Notes").val("");
+        $("#GrossAmount").val(""); $("#TaxAmount").val(""); $("#OtherCharges").val(""); $("#Discount").val("");
+        //$("#CR_Note_Amount").val("");
+        $("#BED").val("");
+        $("#Edu").val("");
+        $("#SHECess").val("");
+        $("#Rounding_Off").val(""); $("#GrandTotal").val(""); $("#PONo").val("");
+        $("#SupplierName").val(""); $("#btnShowItems").hide(); $("#PONo").prop('disabled', false);
+        $("#SupplierName").prop('disabled', true);
+        $("#Vendor").prop('disabled', true); $("#Vendor").val(""); $("#VendorId").val("");
+        $("#Service").prop('checked', false); $("#Warranty").prop('checked', false);
+        ResetDate("GRNDate");
+        ResetDate("DCDate");
+        ResetDate("InvoiceDate");
+        ResetDate("InwardDate");
+        $("#PODate").val("");
+        ClearParamGrid("grid");
+        var colM = $grid.pqGrid("option", "colModel");
+        var childColM = colM[5].colModel;
+        //childColM[2].editable = false;
+        //childColM[3].editable = false;
+        $grid.pqGrid("option", "colModel", colM);
+        $("#preApproveImg").empty(); $("#appendImg").empty(); $("#files").val(null);
+    }
+
+    function LoadTaxgrid() {
+        $.ajax({
+            type: "GET",
+            url: "/Master/TaxMaster",
+            datatype: "Json",
+            success: function (data) {
+                $Taxgrid.pqGrid("option", "dataModel.data", data);
+                $Taxgrid.pqGrid("refreshDataAndView");
+            }
+        });
+    }
+    function getRowIndx() {
+        var arr = $grid.pqGrid('selection', { type: 'row', method: 'getSelection' });
+        if (arr && arr.length > 0) {
+            return arr[0].rowIndx;
+        }
+        else {
+            alert("Select a row.");
+            return null;
+        }
+    }
+    function LoadSearchGrid() {
+        $.ajax({
+            url: "/GRN/GRNForAuthorization",
+            cache: false,
+            async: true,
+            method: "GET",
+            dataType: "JSON",
+            beforeSend: function () {
+                $SearchGrid.pqGrid("showLoading");
+            },
+            complete: function () {
+                $SearchGrid.pqGrid("hideLoading");
+            },
+            success: function (response) {
+                var filterData = response.records.filter(obj => obj.Authorized == false)
+                $SearchGrid.pqGrid("hideLoading");
+                $SearchGrid.pqGrid("option", "dataModel.data", filterData);
+                $SearchGrid.pqGrid("refreshDataAndView");
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        $('#GRNDate').data("DateTimePicker").disable();
+        $('#PODate').prop('disabled', true);
+        $("#GrossAmount").prop('disabled', true);
+        $("#TaxAmount").prop('disabled', true);
+        $("#OtherCharges").prop('disabled', true);
+        $("#Discount").prop('disabled', true);
+        $("#GrandTotal").prop('disabled', true);
+        $("#Rounding_Off").prop('disabled', true);
+        $('#PONo').on('click', function () {
+            if ($("#ddlStores").val() == "") {
+                ShowAlert("error", "Please Select Project");
+                return;
+            }
+            $("#POModal").dialog({
+                height: 500,
+                width: 700,
+                modal: true,
+                open: function (evt, ui) {
+                    $.ajax({
+                        type: "GET",
+                        url: "/PurchaseOrder/PurchaseOrderForGrn",//PurchaseOrderForGrn",AuthorizedPurchaseOrder
+                        datatype: "Json",
+                        data: { storeId: $("#ddlStores").val() },
+                        beforeSend: function () {
+                            $POgrid.pqGrid("showLoading");
+                        },
+                        complete: function () {
+                            $POgrid.pqGrid("hideLoading");
+                        },
+                        success: function (data) {
+                            if (data.success) {
+                                $POgrid.pqGrid("hideLoading");
+                                $POgrid.pqGrid("option", "dataModel.data", data.records);
+                                $POgrid.pqGrid("refreshDataAndView");
+                            } else {
+                                ClearParamGrid('POgrid');
+                                ShowAlert("info", "No Purchase Order found against selected Project.");
+                            }
+                        },
+                        error: function (request, status, error) {
+                            $POgrid.pqGrid("hideLoading");
+                            ClearParamGrid('POgrid');
+                            ShowAlert("error", "Server error! Please Contact Administrator");
+                            return;
+                        }
+                    });
+                },
+                close: function (event, ui) {
+                },
+                show: {
+                    effect: "blind",
+                    duration: 500
+                }
+            });
+        });
+    });
+    $(document).ready(function () {
+        $("#btnShowItems").hide();
+        $("#GRNNo").prop('disabled', true);
+        $("#GRNNo").val("Auto");
+        $("#SupplierName").prop('disabled', true);
+
+        $.ajax({
+            type: "GET",
+            url: "/Master/AllStores",
+            datatype: "Json",
+            success: function (data) {
+                $.each(data, function (index, value) {
+                    $('#ddlStores').append('<option value="' + value.ID + '">' + value.Code + '</option>');
+                });
+            }
+        });
+        function ClearformonGrnTypeIDchanged() {
+            $("#ID").val(""); $("#GRNNo").val(""); $("#DCNo").val(""); $("#InvoiceNo").val(""); $("#InwardNo").val(""); $("#PoID").val("");
+            $("#ddlStores").val(""); $("#SupplierID").val(""); $("#VehicleNo").val(""); $("#Transporter").val(""); $("#Notes").val("");
+            $("#GrossAmount").val(""); $("#TaxAmount").val(""); $("#OtherCharges").val(""); $("#Discount").val("");
+            //$("#CR_Note_Amount").val("");
+            $("#BED").val("");
+            $("#Edu").val("");
+            $("#SHECess").val("");
+            $("#Rounding_Off").val(""); $("#GrandTotal").val(""); $("#PONo").val("");
+            $("#SupplierName").val(""); $("#PONo").prop('disabled', false);
+            $("#SupplierName").prop('disabled', true);
+            $("#Vendor").prop('disabled', true); $("#Vendor").val(""); $("#VendorId").val("");
+
+            ResetDate("GRNDate"); $("#btnShowItems").hide();
+            ResetDate("DCDate");
+            ResetDate("InvoiceDate");
+            ResetDate("InwardDate");
+            $("#PODate").val("");
+            ClearParamGrid("grid");
+
+        }
+
+        $('#GrnTypeID').change(function () {
+            ClearformonGrnTypeIDchanged();
+            $("#PoID").val("");
+            $("#PONo").val("");
+            $("#SupplierName").val("");
+            $("#SupplierID").val("");
+            if ($('#GrnTypeID').val() == "1") {
+                $("#btnShowItems").hide();
+                $("#PONo").prop('disabled', false);
+                //$("#PODate").prop('disabled', false);
+                $("#SupplierName").prop('disabled', true);
+                $("#Vendor").prop('disabled', true);
+            }
+            else {
+                $("#btnShowItems").show();
+                $("#PONo").prop('disabled', true);
+                $("#PODate").prop('disabled', true);
+                $("#SupplierName").prop('disabled', true);
+                $("#Vendor").prop('disabled', false);
+            }
+        });
+        $('#btnAddGRN').on('click', function () {
+            ClearForm();
+        });
+        $('#btnRemoveItem').on('click', function () {
+            if (selectedItemRowIndx == null) {
+                return;
+            }
+            $("#grid").pqGrid("deleteRow", { rowIndx: selectedItemRowIndx });
+            selectedItemRowIndx = null;
+        });
+
+        /********* Add Item to GRN Detail grid*********/
+        $('#btnAddItem').on('click', function () {
+            var dataMGrid = [];
+            var getData = $("#Itemgrid").pqGrid("option", "dataModel.data");
+            var selectedItems = jLinq.from(getData).equals("state", true).select();
+            ClosePopupWindow("ItemModal");
+            $("#Itemgrid").pqGrid("reset", { filter: true });
+            var getMainGridData = $grid.pqGrid("option", "dataModel.data");
+
+            ClearParamGrid("grid");
+            $.each(getMainGridData, function (key, value) {
+                var grdData = {
+                    'ID': value.ID, 'ItemID': value.ItemID, 'ItemName': value.ItemName, 'UnitName': value.UnitName, 'PackSizeId': value.PackSizeId,
+                    'PackSize': value.PackSize, 'CBatch': value.CBatch, 'CExpiryDate': value.CExpiryDate, 'CQty': value.CQty, 'CFreeQty': value.CFreeQty, 'CRate': value.CRate,
+                    'MarkupPercentage': value.MarkupPercentage, 'CMrp': value.CMrp, 'CItemTotal': value.CItemTotal, 'TaxRates': value.TaxRates,
+                    'TaxAmount': value.TaxAmount, 'DiscountPer': value.discountper, 'Discount': value.Discount,
+                    'BatchName': value.BatchName, 'ExpiryDate': value.ExpiryDate, 'Qty': value.Qty, 'FreeQty': value.FreeQty, 'Rate': value.Rate,
+                    'MRP': value.MRP, 'ItemTotal': value.ItemTotal, 'TransC': value.TransC, 'InstallC': value.InstallC,
+                    'ServiceAmt': value.ServiceAmt, 'OtherC': value.OtherC, 'CustomDuty': value.CustomDuty, 'Amount': value.Amount,
+                    'IGST': value.IGST, 'CGST': value.CGST, 'UGST': value.UGST, 'SGST': value.SGST, 'HSNCode': value.HSNCode
+                }
+                dataMGrid.push(grdData);
+            });
+
+
+            $.each(selectedItems, function (key, value) {
+                var grdData = {
+                    'ItemID': value.ID, 'ItemName': value.Name, 'UnitName': value.UnitName, 'PackSizeId': value.PackSizeID, 'PackSize': value.PackSize, 'CRate': value.StandardRate, 'CMrp': value.MRP,
+                    'CExpiryDate': '12/12/2099', 'CBatch': value.Code, 'MarkupPercentage': value.MarkupPercentage, 'HSNCode': value.HSNCode
+                }
+                dataMGrid.push(grdData);
+            });
+
+            $grid.pqGrid("option", "dataModel.data", dataMGrid);
+            $grid.pqGrid("refreshDataAndView");
+        });
+
+        validateFiles('files', 'preApproveImg');
+        $('#btnSaveGRN').on('click', function () {
+            if ($('#GrnTypeID').val() == "1") {
+                if ($("#PoID").val() == "") {
+                    ShowAlert("error", "Please Select PO No");
+                    return;
+                }
+            }
+            else {
+                if ($("#SupplierId").val() == "") {
+                    ShowAlert("error", "Please Select Supplier");
+                    return;
+                }
+            }
+
+            if ($("#DCNo").val() == "") {
+                ShowAlert("error", "Please Enter DC No");
+                return;
+            }
+            if ($("#DCDate").data('date') == "") {
+                ShowAlert("error", "Please Select DC Date");
+                return;
+            }
+            if ($("#InwardNo").val() == "") {
+                ShowAlert("error", "Please Enter Inward No");
+                return;
+            }
+            if ($("#InwardDate").data('date') == "") {
+                ShowAlert("error", "Please Select Inward Date");
+                return;
+            }
+            if ($("#ddlStores").val() == "" || $("#ddlStores").val() == "0") {
+                ShowAlert("error", "Please Select Project");
+                return;
+            }
+            /*if ($("[name='PaymentMode']:checked").val() == "") {
+                ShowAlert("error", "Please Select Payment Mode");
+                return;
+            }*/
+            DisableClick("btnSave");
+            var items = $grid.pqGrid("getData", {
+                dataIndx: ['ItemID', 'PackSizeId', 'PackSize', 'CBatch', 'CQty', 'CFreeQty', 'CRate', 'CMrp', 'Taxes', 'TaxRates', 'TaxAmount', 'Discount', 'DiscountPer', 'BatchName', 'CExpiryDate', 'ExpiryDate', 'Qty', 'FreeQty', 'Rate',
+                    'MRP', 'TransC', 'InstallC', 'ServiceAmt', 'OtherC', 'CustomDuty', 'Amount', 'ItemName', 'IGST', 'CGST', 'SGST', 'UGST', 'DescriptiveName', 'RejectedQty', 'RejectionReason', 'RecieveQty']
+            });
+            var checkQty = 0, checkBatch = 0, checkExpiry = 0, rejection = 0;
+            $.each(items, function (key, value) {
+                if (value.Qty <= 0 || value.Qty == undefined) checkQty++;
+                if (value.CBatch == "" || value.CBatch == undefined) checkBatch++;
+                if (value.CExpiryDate == "" || value.CExpiryDate == undefined) checkExpiry++;
+                if (value.Qty + value.RejectedQty > value.RecieveQty) rejection++;
+            });
+            if (checkQty > 0) {
+                ShowAlert("error", "Please Enter Accepted Quantity ");
+                return;
+            }
+            if (checkBatch > 0) {
+                ShowAlert("error", "Please Enter Batch Name");
+                return;
+            }
+            if (checkExpiry > 0) {
+                ShowAlert("error", "Please Enter Expiry Date");
+                return;
+            }
+            if (rejection > 0) {
+                ShowAlert("error", "Rejected Qty + Accepted Qty cannot be greater to Recieve Qty");
+                return;
+            }
+            if (items != undefined) {
+                if (items.length > 0) {
+
+                }
+                else {
+                    ShowAlert("error", "No Items to Save");
+                    return;
+                }
+            }
+            else {
+                ShowAlert("error", "No Items to Save");
+                return;
+            }
+            /* if ($("[name='PaymentMode']:checked").val() == "" || $("[name='PaymentMode']:checked").val() == undefined) {
+                 ShowAlert("error", "Select Payment Mode");
+                 return;Qty
+             }*/
+            var grn = JSON.stringify({ //Passing data
+                ID: $("#ID").val(),
+                GRNNo: $("#GRNNo").val(),
+                GRNDate: $("#GRNDate").data('date'),
+                DCNo: $("#DCNo").val(),
+                DCDate: $("#DCDate").data('date'),
+                InvoiceNo: $("#InvoiceNo").val(),
+                InvoiceDate: $("#InvoiceDate").data('date'),
+                PoID: $("#PoID").val(),
+                InwardNo: $("#InwardNo").val(),
+                InwardDate: $("#InwardDate").data('date'),
+                GrnTypeID: $("#GrnTypeID").val(),
+                StoreId: $("#ddlStores").val(),
+                SupplierID: $("#SupplierID").val(),
+                VehicleNo: $("#VehicleNo").val(),
+                Transporter: $("#Transporter").val(),
+                Notes: $("#Notes").val(),
+                GrnPaymentType: 'N/A',
+                Amount: $("#GrossAmount").val(),
+                TotalTaxamt: $("#TaxAmount").val(),
+                TotalOtherAmt: $("#OtherCharges").val(),
+                TotalDisc: $("#Discount").val(),
+                //CrNoteAmt: $("#CR_Note_Amount").val(),
+                Roundoff: $("#Rounding_Off").val(),
+                TotalAmount: $("#GrandTotal").val(),
+                StoreName: $("#ddlStores option:selected").text(),
+                SupplierName: $("#SupplierName").val(),
+                VendorId: $("#VendorId").val(),
+                BED: $("#BED").val(),
+                Edu: $("#Edu").val(),
+                SHECess: $("#SHECess").val(),
+                Service: $("#Service").prop('checked'),
+                Warranty: $("#Warranty").prop('checked'),
+                GRNDetails: items
+            });
+            $.ajax({
+                type: "POST", //HTTP POST Method
+                traditional: true,
+                contentType: 'application/json; charset=utf-8',
+                url: '/GRN/SaveGRN', // Controller/View
+                data: grn,
+                success: function (msg) {
+                    if (msg.success) {
+                        if ($("#ID").val() == "") {
+                            ShowAlert("success", "Generated GRN No : " + msg.Message);
+                            $("#ID").val(msg.Data.ID);
+                        }
+                        else {
+                            ShowAlert("success", "GRN updated successfully");
+                        }
+                        SaveScandoc("files", $("#ID").val(), "Store", "GRN");
+                        ClearForm();
+                    }
+                    else {
+                        ShowAlert("error", "Falied to Save! " + msg.Message);
+                    }
+                },
+                error: function (jqXHR, exception) {
+                    ShowAlert("error", "Error while saving GRN.");
+                }
+            });
+        });
+    });
+
+    /********* Add Tax Function*********/
+    $(document).ready(function () {
+        $('#btnAddTax').on('click', function () {
+            var totalTax = 0;
+            var selections = $("#Taxgrid").grid().getSelections();
+            $.each(selections, function () {
+                var data = $("#Taxgrid").grid().getById(this);
+                if (!data.Tax_EncExc) {
+                    totalTax = totalTax + parseFloat(data.Tax_percentage);
+                }
+            });
+            var rowId = $("#rowId").val();
+            var rowdata = $("#grid").grid().getById(rowId);
+            if (rowdata != undefined) {
+                var CRate = rowdata.CRate, CQty = rowdata.CQty, CMrp = rowdata.CMrp;
+                var TaxPer = 0;
+                var Rate = rowdata.Rate, Qty = rowdata.Qty, discount = rowdata.Discount, discper = rowdata.DiscountPer;
+                var TransC = rowdata.TransC, InstallC = rowdata.InstallC, ServiceAmt = rowdata.ServiceAmt, OtherC = rowdata.OtherC, CustomDuty = rowdata.CustomDuty;
+
+                if (CRate == undefined || CRate == null) CRate = 0;
+                if (CQty == undefined || CQty == null) CQty = 0;
+                if (CMrp == undefined || CMrp == null) CMrp = 0;
+
+                if (TaxPer == undefined || TaxPer == null) TaxPer = 0;
+
+                if (Rate == undefined || Rate == null) Rate = 0;
+                if (Qty == undefined || Qty == null) Qty = 0;
+                if (discount == undefined || discount == null) discount = 0;
+                if (discper == undefined || discper == null) discper = 0;
+                if (TransC == undefined || TransC == null) TransC = 0;
+                if (InstallC == undefined || InstallC == null) InstallC = 0;
+                if (ServiceAmt == undefined || ServiceAmt == null) ServiceAmt = 0;
+                if (OtherC == undefined || OtherC == null) OtherC = 0;
+                if (CustomDuty == undefined || CustomDuty == null) CustomDuty = 0;
+
+                TaxPer = totalTax;
+
+                var Amount = Rate * Qty;
+                var TaxAmount = (Amount * TaxPer) / 100;
+
+                if (rowdata.field == "DiscountPer") {
+                    discount = Amount * discper / 100;
+                }
+                if (rowdata.field == "Discount") {
+                    discper = discount * 100 / Amount;
+                }
+
+                var NetAmt = parseFloat(Amount) + parseFloat(InstallC) + parseFloat(TransC) + parseFloat(ServiceAmt) + parseFloat(OtherC) + parseFloat(CustomDuty);
+                NetAmt = NetAmt - discount;
+
+                $("#grid").grid().updateRow(rowId, {
+                    'ID': rowdata.ID, 'ItemID': rowdata.ItemID, 'PackSizeId': rowdata.PacksizeId, 'ItemName': rowdata.ItemName, 'UnitName': rowdata.UnitName, 'PackSize': rowdata.PackSize,
+                    'CQty': rowdata.CQty, 'CRate': rowdata.CRate, 'CMrp': rowdata.CMrp, 'CFreeQty': rowdata.CFreeQty,
+                    'TaxPer': TaxPer, 'TaxAmount': TaxAmount, 'DiscountPer': discper, 'Discount': discount, 'Qty': Qty, 'FreeQty': rowdata.FreeQty, 'Rate': Rate, 'MRP': rowdata.MRP,
+                    'TransC': rowdata.TransC, 'InstallC': rowdata.InstallC, 'ServiceAmt': rowdata.ServiceAmt, 'OtherC': rowdata.OtherC, 'CustomDuty': rowdata.CustomDuty, 'Amount': NetAmt
+                });
+            }
+            CalculateTotalAmount();
+        });
+    });
+    $(document).ready(function () {
+        $("#BED").keyup(function () {
+            CalculateTotalAmount();
+            showperAmount();
+        });
+        $("#Edu").keyup(function () {
+            CalculateTotalAmount();
+            showperAmount();
+        });
+        $("#SHECess").keyup(function () {
+            CalculateTotalAmount();
+            showperAmount();
+        });
+    });
+
+    function showperAmount() {
+        var amt = $("#GrossAmount").val();
+        if (amt == undefined || amt === "") amt = 0;
+        var bed = $("#BED").val();
+        if (bed == undefined || bed === "") bed = 0;
+        var bedamt = (bed * amt) / 100;
+        $("#BedAmt").val(Math.round(bedamt));
+
+        var shecess = $("#SHECess").val();
+        if (shecess == undefined || shecess === "") shecess = 0;
+        var shecessamt = (shecess * amt) / 100;
+        $("#Shecessamt").val(Math.round(shecessamt));
+
+        var educess = $("#Edu").val();
+        if (educess == undefined || educess === "") educess = 0;
+        var eduamt = (educess * amt) / 100;
+        $("#educessamt").val(Math.round(eduamt));
+
+    }
+    /********* GRN Grid Function*********/
+    function CalculateTotalAmount() {
+        var getData = $grid.pqGrid("option", "dataModel.data");
+        var grossAmt = 0, taxAmount = 0, otherAmount = 0, DiscountAmount = 0, grandTotal = 0, rndGrandTotal = 0;
+        var bedAmt = $("#BED").val(), eduAmt = $("#Edu").val(), sheAmt = $("#SHECess").val();
+        if (bedAmt == undefined || bedAmt === "") bedAmt = 0;
+        if (eduAmt == undefined || eduAmt === "") eduAmt = 0;
+        if (sheAmt == undefined || sheAmt === "") sheAmt = 0;
+        $.each(getData, function (_, item) {
+            if (!isNaN(item.ItemTotal) && item.ItemTotal != null)
+                grossAmt += parseFloat(item.ItemTotal);
+            if (!isNaN(item.TaxAmount) && item.TaxAmount != null)
+                taxAmount += parseFloat(item.TaxAmount);
+            if (!isNaN(item.OtherC) && item.OtherC != null)
+                otherAmount += parseFloat(item.OtherC);
+            if (!isNaN(item.TransC) && item.TransC != null)
+                otherAmount += parseFloat(item.TransC);
+            if (!isNaN(item.InstallC) && item.InstallC != null)
+                otherAmount += parseFloat(item.InstallC);
+            if (!isNaN(item.CustomDuty) && item.CustomDuty != null)
+                otherAmount += parseFloat(item.CustomDuty);
+            if (!isNaN(item.ServiceAmt) && item.ServiceAmt != null)
+                otherAmount += parseFloat(item.ServiceAmt);
+            if (!isNaN(item.Discount) && item.Discount != null)
+                DiscountAmount += parseFloat(item.Discount);
+
+        });
+        var bedAmount = grossAmt * (bedAmt / 100);
+        var eduAmount = grossAmt * (eduAmt / 100);
+        var sheAmount = grossAmt * (sheAmt / 100);
+        var extraAmt = parseFloat(bedAmount) + parseFloat(eduAmount) + parseFloat(sheAmount);
+        grandTotal = parseFloat(grossAmt) + parseFloat(taxAmount) + parseFloat(otherAmount) - parseFloat(DiscountAmount) + parseFloat(extraAmt);
+        rndGrandTotal = Math.round(grandTotal);
+
+        $("#GrossAmount").val(grossAmt.toFixed(2));
+        $("#TaxAmount").val(taxAmount.toFixed(2));
+        $("#OtherCharges").val(otherAmount.toFixed(2));
+        $("#Discount").val(DiscountAmount.toFixed(2));
+        $("#GrandTotal").val(grandTotal.toFixed(2));
+        $("#Rounding_Off").val(rndGrandTotal);
+    }
+    function editRow(rowIndx, grid, edit) {
+        if (rowIndx != null) {
+            var row = $grid.pqGrid('getRowData', { rowIndx: rowIndx });
+            LoadTaxgrid();
+
+            $("#popup-dialog-crud").dialog({
+                title: "Get Tax For (" + (row.ItemName) + ")", buttons: {
+                    Update: function () {
+                        var getData = $("#Taxgrid").pqGrid("option", "dataModel.data");
+                        var selectedItems = jLinq.from(getData).equals("state", true).select();
+                        var totalTax = 0;
+                        var TaxIds = [];
+                        $.each(selectedItems, function (key, value) {
+                            totalTax = totalTax + value.Tax_percentage;
+                            TaxIds.push(value.Taxid);
+                        });
+                        var sgst = 0, cgst = 0, igst = 0, ugst = 0;
+                        $.each(selectedItems, function (_, item) {
+                            if (item.Tax_name === 'SGST') {
+                                sgst += parseFloat(item.Tax_percentage);
+                            }
+                            if (item.Tax_name === 'CGST') {
+                                cgst += parseFloat(item.Tax_percentage);
+                            }
+                            if (item.Tax_name === 'IGST') {
+                                igst += parseFloat(item.Tax_percentage);
+                            }
+                            if (item.Tax_name === 'UGST') {
+                                ugst += parseFloat(item.Tax_percentage);
+                            }
+
+                        });
+                        $("#grid").pqGrid('updateRow', { rowIndx: rowIndx, newRow: { 'TaxRates': totalTax, 'Taxes': TaxIds, 'SGST': sgst, 'CGST': cgst, 'IGST': igst, 'UGST': ugst } });
+                        $("#grid").pqGrid("refreshRow", { rowIndx: rowIndx });
+                        $(this).dialog("destroy");
+                        CalculateTotalAmount();
+                    },
+                    Cancel: function () {
+                        $(this).dialog("destroy");
+                    }
+                }
+            }).dialog("open");
+        }
+    }
+
+    /********* GRN Grid *********/
+    $(document).ready(function () {
+
+        var packsizes = [];
+        $.ajax({
+            type: "GET",
+            url: "/Master/AllItemPackSize",
+            success: function (data) {
+                $.each(data, function (index, value) {
+                    packsizes.push(value.Name)
+                });
+            }
+        });
+
+        var autoCompleteEditor = function (ui) {
+            var $cell = ui.$cell,
+                rowData = ui.rowData,
+                dataIndx = ui.dataIndx,
+                width = ui.column.width,
+                cls = ui.cls;
+            var dc = $.trim(rowData[dataIndx]);
+
+            var $inp = $("<input type='text' name='" + dataIndx + "' class='" + cls + " pq-ac-editor' />")
+                .width(width - 6)
+                .appendTo($cell)
+                .val(dc);
+
+            $inp.autocomplete({
+                source: packsizes,
+                minLength: 0
+            }).focus(function () {
+                //open the autocomplete upon focus
+                $(this).autocomplete("search", "");
+            });
+        }
+
+        var dateEditor = function (ui) {
+            var $cell = ui.$cell,
+                rowData = ui.rowData,
+                dataIndx = ui.dataIndx,
+                cls = ui.cls,
+                dc = $.trim(rowData[dataIndx]);
+            $cell.css('padding', '0');
+
+            var $inp = $("<input type='text' name='" + dataIndx + "' class='" + cls + " pq-date-editor' />")
+                .appendTo($cell)
+                .val(dc).datepicker({
+                    changeMonth: true,
+                    changeYear: true,
+                    onClose: function () {
+                        $inp.focus();
+                    }
+                });
+        }
+        var dataModel = { location: 'remote', sorting: 'local', paging: 'local', dataType: 'JSON' };
+        var colModel = [
+            { title: "", dataIndx: "ID", width: 10, dataType: "integer", editable: false, resizable: false, hidden: true },
+            { title: "", dataIndx: "ItemID", width: 10, dataType: "integer", editable: false, resizable: false, hidden: true },
+            {
+                title: "Item Details", align: "center", colModel: [
+                    { title: "Item Name & Description", dataIndx: "ItemName", width: 350, dataType: "string", resizable: true, editable: false },
+
+                    { title: "HSN Code", dataIndx: "HSNCode", width: 150, dataType: "string", resizable: true, editable: false },
+                    {
+                        title: "Description", dataIndx: "DescriptiveName", width: 200, dataType: "string", editable: true,
+                        editor: { type: "textarea", attr: "rows=5" }, hidden: true
+                    },
+                    { title: "Unit", dataIndx: "UnitName", width: 90, dataType: "string", resizable: true, editable: false },
+                    { title: "PackSizeId", dataIndx: "PackSizeId", dataType: "integer", editable: false, hidden: true },
+                    {
+                        title: "Pack Size", dataIndx: "PackSize", width: 90, resizable: true, hidden: false, editable: false,
+                        editor: {
+                            type: autoCompleteEditor
+                        },
+                        validations: [
+                            { type: 'minLen', value: 1, msg: "Required" },
+                            {
+                                type: function (ui) {
+                                    var value = ui.value;
+                                    if ($.inArray(ui.value, packsizes) == -1) {
+                                        ui.msg = value + " not found in list";
+                                        return false;
+                                    }
+                                }
+                            }
+                        ]
+                    }]
+            },
+            {
+                title: "Challan Details", align: "center", colModel: [
+                    { title: "Batch", dataIndx: "CBatch", width: 100, dataType: "string", resizable: true, editable: false, hidden: true },
+
+                    {
+                        title: "Expiry Date", dataIndx: "CExpiryDate", width: 100, resizable: true, hidden: true,
+                        editor: {
+                            type: dateEditor
+                        },
+                        validations: [
+                            { type: 'regexp', value: '[0-9]{2}/[0-9]{2}/[0-9]{4}', msg: 'Not in mm/dd/yyyy format' }
+                        ]
+                    },
+                    { title: "Qty", dataIndx: "CQty", width: 110, dataType: "float", align: "center", editable: false },
+                    { title: "Free Qty", dataIndx: "CFreeQty", width: 90, dataType: "float", align: "left", editable: false, hidden: true },
+                    { title: "Unit Rate", dataIndx: "CRate", width: 90, dataType: "float", align: "left", editable: false, hidden: false },
+                    { title: "MarkupPercentage", dataIndx: "MarkupPercentage", width: 90, dataType: "float", hidden: true, editable: false },
+                    {
+                        title: "MRP", dataIndx: "CMrp", width: 90, dataType: "float", align: "left", editable: false, hidden: true
+                    },
+                    {
+                        title: "Item Total", dataIndx: "CItemTotal", width: 100, dataType: "float", align: "left", hidden: false,
+                        format: '##,###.00',
+                        editable: false
+                    }]
+            },
+
+            {
+                title: "Accepted Details", align: "center", colModel: [
+                    {
+                        title: "Batch", dataIndx: "BatchName", width: 100, dataType: "string", resizable: true, hidden: true,
+                        editable: false
+                    },
+                    {
+                        title: "Expiry Date", dataIndx: "ExpiryDate", width: 100, resizable: true, hidden: true,
+                        editable: false
+                    },
+                    {
+                        title: "Popending Qty", dataIndx: "PoPendingQty", width: 90, dataType: "float", align: "left", resizable: true, editable: false
+                    },
+                    { title: "Recieve Qty", dataIndx: "RecieveQty", width: 90, dataType: "float", align: "left", resizable: true, editable: true },
+                    {
+                        title: "Accepted Qty", dataIndx: "Qty", width: 90, dataType: "float", align: "left", resizable: true,
+                        editable: true
+                    },
+                    {
+                        title: "Free Qty", dataIndx: "FreeQty", width: 90, dataType: "float", align: "left", resizable: true, hidden: false,
+                        editable: true
+                    },
+                    {
+                        title: "Unit Rate", dataIndx: "Rate", width: 90, dataType: "float", align: "left", resizable: true, hidden: false,
+                        editable: false
+                    },
+                    {
+                        title: "MRP", dataIndx: "MRP", width: 90, dataType: "float", align: "left", resizable: true, hidden: true,
+                        editable: false
+                    },
+                    {
+                        title: "Item Total", dataIndx: "ItemTotal", width: 100, dataType: "float", editable: false, align: "left", hidden: false,
+                        format: '##,###.00'
+                    }]
+            },
+            {
+                title: "Rejection Details", align: "center", colModel: [
+                    { title: "Qty", dataIndx: "RejectedQty", width: 90, dataType: "float", editable: true, hidden: false },
+                    { title: "Reason", dataIndx: "RejectionReason", width: 220, dataType: "string", editable: true, hidden: false }
+                ]
+            },
+            {
+                title: "Tax Details", hidden: false, align: "center", editable: false, colModel: [
+                    {
+                        title: "Discount %", dataIndx: "DiscountPer", width: 110, dataType: "float", align: "left",
+                        format: '##,###.00',
+                        editable: true
+                    },
+                    {
+                        title: "Discount", dataIndx: "Discount", width: 90, dataType: "float", align: "left",
+                        format: '##,###.00',
+                        editable: false
+                    },
+                    {
+                        title: "Taxable Value", dataIndx: "TaxableValue", width: 100, dataType: "float", resizable: false, align: "left", hidden: false, editable: false
+                    },
+                    { title: "Taxes", dataIndx: "Taxes", width: 90, dataType: "string", editable: false, hidden: true },
+                    {
+                        title: "", editable: false, minWidth: 30, sortable: false, hidden: true, listeners: [{ click: editRow }], render: function (ui) {
+                            return "<button type='button' class='edit_btn'></button>";
+                        },
+                        postRender: function (ui) {
+                            var rowIndx = ui.rowIndx,
+                                grid = this,
+                                $cell = grid.getCell(ui);
+
+                            $cell.find(".edit_btn").button({ icons: { primary: 'ui-icon-pencil' } })
+                                .bind("click", function (evt) {
+                                    editRow(rowIndx, grid, true);
+                                });
+                        }
+                    },
+                    { title: "TaxRates", dataIndx: "TaxRates", align: "left", editable: false, minWidth: 90, sortable: false, hidden: false },
+                    {
+                        title: "Tax Amount", dataIndx: "TaxAmount", width: 110, dataType: "float", align: "left",
+                        format: '##,###.00',
+                        editable: false
+                    },
+
+                    { title: "SGST", dataIndx: "SGST", width: 90, dataType: "double", align: "left", editable: false, hidden: true },
+                    { title: "CGST", dataIndx: "CGST", width: 90, dataType: "double", align: "left", editable: false, hidden: true },
+                    { title: "IGST", dataIndx: "IGST", width: 90, dataType: "double", align: "left", editable: false, hidden: true },
+                    { title: "UGST", dataIndx: "UGST", width: 90, dataType: "double", align: "left", editable: false, hidden: true },
+                    {
+                        title: "SGSTAmt", dataIndx: "SGSTAmt", width: 90, dataType: "double", align: "left", format: '##,###.00', editable: false
+                    },
+                    {
+                        title: "CGSTAmt", dataIndx: "CGSTAmt", width: 90, dataType: "double", align: "left", format: '##,###.00', editable: false
+                    },
+                    {
+                        title: "IGSTAmt", dataIndx: "IGSTAmt", width: 90, dataType: "double", align: "left", format: '##,###.00', editable: false
+                    },
+                    {
+                        title: "UGSTAmt", dataIndx: "UGSTAmt", width: 90, dataType: "double", align: "left", format: '##,###.00', editable: false
+                    },
+
+                ]
+            },
+            {
+                title: "Other Charges", hidden: false, align: "center", colModel: [{ title: "Trans. Charges", dataIndx: "TransC", width: 90, dataType: "float", align: "left", editable: true, resizable: true },
+                { title: "Inst. Charges", dataIndx: "InstallC", width: 90, dataType: "float", align: "left", editable: true, resizable: true },
+                { title: "Service Charges", dataIndx: "ServiceAmt", width: 90, dataType: "float", align: "left", editable: true, resizable: true },
+                { title: "Other Charges", dataIndx: "OtherC", width: 90, dataType: "float", align: "left", editable: true, resizable: true },
+                { title: "Custom Duty", dataIndx: "CustomDuty", width: 90, dataType: "float", align: "left", editable: true, resizable: true }]
+            },
+            {
+                title: "Net Amount", hidden: false, dataIndx: "Amount", width: 100, dataType: "float", align: "left", editable: false,
+                format: '##############.00'
+            }
+        ];
+        var grid = {
+            width: '100%',
+            height: 400,
+            sortable: false,
+            numberCell: { show: false },
+            selectionModel: { type: 'row' },
+            hoverMode: 'cell',
+            editor: { type: 'textbox' },
+            showTop: true,
+            resizable: true,
+            colModel: colModel,
+            title: "Item Details",
+            cellSave: function (evt, ui) {
+                this.refreshRow(ui);
+                CalculateTotalAmount();
+                showperAmount();
+            },
+            editModel: {
+                saveKey: ""
+            },
+            draggable: false,
+            wrap: false,
+            dataModel: dataModel,
+            formulas: [
+                ["CMrp", function (rd) {
+                    var MarkupPercentage = rd.MarkupPercentage;
+                    var mrp = 0;
+                    if (MarkupPercentage == "" || MarkupPercentage == undefined) {
+                        mrp = rd.CMrp;
+                    }
+                    else {
+                        mrp = rd.CRate + ((rd.CRate * MarkupPercentage) / 100);
+                    }
+                    return mrp;
+                }],
+                ["CItemTotal", function (rd) {
+                    return rd.CQty * rd.CRate;
+                }],
+                ["BatchName", function (rd) {
+                    return rd.CBatch;
+                }],
+                ["ExpiryDate", function (rd) {
+                    return rd.CExpiryDate;
+                }],
+                ["FreeQty", function (rd) {
+                    if ($("#GrnTypeID").val() == 0)
+                        return rd.CFreeQty;
+                    else
+                        return rd.FreeQty;
+                }],
+                ["Rate", function (rd) {
+                    return rd.CRate;
+                }],
+                ["MRP", function (rd) {
+                    return rd.CMrp;
+                }],
+                ["ItemTotal", function (rd) {
+                    return rd.Qty * rd.Rate;
+                }],
+                ["TaxableValue", function (rd) {
+                    var amount = rd.Qty * rd.Rate;;
+                    var disc = rd.Discount;
+                    if (disc == undefined) disc = 0;
+
+                    return amount - disc;
+                }],
+                ["TaxAmount", function (rd) {
+                    var amount = rd.TaxableValue;
+                    if (amount == undefined) amount = 0;
+                    var taxper = rd.TaxRates;
+                    if (taxper == undefined) taxper = 0;
+                    return amount * taxper / 100;
+                }],
+                ["SGSTAmt", function (rd) {
+                    var amount = rd.TaxableValue, sgstAmt = 0, sgstPer = rd.SGST;
+                    if (amount == undefined) amount = 0;
+                    if (sgstPer == undefined) sgstPer = 0;
+                    sgstAmt = amount * (sgstPer / 100);
+                    return sgstAmt;
+                }],
+                ["CGSTAmt", function (rd) {
+                    var amount = rd.TaxableValue, cgstAmt = 0, cgstPer = rd.CGST;
+                    if (amount == undefined) amount = 0;
+                    if (cgstPer == undefined) cgstPer = 0;
+                    cgstAmt = amount * (cgstPer / 100);
+                    return cgstAmt;
+                }],
+                ["IGSTAmt", function (rd) {
+                    var amount = rd.TaxableValue, igstAmt = 0, igstPer = rd.IGST;
+                    if (amount == undefined) amount = 0;
+                    if (igstPer == undefined) igstPer = 0;
+                    igstAmt = amount * (igstPer / 100);
+                    return igstAmt;
+                }],
+                ["UGSTAmt", function (rd) {
+                    var amount = rd.TaxableValue, ugstAmt = 0, ugstPer = rd.UGST;
+                    if (amount == undefined) amount = 0;
+                    if (ugstPer == undefined) ugstPer = 0;
+                    ugstAmt = amount * (ugstPer / 100);
+                    return ugstAmt;
+                }],
+                ["Amount", function (rd) {
+                    var itemTotal = rd.ItemTotal, discount = rd.Discount, taxAmount = rd.TaxAmount;
+                    var TransC = rd.TransC, InstallC = rd.InstallC, ServiceAmt = rd.ServiceAmt, OtherC = rd.OtherC, CustomDuty = rd.CustomDuty;
+                    if (itemTotal == undefined || itemTotal == null || isNaN(itemTotal)) itemTotal = 0;
+                    if (discount == undefined || discount == null || isNaN(discount)) discount = 0;
+                    if (taxAmount == undefined || taxAmount == null || isNaN(taxAmount)) taxAmount = 0;
+
+                    if (TransC == undefined || TransC == null || isNaN(TransC)) TransC = 0;
+                    if (InstallC == undefined || InstallC == null || isNaN(InstallC)) InstallC = 0;
+                    if (ServiceAmt == undefined || ServiceAmt == null || isNaN(ServiceAmt)) ServiceAmt = 0;
+                    if (OtherC == undefined || OtherC == null || isNaN(OtherC)) OtherC = 0;
+                    if (CustomDuty == undefined || CustomDuty == null || isNaN(CustomDuty)) CustomDuty = 0;
+
+                    var otherCharges = parseFloat(InstallC) + parseFloat(TransC) + parseFloat(ServiceAmt) + parseFloat(OtherC) + parseFloat(CustomDuty);
+                    var NetAmt = parseFloat(itemTotal) + parseFloat(otherCharges) + parseFloat(taxAmount);
+                    NetAmt = NetAmt - discount;
+                    return NetAmt;
+                }],
+                ["Discount", function (rd) {
+                    var amount = rd.Amount;
+                    if (amount == undefined) amount = 0;
+                    var discper = rd.DiscountPer;
+                    if (discper == undefined) discper = 0;
+                    var discamt = rd.Discount;
+                    if (discamt == undefined) discamt = 0;
+                    if (discper > 0) {
+                        discamt = amount * discper / 100;
+                    }
+                    return discamt;
+                }],
+            ],
+            pageModel: { type: "local", rPP: 20 },
+            postRenderInterval: -1,
+            cellBeforeSave: function (event, ui) {
+                var dataIndx = ui.dataIndx,
+                    newVal = ui.newVal;
+                var data = ui.rowData;
+
+
+                if (dataIndx === 'RecieveQty') {
+                    if (newVal > data.PoPendingQty) {
+                        ShowAlert('info', "Recieve Qty cannot be greater than PoPending Qty");
+                        return false;
+                    }
+                }
+                if (dataIndx === 'Qty') {
+                    if ($("#GrnTypeID").val() == 1) {
+                        if (newVal > data.RecieveQty) {
+                            ShowAlert('info', "Accepted Qty is greater than Recieve Qty");
+                            return false;
+                        }
+                        else
+                            return true;
+                    }
+                }
+                if (dataIndx === 'RejectedQty') {
+                    if (newVal > data.Qty) {
+                        ShowAlert('info', "Rejected Qty cannot be greater than Accept Qty");
+                        return false;
+                    }
+                }
+
+            },
+            rowClick: function (evt, ui) {
+                if (ui.rowData) {
+                    selectedItemRowIndx = ui.rowIndx;
+                }
+            }
+        };
+        $grid = $("#grid").pqGrid(grid);
+        $("#popup-dialog-crud").dialog({
+            width: 400, modal: true,
+            open: function () { $(".ui-dialog").position({ of: "#grid" }); },
+            autoOpen: false
+        });
+    });
+    /********* Item Grid *********/
+    $(document).ready(function () {
+        setItemList = {
+            width: "auto", //auto width
+            height: "100%-30", //height in %age
+            selectionModel: { type: 'cell' },
+            autoSizeInterval: 0,
+            scrollModel: { autoFit: true },
+            dragColumns: { enabled: false },
+            hoverMode: 'cell',
+            editor: { type: 'textbox' },
+            filterModel: { on: true, mode: "AND", header: true },
+            showTop: false,
+            resizable: true,
+            virtualX: true,
+            colModel: colGRNItemList,
+            dataModel: dataItemList,
+            toggle: function (evt, ui) {
+                if (ui.state == 'max') {
+                    $(".ui-dialog,.ui-widget-overlay").css('position', 'static');
+                }
+                else {
+                    $(".ui-dialog,.ui-widget-overlay").css('position', 'absolute');
+                }
+            },
+            pageModel: { type: "local", rPP: 20 }
+        };
+        $('#btnShowItems').on('click', function () {
+            if ($("#ddlStores").val() == "" || $("#ddlStores").val() == "0") {
+                ShowAlert("error", "Please Select Store");
+                return;
+            }
+            var searchStoreId = $("#ddlStores").val();
+            //ShowItemListPoup("Itemgrid", "ItemModal", setItemList, "/ItemMaster/GetItemsByStoreItemType/", searchStoreId);
+            ShowItemListPoup("Itemgrid", "ItemModal", setItemList, "/ItemMaster/GetItemsforclientbilling/", searchStoreId);
+        });
+        $('#btnCloseItem').on('click', function () {
+            ClosePopupWindow("ItemModal");
+        });
+    });
+    /********* Tax Grid *********/
+    $(document).ready(function () {
+        var packsizes = ["", ""];
+        var dataTaxM = { location: "local", sorting: 'local' }
+        var colTaxM = [
+            {
+                dataIndx: "state", Width: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                editor: false, dataType: 'bool',
+                cb: { select: true, all: false, header: true }
+            },
+            { title: "", dataIndx: "Taxid", dataType: "integer", hidden: true },
+            { title: "Code", dataIndx: "Tax_Code", width: 50, editable: false },
+            { title: "Name", dataIndx: "Tax_name", width: 160, editable: false },
+            { title: "Tax Type", dataIndx: "Tax_Type", width: 50, hidden: true },
+            { title: "Percentage", dataIndx: "Tax_percentage", width: 120, editable: false },
+            { title: "Formula", dataIndx: "Formula", width: 350, editable: false },
+            { title: "Tax", dataIndx: "Tax_EncExc", width: 100, editable: false },
+            { title: "Taxes", dataIndx: "Taxes", hidden: true }
+            //    {
+            //        title: "Tax", dataIndx: "Tax_EncExc", width: 100, editor: {
+            //        type: 'select',
+            //            //init: function (ui) {
+            //            //    ui.$cell.find("select").pqSelect();
+            //            //},
+            //            //valueIndx: "value",
+            //            //labelIndx: "text",
+            //            ////mapIndices: { "text": "INCEXCL", "value": "INCEXCL" },
+            //        options: [
+            //            { "Exclusive": "Exclusive" },
+            //            { "Inclusive": "Inclusive" },
+            //        ]
+            //    },
+            //    validations: [{ type: 'minLen', value: 1, msg: "Required" }]
+            //},
+        ];
+        var TaxM = {
+            width: 'flex',
+            height: 300,
+            sortable: false,
+            numberCell: { show: false },
+            hoverMode: 'cell',
+            showTop: false,
+            resizable: true,
+            scrollModel: { autoFit: true },
+            draggable: false,
+            wrap: false,
+            editable: true,
+            columnBorders: true,
+            selectionModel: { type: 'row' },
+            colModel: colTaxM,
+            dataModel: dataTaxM,
+            pageModel: { type: "local", rPP: 20 },
+        };
+        $Taxgrid = $("#Taxgrid").pqGrid(TaxM);
+    });
+    /********* PO Grid *********/
+    $(document).ready(function () {
+        var dataM = { location: "local", sorting: 'local' }
+        var colM = [
+            { dataIndx: "ID", width: 10, sortable: false, hidden: true },
+            {
+                dataIndx: "StoreName", width: 150, title: "Project Code", sortable: true
+                , filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            },
+            {
+                dataIndx: "PONo", width: 150, title: "PO No", sortable: true
+                , filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            },
+            {
+                dataIndx: "strPODate", width: 150, title: "PO Date", sortable: true
+                , filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            },
+            {
+                dataIndx: "SupplierName", width: 100, title: "Supplier Name"
+                , filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            },
+            { dataIndx: "SupplierID", width: 50, hidden: true },
+        ];
+
+        var PO = {
+            width: '100%',
+            height: 400,
+            sortable: false,
+            numberCell: { show: false },
+            hoverMode: 'row',
+            showTop: false,
+            resizable: true,
+            wrap: false,
+            editable: false,
+            filterModel: { on: true, mode: "AND", header: true },
+            selectionModel: { type: 'row', mode: 'single' },
+            scrollModel: { autoFit: true },
+            colModel: colM,
+            dataModel: dataM,
+            pageModel: { type: "local", rPP: 20 },
+            rowClick: function (evt, ui) {
+                ClearParamGrid("grid");
+
+                if (ui.rowData) {
+                    closeModal();
+                    var rowIndx = parseInt(ui.rowIndx);
+                    var record = ui.rowData;
+                    $("#PoID").val(record.ID);
+                    $("#PONo").val(record.PONo);
+                    $("#PODate").val(record.strPODate);
+                    $("#SupplierName").val(record.SupplierName);
+                    $("#SupplierID").val(record.SupplierID);
+                    $("#Vendor").val(record.PoVendorName);
+                    $("#VendorId").val(record.PoVendorId);
+                    $("#BED").val(record.BED);
+                    $("#Edu").val(record.Edu);
+                    $("#SHECess").val(record.SHECess);
+                    $("#TaxAmount").val(record.Tax);
+                    $("#GrossAmount").val(record.Amount);
+                    $("#Discount").val(record.Discount);
+                    $("#OtherCharges").val(record.OtherCharges);
+                    $("#GrandTotal").val(record.GrandTotal);
+                    ClosePopupWindow("POModal");
+
+                    $.ajax({
+                        type: "GET",
+                        url: "/PurchaseOrder/POdetails/",
+                        data: { POId: record.ID },
+                        datatype: "Json",
+                        success: function (data) {
+
+                            var dataMGrid = [];
+                            $.each(data, function (index, value) {
+                                var grdData = {
+                                    'ItemID': value.ItemID, 'PackSizeId': value.PackSizeId, 'ItemName': value.ItemName, 'CBatch': value.ItemCode, 'BatchName': value.ItemCode, 'UnitName': value.OrderingUnit,
+                                    'PackSize': value.PackSize, 'CQty': value.Qty, 'Qty': 0, 'CRate': value.Rate, 'CMrp': value.MRP, 'TaxRates': value.Tax, 'TaxAmount': value.TaxAmount,
+                                    'CFreeQty': value.FreeQty, 'FreeQty': '0', 'CExpiryDate': '01/01/2099', 'ExpiryDate': '01/01/2099',
+                                    'IGST': value.IGST, 'CGST': value.CGST, 'UGST': value.UGST, 'SGST': value.SGST, 'HSNCode': value.HSNCode, 'DescriptiveName': value.DescriptiveName,
+                                    'PoPendingQty': value.PoPendingQty, 'RecieveQty': 0, 'Discount': value.Discount, 'DiscountPer': value.discountper, OtherC: value.OtherC, 'TransC': value.TransC
+                                }
+                                dataMGrid.push(grdData);
+                            });
+                            $grid.pqGrid("option", "dataModel.data", dataMGrid);
+                            $grid.pqGrid("refreshDataAndView");
+                            var colM = $grid.pqGrid("option", "colModel");
+                            var childColM = colM[5].colModel;
+                            //childColM[2].editable = true;
+                            //childColM[3].editable = true;
+                            $grid.pqGrid("option", "colModel", colM);
+
+                            CalculateTotalAmount();
+                            showperAmount();
+                        }
+                    });
+                }
+            }
+        };
+        $POgrid = $("#POgrid").pqGrid(PO);
+    });
+    /********* GRN Search Grid *********/
+    $(document).ready(function () {
+        var dataM = { location: "local", sorting: 'local' };
+        var colM = [
+            { title: "", dataIndx: "ID", dataType: "integer", editable: false, hidden: true },
+            { title: "", dataIndx: "GrnTypeID", dataType: "integer", editable: false, hidden: true },
+            { title: "", dataIndx: "Storeid", dataType: "integer", editable: false, hidden: true },
+            { title: "", dataIndx: "PoID", dataType: "integer", editable: false, hidden: true },
+            { title: "", dataIndx: "SupplierID", dataType: "integer", editable: false, hidden: true },
+            { title: "", dataIndx: "strDCDate", dataType: "integer", editable: false, hidden: true },
+            { title: "", dataIndx: "strInvoiceDate", dataType: "integer", editable: false, hidden: true },
+            { title: "", dataIndx: "strInwardDate", dataType: "integer", editable: false, hidden: true },
+            { title: "", dataIndx: "strPODate", dataType: "integer", editable: false, hidden: true },
+            { title: "", dataIndx: "InvoiceNo", dataType: "integer", editable: false, hidden: true },
+            { title: "", dataIndx: "PONo", dataType: "integer", editable: false, hidden: true },
+            { title: "", dataIndx: "Amount", dataType: "integer", editable: false, hidden: true },
+            { title: "", dataIndx: "Transporter", dataType: "integer", editable: false, hidden: true },
+            { title: "", dataIndx: "VehicleNo", dataType: "integer", editable: false, hidden: true },
+            { title: "", dataIndx: "TotalTaxamt", dataType: "integer", editable: false, hidden: true },
+            { title: "", dataIndx: "TotalFORE", dataType: "integer", editable: false, hidden: true },
+            { title: "", dataIndx: "TotalExciseAmt", dataType: "integer", editable: false, hidden: true },
+            { title: "", dataIndx: "TotalDisc", dataType: "integer", editable: false, hidden: true },
+            { title: "", dataIndx: "InwardNo", dataType: "integer", editable: false, hidden: true },
+            { title: "", dataIndx: "GrnPaymentType", dataType: "integer", editable: false, hidden: true },
+            { title: "", dataIndx: "CrNoteAmt", dataType: "integer", editable: false, hidden: true },
+            { title: "", dataIndx: "TotalOtherAmt", dataType: "integer", editable: false, hidden: true },
+            { title: "", dataIndx: "TotalAmount", dataType: "integer", editable: false, hidden: true },
+            { title: "", dataIndx: "GRNType", dataType: "integer", editable: false, hidden: true },
+            { title: "", dataIndx: "Notes", dataType: "integer", editable: false, hidden: true },
+            {
+                title: "Project Name", dataIndx: "StoreName", width: "16%", dataType: "string", editable: false,
+                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            },
+            {
+                title: "GRN No", dataIndx: "GRNNo", width: "18%", dataType: "string", editable: false,
+                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            },
+            {
+                title: "GRN Date", dataIndx: "strGRNDate", width: "16%", dataType: "string", editable: false,
+                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            },
+            {
+                title: "Supplier", dataIndx: "SupplierName", width: "18%", dataType: "string", editable: false,
+                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            },
+            {
+                title: "DC No", dataIndx: "DCNo", width: "16%", dataType: "double", editable: false,
+                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            },
+            {
+                title: "Created-By", dataIndx: "InsertedByName", width: "16%", dataType: "string", editable: false,
+                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            },
+        ];
+
+        var setM = {
+            width: '100%',
+            height: 400,
+            sortable: false,
+            numberCell: { show: false },
+            hoverMode: 'cell',
+            showTop: false,
+            resizable: true,
+            scrollModel: { autoFit: true },
+            selectionModel: { type: 'row' },
+            draggable: false,
+            wrap: false,
+            editable: false,
+            columnBorders: true,
+            filterModel: { on: true, mode: "AND", header: true },
+            colModel: colM,
+            dataModel: dataM,
+            pageModel: { type: "local", rPP: 20 },
+            rowClick: function (evt, ui) {
+                ClearForm();
+                ClearParamGrid("grid");
+                if (ui.rowData) {
+                    var rowIndx = parseInt(ui.rowIndx);
+                    var record = ui.rowData;
+                    $("#ID").val(record.ID); $("#GRNNo").val(record.GRNNo);
+                    $("#DCNo").val(record.DCNo);
+                    viewAttachments(record.ID);
+                    $('#GRNDate').data({ date: record.strGRNDate });
+                    $('#GRNDate').datetimepicker('update');
+                    $('#GRNDate').datetimepicker().children('input').val(record.strGRNDate);
+                    grndate = record.strGRNDate;
+                    storeName = record.StoreName;
+                    $('#DCDate').data({ date: record.strDCDate });
+                    $('#DCDate').datetimepicker('update');
+                    $('#DCDate').datetimepicker().children('input').val(record.strDCDate);
+
+                    $('#InvoiceDate').data({ date: record.strInvoiceDate });
+                    $('#InvoiceDate').datetimepicker('update');
+                    $('#InvoiceDate').datetimepicker().children('input').val(record.strInvoiceDate);
+
+                    $('#PODate').val(record.strPODate);
+
+                    $('#InwardDate').data({ date: record.strInwardDate });
+                    $('#InwardDate').datetimepicker('update');
+                    $('#InwardDate').datetimepicker().children('input').val(record.strInwardDate);
+
+                    $('#IssueDate').data({ date: record.strIssueDate });
+                    $('#IssueDate').datetimepicker('update');
+                    $('#IssueDate').datetimepicker().children('input').val(record.strIssueDate);
+
+                    $("#InvoiceNo").val(record.InvoiceNo); $("#PoID").val(record.PoID); $("#PONo").val(record.PONo);
+                    $("#InwardNo").val(record.InwardNo);
+                    $("#GrnTypeID").val(record.GrnTypeID);
+                    $("#BED").val(record.BED);
+                    $("#Edu").val(record.Edu); $("#Service").prop('checked', record.Service); $("#Warranty").prop('checked', record.Warranty);
+                    $("#SHECess").val(record.SHECess);
+                    if (record.GrnTypeID == 1) {
+                        $("#btnShowItems").hide();
+                        $("#PONo").prop('disabled', false);
+                        $("#Vendor").prop('disabled', true);
+                        $("#SupplierName").prop('disabled', true);
+                    }
+                    else {
+                        $("#btnShowItems").show();
+                        $("#PONo").prop('disabled', true);
+                        $("#SupplierName").prop('disabled', true);
+                        $("#Vendor").prop('disabled', false);
+                    }
+                    $("#ddlStores").val(record.StoreId); $("#Vendor").val(record.Vendor); $("#VendorId").val(record.VendorId);
+                    $("#SupplierID").val(record.SupplierID); $("#SupplierName").val(record.SupplierName); $("#VehicleNo").val(record.VehicleNo); $("#Transporter").val(record.Transporter);
+                    $("#Notes").val(record.Notes); $('input:radio[name="PaymentMode"][value="' + record.GrnPaymentType + '"]').prop('checked', true); $("[name='']").prop('checked', true);
+                    $("#GrossAmount").val(record.Amount); $("#TaxAmount").val(record.TotalTaxamt); $("#OtherCharges").val(record.TotalOtherAmt); $("#Discount").val(record.TotalDisc);
+                    //$("#CR_Note_Amount").val(record.CrNoteAmt);
+                    $("#Rounding_Off").val(record.Roundoff); $("#GrandTotal").val(record.TotalAmount);
+                    $("#StoreName").val(record.StoreName);
+
+                    $.ajax({
+                        type: "GET",
+                        url: "/GRN/GRNDetails/",
+                        data: { GRNId: record.ID },
+                        datatype: "Json",
+                        success: function (data) {
+                            var dataMGrid = [];
+                            $.each(data, function (key, value) {
+                                var grdData = {
+                                    'ID': value.ID, 'ItemID': value.ItemID, 'PackSizeId': value.PackSizeId, 'ItemName': value.ItemName, 'UnitName': value.UnitName, 'PackSize': value.PackSize,
+                                    'CQty': value.CQty, 'CFreeQty': value.CFreeQty, 'CRate': value.CRate, 'CMrp': value.CMrp, 'CBatch': value.CBatch, 'CExpiryDate': value.strCExpiryDate,
+                                    'Qty': value.Qty, 'FreeQty': value.FreeQty, 'Rate': value.Rate, 'MRP': value.MRP, 'BatchName': value.BatchName, 'ExpiryDate': value.strExpiryDate,
+                                    'TaxAmount': value.TaxAmount, 'DiscountPer': value.discountper, 'Discount': value.Discount, 'Taxes': value.Taxes, 'TaxRates': value.TaxRates,
+                                    'TransC': value.TransC, 'InstallC': value.InstallC, 'ServiceAmt': value.ServiceAmt, OtherC: value.OtherC, 'CustomDuty': value.CustomDuty, 'Amount': value.Amount,
+                                    'IGST': value.IGST, 'CGST': value.CGST, 'UGST': value.UGST, 'SGST': value.SGST, 'HSNCode': value.HSNCode, 'DescriptiveName': value.DescriptiveName,
+                                    'RejectedQty': value.RejectedQty, 'RejectionReason': value.RejectionReason, 'RecieveQty': value.RecieveQty, 'PoPendingQty': value.PopendingQty//PopendingQty
+                                }
+                                dataMGrid.push(grdData);
+                            });
+                            $grid.pqGrid("option", "dataModel.data", dataMGrid);
+                            $grid.pqGrid("refreshDataAndView");
+                            showperAmount();
+                        }
+                    });
+                    closeModal();
+                }
+            }
+        };
+        $SearchGrid = $("#searchgrid").pqGrid(setM);
+    });
+    /********* Supplier Grid *********/
+    $(document).ready(function () {
+        var SupplierM = {
+            height: 400,
+            autoSizeInterval: 0,
+            scrollModel: { autoFit: true },
+            dragColumns: { enabled: false },
+            hoverMode: 'cell',
+            editor: { type: 'textbox' },
+            filterModel: { on: true, mode: "AND", header: true },
+            showTop: false,
+            resizable: true,
+            virtualX: true,
+            colModel: colSupplierM,
+            dataModel: dataSupplierM,
+            pageModel: { type: "local", rPP: 20 },
+            toggle: function (evt, ui) {
+                if (ui.state == 'max') {
+                    $(".ui-dialog,.ui-widget-overlay").css('position', 'static');
+                }
+                else {
+                    $(".ui-dialog,.ui-widget-overlay").css('position', 'absolute');
+                }
+            },
+            cellClick: function (evt, ui) {
+                if (ui.rowData) {
+                    var rowIndx = parseInt(ui.rowIndx);
+                    var record = ui.rowData;
+                    $("#SupplierID").val(record.ID);
+                    $("#SupplierName").val(record.Name);
+                    ClosePopupWindow("SupplierModal");
+                }
+            }
+        };
+        $("#SupplierName").on('click', function () {
+            ShowSupplierListPoup("Suppliergrid", "SupplierModal", SupplierM, "/Master/AllSupplier/");
+        });
+    });
+    $(document).ready(function () {
+        $('#Vendor').on('click', function () {
+            LoadVendor();
+
+        });
+
+        /********* Build Vendor Grid *********/
+        var datavendor = { location: "local", sorting: 'local' }
+        var colvendor = [
+            { title: "", dataIndx: "VendorId", dataType: "integer", hidden: true },
+            { title: "Code", dataIndx: "Code", width: 100, filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } },
+            { title: "Vendor", dataIndx: "Name", width: 200, filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } }
+        ];
+        var vendor = {
+            height: 500,
+            sortable: false,
+            numberCell: { show: false },
+            hoverMode: 'cell',
+            showTop: false,
+            resizable: true,
+            scrollModel: { autoFit: true },
+            editable: false,
+            filterModel: { on: true, mode: "AND", header: true },
+            colModel: colvendor,
+            dataModel: datavendor,
+            virtualX: true,
+            virtualY: true,
+            pageModel: { type: "local", rPP: 20 },
+            cellClick: function (evt, ui) {
+                if (ui.rowData) {
+                    var rowIndx = parseInt(ui.rowIndx);
+                    var record = ui.rowData;
+                    $("#VendorId").val(record.VendorId);
+                    $("#Vendor").val(record.Name);
+                    ClosePopupWindow("VendorModal");
+                }
+            }
+        };
+        $Vendor = $("#vendorgrid").pqGrid(vendor);
+        //LoadManufacturergrid();
+    });
+    function LoadVendor() {
+        $("#VendorModal").dialog({
+            height: 500,
+            width: 700,
+            modal: true,
+            open: function (evt, ui) {
+                $.ajax({
+                    type: "GET",
+                    url: "/VendorMaster/AllVendor",
+                    datatype: "Json",
+                    beforeSend: function () {
+                        $Vendor.pqGrid("showLoading");
+                    },
+                    complete: function () {
+                        $Vendor.pqGrid("hideLoading");
+                    },
+                    success: function (data) {
+                        $Vendor.pqGrid("hideLoading");
+                        $Vendor.pqGrid("option", "dataModel.data", data.records);
+                        $Vendor.pqGrid("refreshDataAndView");
+                    }
+                });
+            }
+        });
+
+    }
+    $('#btnPrint').on('click', function () {
+        if ($("#ID").val() === "" || $("#ID").val() === 0) {
+            ShowAlert("error", "Please Select GRN");
+            return;
+        }
+        $("#ReportModal").modal('show');
+        ReportValidationCheck($("#ID").val());
+    });
+
+
+    function ReportValidationCheck(grnid) {
+        var url = "";
+        url = "../../Reports/ReportViewer.aspx?reportid=" +
+            142 +
+            "&fdate=" +
+            grndate +
+            "&tdate=" +
+            grndate +
+            "&storeid=" +
+            $("#ddlStores").val() + "&suppid=" + 0 + "&GrnId=" + grnid + "&sname=" + storeName;
+
+        console.log(url);
+        var myframe = document.getElementById("iframeReportViewer");
+        if (myframe != null) {
+            if (myframe.src) {
+                myframe.src = url;
+            }
+            else if (myframe.contentWindow != null && myframe.contentWindow.location != null) {
+                myframe.contentWindow.location = url;
+            }
+            else {
+                myframe.setAttribute('src', url);
+            }
+            return false;
+        }
+    }
+
+    $("#btnSearch").on('click', function () {
+        $("#SearchGridModal").modal('show');
+        LoadSearchGrid();
+    });
+    function closeModal() {
+        $("#SearchGridModal").modal('hide');
+        $("#ReportModal").modal('hide');
+    }
+
+
+    //*******************Image View********************//
+    $("#btnShowAttachments").click(function () {
+        var ID = $("#ID").val();
+        if (ID === "" || ID === 0) {
+            ShowAlert("error", "Please Select Request");
+            return;
+        }
+        $.ajax({
+            type: "GET",
+            url: "/ScanDoc/ScanDoc/GetScanDocUrl",
+            data: { FileId: ID, ScanDocSubTypeId: 19 },
+            datatype: "Json",
+            success: function (data) {
+                if (data != '') {
+                    ViewSlideShow(data, 'slideshow-container', appSetting);
+                }
+                else {
+                    ShowAlert("error", "No Documents Found")
+                }
+            }
+        });
+    })
+
+    /////*********Image Slide Show in Modal**********************//
+    let ImgIndex = 1;
+
+    function plusSlides(n) {
+        showGallary(ImgIndex += n);
+    }
+    function showGallary(n) {
+        let i;
+        let ImgSlides = document.getElementsByClassName("imgSlide");
+        let video = document.getElementById("video");
+        if (n > ImgSlides.length) { ImgIndex = 1 }
+        if (n < 1) { ImgIndex = ImgSlides.length }
+        for (i = 0; i < ImgSlides.length; i++) {
+            ImgSlides[i].style.display = "none";
+        }
+        ImgSlides[ImgIndex - 1].style.display = "block";
+        if (video) {
+            video.play();
+        }
+    }
+
+    function closeImageModal() {
+        $("#slideshow-container").empty();
+        $("#ViewModal").css('display', 'none');
+    }
+    //***********Close SlideShow Modal*********************////
+
+    //************View uploaded Images in List ******//
+    function viewAttachments(Id) {
+        $.ajax({
+            type: "GET",
+            url: "/ScanDoc/ScanDoc/GetScanDocUrl",
+            data: { FileId: Id, ScanDocSubTypeId: 19 },
+            datatype: "Json",
+            success: function (data) {
+                if (data != '') {
+                    $.each(data, function (key, value) {
+                        DisplayUploadedDocuments("appendImg", value, appSetting, 19);
+                    });
+                }
+            }
+        });
+    }
+    // on upload of Image and Video this function run
+    var fileTypes = ['jpg', 'jpeg', 'png', 'pdf'];
+    $(document).on("change", '.uploadup', function (z) {
+        $("#preApproveImg").empty();
+        let Img = $("#files").get(0).files;
+        uploadImg(Img, 'preApproveImg');
+    });
+
+    $(document).on("click", '.imgclick', function (e) {
+        let name = e.currentTarget.getAttribute("name");
+        let files = $("#files").get(0).files;
+        for (f = 0; f < files.length; f++) {
+            if (files.item(f).name == name) {
+                imagefile = $("#files").get(0).files[f];
+                imagefile_url = URL.createObjectURL(imagefile);
+                window.open(imagefile_url, '_blank');
+            }
+        }
+    });
+
+</script>
+

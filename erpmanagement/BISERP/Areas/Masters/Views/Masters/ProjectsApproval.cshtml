@@ -1,0 +1,552 @@
+﻿@model BISERP.Areas.Masters.Models.StoreMasterModel
+<script>
+    $(function () {
+        $(".datepicker").datepicker({
+            showOn: "button",
+            buttonImage: "/Content/images/calendar.gif",
+            buttonImageOnly: true,
+            buttonText: "Select date",
+            'changeMonth': true,
+            'changeYear': true,
+            'yearRange': '2021:2030',
+            "format": "dd-M-yyyy",
+            todayBtn: "linked",
+            pickerPosition: "bottom-left",
+            "todayHighlight": true,
+            autoclose: true,
+        }).datepicker("setDate", "");
+        $("#anim").change(function () {
+            $(".datepicker").datepicker("option", "showAnim", "fadeIn");
+        });
+    });
+
+
+</script>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <h5 class="page-header orangeDottedBottomBorder">Project Projects Approval</h5>
+    <div id="SearchGridModal" class="modal fade" role="dialog" data-backdrop="false">
+        <div class="modal-dialog find-search-grid-modal">
+            <div class="modal-content gridmodal-content">
+                <div class="modal-header gridmodal-header">
+                    <button type="button" class="close" onclick="closeModal()">&times;</button>
+                    <h4 class="modal-title">Approved Projects</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="fill">
+                        <div id="ApprovedStoreGrid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="fill">
+                    <div class="submit-row">
+                        <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                        <button type="button" class="btn btn-primary" id="btnreset" onclick="ClearForm()">Reset</button>
+                        <button type="button" class="btn btn-info" id="btnSearch">Find</button>
+                        <button type="button" class="btn btn-primary" id="btnShowAttachments">View Upload</button>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="row">
+                        <div class="col-sm-2">
+                            @Html.Label("Select Project", new { @class = "required" })
+                            @Html.DropDownList("ddlStore", new SelectList(string.Empty, "Value", "Text"), "", new { @class = "wrapperdropdown-content form-control" })
+                        </div>
+                        <div class="col-sm-2" style="text-align: center;">
+                            <br />
+                            @Html.LabelFor(model => model.ProjectsApproved)
+                            @Html.CheckBoxFor(model => model.ProjectsApproved)
+                            @Html.ValidationMessageFor(model => model.ProjectsApproved)
+                        </div>
+                    </div>
+                    <div class="divider"></div>
+                    <fieldset class="fieldsetCustom">
+                        <legend class="legendCustom">Project Details</legend>
+                        <div class="row">
+                            <div class="col-sm-2">
+                                @Html.LabelFor(model => model.Code, new { @class = "" })
+                                @Html.TextBoxFor(model => model.Code, new { @class = "form-control", @disabled = "disabled" })
+
+                            </div>
+                            <div class="col-sm-2">
+                                @Html.LabelFor(model => model.Name, new { @class = "" })
+                                @Html.TextBoxFor(model => model.Name, new { @class = "form-control", @disabled = "disabled" })
+                                @Html.HiddenFor(m => m.ID)
+                            </div>
+
+                            <div class="col-sm-2">
+                                @Html.LabelFor(model => model.ProjectBudget, new { @class = "" })
+                                @Html.TextBoxFor(model => model.ProjectBudget, new { @class = "form-control", @disabled = "disabled" })
+                            </div>
+                            <div class="col-sm-2">
+                                @Html.Label("ClientName", new { @class = "" })
+                                @Html.DropDownList("ddlClient", new SelectList(string.Empty, "Value", "Text"), "Select Client ", new { @class = "wrapperdropdown-content form-control", @disabled = "disabled" })
+                            </div>
+                            <div class="col-sm-2">
+                                @Html.Label("Remark")
+                                @Html.TextBoxFor(model => model.Description, new { @class = "form-control", @disabled = "disabled" })
+                            </div>
+                            <div class="col-sm-2">
+                                @Html.LabelFor(model => model.ClientPoNo, new { @class = "" })
+                                @Html.TextBoxFor(model => model.ClientPoNo, new { @class = "form-control", @disabled = "disabled" })
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-2">
+                                @Html.LabelFor(m => m.StartDate)
+                                @Html.TextBoxFor(model => model.StartDate, new { @class = "form-control datepicker", @disabled = "disabled" })
+
+                            </div>
+                            <div class="col-sm-2">
+                                @Html.LabelFor(m => m.DueDate)
+                                @Html.TextBoxFor(model => model.DueDate, new { @class = "form-control datepicker", @disabled = "disabled" })
+
+                            </div>
+                        </div>
+                    </fieldset>
+                    <div class="divider"></div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <fieldset class="fieldsetCustom">
+                                <legend class="legendCustom">Projects Status</legend>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        @Html.LabelFor(model => model.ProjectsStartDate, new { @class = "" })
+                                        @Html.TextBoxFor(model => model.ProjectsStartDate, new { @class = "form-control datepicker" })
+
+                                    </div>
+                                    <div class="col-sm-4" hidden>
+                                        @Html.LabelFor(model => model.ProjectsRevisionDate, new { @class = "" })
+                                        @Html.TextBoxFor(model => model.ProjectsRevisionDate, new { @class = "form-control datepicker" })
+                                    </div>
+                                    <div class="col-sm-4">
+                                        @Html.LabelFor(model => model.ProjectsApprovalDate, new { @class = "" })
+                                        @Html.TextBoxFor(model => model.ProjectsApprovalDate, new { @class = "form-control datepicker" })
+                                    </div>
+                                    <div class="col-sm-4">
+                                        @Html.Label("Upload")
+                                        <input type='file' id="files" multiple accept=".jpg,.jpeg,.png,.pdf" class="form-control btn-primary uploadup" />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6"><ul class="list" id="appendImg"> </ul></div>
+                                    <div class="col-sm-6"><ul class="list" id="preApproveImg"> </ul></div>
+                                </div>
+                            </fieldset>
+                        </div>
+                        <div class="col-sm-6">
+                            <fieldset class="fieldsetCustom">
+                                <legend class="legendCustom">Create New Revision</legend>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <label for="NewRevisionDate">RevisionDate</label>
+                                        <input id="NewRevisionDate" class="form-control datepicker" />
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <label for="NewComment">Comment</label>
+                                        <textarea id="NewComment" class="form-control"></textarea>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                    <div class="divider"></div>
+                    <fieldset class="fieldsetCustom">
+                        <legend class="legendCustom">Revision Details</legend>
+                        <div id="RevisionDetailsGrid"></div>
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+    </div>
+    @*The Modal*@
+    <div id="ViewModal" class="modal slideModal">
+        @*Modal content*@
+        <div class="modal-content slideContent">
+            <span class="close slideClose" onclick="closeImageModal()"> &#x2715 </span>
+            <div id="slideshow-container">
+                <!--Slidshow-->
+            </div>
+            <div>
+                <a class="prev slide-prev" onclick="plusSlides(-1)">❮</a>
+                <a class="next slide-next" onclick="plusSlides(1)">❯</a>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    var appSetting = '@BISERP.Common.Constants.ScandocUrl';
+
+    var storeDB = [];
+
+    $.ajax({
+        type: "GET",
+        url: "/ClientMaster/AllClient",
+        datatype: "Json",
+        success: function (data) {
+            $.each(data.records, function (index, value) {
+                $('#ddlClient').append('<option value="' + value.ClientId + '">' + value.Name + '</option>');
+            });
+        }
+    });
+
+    loadStoreMaster();
+    function loadStoreMaster() {
+         $.ajax({
+            type: "GET",
+            url: '@Url.Action("AllStoreMasters", "StoreMaster")',
+            datatype: "Json",
+            success: function (data) {
+                storeDB = data.records;
+                let unApproved = storeDB.filter(obj => obj.ProjectsApproved === false);
+                $('#ddlStore').empty();
+                $('#ddlStore').append('<option value="">' + "Select Project"+ '</option>');
+                $.each(unApproved, function (index, value) {
+                    $('#ddlStore').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                });
+            }
+        });
+    }
+
+    //------------------------Find's Grid (Search Grid) ---------------------------
+    var dataApprovedStoreGrid = { location: "local" };
+    var colsApprovedStoreGrid = [
+        {
+            title: "Code", dataIndx: "Code", width: '30%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Name", dataIndx: "Name", width: '50%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Project Budget", dataIndx: "ProjectBudget", width: '18%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        }
+    ];
+    var setApprovedStoreGrid = {
+        width: 'auto',
+        height: '360',
+        maxWidth: '100%',
+        minWidth: 800,
+        sortable: true,
+        autofill: true,
+        numberCell: { show: true },
+        hoverMode: 'row',
+        showTop: false,
+        showTitle: true,
+        showBottom: true,
+        resizable: true,
+        scrollModel: { autoFit: true },
+        filterModel: { on: true, mode: "AND", header: true },
+        draggable: false,
+        hwrap: false,
+        wrap: false,
+        editable: false,
+        columnBorders: true,
+        menuIcon: true,
+        selectionModel: { type: 'row', mode: 'single', cbHeader: false },
+        colModel: colsApprovedStoreGrid,
+        dataModel: dataApprovedStoreGrid,
+        pageModel: { type: "local" },
+        rowClick: function (evt, ui) {
+            if (ui.rowData) {
+                $("#ddlStore").prop("disabled", true);
+                $("#ID").val(ui.rowData.ID);
+                $("#Code").val(ui.rowData.Code);
+                $("#Name").val(ui.rowData.Name);
+                $("#ddlClient").val(ui.rowData.ClientId);
+                $("#ProjectBudget").val(ui.rowData.ProjectBudget);
+                $("#Description").val(ui.rowData.Description);
+                $("#ClientPoNo").val(ui.rowData.ClientPoNo);
+                $("#StartDate").datepicker().datepicker("setDate", ui.rowData.strStartDate);
+                $("#DueDate").datepicker().datepicker("setDate", ui.rowData.strDueDate);
+
+                $("#ProjectsStartDate").datepicker().datepicker("setDate", ui.rowData.strProjectsStartDate);
+                $("#ProjectsRevisionDate").datepicker().datepicker("setDate", ui.rowData.strProjectsRevisionDate);
+                $("#ProjectsApprovalDate").datepicker().datepicker("setDate", ui.rowData.strProjectsApprovalDate);
+                $("#ProjectsApproved").prop('checked', ui.rowData.ProjectsApproved);
+                GetRevisionDetails();
+                closeModal();
+                viewAttachments(ui.rowData.ID);
+            }
+        }
+    }
+    var $ApprovedStoreGrid = $("#ApprovedStoreGrid").pqGrid(setApprovedStoreGrid);
+
+    function loadApprovedStore() {
+        if (storeDB) {
+            let data = storeDB.filter(obj => obj.ProjectsApproved == true);
+            $("#ApprovedStoreGrid").pqGrid("hideLoading");
+            $("#ApprovedStoreGrid").pqGrid("option", "dataModel.data", data);
+            $("#ApprovedStoreGrid").pqGrid("refreshDataAndView");
+            PqGridRefreshClick($ApprovedStoreGrid);
+        }
+    }
+
+    //----------------------RevisionDetailsGrid-------------------------
+
+    var dataRevisionDetailsGrid = { location: "local" };
+    var colsRevisionDetailsGrid = [
+        {
+            title: "RevisionDate", dataIndx: "strNewRevisionDate", width: '25%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Comment", dataIndx: "NewComment", width: '74%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'], editor: { type: "textarea", attr: "rows=5" }  }
+        }
+    ];
+    var setRevisionDetailsGrid = {
+        width: 'auto',
+        height: '360',
+        maxWidth: '100%',
+        minWidth: 800,
+        sortable: true,
+        autofill: true,
+        numberCell: { show: true },
+        hoverMode: 'row',
+        showTop: false,
+        showTitle: true,
+        showBottom: true,
+        resizable: true,
+        scrollModel: { autoFit: true },
+        filterModel: { on: true, mode: "AND", header: true },
+        draggable: false,
+        hwrap: false,
+        wrap: false,
+        editable: false,
+        columnBorders: true,
+        menuIcon: true,
+        selectionModel: { type: 'row', mode: 'single', cbHeader: false },
+        colModel: colsRevisionDetailsGrid,
+        dataModel: dataRevisionDetailsGrid,
+        pageModel: { type: "local" }
+    }
+    var $RevisionDetailsGrid = $("#RevisionDetailsGrid").pqGrid(setRevisionDetailsGrid);
+
+    function GetRevisionDetails() {
+        var antiForgeryToken = $("input[LoadItemDetail=__RequestVerificationToken]").val();
+        $.ajax({
+
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            url: "/StoreMaster/GetRevisionDetails",
+            data: { StoreID: $("#ID").val(), Department:'Projects'},
+            dataType: "json",
+            beforeSend: function () {
+                $RevisionDetailsGrid.pqGrid("showLoading");
+            },
+            complete: function () {
+                $RevisionDetailsGrid.pqGrid("hideLoading");
+            },
+            success: function (response) {
+                if (response.data.length > 0) {
+                    $("#RevisionDetailsGrid").pqGrid("hideLoading");
+                    $("#RevisionDetailsGrid").pqGrid("option", "dataModel.data", response.data);
+                    $("#RevisionDetailsGrid").pqGrid("refreshDataAndView");
+                    PqGridRefreshClick($RevisionDetailsGrid);
+                }
+            }
+        });
+    }
+
+    $("#ddlStore").change(() => {
+        let data = storeDB.filter(obj => obj.ID == $("#ddlStore").val());
+        $("#ID").val(data[0].ID);
+        $("#Code").val(data[0].Code);
+        $("#Name").val(data[0].Name);
+        $("#ddlClient").val(data[0].ClientId);
+        $("#ProjectBudget").val(data[0].ProjectBudget);
+        $("#Description").val(data[0].Description);
+        $("#ClientPoNo").val(data[0].ClientPoNo);
+        $("#StartDate").datepicker().datepicker("setDate", data[0].strStartDate);
+        $("#DueDate").datepicker().datepicker("setDate", data[0].strDueDate);
+
+        $("#ProjectsStartDate").datepicker().datepicker("setDate", data[0].strProjectsStartDate);
+        $("#ProjectsRevisionDate").datepicker().datepicker("setDate", data[0].strProjectsRevisionDate);
+        $("#ProjectsApprovalDate").datepicker().datepicker("setDate", data[0].strProjectsApprovalDate);
+        $("#ProjectsApproved").prop('checked', data[0].ProjectsApproved);
+        GetRevisionDetails();
+    });
+
+    $("#btnSave").click(() => {
+        if ($("#ID").val() === "") {
+            ShowAlert("error", "Please select Project first!");
+            return false;
+        }
+        let ProjectsStartDate = $("#ProjectsStartDate").val() == "" ? null : $("#ProjectsStartDate").val();
+        let ProjectsRevisionDate = $("#ProjectsRevisionDate").val() == "" ? null : $("#ProjectsRevisionDate").val();
+        let ProjectsApprovalDate = $("#ProjectsApprovalDate").val() == "" ? null : $("#ProjectsApprovalDate").val();
+
+        let NewRevisionDate = $("#NewRevisionDate").val() == "" ? null : $("#NewRevisionDate").val();
+        let NewComment = $("#NewComment").val() == "" ? null : $("#NewComment").val();
+
+        var details = JSON.stringify({
+            ID: $("#ID").val(),
+            ProjectsStartDate: ProjectsStartDate,
+            ProjectsRevisionDate: ProjectsRevisionDate,
+            ProjectsApprovalDate: ProjectsApprovalDate,
+            ProjectsApproved: $("#ProjectsApproved").prop('checked'),
+
+            NewRevisionDate: NewRevisionDate,
+            NewComment: NewComment,
+            Department: 'Projects'
+        });
+        $.ajax(
+            {
+                type: "POST", //HTTP POST Method
+                traditional: true,
+                contentType: 'application/json; charset=utf-8',
+                url: '/StoreMaster/SaveStoreMasterApproval', // Controller/View
+                data: details,
+                success: function (msg) {
+                    if (msg.success) {
+                        var fileSaveMsg = "";
+                        try {
+                            SaveScandoc("files", $("#ID").val(), "StoreMaster", "ProjectsApproval");
+                        } catch (err) {
+                            fileSaveMsg = "But failed to save attached files."
+                        }
+                        finally {
+                            ShowAlert("success", "Approval details saved successfuly.\n" + fileSaveMsg);
+                        }
+                        loadStoreMaster();
+                        ClearForm();
+                    }
+                    else {
+                        ShowAlert("error", msg.Message);
+                    }
+                }
+            });
+    });
+
+    $("#btnSearch").on('click', function () {
+        $("#SearchGridModal").modal('show');
+        loadApprovedStore();
+    });
+
+    function closeModal() {
+        $("#SearchGridModal").modal('hide');
+    }
+
+    function ClearForm() {
+        $("#ddlStore").prop("disabled", false);
+        $("#ddlStore").val("");
+        $("#ID").val("");
+        $("#Code").val("");
+        $("#Name").val("");
+        $("#ddlClient").val("");
+        $("#Description").val("");
+        $("#ProjectBudget").val("");
+        $("#ClientPoNo").val("");
+        $("#NewComment").val("");
+        $("#ProjectsApproved").prop('checked', false);
+        $(".datepicker").datepicker().datepicker("setDate", "");
+        ClearParamGrid('RevisionDetailsGrid');
+        $("#preApproveImg").empty(); $("#appendImg").empty(); $("#files").val(null);
+    }
+
+
+
+    // on upload of Image and Video this function run
+    var fileTypes = ['jpg', 'jpeg', 'png', 'pdf'];
+    $(document).on("change", '.uploadup', function (z) {
+        $("#preApproveImg").empty();
+        let Img = $("#files").get(0).files;
+        uploadImg(Img, 'preApproveImg');
+    });
+
+    $(document).on("click", '.imgclick', function (e) {
+        let name = e.currentTarget.getAttribute("name");
+        let files = $("#files").get(0).files;
+        for (f = 0; f < files.length; f++) {
+            if (files.item(f).name == name) {
+                imagefile = $("#files").get(0).files[f];
+                imagefile_url = URL.createObjectURL(imagefile);
+                window.open(imagefile_url, '_blank');
+            }
+        }
+    });
+
+    //************View uploaded Images in List ******//
+    function viewAttachments(Id) {
+        $.ajax({
+            type: "GET",
+            url: "/ScanDoc/ScanDoc/GetScanDocUrl",
+            data: { FileId: Id, ScanDocSubTypeId: 26 },
+            datatype: "Json",
+            success: function (data) {
+                if (data != '') {
+                    $.each(data, function (key, value) {
+                        DisplayUploadedDocuments("appendImg", value, appSetting, 26);
+                    });
+                }
+            }
+        });
+    }
+
+    $("#btnShowAttachments").click(function () {
+        let storeId = $("#ID").val();
+        if ($("#ID").val() === "" || $("#ID").val() == undefined) {
+            ShowAlert("error", "Please select Project first");
+            return;
+        }
+        else {
+
+            $.ajax({
+                type: "GET",
+                url: "/ScanDoc/ScanDoc/GetScanDocUrl",
+                data: { FileId: storeId, ScanDocSubTypeId: 26 },
+                datatype: "Json",
+                success: function (data) {
+                    if (data != '') {
+                        ViewSlideShow(data, 'slideshow-container', appSetting);
+                    }
+                    else {
+                        ShowAlert("error", "No Documents Found");
+                    }
+                }
+            });
+        }
+    })
+
+
+
+    let ImgIndex = 1;
+
+    function plusSlides(n) {
+        showGallary(ImgIndex += n);
+    }
+    function showGallary(n) {
+        let i;
+        let ImgSlides = document.getElementsByClassName("imgSlide");
+        let video = document.getElementById("video");
+        if (n > ImgSlides.length) { ImgIndex = 1 }
+        if (n < 1) { ImgIndex = ImgSlides.length }
+        for (i = 0; i < ImgSlides.length; i++) {
+            ImgSlides[i].style.display = "none";
+        }
+        ImgSlides[ImgIndex - 1].style.display = "block";
+        if (video) {
+            video.play();
+        }
+    }
+
+    function closeImageModal() {
+        $("#slideshow-container").empty();
+        $("#ViewModal").css('display', 'none');
+    }
+
+
+</script>

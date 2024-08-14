@@ -1,0 +1,416 @@
+﻿@model BISERP.Areas.Training.Models.TrainingTempHeaderModel
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <fieldset>
+        <div id="content">
+            <div class="panel-group">
+                <div class="panel-groupingBoder">
+                    <div class="panel-heading">
+                        <div class="panel-title">
+                            <a class="collapsediv" data-toggle="collapse" href="#SearchDetails" style="color: white">
+                                Search Details
+                            </a>
+                        </div>
+                    </div>
+                    <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                        <div class="panel-body">
+                            <div class="container fill">
+                                <div id="searchgrid"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="collapse2" class="panel-groupingBoder">
+                    <div class=" panel-heading">
+                        <div class="panel-title">
+                            <a class="collapsediv" data-toggle="collapse" href="#FilterCriteria" style="color: white" >
+                                Filter Criteria
+                            </a>
+                        </div>
+                    </div>
+                    <div id="FilterCriteria" class="panel-collapse collapse in" aria-expanded="true">
+                        <div class="panel-body">
+                            <fieldset>
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        @Html.Label("Training Type", new { @class = "required" })
+                                        @Html.DropDownList("ddlTrainingType", new SelectList(string.Empty, "Value", "Text"), " -- Select Traning Type --", new { @class = "wrapperdropdown-content form-control" })
+                                    </div>
+                                    <div class="col-md-2">
+                                        @Html.Label("Batch", new { @class = "required" })
+                                        @Html.DropDownList("ddlBatch", new SelectList(string.Empty, "Value", "Text"), "-- Select Batch --", new { @class = "wrapperdropdown-content form-control" })
+                                        @Html.HiddenFor(m => m.BatchId)
+                                    </div>
+                                    <div class="col-md-4 butn-bottom-as-label">
+                                        <button type="button" id="btnAddNew" class="btn btn-success">Add Daywise Performance</button>
+                                        <button type="button" id="btnClear" class="btn btn-success">Clear Entries</button>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="collapse3" class="panel-groupingBoder" style="">
+                        <div class=" panel-heading">
+                            <div class="panel-title">
+                                <a class="collapsediv" data-toggle="collapse" href="#EntryForm" style="color: white">
+                                    Entry Form
+                                </a>
+                            </div>
+                        </div>
+                        <div id="EntryForm" class="panel-collapse collapse in" aria-expanded="true">
+                            <div class="panel-body">
+                                    <div class="row ">
+                                        <div class="col-md-2">
+                                            @Html.Label("Trainig Name", new { @class = "required" })
+                                            @Html.TextBoxFor(model => model.TrainingName, new { @id = "TrainingName", @class = "form-control", @minlength = "3" })
+                                            @Html.HiddenFor(model => model.TrainingTemplateId, new { @id = "TrainingTemplateId" })
+                                        </div>
+                                        <div class="col-md-2">
+                                            @Html.Label("Trainig Code", new { @class = "required" })
+                                            @Html.TextBoxFor(model => model.TrainingCode, new { @id = "TrainingCode", @class = "form-control" })
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div id="content">
+                                            <div id="content-tab">
+                                                <ul id="tabs" class="nav nav-tabs" data-tabs="tabs"></ul>
+                                                <div id="my-tab-content" class="tab-content">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </fieldset>
+    <script type="text/javascript">
+        var $SearchGrid;
+        var partialResult;
+        var tabIds = [];
+
+        function handleException(request) {
+            var msg = "";
+            msg += "Code: " + request.status + "\n";
+            msg += "Text: " + request.statusText + "\n";
+            if (request.responseJSON != null) {
+                msg += "Message" +
+                    request.responseJSON.Message +
+                    "\n";
+            }
+            ShowAlert("error", msg);
+        }
+
+        $.ajax({
+            type: "GET",
+            url: "/TrainingType/AllActiveTrainingType",
+            datatype: "Json",
+            success: function(data) {
+                $.each(data,
+                    function(index, value) {
+                        $('#ddlTrainingType')
+                            .append('<option value="' + value.TypeId + '">' + value.TrainingType + '</option>');
+                    });
+            }
+        });
+
+        $('select#ddlTrainingType')
+            .change(function() {
+                Fillslot();
+            });
+
+        function Fillslot(selectedVal) {
+            var trainigtypeid = $("#ddlTrainingType").val();
+            if (trainigtypeid.length > 0)
+                $.ajax({
+                    type: "GET",
+                    url: '/BatchMaster/GetTraniningWiseSlot',
+                    data: { TrainingTypeId: trainigtypeid },
+                    datatype: "Json",
+                    success: function (data) {
+                           
+                        $("#ddlBatch").html("");
+                        InsertDefaultSelect($('#ddlBatch'));
+                        $.each(data,
+                            function(index, value) {
+                                $('#ddlBatch')
+                                    .append('<option value="' +
+                                        value.BatchId +
+                                        ";" +
+                                        value.NoOfDays +
+                                        ";" +
+                                        value.NoOfSlot +
+                                        '">' +
+                                        value.BatchName +
+                                        '</option>');
+                                //$('#ddlBatch').append('<option value="' + value.SlotId + value.NoOfDays + value.NoOfSlot + '">' + value.TraniningSlotCode + '</option>');
+                            });
+                    },
+                    complete: function() {
+                        if (selectedVal != undefined) {
+                            $("#ddlBatch option:contains(" + selectedVal + ")").attr('selected', 'selected');
+                            ShowEntryForm();
+                        }
+                    }
+                });
+        }
+
+        function showActiveTab(selectedTab) {
+            for (var i = 0; i < tabIds.length; i++) {
+                var controlId = tabIds[i]["id"];
+                $(controlId).hide();
+                if (selectedTab.hash === controlId) {
+                    if (!tabIds[i]["IsLoaded"]) {
+                        LoadPartialView(controlId, i);
+                    }
+                    $(controlId).show();
+                }
+            }
+        }
+
+
+        $(document)
+            .ready(function () {
+                $('#collapse3').hide();
+               
+                $("#btnAddNew")
+                    .click(function() {
+                        if ($("#ddlTrainingType").val() == "") {
+                            ShowAlert("error", "Please Select TrainingType");
+                            return;
+                        }
+                        if ($("#ddlBatch").val() == "") {
+                            ShowAlert("error", "Please Select Batch");
+                            return;
+                        }
+                        $("#TrainingCode").val("");
+                        $("#TrainingTemplateId").val("");
+
+                        ShowEntryForm();
+                    });
+
+                $("#btnClear")
+                    .click(function () {
+                        $("#ddlTrainingType").val("");
+                        $("#ddlBatch").val("");
+                        $("#TrainingName").val("");
+                        $("#TrainingCode").val("");
+                        $("#TrainingTemplateId").val("");
+                        $("#tabs").html("");
+                        $("#my-tab-content").html("");
+                        $('#collapse3').hide();
+                        $("#TrainingName").prop('disabled', false);
+                        $("#TrainingCode").prop('disabled', false);
+                    });
+                //$("#Criteria1")
+                //    .click(function () {
+                //        
+                //        $("#FilterCriteria").toggle();
+                //    });
+            });
+
+        function ShowEntryForm() {
+            tabIds = [];
+            var tabHtml = "", tabDetailHtml = "";
+            $('#collapse3').show();
+           
+
+            var arr = $('#ddlBatch').val().split(";");
+            for (var i = 1; i <= arr[1]; i++) {
+                var tabId = 'Day' + i.toString();
+                tabIds.push({ "id": "#tabDetail" + tabId, IsLoaded: false });
+
+                if (i === 1) {
+                    tabHtml = tabHtml + "<li class='active'>";
+                    tabDetailHtml = tabDetailHtml + " <div class='tab-pane active' ";
+                } else {
+                    tabHtml = tabHtml + "<li>";
+                    tabDetailHtml = tabDetailHtml + " <div style='display:none' ";
+                }
+                tabHtml = tabHtml +
+                    " <a class='tabs' data-toggle='tab' onclick='showActiveTab(this);' href='#tabDetail" +
+                    tabId +
+                    "' id='" +
+                    tabId +
+                    "'>Day" +
+                    i +
+                    "</a></li>";
+                tabDetailHtml = tabDetailHtml + " id='tabDetail" + tabId + "' ></div>";
+            }
+            $("#tabs").html(tabHtml);
+            $("#my-tab-content").html(tabDetailHtml);
+            LoadPartialView(tabIds[0]["id"], 0);
+        }
+
+        function LoadSearchGrid() {
+            $.ajax({
+                url: "/TrainingTemplate/GetTrainingTemplateHdr",
+                cache: false,
+                async: true,
+                method: "GET",
+                dataType: "JSON",
+                beforeSend: function() {
+                    $SearchGrid.pqGrid("showLoading");
+                },
+                complete: function() {
+                    $SearchGrid.pqGrid("hideLoading");
+                },
+                success: function(response) {
+                    $SearchGrid.pqGrid("hideLoading");
+                    $SearchGrid.pqGrid("option", "dataModel.data", response);
+                    $SearchGrid.pqGrid("refreshDataAndView");
+                }
+            });
+        }
+
+        function LoadPartialView(htmlControlId, index) {
+            var arr = $('#ddlBatch').val();
+            if ($("#TrainingCode").val() == "" && $("#TrainingName").val() == "") {
+                //update
+                $.ajax({
+                        url: '/TrainingTemplate/GetTrainingTemplateHdr',
+                        dataType: "JSON",
+                        type: 'GET',
+                        async: true,
+                        data: { slotDtl: arr}
+                    })
+                    .success(function (data) {
+                        $("#TrainingTemplateId").val(data.TrainingTemplateId);
+                        $("#TrainingCode").val(data.TrainingCode);
+                        $("#TrainingName").val(data.TrainingName);
+
+                        LoadDaywiseSlot(htmlControlId, index);
+                    })
+                    .error(function(xhr, status) {
+                        ShowAlert("error", status);
+                    });
+            } else {
+                LoadDaywiseSlot(htmlControlId, index);
+
+        }
+        tabIds[index]["IsLoaded"] = true;
+    }
+
+
+        function LoadDaywiseSlot(htmlControlId, index) {
+            var arr = $('#ddlBatch').val();
+            var TrainingCode, TrainingName, TrainingTemplateId;
+
+            TrainingName = $("#TrainingName").val();
+            TrainingCode = $("#TrainingCode").val();
+            TrainingTemplateId = $("#TrainingTemplateId").val();
+            if (TrainingTemplateId == "" || TrainingTemplateId == undefined)
+                TrainingTemplateId = 0;
+            var url =
+                '@Url.Action("GetTemplatedaysSlot", "TrainingTemplate", new {slotDtl = "PARAMETER"})';
+            url = url.replace("PARAMETER", arr);
+            $.ajax({
+                url: '/TrainingTemplate/GetTemplatedaysSlot',
+                contentType: 'application/html;charset=utf-8',
+                type: 'GET',
+                data: {
+                    "slotDtl": arr,
+                    "day": index+1,
+                    TrainingName: TrainingName,
+                    TrainingCode: TrainingCode,
+                    TrainingTemplateId: TrainingTemplateId
+                }
+            })
+                .success(function (result) {
+                    partialResult = result;
+                    $(htmlControlId).html(partialResult);
+                })
+                .error(function (xhr, status) {
+                    ShowAlert("error", status);
+                });
+        }
+
+
+    /********* Search Grid *********/
+    $(document).ready(function () {
+        var dataM = { location: "local", sorting: 'local' }
+        var colM = [
+            { title: "", dataIndx: "TrainingTemplateId", dataType: "integer", hidden: true },
+            { title: "", dataIndx: "BatchId", dataType: "integer", hidden: true },
+            { title: "", dataIndx: "TrainingTypeId", dataType: "integer", hidden: true },
+            { title: "", dataIndx: "Slot", dataType: "integer", hidden: true },
+            {
+                title: "Training Type",
+                dataIndx: "TrainingTypeCode",
+                width: 400,
+                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            },
+            {
+                title: "Batch",
+                dataIndx: "BatchName",
+                width: 200,
+                dataType: "string",
+                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            },
+            {
+                title: "TrainingName",
+                dataIndx: "TrainingName",
+                width: 200,
+                dataType: "string",
+                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            },
+            {
+                title: "TrainingCode",
+                dataIndx: "TrainingCode",
+                width: 200,
+                dataType: "string",
+                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            }
+        ];
+
+        var setM = {
+            width: '100%',
+            height: 250,
+            sortable: false,
+            numberCell: { show: false },
+            hoverMode: 'cell',
+            showTop: true,
+            showTitle: false,
+            resizable: true,
+            scrollModel: { autoFit: true },
+            draggable: false,
+            wrap: false,
+            editable: false,
+            columnBorders: true,
+            selectionModel: { type: 'row' },
+            filterModel: { on: true, mode: "AND", header: true },
+            colModel: colM,
+            dataModel: dataM,
+            toolbar: exportToExcelToolbar,
+
+            pageModel: { type: "local", rPP: 20 },
+            rowClick: function (evt, ui) {
+                if (ui.rowData) {
+                    $('#btnDisplay').hide();
+                    $("#FilterCriteria").collapse('toggle');
+                    var record = ui.rowData;
+                    $("#TrainingTemplateId").val(record.TrainingTemplateId);
+                    $("#ddlTrainingType").val(record.TrainingTypeId);
+                    $("#TrainingCode").val(record.TrainingCode);
+                    $("#TrainingName").val(record.TrainingName);
+                    $("#TrainingName").prop('disabled', true);
+                    $("#TrainingCode").prop('disabled', true);
+                  
+                   Fillslot(record.BatchName);
+                }
+            }
+        };
+        $SearchGrid = $("#searchgrid").pqGrid(setM);
+        LoadSearchGrid();
+    });
+    </script>
+}

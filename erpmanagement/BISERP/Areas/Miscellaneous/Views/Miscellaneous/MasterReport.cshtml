@@ -1,0 +1,248 @@
+﻿@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        Entry Form
+                    </div>
+                </div>
+                <div class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <br>
+                        <div class="row">
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-3">
+                                    @Html.Label("Select Store", new {@class = "required"})
+                                    @Html.DropDownList("ddlStore", new SelectList(string.Empty, "Value", "Text"), "Select Store", new {@class = "form-control"})
+                                </div>
+                                <div class="col-sm-2">
+                                    @Html.Label("From Date")
+                                    <div class='input-group date' id='FromDate'>
+                                        <input type='text' class="form-control"/>
+                                        <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    @Html.Label("To Date")
+                                    <div class='input-group date' id='ToDate'>
+                                        <input type='text' class="form-control"/>
+                                        <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="col-sm-4">
+                                <button type="button" class="btn btn-primary" id="btnViewItem">Display Records</button>
+                                <button type="button" class="btn btn-success" id="btnAdd">Reset</button>
+                            </div>
+                        </div>
+                        <div class="panel-groupingBoder">
+                            <fieldset>
+                                <div class="container fill">
+                                    <div class="row">
+                                        <div id="grid"></div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+    $(function () {
+        $('#FromDate').datetimepicker({
+            format: 'DD-MMM-YYYY',
+            extraFormats: ['DD-MM-YYYY', 'DD-MM-YY'],
+            defaultDate: new Date()
+        });
+        $('#ToDate').datetimepicker({
+            format: 'DD-MMM-YYYY',
+            extraFormats: ['DD-MM-YYYY', 'DD-MM-YY'],
+            defaultDate: new Date()
+        });
+    });
+    </script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $.ajax({
+                type: "GET",
+                url: "/Master/AllStores",
+                datatype: "Json",
+                async: true,
+                success: function (data) {
+                    $.each(data, function (index, value) {
+                        $('#ddlStore').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                    });
+                }
+            });
+
+        });
+        var $grid;
+
+        $(document).ready(function () {
+        
+            var dataM = { location: "local", sorting: 'local' };
+            var colM = [
+                { dataIndx: "GRNId", width: 10, dataType: "integer", hidden: true },
+                {
+                    title: "GRN No", dataIndx: "GRNNo", width: 150, dataType: "string",
+                        filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                },
+                { title: "GRN Date", dataIndx: "strGRNDate", dataType: "string", width: 120 },
+                { dataIndx: "Storeid", width: 10, dataType: "integer", hidden: true },
+                {
+                    title: "Store Name", dataIndx: "StoreName", width: 90, dataType: "string", hidden: true,
+                    filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                },
+                {
+                    title: "Project Code", dataIndx: "ProjectCode", width: 90, dataType: "string",
+                    filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                },
+                { dataIndx: "ClientId", width: 10, dataType: "integer", hidden: true },
+                {
+                    title: "Party", dataIndx: "ClientName", width: 90, dataType: "string",
+                    filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                },
+                { dataIndx: "ConsigneeId", width: 10, dataType: "integer", hidden: true },
+                {
+                    title: "Consignee", dataIndx: "ConsigneeName", width: 90, dataType: "string",
+                    filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                },
+                { title: "Invoice No", dataIndx: "InvoiceNo", width: 90, dataType: "string" },
+                { title: "Invoice Date", dataIndx: "strInvoiceDate", dataType: "string", width: 120 },
+                { title: "Address", dataIndx: "Address", dataType: "string", width: 150 },
+                { title: "Contact", dataIndx: "Contact", dataType: "string", width: 150 },
+                { title: "Email", dataIndx: "Email", dataType: "string", width: 150 },
+                { dataIndx: "ItemCategoryId", width: 10, dataType: "integer", hidden: true },
+                {
+                    title: "Goods/Services", dataIndx: "ItemCategoryName", width: 100, dataType: "string",
+                    filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                },
+                { title: "GSTIN", dataIndx: "GSTIN", width: 10, dataType: "string" },
+                { title: "State", dataIndx: "StateName", dataType: "string", width: 100 },
+                { title: "City", dataIndx: "CityName", dataType: "string", width: 100 },
+                { title: "Pan No", dataIndx: "PanNo", dataType: "string", width: 100 },
+                { dataIndx: "PoID", width: 10, dataType: "integer", hidden: true },
+                {
+                    title: "PO No", dataIndx: "PONo", width: 130, dataType: "string",
+                    filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                },
+                { title: "Payment Term", dataIndx: "PaymentTerm", dataType: "string", width: 100 },
+                { title: "Delivery Term", dataIndx: "DeliveryTerm", dataType: "string", width: 100 },
+                { title: "PO Date", dataIndx: "strPODate", dataType: "string", width: 120 },
+                { title: "Vehicle No", dataIndx: "VehicleNo", dataType: "string", width: 100 },
+                { title: "Transport Medium", dataIndx: "Transporter", dataType: "string", width: 90 },
+                { title: "DC/LR No", dataIndx: "DCNo", dataType: "string", width: 100 },
+                { title: "DC/LR Date", dataIndx: "strDCDate", dataType: "string", width: 120 },
+                { dataIndx: "ItemID", width: 10, dataType: "integer", hidden: true },
+                {
+                    title: "Item", dataIndx: "ItemName", width: 120, dataType: "string",
+                    filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                },
+                { title: "Packsize", dataIndx: "Packsize", dataType: "string", width: 90 },
+                { title: "Unit", dataIndx: "UnitName", dataType: "string", width: 90 },
+                { title: "HSNCode", dataIndx: "HSNCode", dataType: "string", width: 100 },
+                { title: "Rate", dataIndx: "Rate", dataType: "string", width: 90 },
+                { title: "Qty", dataIndx: "Qty", dataType: "string", width: 90 },
+                { title: "Value", dataIndx: "Value", dataType: "string", width: 90 },
+                { title: "Discount", dataIndx: "Discount", dataType: "string", width: 90 },
+                { title: "Tax Amount", dataIndx: "TaxAmount", dataType: "string", width: 90 },
+                { title: "TaxRate", dataIndx: "TaxRate", dataType: "string", width: 90 },
+                { title: "RoundOffAmt", dataIndx: "RoundOffAmt", dataType: "string", width: 90 },
+                { title: "Gross Total", dataIndx: "GrossTotal", dataType: "string", width: 90 }
+            ];
+
+            var setM = {
+                virtualX: true,
+                virtualY: true,
+                height: 500,
+                sortable: false,
+                numberCell: { show: false },
+                showTop: true,
+                resizable: true,
+                scrollModel: { flexContent: true },
+                selectionModel: { type: 'row', mode: 'single' },
+                filterModel: { on: true, mode: "AND", header: true },
+                toolbar: exportToExcelToolbar,
+                hoverMode: 'cell',
+                editor: { type: 'textbox' },
+                draggable: false,
+                columnBorders: true,
+                cellSave: function (evt, ui) {
+                    this.refreshRow(ui);
+
+                },
+                editModel: {
+                    saveKey: $.ui.keyCode.ENTER,
+                    keyUpDown: false
+                },
+                colModel: colM,
+                dataModel: dataM,
+                pageModel: { type: "local", rPP: 20 }
+            }
+            $grid = $("#grid").pqGrid(setM);
+        });
+        $('#btnViewItem').on('click', function () {
+            
+            if ($("#ddlStore").val() === "") {
+                ShowAlert("error", "Please Select Store");
+                return;
+            }
+            var searchStoreId = $("#ddlStore").val();
+            var fromDate = $("#FromDate").data('date');
+            var toDate = $("#ToDate").data('date');
+            $.ajax({
+
+                type: "GET",
+                url: "/StoreQuantityLimits/GetMasterReport/",
+                data: { StoreId: searchStoreId, FromDate: fromDate, ToDate: toDate },
+                datatype: "Json",
+                beforeSend: function () {
+                    $grid.pqGrid("showLoading");
+                },
+                complete: function () {
+                    $grid.pqGrid("hideLoading");
+                },
+                success: function (data) {
+                    
+                    if (data.success) {
+                        $grid.pqGrid("hideLoading");
+                        $grid.pqGrid("option", "dataModel.data", data.model);
+                        $grid.pqGrid("refreshDataAndView");
+                    } else {
+                        ClearParamGrid('grid');
+                        ShowAlert("error", data.Messsage);
+                        return;
+                    }
+                },
+                error: function (request, status, error) {
+                    //ClearParamGrid("Itemgrid");
+                    $grid.pqGrid("hideLoading");
+                    ShowAlert("error", "Server error! Please Contact Administrator");
+                    return;
+                }
+            });
+        });
+        function ClearForm() {
+            $("#ddlStore").val("");
+            $("#ddlItemtype").val("");
+            ClearParamGrid("grid");
+        }
+
+        $("#btnAdd").on("click", ClearForm);
+      
+    </script>
+}

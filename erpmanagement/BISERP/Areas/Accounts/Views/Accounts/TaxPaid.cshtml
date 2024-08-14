@@ -1,0 +1,114 @@
+﻿@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <a class="collapsediv" data-toggle="collapse" href="#SearchDetails" style="color: white">
+                           Tax Credited
+                        </a>
+                    </div>
+                </div>
+                <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <div class="container fill">
+                            <div id="TaxDetailGrid"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<script>
+    var $TaxDetailGrid;
+    dataTax = { location: 'local', sorting: 'local', paging: 'local', dataType: 'JSON' };
+    colbill = [
+                 
+     {
+         title: "Bill No", dataIndx: "BillNo", width: 150, dataType: "string", editable: false,
+         filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+     },
+     { title: "Bill Date ", dataIndx: "StrBillDate", width: 130, dataType: "double", editable: false },
+    {
+        title: "Against To", dataIndx: "ProjectName", width: 150, dataType: "string", editable: false,
+        filter: {
+            type: "select",
+            condition: 'equal',
+            prepend: { '': '--Select--' },
+            valueIndx: "ProjectName",
+            labelIndx: "ProjectName",
+            listeners: ['change']
+        }
+    },
+    { title: "Project Code", dataIndx: "ProjectCode", width: 100, dataType: "string", editable: false },
+     { title: "Gross Value", dataIndx: "GrossAmt", width: 100, dataType: "double", editable: false },
+     { title: "Discount", dataIndx: "StanderdDis", width: 90, dataType: "double", editable: false },
+     { title: "Total Tax", dataIndx: "TaxAmt", width: 90, dataType: "double", editable: false },
+     { title: "Total Value", dataIndx: "NetAmt", width: 100, dataType: "double", editable: false },
+     { title: "Total Recieved", dataIndx: "TotalRecieved", width: 100, dataType: "double", editable: false },
+     {
+         title: "Pending Amount", dataIndx: "PendAmt", width: 140, dataType: "double", editable: false,
+         format: 'Rs ##,###.00',
+         formula: function (ui) {
+             var rd = ui.rowData;
+             return rd["NetAmt"] - rd["TotalRecieved"];
+         }
+     }
+    ];
+    setgrid = {
+        width: "100%", //auto width
+        height: 580, //height in %age
+        sortable: false,
+        numberCell: { show: true },
+        selectionModel: { type: 'row' },
+        hoverMode: 'cell',
+        editor: { type: 'textbox' },
+        showTop: true,
+        resizable: true,
+        filterModel: { on: true, mode: "AND", header: true },
+        virtualX: true,
+        virtualY: true,
+        editable: false,
+        draggable: false,
+        colModel: colbill,
+        dataModel: dataTax,
+        postRenderInterval: -1,
+        pageModel: { type: "local", rPP: 50 }
+    };
+    $TaxDetailGrid = $("#TaxDetailGrid").pqGrid(setgrid);
+    LoadClientBillStatusGrid();
+    function LoadClientBillStatusGrid() {
+        $.ajax({
+            url: "/ClientBillCancel/GetTaxPaid",
+            cache: false,
+            async: true,
+            method: "GET",
+            dataType: "JSON",
+            data: { branchId: 0 },
+            success: function (response) {
+                if (response.success) {
+                    $TaxDetailGrid.pqGrid("option", "dataModel.data", response.records);
+
+                    var column = $TaxDetailGrid.pqGrid("getColumn", { dataIndx: "ProjectName" });
+                    var filter = column.filter;
+                    filter.cache = null;
+                    filter.options = $TaxDetailGrid.pqGrid("getData", { dataIndx: ["ProjectName"] });
+
+                    $TaxDetailGrid.pqGrid("refreshDataAndView");
+                } else {
+                    ClearParamGrid('TaxDetailGrid');
+                    ShowAlert("error", "Something Went Wrong");
+                    return;
+                }
+            },
+            error: function () {
+                ShowAlert("error", "Something Went Wrong");
+                return;
+            }
+        });
+    }
+    </script>

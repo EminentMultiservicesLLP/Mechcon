@@ -1,0 +1,256 @@
+﻿@Scripts.Render("~/bundles/jquerymodels")
+<script>
+    $(function () {
+        $('#PaymentDate').datetimepicker({
+            format: 'DD-MMM-YYYY',
+            extraFormats: ['DD-MM-YYYY', 'DD-MM-YY'],
+            defaultDate: new Date()
+        });
+    });
+</script>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        Bill Payment Entry
+                    </div>
+                </div>
+                <div class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                                <a data-toggle="collapse" class="btn btn-success" id="btnReset">Reset</a>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-3">
+                                    @Html.Label("Supplier")
+                                    @Html.TextBox("SupplierName", "", new Dictionary<string, object> { { "class", "form-control " } })
+                                    @Html.Hidden("SupplierID")
+                                </div>
+                            </div>
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-3">
+                                    @Html.Label("Payment Date")
+                                    <div class='input-group date' id='PaymentDate'>
+                                        <input type='text' class="form-control" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-2">
+                                    <button type="button" class="btn btn-primary" id="btnShowrequest">Show Bills</button>
+                                </div>
+                            </div>
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-3">
+                                    <button type="button" class="btn btn-primary" id="btnSmartPay">Smart Pay</button>
+                                    @Html.TextBox("SmartPayAmount", "", new Dictionary<string, object> { { "class", "form-control " } })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="container fill">
+                                <div id="grid"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="SupplierModal" title="Select Items" style="overflow:hidden;">
+        <div id="Suppliergrid"></div>
+    </div>
+    <script>
+        var $Suppliergrid;
+        var $gridMain;
+        function LoadSupplierBill()
+        {
+            var SupplierID = $("#SupplierID").val();            
+            $.ajax({
+                type: "GET",
+                url: "/SupplierBillList/GetSupplierBilldt/",
+                data: { SupplierID: SupplierID },
+                datatype: "Json",
+                beforeSend: function () {
+                    $("#grid").pqGrid("showLoading");
+                },
+                complete: function () {
+                    $("#grid").pqGrid("hideLoading");
+                },
+                success: function (response) {
+                    $("#grid").pqGrid("hideLoading");
+                    $("#grid").pqGrid("option", "dataModel.data", response);
+                    $("#grid").pqGrid("refreshDataAndView");
+                },
+                error: function (request, status, error) {
+                    $("#grid").pqGrid("hideLoading");
+                    ClearParamGrid("grid");
+                    ShowAlert("error", "No Data Found");
+                    return;
+                }
+            });
+        }
+        $(document).ready(function () {
+            $('#PaymentDate').data("DateTimePicker").disable();
+
+            var dataModel = { location: 'local', sorting: 'local', paging: 'local', dataType: 'JSON' };
+            $gridMain = $("div#grid").pqGrid({
+                height: 400,
+                sortable: false,
+                numberCell: { show: false },
+                //selectionModel: { type: 'row' },
+                showTop: true,
+                title: "Supplier Bill Details",
+                hoverMode: 'cell',
+                resizable: true,
+                virtualX: true,
+                virtualY: true,
+                scrollModel: { autoFit: true },
+                draggable: false,
+                wrap: false,
+                colModel: [                    
+                    { title: "", dataIndx: "BillId", width: 10, hidden: true },
+                    { title: "", dataIndx: "SuppilerId", width: 10, hidden: true },
+                    { title: "Bill No", dataIndx: "BillNo", width: 400., editable: false },
+                    { title: "Bill Date", dataIndx: "strBillDate", width: 200, editable: false },
+                    { title: "Bill Amount", dataIndx: "BillAmount", dataType: "double", width: 200, editable: false },
+                    {
+                        dataIndx: "state", Width: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                        editor: false, dataType: 'bool',
+                        title: "<input type='checkbox' />",
+                        cb: { select: true, all: false, header: true }
+                    },
+                    { title: "Party Payable", dataIndx: "PartyPayable", width: 100, dataType: "double", align: "right", editable: true }
+                ],
+                dataModel: dataModel,
+                scrollModel: { autoFit: true },
+                trackModel: { on: true }, //to turn on the track changes.
+                pageModel: { type: "local", rPP: 50 }                
+            });
+        });
+
+        ///********* Supplier Grid *********/
+        $(document).ready(function () {
+            var SupplierM = {
+                height: 400,
+                autoSizeInterval: 0,
+                scrollModel: { autoFit: true },
+                dragColumns: { enabled: false },
+                hoverMode: 'cell',
+                editor: { type: 'textbox' },
+                filterModel: { on: true, mode: "AND", header: true },
+                showTop: false,
+                resizable: true,
+                virtualX: true,
+                colModel: colSupplierM,
+                dataModel: dataSupplierM,
+                pageModel: { type: "local", rPP: 20 },
+                toggle: function (evt, ui) {
+                    if (ui.state == 'max') {
+                        $(".ui-dialog,.ui-widget-overlay").css('position', 'static');
+                    }
+                    else {
+                        $(".ui-dialog,.ui-widget-overlay").css('position', 'absolute');
+                    }
+                },
+                cellClick: function (evt, ui) {
+                    if (ui.rowData) {
+                        var rowIndx = parseInt(ui.rowIndx);
+                        var record = ui.rowData;
+                        $("#SupplierID").val(record.ID);
+                        $("#SupplierName").val(record.Name);
+                        ClosePopupWindow("SupplierModal");
+                    }
+                }
+            };
+            $("#SupplierName").on('click', function () {
+                ShowSupplierListPoup("Suppliergrid", "SupplierModal", SupplierM, "/Master/AllSupplier/");
+            });
+            
+            $('#btnShowrequest').on('click', function () {
+                LoadSupplierBill();
+            });
+            $('#btnReset').on('click', function () {
+                LoadSupplierBill();
+                $("#SmartPayAmount").val("");
+            });
+            $("#btnSave").on('click', function () {
+                if ($("#SupplierID").val() == "") {
+                    ShowAlert("error", "Please Select Supplier");
+                    return;
+                }
+                var items = $("div#grid").pqGrid("getData", { dataIndx: ['BillId', 'SuppilerId', 'BillNo', 'BillAmount', 'PartyPayable', 'state'] });
+                var griditems = JSON.stringify(items);
+                $.ajax(
+                {
+                    type: "POST",
+                    traditional: true,
+                    contentType: 'application/json; charset=utf-8',
+                    url: '/BillPayment/SaveBillPayment',
+                    data: griditems,
+                    success: function (msg) {
+                        if (msg.success) {
+                            ShowAlert("success", "Data saved successfully.");
+                            LoadSupplierBill();
+                            $("#SmartPayAmount").val("");
+                        }
+                        else {
+                            ShowAlert("error", msg.Message);
+                        }
+                    },
+                    error: function (jqXHR, exception) {
+                    }
+                });
+            });
+            $("#btnSmartPay").on('click', function () {
+                var getData = $("#grid").pqGrid("option", "dataModel.data");
+                var selectedItems = jLinq.from(getData).equals("state", true).select();
+
+                var unselectedItems = jLinq.from(getData).equals("state", false).select();
+                var rowctr = 0;
+                var totalAmount = $("#SmartPayAmount").val();
+                $.each(selectedItems, function (key, value) {
+                    totalAmount = totalAmount - value.PartyPayable;
+                });
+
+                $.each(getData, function (key, value) {
+                    if (value.state == false) {
+                        var payamount = value.PartyPayable;
+                        var billamount = value.BillAmount;
+                        if (billamount == "" || billamount == undefined) billamount = 0;
+                        var PartyPayable = totalAmount - billamount;
+
+                        if (PartyPayable >= 0) {
+                            totalAmount = PartyPayable;
+                            PartyPayable = billamount;
+                        }
+                        else {
+                            PartyPayable = totalAmount;
+                            totalAmount = 0;
+                        }
+
+                        if (PartyPayable >= 0) {
+                            $("#grid").pqGrid('updateRow', { rowIndx: rowctr, newRow: { 'PartyPayable': PartyPayable } });
+                            $("#grid").pqGrid("refreshRow", { rowIndx: rowctr });
+                        }
+                    }
+                    rowctr++;
+                });
+            });        
+        });
+    </script>
+}

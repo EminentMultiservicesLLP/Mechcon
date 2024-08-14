@@ -1,0 +1,216 @@
+﻿@model BISERP.Areas.Store.Models.Store.MaterialReturnModel
+<script>
+    $(function () {
+        $(".datepicker").datepicker({
+            showOn: "button",
+            buttonImage: "",
+            buttonImageOnly: true,
+            buttonText: "",
+            dateFormat: "dd-MM-yy"
+        }).datepicker("setDate", new Date());
+        $("#anim").change(function () {
+            $(".datepicker").datepicker("option", "showAnim", "fadeIn");
+        });
+    });
+</script>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <a class="collapsediv" data-toggle="collapse" href="#SearchDetails" style="color:white">
+                            Material Return List
+                        </a>
+                    </div>
+                </div>
+                <div class="panel-collapse collapse in" aria-expanded="true" id="SearchDetails">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="container fill">
+                                <div id="searchgrid"></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-9"></div>
+                            <div class="form-group form-horizontal">
+                                <div class="col-sm-2">
+                                    @Html.Label("Total Return Amount")
+                                    @Html.TextBox("TotalReturnAmount", "", new Dictionary<string, object> { { "class", "form-control " } })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<script type="text/javascript">
+    function CalculateTotalReturnAmount() {
+        var getData = $searchgrid.pqGrid("option", "dataModel.data");
+        var TotalReturnAmount = 0, rndTotal = 0;
+        $.each(getData, function (_, item) {
+            if (!isNaN(item.ReturnAmount) && item.ReturnAmount != null)
+                TotalReturnAmount += parseFloat(item.ReturnAmount);
+            console.log(TotalReturnAmount);
+        });
+        rndTotal = Math.round(TotalReturnAmount);
+        $("#TotalReturnAmount").val(rndTotal);
+    }
+    function LoadSearchGrid() {
+        $.ajax({
+            url: "/MaterialReturn/AuthMaterialReturn",
+            cache: false,
+            async: true,
+            method: "GET",
+            dataType: "JSON",
+            beforeSend: function () {
+                $searchgrid.pqGrid("showLoading");
+            },
+            complete: function () {
+                $searchgrid.pqGrid("hideLoading");
+            },
+            success: function (response) {
+                $searchgrid.pqGrid("hideLoading");
+                $searchgrid.pqGrid("option", "dataModel.data", response);
+
+                //var column = $searchgrid.pqGrid("getColumn", { dataIndx: "StrReturnFrom" });
+                //var filter = column.filter;
+                //filter.cache = null;
+                //filter.options = $searchgrid.pqGrid("getData", { dataIndx: ["StrReturnFrom"] });
+
+                //var column = $searchgrid.pqGrid("getColumn", { dataIndx: "StrReturnTo" });
+                //var filter = column.filter;
+                //filter.cache = null;
+                //filter.options = $searchgrid.pqGrid("getData", { dataIndx: ["StrReturnTo"] });
+
+                $searchgrid.pqGrid("refreshDataAndView");
+                CalculateTotalReturnAmount();
+            }
+        });        
+    }
+    var $searchgrid;
+    $(document).ready(function () {
+        var dataSearchGrid = { location: "local", sorting: 'local' };
+        var colSearchGrid = [
+                { title: "", minWidth: 30, maxWidth: 30, type: "detail", dataIndx: "detail", resizable: false, sortable: false },
+                { title: "", dataIndx: "ReturnID", dataType: "integer", hidden: true },
+                { title: "", dataIndx: "ReturnFrom", dataType: "integer", hidden: true },
+                { title: "", dataIndx: "ReturnTo", dataType: "integer", hidden: true },
+                {
+                    title: "Return No", dataIndx: "ReturnNo", width: 200,
+                    //filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+                },
+                {
+                    title: "Return Date", dataIndx: "StrReturnDate", width: 200, dataType: "date"
+                },
+                {
+                    title: "Return From", dataIndx: "StrReturnFrom", width: 200,
+                    //filter: {
+                    //    type: "select",
+                    //    condition: 'equal',
+                    //    prepend: { '': '--Select--' },
+                    //    valueIndx: "StrReturnFrom",
+                    //    labelIndx: "StrReturnFrom",
+                    //    listeners: ['change']
+                    //}
+                },
+                {
+                    title: "ReturnTo", dataIndx: "StrReturnTo", width: 150,
+                    //filter: {
+                    //    type: "select",
+                    //    condition: 'equal',
+                    //    prepend: { '': '--Select--' },
+                    //    valueIndx: "StrReturnTo",
+                    //    labelIndx: "StrReturnTo",
+                    //    listeners: ['change']
+                    //}
+                },
+                { title: "Return Amount", dataIndx: "ReturnAmount", width: 100, dataType: "float" }
+        ];
+        var setSearchGrid = {
+            height: 450,
+            sortable: false,
+            numberCell: { show: false },
+            showTop: false,
+            resizable: true,
+            scrollModel: { autoFit: true },
+            draggable: false,
+            wrap: false,
+            editable: false,
+            columnBorders: true,            
+            //filterModel: { on: true, mode: "AND", header: true },
+            colModel: colSearchGrid,
+            dataModel: dataSearchGrid,
+            virtualX: true,
+            virtualY: true,
+            pageModel: { type: "local", rPP: 20 },
+            trackModel: { on: true }, 
+            detailModel: {
+                cache: true,
+                collapseIcon: "ui-icon-plus",
+                expandIcon: "ui-icon-minus",
+                init: function (ui) {
+                    var rowData = ui.rowData,
+                        detailobj = gridDetailModel($(this), rowData), //get a copy of gridDetailModel
+                        $grid = $("<div id=detailgrid></div>").pqGrid(detailobj); //init the detail grid.
+                    return $grid;
+                }
+            }
+        }
+        $searchgrid = $("#searchgrid").pqGrid(setSearchGrid);
+        LoadSearchGrid();
+       
+
+        var gridDetailModel = function ($gridMain, rowData) {
+            return {
+                width: '90%',
+                scrollModel: { autoFit: true },
+                height: 130,
+                pageModel: { type: "local", rPP: 5, strRpp: "" },
+                selectionModel: { type: 'row' },
+                dataModel: {
+                    location: "remote",
+                    sorting: "local",
+                    dataType: "json",
+                    method: "GET",
+                    url: "/MaterialReturn/MaterialReturnItems/get?ReturnID=" + rowData.ReturnID,
+                    getData: function (dataJSON) {
+                        var data = dataJSON;
+                        return { curPage: dataJSON.curPage, totalRecords: dataJSON.totalRecords, data: data };
+                    }
+                },
+
+                colModel: [
+                    { title: "", dataIndx: "ReturnDtlID", dataType: "integer", editable: false, hidden: true },
+                    { title: "", dataIndx: "ItemID", dataType: "integer", editable: false, hidden: true },
+                    { title: "Item Name", dataIndx: "ItemName", dataType: "string", width: 200, editable: false },
+                    { title: "", dataIndx: "BatchId", width: 200, dataType: "integer", editable: false, hidden: true },
+                    { title: "Batch", dataIndx: "Batch", width: 100, dataType: "double", editable: false },
+                    { title: "Expiry Date", dataIndx: "strExpiryDate", width: 150, dataType: "string", editable: false },
+                    { title: "StockQty", dataIndx: "StockQty", width: 100, dataType: "float", editable: false },
+                    { title: "ReturnQty", dataIndx: "Quantity", width: 100, dataType: "float", editable: false },
+                    { title: "Reason", dataIndx: "Reason", width: 190, dataType: "string", editable: false, type: 'textarea' },
+                ],
+                editable: true,
+                groupModel: {
+                    dataIndx: ["ReturnNo"],
+                    dir: ["up"],
+                    title: ["{0} - Total : {1}"],
+                    icon: [["ui-icon-triangle-1-se", "ui-icon-triangle-1-e"]]
+                },
+                flexHeight: true,
+                flexWidth: true,
+                numberCell: { show: false },
+                title: "Item Details",
+                showTop: false,
+                showBottom: false
+            };
+        };
+    });
+</script>

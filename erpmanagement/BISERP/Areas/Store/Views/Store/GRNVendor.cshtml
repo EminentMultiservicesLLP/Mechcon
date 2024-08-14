@@ -1,0 +1,1360 @@
+﻿@model BISERP.Areas.Store.Models.Store.GRNVendorModel
+
+<script>
+    $(function () {
+        $(function () {
+            $(".nonEditdatepicker").datepicker({
+                showOn: "button",
+                buttonImage: "",
+                buttonImageOnly: true,
+                buttonText: "",
+                dateFormat: "dd-MM-yy"
+            }).datepicker("setDate", new Date());
+        });
+        $(".datepicker").datepicker({
+            showOn: "button",
+            buttonImage: "/Content/images/calendar.gif",
+            buttonImageOnly: true,
+            buttonText: "Select date",
+            dateFormat: "dd-MM-yy"
+        }).datepicker("setDate", new Date());
+        $("#anim").change(function () {
+            $(".datepicker").datepicker("option", "showAnim", "fadeIn");
+            $(".nonEditdatepicker").datepicker("option", "showAnim", "fadeIn");
+        });
+    });
+</script>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <div class="panel-group">
+        <div class="panel panel-default">            
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        Entry Form
+                    </div>
+                </div>
+                <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <div class="panel-groupingBoder">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <a data-toggle="collapse" class="btn btn-success" id="btnAddGRN">Reset</a>
+                                    <button type="button" class="btn btn-success" id="btnSaveGRN">Save</button>
+                                    <button type="button" class="btn btn-success">Report</button>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.GRNNo)
+                                        @Html.TextBoxFor(m => m.GRNNo, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.GRNDate)
+                                        @Html.TextBoxFor(m => m.GRNDate, new { @class = "form-control nonEditdatepicker" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.DCNo, new { @class = "required" })
+                                        @Html.TextBoxFor(m => m.DCNo, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.DCDate, new { @class = "required" })
+                                        @Html.TextBoxFor(m => m.DCDate, new { @class = "form-control datepicker" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.GrnTypeID, new { @class = "required" })
+                                        <select id="GrnTypeID" class="form-control wrapper-dropdown">
+                                            <option class=" wrapperdropdown-content" value="1">Against Vendor</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        @Html.Label("IssueNo")
+                                        @Html.TextBox("IssueNo", "", new Dictionary<string, object> { { "class", "form-control" } })
+                                        @Html.HiddenFor(model => model.IssueId)
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.InwardNo, new { @class = "required" })
+                                        @Html.TextBoxFor(m => m.InwardNo, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.InwardDate, new { @class = "required" })
+                                        @Html.TextBoxFor(m => m.InwardDate, new { @class = "form-control datepicker" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.StoreId, new { @class = "required" })
+                                        @Html.DropDownList("ddlStores", new SelectList(string.Empty, "Value", "Text"), new { @class = "wrapperdropdown-content form-control" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.PODate)
+                                        @Html.TextBoxFor(m => m.PODate, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.InvoiceNo)
+                                        @Html.TextBoxFor(m => m.InvoiceNo, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.InvoiceDate)
+                                        @Html.TextBoxFor(m => m.InvoiceDate, new { @class = "form-control datepicker" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        @Html.Label("Manufacturer",new { @class = "required" })
+                                        @Html.TextBox("VendorName", "", new Dictionary<string, object> { { "data-toggle", "modal" }, { "data-target", "#SupplierModal" }, { "class", "form-control" } })
+                                        @Html.HiddenFor(m => m.VendorID)
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.VehicleNo)
+                                        @Html.TextBoxFor(m => m.VehicleNo, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.Transporter)
+                                        @Html.TextBoxFor(m => m.Transporter, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-groupingBoder">
+                                <div class="row">
+                                    <div class="container fill">
+                                        <div id="vendorgrid"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <button type="button" class="btn btn-primary" id="btnShowItems">Get Items</button>
+                                        <button class="btn btn-primary" type="button" id="btnRemoveItem">Remove Item</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="panel-groupingBoder">
+                <div class="row">
+                    <div class="container fill">
+                        <div id="grid"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-groupingBoder">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-sm-8">
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    @Html.LabelFor(m => m.Preparedby)
+                                </div>
+                                <div class="col-sm-2">
+                                    <strong>@Html.Encode(User.Identity.Name)</strong>
+                                    @*@Html.TextBoxFor(m => m.Preparedby, new { @class = "form-control" })*@
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    @Html.LabelFor(m => m.Notes)
+                                </div>
+                                <div class="col-sm-2">
+                                    @Html.TextAreaFor(m => m.Notes, new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    @Html.LabelFor(m => m.GrnPaymentType)
+                                </div>
+                                <div class="col-sm-2">
+                                    @Html.RadioButton("PaymentMode", "Cash")  Cash
+                                    @Html.RadioButton("PaymentMode", "Credit") Credit
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <table align="right">
+                                <tr>
+                                    <td>Gross Amount</td>
+                                    <td>
+                                        @Html.TextBoxFor(m => m.Amount, new Dictionary<string, object> { { "Id", "GrossAmount" }, { "readonly", "true" }, { "class", "form-control" } })
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Tax</td>
+                                    <td>
+                                        @Html.TextBoxFor(m => m.TotalTaxamt, new Dictionary<string, object> { { "Id", "TaxAmount" }, { "readonly", "true" }, { "class", "form-control" } })
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Other Charges</td>
+                                    <td>
+                                        @Html.TextBoxFor(m => m.TotalOtherAmt, new Dictionary<string, object> { { "Id", "OtherCharges" }, { "readonly", "true" }, { "class", "form-control" } })
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Discount</td>
+                                    <td>
+                                        @Html.TextBoxFor(m => m.TotalDisc, new Dictionary<string, object> { { "Id", "Discount" }, { "readonly", "true" }, { "class", "form-control" } })
+                                    </td>
+                                </tr>
+                                @*<tr>
+                                        <td>CR Note Amount</td>
+                                        <td>
+                                            @Html.TextBoxFor(m => m.CrNoteAmt, new Dictionary<string, object> { { "Id", "CR_Note_Amount" }, { "readonly", "true" }, { "class", "form-control" } })
+                                        </td>
+                                    </tr>*@
+                                <tr>
+                                    <td>Grand Total</td>
+                                    <td>
+                                        @Html.TextBoxFor(m => m.TotalAmount, new Dictionary<string, object> { { "Id", "GrandTotal" }, { "readonly", "true" }, { "class", "form-control" } })
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Rounding Off</td>
+                                    <td>
+                                        @Html.TextBoxFor(m => m.TotalAmount, new Dictionary<string, object> { { "Id", "Rounding_Off" }, { "readonly", "true" }, { "class", "form-control" } })
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="ItemModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Select Item</h4>
+                </div>
+                <div class="modal-body">
+                    <div id="Itemgrid"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="btnAddItem">Add</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="ALOModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Select PO No</h4>
+                </div>
+                <div class="modal-body">
+                    <div id="POgrid"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="SupplierModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Select Supplier</h4>
+                </div>
+                <div class="modal-body">
+                    <div id="Suppliergrid"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="popup-dialog-crud" style="display:none;">
+        <form id="crud-form">
+            <div id="Taxgrid"></div>
+        </form>
+    </div>
+    <script type="text/javascript">
+        var $POgrid;
+        var $grid;
+        var $Suppliergrid;
+        var $Taxgrid;
+        var $SearchGrid;
+        var $Itemgrid;
+        var $vendorgrid;
+        function ClearForm() {
+            $("#ID").val(""); $("#GRNNo").val(""); $("#GRNDate").val(""); $("#DCNo").val(""); $("#DCDate").val(""); $("#InvoiceNo").val(""); $("#InvoiceDate").val(""); $("#IssueId").val("");
+            $("#InwardNo").val(""); $("#InwardDate").val(""); $("#GrnTypeID").val(""); $("#ddlStores").val(""); $("#VendorID").val(""); $("#VehicleNo").val(""); $("#Transporter").val(""); $("#Notes").val("");
+            $("#GrossAmount").val(""); $("#TaxAmount").val(""); $("#OtherCharges").val(""); $("#Discount").val("");
+            //$("#CR_Note_Amount").val("");
+            $("#Rounding_Off").val(""); $("#GrandTotal").val(""); $("#IssueNo").val("");
+            $("#PODate").val(""); $("#VendorName").val(""); $("#IssueNo").prop('disabled', false);
+            $("#VendorName").prop('disabled', false);
+            ClearParamGrid("grid");
+            ClearParamGrid("vendorgrid");
+            var colM = $grid.pqGrid("option", "colModel");
+            var childColM = colM[5].colModel;
+            childColM[2].editable = false;
+            childColM[3].editable = false;
+            $grid.pqGrid("option", "colModel", colM);
+        }
+        function LoadPOgrid() {
+            
+            $.ajax({
+                type: "GET",
+                url: "/VendorMaterialIssue/AllVendorMaterialIssueForGRN",
+                datatype: "Json",
+                data: { StoreId: $("#ddlStores").val(), UserId: 1 },
+                beforeSend: function () {
+                  //  $POgrid = $("#POgrid").pqGrid(PO);
+                    $POgrid.pqGrid("showLoading");
+                },
+                complete: function () {
+                    $POgrid.pqGrid("hideLoading");
+                },
+                success: function (data) {
+                    $("#ALOModal").modal('toggle');
+                    $POgrid.pqGrid("hideLoading");
+                    $POgrid.pqGrid("option", "dataModel.data", data);
+                    $POgrid.pqGrid("refreshDataAndView");
+                },
+                error: function (request, status, error) {
+                    //ClearParamGrid("Itemgrid");
+                    $POgrid.pqGrid("hideLoading");
+                    ShowAlert("error", "Error while loading list");
+                    return;
+                }
+            });
+        }        
+        function LoadTaxgrid() {
+            $.ajax({
+                type: "GET",
+                url: "/Master/TaxMaster",
+                datatype: "Json",
+                success: function (data) {
+                    $Taxgrid.pqGrid("option", "dataModel.data", data);
+                    $Taxgrid.pqGrid("refreshDataAndView");
+                }
+            });
+        }
+        function LoadItemgrid() {
+            
+        }
+        function getRowIndx() {
+            var arr = $grid.pqGrid('selection', { type: 'row', method: 'getSelection' });
+            if (arr && arr.length > 0) {
+                return arr[0].rowIndx;
+            }
+            else {
+                alert("Select a row.");
+                return null;
+            }
+        }
+        function LoadSearchGrid() {
+            $.ajax({
+                url: "/GRN/GRNForAuthorization",
+                cache: false,
+                async: true,
+                method: "GET",
+                dataType: "JSON",
+                success: function (response) {
+
+                    $SearchGrid.pqGrid("option", "dataModel.data", response.records);
+
+                    var column = $SearchGrid.pqGrid("getColumn", { dataIndx: "VendorName" });
+                    var filter = column.filter;
+                    filter.cache = null;
+                    filter.options = $SearchGrid.pqGrid("getData", { dataIndx: ["VendorName"] });
+
+                    var column = $SearchGrid.pqGrid("getColumn", { dataIndx: "StoreName" });
+                    var filter = column.filter;
+                    filter.cache = null;
+                    filter.options = $SearchGrid.pqGrid("getData", { dataIndx: ["StoreName"] });
+
+                    $SearchGrid.pqGrid("refreshDataAndView");
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            $("#PODate").prop('disabled', true);
+            $("#GrossAmount").prop('disabled', true);
+            $("#TaxAmount").prop('disabled', true);
+            $("#OtherCharges").prop('disabled', true);
+            $("#Discount").prop('disabled', true);
+            $("#GrandTotal").prop('disabled', true);
+            $("#Rounding_Off").prop('disabled', true);
+            $('#IssueNo').on('click', function () {
+                if ($("#ddlStores").val() == "") {
+                    ShowAlert("error", "Please Select Store");
+                    return;
+                }
+                LoadPOgrid();
+            });
+        });
+        $(document).ready(function () {            
+            $("#GRNNo").prop('disabled', true);
+            $("#GRNNo").val("Auto");
+            $("#VendorName").prop('disabled', true);
+
+            $.ajax({
+                type: "GET",
+                url: "/Master/MainStores",
+                datatype: "Json",
+                success: function (data) {
+                    $.each(data, function (index, value) {
+                        $('#ddlStores').append('<option value="' + value.ID + '">' + value.Name + '</option>');
+                    });
+                }
+            });
+
+            $('#GrnTypeID').change(function () {
+                $("#IssueId").val("");
+                $("#IssueNo").val("");
+                $("#PODate").val("");
+                $("#VendorName").val("");
+                $("#VendorID").val("");
+                if ($('#GrnTypeID').val() == "1") {                    
+                    $("#IssueNo").prop('disabled', false);
+                    //$("#PODate").prop('disabled', false);
+                    $("#VendorName").prop('disabled', true);
+                }
+                else {
+                    $("#IssueNo").prop('disabled', true);
+                    //$("#PODate").prop('disabled', true);
+                    $("#VendorName").prop('disabled', false);
+                }
+            });
+            $('#btnAddGRN').on('click', function () {
+                ClearForm();
+            });
+            $('#btnRemoveItem').on('click', function () {
+                var rowIndx = getRowIndx();
+                if (rowIndx == null) {
+                    return;
+                }
+                $grid.pqGrid("deleteRow", { rowIndx: rowIndx });
+            });
+            $('#btnShowItems').on('click', function () {
+                var getData = $vendorgrid.pqGrid("option", "dataModel.data");
+                var selectedItems = jLinq.from(getData).equals("state", true).select();                
+                var dataItems = [];
+                $.each(selectedItems, function (key, value) {
+                    dataItems.push(value.ItemId);
+                });
+                console.log(dataItems);
+                if (selectedItems.length > 0) {
+                    $("#ItemModal").modal('toggle');
+                    $.ajax({
+                        type: "GET",
+                        url: "/ItemMaster/VendorItems/",
+                        traditional: true,
+                        data: { ItemIds: dataItems },
+                        datatype: "Json",
+                        beforeSend: function () {
+                            $Itemgrid = $("#Itemgrid").pqGrid(setM);
+                            $Itemgrid.pqGrid("showLoading");
+                        },
+                        complete: function () {
+                            $Itemgrid.pqGrid("hideLoading");
+                        },
+                        success: function (data) {
+                            $Itemgrid.pqGrid("hideLoading");
+                            $Itemgrid.pqGrid("option", "dataModel.data", data);
+                            $Itemgrid.pqGrid("refreshDataAndView");
+                        },
+                        error: function (request, status, error) {
+                            //ClearParamGrid("Itemgrid");
+                            $Itemgrid.pqGrid("hideLoading");
+                            ShowAlert("error", "Error while loading Itemlist");
+                            return;
+                        }
+                    });
+                }
+                else {
+                    ShowAlert("error", "Please Select Vendor Items");
+                }
+            });
+            /********* Add Item to GRN Detail grid*********/
+            $('#btnAddItem').on('click', function () {
+                $Itemgrid.pqGrid("reset", { filter: true });
+                var dataMGrid = [];
+                var getData = $Itemgrid.pqGrid("option", "dataModel.data");
+                var selectedItems = jLinq.from(getData).equals("state", true).select();
+
+                var getMainGridData = $grid.pqGrid("option", "dataModel.data");
+                ClearParamGrid("grid");
+                $.each(getMainGridData, function (key, value) {
+                    var grdData = {
+                        'ID': value.ID, 'ItemID': value.ItemID, 'ItemName': value.ItemName, 'UnitName': value.UnitName, 'PackSizeId': value.PackSizeId,
+                        'PackSize': value.PackSize, 'CBatch': value.CBatch, 'CQty': value.CQty, 'CFreeQty': value.CFreeQty, 'CRate': value.CRate,
+                        'MarkupPercentage': value.MarkupPercentage, 'CMrp': value.CMrp, 'CItemTotal': value.CItemTotal, 'TaxRates': value.TaxRates,
+                        'TaxAmount': value.TaxAmount, 'DiscountPer': value.DiscountPer, 'Discount': value.Discount,
+                        'BatchName': value.BatchName, 'ExpiryDate': value.ExpiryDate, 'Qty': value.Qty, 'FreeQty': value.FreeQty, 'Rate': value.Rate,
+                        'MRP': value.MRP, 'ItemTotal': value.ItemTotal, 'TransC': value.TransC, 'InstallC': value.InstallC,
+                        'ServiceAmt': value.ServiceAmt, 'OtherC': value.OtherC, 'CustomDuty': value.CustomDuty, 'Amount': value.Amount
+                    }
+                    dataMGrid.push(grdData);
+                });
+
+                $.each(selectedItems, function (key, value) {
+                    var grdData = {
+                        'ItemID': value.ID, 'ItemName': value.Name, 'UnitName': value.UnitName, 'PackSizeId': value.PackSizeID, 'PackSize': value.PackSize, 'CRate': value.StandardRate, 'CMrp': value.MRP,
+                        'CExpiryDate': '12/12/2099', 'CBatch': value.Code, 'MarkupPercentage': value.MarkupPercentage
+                    }
+                    dataMGrid.push(grdData);
+                });
+
+                $grid.pqGrid("option", "dataModel.data", dataMGrid);
+                $grid.pqGrid("refreshDataAndView");
+                $("#ItemModal").modal('toggle');
+            });
+
+            $('#btnSaveGRN').on('click', function () {
+                if ($('#GrnTypeID').val() == "1") {
+                    if ($("#IssueId").val() == "") {
+                        ShowAlert("error", "Please Select Issue No");
+                        return;
+                    }
+                }
+                else {
+                    if ($("#VendorID").val() == "") {
+                        ShowAlert("error", "Please Select Supplier");
+                        return;
+                    }
+                }
+
+                if ($("#DCNo").val() == "") {
+                    ShowAlert("error", "Please Enter DC No");
+                    return;
+                }
+                if ($("#DCDate").val() == "") {
+                    ShowAlert("error", "Please Select DC Date");
+                    return;
+                }
+                if ($("#InwardNo").val() == "") {
+                    ShowAlert("error", "Please Enter Inward No");
+                    return;
+                }
+                if ($("#InwardDate").val() == "") {
+                    ShowAlert("error", "Please Select Inward Date");
+                    return;
+                }
+                if ($("#ddlStores").val() == "" || $("#ddlStores").val() == "0") {
+                    ShowAlert("error", "Please Select Store");
+                    return;
+                }
+                if ($("[name='PaymentMode']:checked").val() == "") {
+                    ShowAlert("error", "Please Select Payment Mode");
+                    return;
+                }
+                if ($("[name='PaymentMode']:checked").val() == "" || $("[name='PaymentMode']:checked").val() == undefined) {
+                    ShowAlert("error", "Select Payment Mode");
+                    return;
+                }
+
+                var grnvendoritem = $vendorgrid.pqGrid("getData", { dataIndx: ['IssueDetailsId', 'IssueId', 'ItemId', 'BatchId', 'AcceptedQuantity'] });
+                var checkAcceptQty = 0; 
+                $.each(grnvendoritem, function (key, value) {
+                    if (value.AcceptedQuantity <= 0 || value.AcceptedQuantity == undefined) checkAcceptQty++;
+                });
+                if (checkAcceptQty > 0) {
+                    ShowAlert("error", "Please Enter Accepted Quantity ");
+                    return;
+                }
+                var items = $grid.pqGrid("getData", { dataIndx: ['ItemID', 'PackSizeId', 'PackSize', 'CBatch', 'CQty', 'CFreeQty', 'CRate', 'CMrp', 'Taxes', 'TaxRates', 'TaxAmount', 'Discount', 'BatchName', 'CExpiryDate', 'ExpiryDate', 'Qty', 'FreeQty', 'Rate', 'MRP', 'TransC', 'InstallC', 'ServiceAmt', 'OtherC', 'CustomDuty', 'Amount'] });
+                var checkQty = 0, checkBatch = 0, checkExpiry = 0;
+                $.each(items, function (key, value) {
+                    if (value.CQty <= 0 || value.CQty == undefined) checkQty++;
+                    if (value.CBatch == "" || value.CBatch == undefined) checkBatch++;
+                    if (value.CExpiryDate == "" || value.CExpiryDate == undefined) checkExpiry++;
+                });
+                if (checkQty > 0) {
+                    ShowAlert("error", "Please Enter Challan Quantity ");
+                    return;
+                }
+                if (checkBatch > 0) {
+                    ShowAlert("error", "Please Enter Batch Name");
+                    return;
+                }
+                if (checkExpiry > 0) {
+                    ShowAlert("error", "Please Enter Expiry Date");
+                    return;
+                }
+                if (items != undefined) {
+                    if (items.length > 0) {
+
+                    }
+                    else {
+                        ShowAlert("error", "No Items to Save");
+                        return;
+                    }
+                }
+                else {
+                    ShowAlert("error", "No Items to Save");
+                    return;
+                }
+                
+                var grn = JSON.stringify({ //Passing data
+                    ID: $("#ID").val(),
+                    GRNNo: $("#GRNNo").val(),
+                    GRNDate: $("#GRNDate").val(),
+                    DCNo: $("#DCNo").val(),
+                    DCDate: $("#DCDate").val(),
+                    InvoiceNo: $("#InvoiceNo").val(),
+                    InvoiceDate: $("#InvoiceDate").val(),
+                    IssueId: $("#IssueId").val(),
+                    InwardNo: $("#InwardNo").val(),
+                    InwardDate: $("#InwardDate").val(),
+                    GrnTypeID: $("#GrnTypeID").val(),
+                    StoreId: $("#ddlStores").val(),
+                    VendorID: $("#VendorID").val(),
+                    VehicleNo: $("#VehicleNo").val(),
+                    Transporter: $("#Transporter").val(),
+                    Notes: $("#Notes").val(),
+                    GrnPaymentType: $("[name='PaymentMode']:checked").val(),
+                    Amount: $("#GrossAmount").val(),
+                    TotalTaxamt: $("#TaxAmount").val(),
+                    TotalOtherAmt: $("#OtherCharges").val(),
+                    TotalDisc: $("#Discount").val(),
+                    //CrNoteAmt: $("#CR_Note_Amount").val(),
+                    Roundoff: $("#Rounding_Off").val(),
+                    TotalAmount: $("#GrandTotal").val(),
+                    GRNDetails: items,
+                    grnvendoritems: grnvendoritem
+                });
+                $.ajax({
+                    type: "POST", //HTTP POST Method
+                    traditional: true,
+                    contentType: 'application/json; charset=utf-8',
+                    url: '/GRNVendor/SaveGRN', // Controller/View
+                    data: grn,
+                    success: function (msg) {
+                        if (msg.success) {
+                            ClearForm();
+                            LoadSearchGrid();
+                            ShowAlert("success", "Generated GRN No : " + msg.Message);
+                        }
+                        else {
+                            ShowAlert("error", "Falied to Save! " + msg.Message);
+                        }
+                    },
+                    error: function (jqXHR, exception) {
+                        Notify("Falied to Save", "error", "Error while saving GRN.");
+                    }
+                });
+            });
+        });
+
+        /********* Add Tax Function*********/
+        $(document).ready(function () {
+            $('#btnAddTax').on('click', function () {
+                var totalTax = 0;
+                var selections = $("#Taxgrid").grid().getSelections();
+                $.each(selections, function () {
+                    var data = $("#Taxgrid").grid().getById(this);
+                    if (!data.Tax_EncExc) {
+                        totalTax = totalTax + parseFloat(data.Tax_percentage);
+                    }
+                });
+                var rowId = $("#rowId").val();
+                var rowdata = $("#grid").grid().getById(rowId);
+                if (rowdata != undefined) {
+                    var CRate = rowdata.CRate, CQty = rowdata.CQty, CMrp = rowdata.CMrp;
+                    var TaxPer = 0;
+                    var Rate = rowdata.Rate, Qty = rowdata.Qty, discount = rowdata.Discount, discper = rowdata.DiscountPer;
+                    var TransC = rowdata.TransC, InstallC = rowdata.InstallC, ServiceAmt = rowdata.ServiceAmt, OtherC = rowdata.OtherC, CustomDuty = rowdata.CustomDuty;
+
+                    if (CRate == undefined || CRate == null) CRate = 0;
+                    if (CQty == undefined || CQty == null) CQty = 0;
+                    if (CMrp == undefined || CMrp == null) CMrp = 0;
+
+                    if (TaxPer == undefined || TaxPer == null) TaxPer = 0;
+
+                    if (Rate == undefined || Rate == null) Rate = 0;
+                    if (Qty == undefined || Qty == null) Qty = 0;
+                    if (discount == undefined || discount == null) discount = 0;
+                    if (discper == undefined || discper == null) discper = 0;
+                    if (TransC == undefined || TransC == null) TransC = 0;
+                    if (InstallC == undefined || InstallC == null) InstallC = 0;
+                    if (ServiceAmt == undefined || ServiceAmt == null) ServiceAmt = 0;
+                    if (OtherC == undefined || OtherC == null) OtherC = 0;
+                    if (CustomDuty == undefined || CustomDuty == null) CustomDuty = 0;
+
+                    TaxPer = totalTax;
+
+                    var Amount = Rate * Qty;
+                    var TaxAmount = (Amount * TaxPer) / 100;
+
+                    if (rowdata.field == "DiscountPer") {
+                        discount = Amount * discper / 100;
+                    }
+                    if (rowdata.field == "Discount") {
+                        discper = discount * 100 / Amount;
+                    }
+
+                    var NetAmt = parseFloat(Amount) + parseFloat(InstallC) + parseFloat(TransC) + parseFloat(ServiceAmt) + parseFloat(OtherC) + parseFloat(CustomDuty);
+                    NetAmt = NetAmt - discount;
+
+                    $("#grid").grid().updateRow(rowId, {
+                        'ID': rowdata.ID, 'ItemID': rowdata.ItemID, 'PackSizeId': rowdata.PacksizeId, 'ItemName': rowdata.ItemName, 'UnitName': rowdata.UnitName, 'PackSize': rowdata.PackSize,
+                        'CQty': rowdata.CQty, 'CRate': rowdata.CRate, 'CMrp': rowdata.CMrp, 'CFreeQty': rowdata.CFreeQty,
+                        'TaxPer': TaxPer, 'TaxAmount': TaxAmount, 'DiscountPer': discper, 'Discount': discount, 'Qty': Qty, 'FreeQty': rowdata.FreeQty, 'Rate': Rate, 'MRP': rowdata.MRP,
+                        'TransC': rowdata.TransC, 'InstallC': rowdata.InstallC, 'ServiceAmt': rowdata.ServiceAmt, 'OtherC': rowdata.OtherC, 'CustomDuty': rowdata.CustomDuty, 'Amount': NetAmt
+                    });
+                }
+                CalculateTotalAmount();
+            });
+        });
+
+        /********* GRN Grid Function*********/
+        function CalculateTotalAmount() {
+            var getData = $grid.pqGrid("option", "dataModel.data");
+            var grossAmt = 0, taxAmount = 0, otherAmount = 0, DiscountAmount = 0, grandTotal = 0, rndGrandTotal = 0;
+            $.each(getData, function (_, item) {
+                if (!isNaN(item.ItemTotal) && item.ItemTotal != null)
+                    grossAmt += parseFloat(item.ItemTotal);
+                if (!isNaN(item.TaxAmount) && item.TaxAmount != null)
+                    taxAmount += parseFloat(item.TaxAmount);
+                if (!isNaN(item.OtherC) && item.OtherC != null)
+                    otherAmount += parseFloat(item.OtherC);
+                if (!isNaN(item.TransC) && item.TransC != null)
+                    otherAmount += parseFloat(item.TransC);
+                if (!isNaN(item.InstallC) && item.InstallC != null)
+                    otherAmount += parseFloat(item.InstallC);
+                if (!isNaN(item.CustomDuty) && item.CustomDuty != null)
+                    otherAmount += parseFloat(item.CustomDuty);
+                if (!isNaN(item.ServiceAmt) && item.ServiceAmt != null)
+                    otherAmount += parseFloat(item.ServiceAmt);
+                if (!isNaN(item.Discount) && item.Discount != null)
+                    DiscountAmount += parseFloat(item.Discount);
+            });
+            grandTotal = parseFloat(grossAmt) + parseFloat(taxAmount) + parseFloat(otherAmount) + parseFloat(DiscountAmount);
+            rndGrandTotal = Math.round(grandTotal);
+
+            $("#GrossAmount").val(grossAmt.toFixed(2));
+            $("#TaxAmount").val(taxAmount.toFixed(2));
+            $("#OtherCharges").val(otherAmount.toFixed(2));
+            $("#Discount").val(DiscountAmount.toFixed(2));
+            $("#GrandTotal").val(grandTotal.toFixed(2));
+            $("#Rounding_Off").val(rndGrandTotal);
+        }
+        function editRow(rowIndx, grid, edit) {
+            if (rowIndx != null) {
+                var row = $grid.pqGrid('getRowData', { rowIndx: rowIndx });
+                LoadTaxgrid();
+
+                $("#popup-dialog-crud").dialog({
+                    title: "Get Tax For (" + (row.ItemName) + ")", buttons: {
+                        Update: function () {
+                            var getData = $("#Taxgrid").pqGrid("option", "dataModel.data");
+                            var selectedItems = jLinq.from(getData).equals("state", true).select();
+                            var totalTax = 0;
+                            var TaxIds = [];
+                            $.each(selectedItems, function (key, value) {
+                                totalTax = totalTax + value.Tax_percentage;
+                                TaxIds.push(value.Taxid);
+                            });
+                            $("#grid").pqGrid('updateRow', { rowIndx: rowIndx, newRow: { 'TaxRates': totalTax, 'Taxes': TaxIds } });
+                            $("#grid").pqGrid("refreshRow", { rowIndx: rowIndx });
+                            $(this).dialog("destroy");
+                            CalculateTotalAmount();
+                        },
+                        Cancel: function () {
+                            $(this).dialog("destroy");
+                        }
+                    }
+                }).dialog("open");
+            }
+        }
+
+        /********* GRN Grid *********/
+        $(document).ready(function () {
+
+            var packsizes = [];
+            $.ajax({
+                type: "GET",
+                url: "/Master/AllItemPackSize",
+                success: function (data) {
+                    $.each(data, function (index, value) {
+                        packsizes.push(value.Name)
+                    });
+                }
+            });
+
+            var autoCompleteEditor = function (ui) {
+                var $cell = ui.$cell,
+                    rowData = ui.rowData,
+                    dataIndx = ui.dataIndx,
+                    width = ui.column.width,
+                    cls = ui.cls;
+                var dc = $.trim(rowData[dataIndx]);
+
+                var $inp = $("<input type='text' name='" + dataIndx + "' class='" + cls + " pq-ac-editor' />")
+                    .width(width - 6)
+                    .appendTo($cell)
+                    .val(dc);
+
+                $inp.autocomplete({
+                    source: packsizes,
+                    minLength: 0
+                }).focus(function () {
+                    //open the autocomplete upon focus
+                    $(this).autocomplete("search", "");
+                });
+            }
+
+            var dateEditor = function (ui) {
+                var $cell = ui.$cell,
+                    rowData = ui.rowData,
+                    dataIndx = ui.dataIndx,
+                    cls = ui.cls,
+                    dc = $.trim(rowData[dataIndx]);
+                $cell.css('padding', '0');
+
+                var $inp = $("<input type='text' name='" + dataIndx + "' class='" + cls + " pq-date-editor' />")
+                .appendTo($cell)
+                .val(dc).datepicker({
+                    changeMonth: true,
+                    changeYear: true,
+                    onClose: function () {
+                        $inp.focus();
+                    }
+                });
+            }
+            var dataModel = { location: 'remote', sorting: 'local', paging: 'local', dataType: 'JSON' };
+            var colModel = [
+                    { title: "", dataIndx: "ID", width: 10, dataType: "integer", editable: false, resizable: false, hidden: true },
+                    { title: "", dataIndx: "ItemID", width: 10, dataType: "integer", editable: false, resizable: false, hidden: true },
+                    {
+                        title: "Item Details", align: "center", colModel: [
+                            { title: "Item Name", dataIndx: "ItemName", width: 150, dataType: "string", resizable: true, editable: false },
+                            { title: "Unit", dataIndx: "UnitName", width: 90, dataType: "string", resizable: true, editable: false },
+                            { title: "PackSizeId", dataIndx: "PackSizeId", dataType: "integer", editable: false, hidden: true },
+                            {
+                                title: "Pack Size", dataIndx: "PackSize", width: 90, resizable: true,
+                                editor: {
+                                    type: autoCompleteEditor
+                                },
+                                validations: [
+                                    { type: 'minLen', value: 1, msg: "Required" },
+                                        {
+                                            type: function (ui) {
+                                                var value = ui.value;
+                                                if ($.inArray(ui.value, packsizes) == -1) {
+                                                    ui.msg = value + " not found in list";
+                                                    return false;
+                                                }
+                                            }
+                                        }
+                                ]
+                            }]
+                    },
+                    {
+                        title: "Challan Details", align: "center", colModel: [
+                            { title: "Batch", dataIndx: "CBatch", width: 100, dataType: "string", resizable: true },
+                            {
+                                title: "Expiry Date", dataIndx: "CExpiryDate", width: 100, resizable: true,
+                                editor: {
+                                    type: dateEditor
+                                },
+                                validations: [
+                                    { type: 'regexp', value: '[0-9]{2}/[0-9]{2}/[0-9]{4}', msg: 'Not in mm/dd/yyyy format' }
+                                ]
+                            },
+                            { title: "Qty", dataIndx: "CQty", width: 70, dataType: "integer", align: "left" },
+                            { title: "Free Qty", dataIndx: "CFreeQty", width: 90, dataType: "integer", align: "left" },
+                            { title: "Rate", dataIndx: "CRate", width: 90, dataType: "float", align: "left" },
+                            { title: "MarkupPercentage", dataIndx: "MarkupPercentage", width: 90, dataType: "float", hidden: true },
+                            {
+                                title: "MRP", dataIndx: "CMrp", width: 90, dataType: "float", align: "left",
+                                formula: function (ui) {
+                                    var rd = ui.rowData;
+                                    var MarkupPercentage = rd.MarkupPercentage;
+                                    var mrp = 0;
+                                    if (MarkupPercentage == "" || MarkupPercentage == undefined) {
+                                        mrp = rd.CMrp;
+                                    }
+                                    else {
+                                        mrp = rd.CRate + ((rd.CRate * MarkupPercentage) / 100);
+                                    }
+                                    return mrp;
+                                }
+                            },
+                            {
+                                title: "Item Total", dataIndx: "CItemTotal", width: 100, dataType: "float", align: "left",
+                                format: '##,###.00',
+                                editable: false,
+                                formula: function (ui) {
+                                    var rd = ui.rowData;
+                                    return rd.CQty * rd.CRate;
+                                }
+                            }]
+                    },
+                    {
+                        title: "Tax Details", align: "center", colModel: [
+                            { title: "Taxes", dataIndx: "Taxes", width: 90, dataType: "string", editable: true, hidden: true },
+                            {
+                                title: "", editable: false, minWidth: 30, sortable: false, listeners: [{ click: editRow }], render: function (ui) {
+                                    return "<button type='button' class='edit_btn'></button>";
+                                },
+                                postRender: function (ui) {
+                                    var rowIndx = ui.rowIndx,
+                                        grid = this,
+                                        $cell = grid.getCell(ui);
+
+                                    $cell.find(".edit_btn").button({ icons: { primary: 'ui-icon-pencil' } })
+                                    .bind("click", function (evt) {
+                                        editRow(rowIndx, grid, true);
+                                    });
+                                }
+                            },
+                            { title: "TaxRates", dataIndx: "TaxRates", editable: true, minWidth: 90, sortable: false, hidden: true },
+                        {
+                            title: "Tax Amount", dataIndx: "TaxAmount", width: 110, dataType: "float", align: "left",
+                            format: '##,###.00',
+                            editable: false,
+                            formula: function (ui) {
+                                var rd = ui.rowData;
+                                var amount = rd.CItemTotal;
+                                if (amount == undefined) amount = 0
+                                var taxper = rd.TaxRates;
+                                if (taxper == undefined) taxper = 0
+                                return amount * taxper / 100;
+                            }
+                        },
+                        {
+                            title: "Discount %", dataIndx: "DiscountPer", width: 110, dataType: "float", align: "left",
+                            format: '##,###.00',
+                            editable: true,
+                            formula: function (ui) {
+                                var rd = ui.rowData;
+                                var amount = rd.CItemTotal;
+                                if (amount == undefined) amount = 0
+                                var discper = rd.DiscountPer;
+                                if (discper == undefined) discper = 0
+                                var discamt = rd.Discount;
+                                if (discamt == undefined) discamt = 0
+                                if (discamt > 0) {
+                                    discper = discamt * 100 / amount;
+                                }
+                                return discper;
+                            }
+                        },
+                        {
+                            title: "Discount", dataIndx: "Discount", width: 90, dataType: "float", editable: false, align: "left",
+                            format: '##,###.00',
+                            editable: true,
+                            formula: function (ui) {
+                                var rd = ui.rowData;
+                                var amount = rd.CItemTotal;
+                                if (amount == undefined) amount = 0
+                                var discper = rd.DiscountPer;
+                                if (discper == undefined) discper = 0
+                                var discamt = rd.Discount;
+                                if (discamt == undefined) discamt = 0
+                                if (discper > 0) {
+                                    discamt = amount * discper / 100;
+                                }
+                                return discamt;
+                            }
+                        }]
+                    },
+                    {
+                        title: "Accepted Details", align: "center", colModel: [
+                            {
+                                title: "Batch", dataIndx: "BatchName", width: 100, dataType: "string", resizable: true,
+                                editable: false,
+                                formula: function (ui) {
+                                    var rd = ui.rowData;
+                                    return rd.CBatch;
+                                }
+                            },
+                            {
+                                title: "Expiry Date", dataIndx: "ExpiryDate", width: 100, resizable: true,
+                                editable: false,
+                                formula: function (ui) {
+                                    var rd = ui.rowData;
+                                    return rd.CExpiryDate;
+                                }
+                            },
+                            {
+                                title: "Qty", dataIndx: "Qty", width: 90, dataType: "integer", align: "left", resizable: true,
+                                editable: false,
+                                formula: function (ui) {
+                                    var rd = ui.rowData;
+                                    return rd.CQty;                                    
+                                }
+                            },
+                            {
+                                title: "Free Qty", dataIndx: "FreeQty", width: 90, dataType: "integer", align: "left", resizable: true,
+                                editable: false,
+                                formula: function (ui) {
+                                    var rd = ui.rowData;
+                                    return rd.FreeQty;
+                                }
+                            },
+                            {
+                                title: "Rate", dataIndx: "Rate", width: 90, dataType: "float", align: "left", resizable: true,
+                                editable: false,
+                                formula: function (ui) {
+                                    var rd = ui.rowData;
+                                    return rd.CRate;
+                                }
+                            },
+                            {
+                                title: "MRP", dataIndx: "MRP", width: 90, dataType: "float", align: "left", resizable: true,
+                                editable: false,
+                                formula: function (ui) {
+                                    var rd = ui.rowData;
+                                    return rd.CMrp;
+                                }
+                            },
+                            {
+                                title: "Item Total", dataIndx: "ItemTotal", width: 100, dataType: "float", editable: false, align: "left",
+                                format: '##,###.00',
+                                editable: false,
+                                formula: function (ui) {
+                                    var rd = ui.rowData;
+                                    return rd.Qty * rd.Rate;
+                                }
+                            }]
+                    },
+                    {
+                        title: "Other Charges", align: "center", colModel: [{ title: "Trans. Charges", dataIndx: "TransC", width: 90, dataType: "float", align: "left", resizable: true },
+                        { title: "Inst. Charges", dataIndx: "InstallC", width: 90, dataType: "float", align: "left", resizable: true },
+                        { title: "Service Charges", dataIndx: "ServiceAmt", width: 90, dataType: "float", align: "left", resizable: true },
+                        { title: "Other Charges", dataIndx: "OtherC", width: 90, dataType: "float", align: "left", resizable: true },
+                        { title: "Custom Duty", dataIndx: "CustomDuty", width: 90, dataType: "float", align: "left", resizable: true }]
+                    },
+                    {
+                        title: "Net Amount", dataIndx: "Amount", width: 100, dataType: "float", align: "left", editable: false,
+                        format: '##,###.00',
+                        formula: function (ui) {
+                            var rd = ui.rowData;
+                            var itemTotal = rd.CItemTotal, discount = rd.Discount, taxAmount = rd.TaxAmount;
+                            var TransC = rd.TransC, InstallC = rd.InstallC, ServiceAmt = rd.ServiceAmt, OtherC = rd.OtherC, CustomDuty = rd.CustomDuty;
+                            if (itemTotal == undefined || itemTotal == null || isNaN(itemTotal)) itemTotal = 0;
+                            if (discount == undefined || discount == null || isNaN(discount)) discount = 0;
+                            if (taxAmount == undefined || taxAmount == null || isNaN(taxAmount)) taxAmount = 0;
+
+                            if (TransC == undefined || TransC == null || isNaN(TransC)) TransC = 0;
+                            if (InstallC == undefined || InstallC == null || isNaN(InstallC)) InstallC = 0;
+                            if (ServiceAmt == undefined || ServiceAmt == null || isNaN(ServiceAmt)) ServiceAmt = 0;
+                            if (OtherC == undefined || OtherC == null || isNaN(OtherC)) OtherC = 0;
+                            if (CustomDuty == undefined || CustomDuty == null || isNaN(CustomDuty)) CustomDuty = 0;
+
+                            var otherCharges = parseFloat(InstallC) + parseFloat(TransC) + parseFloat(ServiceAmt) + parseFloat(OtherC) + parseFloat(CustomDuty);
+                            var NetAmt = parseFloat(itemTotal) + parseFloat(otherCharges) + parseFloat(taxAmount);
+                            NetAmt = NetAmt - discount;
+                            return NetAmt;
+                        }
+                    }
+            ];
+            var grid = {
+                width: '100%',
+                height: 400,
+                sortable: false,
+                numberCell: { show: false },
+                selectionModel: { type: 'row' },
+                hoverMode: 'cell',
+                editor: { type: 'textbox' },
+                showTop: true,
+                resizable: true,
+                colModel: colModel,
+                title: "Item Details",
+                cellSave: function (evt, ui) {
+                    this.refreshRow(ui);
+                    CalculateTotalAmount();
+                },
+                editModel: {
+                    saveKey: $.ui.keyCode.ENTER,
+                    keyUpDown: false
+                },
+                draggable: false,
+                wrap: false,
+                dataModel: dataModel,
+                pageModel: { type: "local", rPP: 20 },
+                postRenderInterval: -1,
+                cellBeforeSave: function (event, ui) {
+                    var dataIndx = ui.dataIndx, newVal = ui.newVal;
+                    var data = ui.rowData;
+                    if (dataIndx == 'CFreeQty') {
+                        if (newVal > data.CQty) {
+                            return false;
+                        }
+                    }
+                    if (dataIndx == 'CMrp') {
+                        if (newVal < data.CRate) {
+                            return false;
+                        }
+                    }
+                    if (dataIndx == 'Qty') {
+                        if ($("#GrnTypeID").val() == 1) {
+                            if (newVal <= data.CQty)
+                                return true;
+                            else
+                                return false;
+                        }
+                    }
+                    if (dataIndx == 'FreeQty') {
+                        if ($("#GrnTypeID").val() == 1) {
+                            if (newVal <= ui.CFreeQty)
+                                true;
+                            else
+                                false;
+                        }
+                    }
+                }
+            };
+            $grid = $("#grid").pqGrid(grid);
+            $("#popup-dialog-crud").dialog({
+                width: 400, modal: true,
+                open: function () { $(".ui-dialog").position({ of: "#grid" }); },
+                autoOpen: false
+            });
+        });
+        /********* Item Grid *********/
+        $(document).ready(function () {
+            var dataIL = { location: "local", sorting: 'local' };
+            var colIL = [
+                    {
+                        dataIndx: "state", Width: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                        editor: false, dataType: 'bool',
+                        cb: { select: true, all: false, header: true }
+                    },
+                    { title: "", dataIndx: "ID", editable: false, hidden: true },
+                    { title: "", dataIndx: "MarkupPercentage", editable: false, hidden: true },
+                    { title: "", dataIndx: "PackSizeID", editable: false, hidden: true },
+                    { title: "Code", dataIndx: "Code", width: 100, hidden: true },
+                    { title: "Item Name", dataIndx: "Name", width: 200, dataType: "string", editable: false, filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } },
+                    { title: "Unit", dataIndx: "UnitName", width: 100, editable: false },
+                    { title: "MRP", dataIndx: "MRP", width: 150, editable: false },
+                    { title: "Rate", dataIndx: "StandardRate", width: 150, editable: false }
+            ];
+            var setM = {
+                width: '100%',
+                height: 350,
+                sortable: false,
+                numberCell: { show: false },
+                selectionModel: { type: 'row' },
+                pasteModel: { on: false },
+                hoverMode: 'cell',
+                editor: { type: 'textbox' },
+                filterModel: { on: true, mode: "AND", header: true },
+                showTop: false,
+                resizable: true,
+                virtualX: true,
+                editModel: {
+                    saveKey: $.ui.keyCode.ENTER
+                },
+                draggable: false,
+                wrap: false,
+                colModel: colIL,
+                dataModel: dataIL,
+                pageModel: { type: "local", rPP: 20 }
+            };
+            $Itemgrid = $("#Itemgrid").pqGrid(setM);
+        });
+        /********* Tax Grid *********/
+        $(document).ready(function () {
+            var packsizes = ["", ""];
+            var dataTaxM = { location: "local", sorting: 'local' }
+            var colTaxM = [
+                {
+                    dataIndx: "state", Width: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                    editor: false, dataType: 'bool',
+                    cb: { select: true, all: false, header: true }
+                },
+                { title: "", dataIndx: "Taxid", dataType: "integer", hidden: true },
+                { title: "Code", dataIndx: "Tax_Code", width: 50, editable: false },
+                { title: "Name", dataIndx: "Tax_name", width: 160, editable: false },
+                { title: "Tax Type", dataIndx: "Tax_Type", width: 50, hidden: true },
+                { title: "Percentage", dataIndx: "Tax_percentage", width: 120, editable: false },
+                { title: "Formula", dataIndx: "Formula", width: 350, editable: false },
+                { title: "Tax", dataIndx: "Tax_EncExc", width: 100, editable: false },
+                { title: "Taxes", dataIndx: "Taxes", hidden: true }
+        //    {
+        //        title: "Tax", dataIndx: "Tax_EncExc", width: 100, editor: {
+        //        type: 'select',
+        //            //init: function (ui) {
+        //            //    ui.$cell.find("select").pqSelect();
+        //            //},
+        //            //valueIndx: "value",
+        //            //labelIndx: "text",
+        //            ////mapIndices: { "text": "INCEXCL", "value": "INCEXCL" },
+        //        options: [
+        //            { "Exclusive": "Exclusive" },
+        //            { "Inclusive": "Inclusive" },
+        //        ]
+        //    },
+        //    validations: [{ type: 'minLen', value: 1, msg: "Required" }]
+        //},
+            ];
+            var TaxM = {
+                width: 'flex',
+                height: 300,
+                sortable: false,
+                numberCell: { show: false },
+                hoverMode: 'cell',
+                showTop: false,
+                resizable: true,
+                scrollModel: { autoFit: true },
+                draggable: false,
+                wrap: false,
+                editable: true,
+                columnBorders: true,
+                selectionModel: { type: 'row' },
+                colModel: colTaxM,
+                dataModel: dataTaxM,
+                pageModel: { type: "local", rPP: 20 },
+            };
+            $Taxgrid = $("#Taxgrid").pqGrid(TaxM);
+        });
+        /********* PO Grid *********/
+        $(document).ready(function () {
+            var dataM = { location: "local", sorting: 'local' }
+            var colM = [
+                    { dataIndx: "ID", width: 10, sortable: false, hidden: true },
+                    { dataIndx: "IssueId", hidden: true, sortable: true },
+                    { dataIndx: "IssueNo", width: 150, title: "Issue No", sortable: true },
+                    { dataIndx: "strIssueDate", width: 150, title: "Issue Date", sortable: true },
+                    { dataIndx: "Manufacturer", width: 100, title: "VendorName" },
+                    { dataIndx: "ManufactureId", width: 50, hidden: true }, 
+
+            ];
+            var PO = {
+                width: '100%',
+                height: 400,
+                sortable: false,
+                numberCell: { show: false },
+                hoverMode: 'row',
+                showTop: false,
+                resizable: true,
+                wrap: false,
+                editable: false,
+                filterModel: { on: true, mode: "AND", header: true },
+                selectionModel: { type: 'row', mode: 'single' },
+                scrollModel: { autoFit: true },
+                colModel: colM,
+                dataModel: dataM,
+                pageModel: { type: "local", rPP: 20 },
+                rowClick: function (evt, ui) {
+                    ClearParamGrid("vendorgrid");
+                    if (ui.rowData) {
+                        var rowIndx = parseInt(ui.rowIndx);
+                        var record = ui.rowData;
+                      //  $("#PoID").val(record.ID);
+                        $("#IssueNo").val(record.IssueNo);
+                        $("#IssueId").val(record.IssueId);
+                        $("#PODate").val(record.strIssueDate);
+                        $("#VendorName").val(record.Manufacturer);
+                        $("#VendorID").val(record.ManufactureId);
+                        $("#ALOModal").modal('toggle');
+                        $.ajax({
+                            type: "GET",
+                            url: "/VendorMaterialIssue/AllVendorMaterialIssueForGRNDt/",
+                            data: { IssueId: record.IssueId },
+                            datatype: "Json",
+                            success: function (data) {
+                                var dataMGrid = [];
+                                $.each(data, function (index, value) {
+                                    var grdData = {
+                                        'ItemId': value.ItemId,'IssueDetailsId': value.IssueDetailsId, 'IssueId': value.IssueId, 'ItemName': value.ItemName, 'UnitName': value.UnitName, 'BatchName': value.BatchName, 'ExpiryDate': value.ExpiryDate,
+                                        'IssuedQuantity': value.IssuedQuantity, 'AcceptedQuantity': 0
+                                    }
+                                    dataMGrid.push(grdData);
+                                });
+                                $vendorgrid.pqGrid("option", "dataModel.data", dataMGrid);
+                                $vendorgrid.pqGrid("refreshDataAndView");
+                            }
+                        });
+                    }
+                }
+            };
+            $POgrid = $("#POgrid").pqGrid(PO);
+        });
+        /********* GRN vendor Grid *********/
+        $(document).ready(function () {
+            var dataVendorM = { location: "local", sorting: 'local' }
+            var colVendorM = [
+                    {
+                        dataIndx: "state", Width: 20, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                        editor: false, dataType: 'bool',
+                        title: "<input type='checkbox' />",
+                        cb: { select: true, all: false, header: true }
+                    },
+                    { title: "", dataIndx: "IssueDetailsId", dataType: "integer", hidden: true },
+                    { title: "", dataIndx: "IssueId", dataType: "integer", hidden: true },
+                    { title: "", dataIndx: "ItemId", dataType: "integer", hidden: true },
+                    { title: "", dataIndx: "BatchId", dataType: "integer", hidden: true },
+                    { title: "ItemName", dataIndx: "ItemName", width: 200, editable: false },
+                    { title: "UnitName", dataIndx: "UnitName", width: 100, editable: false },
+                    { title: "BatchName", dataIndx: "BatchName", width: 150, editable: false },
+                    { title: "Expiry Date", dataIndx: "ExpiryDate", width: 200, editable: false },
+                    { title: "Allocated Qty", dataIndx: "IssuedQuantity", width: 100, align: "left", editable: false },
+                    { title: "Acceptance Qty", dataIndx: "AcceptedQuantity", width: 100, align: "left" },
+                    {
+                        title: "Pending", dataIndx: "PendingAcceptance", width: 100, align: "left", editable: false,
+                        formula: function (ui) {
+                            var rd = ui.rowData;
+                            return rd.IssuedQuantity - rd.AcceptedQuantity;
+                        }
+                    },
+            ];
+            var VendorM = {
+                width: '100%',
+                height: 300,
+                sortable: false,
+                numberCell: { show: false },
+                hoverMode: 'cell',
+                showTop: false,
+                selectionModel: { type: 'row' },
+                resizable: true,
+                scrollModel: { autoFit: true },
+                colModel: colVendorM,
+                dataModel:dataVendorM,
+                pageModel: { type: "local", rPP: 20 },
+                cellSave: function (evt, ui) {
+                    this.refreshRow(ui);
+                },
+            };
+            $vendorgrid = $("#vendorgrid").pqGrid(VendorM);
+        });
+        
+    </script>
+}

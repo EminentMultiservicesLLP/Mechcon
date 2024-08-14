@@ -1,0 +1,418 @@
+﻿@model BISERP.Areas.VendorProcess.Models.VendorMaterialIssueModel
+<script>
+    $(function () {
+        $(".IndentDate").datepicker({
+            showOn: "button",
+            buttonImage: "/Content/images/calendar.gif",
+            buttonImageOnly: true,
+            buttonText: "Select date",
+            dateFormat: "dd-MM-yy"
+        });
+        $("#anim").change(function () {
+            $(".IndentDate").datepicker("option", "showAnim", "fadeIn");
+        });
+    });
+</script>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <a class="collapsediv" data-toggle="collapse" href="#SearchDetails" style="color:white">
+                            Search Details
+                        </a>
+                    </div>
+                </div>
+                <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <div class="container fill">
+                            <div id="searchgrid"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        Entry Form
+                    </div>
+                </div>
+                <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <fieldset>
+                            <legend></legend>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <a data-toggle="collapse" class="btn btn-success" href="#SearchDetails">Show Search</a>
+                                    <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                                    <button type="button" class="btn btn-success" id="btnReset">Reset</button>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.IssueNo)
+                                        @Html.TextBoxFor(m => m.IssueNo, new { @readonly = "true", @class = "form-control" })
+                                        @Html.HiddenFor(m => m.IssueId)
+                                    </div>
+                                </div>
+
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.IssueDate)
+                                        @Html.TextBoxFor(m => m.IssueDate, new { @readonly = "true", @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.StoreId)
+                                        @Html.TextBox("Store","", new { @readonly = "true", @class = "form-control" })
+                                        @Html.HiddenFor(m => m.StoreId)
+                                    </div>
+                                </div>
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.VendorId)
+                                        @Html.TextBox("Vendor", "", new { @readonly = "true", @class = "form-control" })
+                                        @Html.HiddenFor(m => m.VendorId)
+                                    </div>
+                                </div>
+                                @*<div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.Nature)
+                                        @Html.TextBox("Priority", "", new { @readonly = "true", @class = "form-control" })
+                                        @Html.Hidden("Indent_Id")
+                                    </div>
+                                </div>*@
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-horizontal">
+                                    <div class="col-sm-3">
+                                        @Html.Label("Status","Status", new { @class = "required" })
+                                        <input type="radio" name="AuthCancel" value="Authorized" checked> Authorise
+                                        <input type="radio" name="AuthCancel" value="Cancel"> Cancel
+                                    </div>
+                                </div>                                
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-groupingBoder">
+                <fieldset>
+                    <legend></legend>
+                    <div class="row">
+                        <div class="container fill">
+                            <div id="grid"></div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        var $SearchGrid;
+        var $MainGrid;
+        var setMainGrid, dataMainGrid, colMainGrid;
+        function LoadSearchGrid() {
+            $.ajax({
+                url: "/VendorMaterialIssue/IssueForAuthorization",
+                cache: false,
+                async: true,
+                method: "GET",
+                dataType: "JSON",
+                beforeSend: function () {
+                    $SearchGrid.pqGrid("showLoading");
+                },
+                complete: function () {
+                    $SearchGrid.pqGrid("hideLoading");
+                },
+                success: function (response) {
+                    $SearchGrid.pqGrid("hideLoading");
+                    $SearchGrid.pqGrid("option", "dataModel.data", response);
+
+                    var column = $SearchGrid.pqGrid("getColumn", { dataIndx: "StoreName" });
+                    var filter = column.filter;
+                    filter.cache = null;
+                    filter.options = $SearchGrid.pqGrid("getData", { dataIndx: ["StoreName"] });
+
+                    var column = $SearchGrid.pqGrid("getColumn", { dataIndx: "Vendor" });
+                    var filter = column.filter;
+                    filter.cache = null;
+                    filter.options = $SearchGrid.pqGrid("getData", { dataIndx: ["Vendor"] });
+
+                    $SearchGrid.pqGrid("refreshDataAndView");
+                }
+            });
+        }
+        
+
+        $(document).ready(function () {
+            $('input[type=radio][name=AuthCancel]').change(function () {
+                if ($("[name='AuthCancel']:checked").val() == "Authorized") {
+                    $("#grid").pqGrid("selection", { type: 'row', method: 'selectAll' });
+                }
+                else {
+                    $("#grid").pqGrid("selection", { type: 'row', method: 'selectAll' });
+                }
+            });
+
+            $('#btnSave').on('click', function () {
+                
+                var items = $("#grid").pqGrid("getData", { dataIndx: ['state', 'IssueDetailsId', 'ItemId', 'BatchId', 'AuthorisedQuantity', 'TotalAmt'] });
+                var Ctr = 0;
+                var Ctr2 = 0;
+                var isSelected = false;
+                
+                var authorize = false;
+                var cancel = false;
+                if ($("[name='AuthCancel']:checked").val() == "Authorized")
+                    authorize = true;
+                else
+                    cancel = true;
+
+                var Indents = JSON.stringify({ //Passing data
+                    IssueId: $("#IssueId").val(),
+                    Authorised: authorize,
+                    Cancelled: cancel,
+                    StoreId: $("#StoreId").val(),
+                    VendorId: $("#VendorId").val(),
+                    VendorMaterialIssueDt: items
+                });
+                $.ajax(
+                {
+                    type: "POST", //HTTP POST Method
+                    traditional: true,
+                    contentType: 'application/json; charset=utf-8',
+                    url: "/VendorMaterialIssue/AuthCancelMaterialIndent/", // Controller/View
+                    data: Indents,
+                    success: function (msg) {
+                        if (msg.success) {
+                            ClearForm();
+                            LoadSearchGrid();
+                            if ($("[name='AuthCancel']:checked").val() == "Authorized")
+                                ShowAlert("success", "Issue authorized successfully to system.");
+                            else
+                                ShowAlert("success", "Issue cancelled successfully.");
+                        }
+                        else
+                        {
+                            ShowAlert("error", msg.responseText);
+                        }
+                    },
+                    error: function (jqXHR, exception) {
+                        ShowAlert("Falied to authorize/cancel", "error", "Error while updation! Please contact administrator!");
+                    }
+                });
+            });
+        });
+
+
+        $(document).ready(function () {
+
+            dataMainGrid = {
+                location: 'local',
+                sorting: 'local',
+                paging: 'local',
+                dataType: 'JSON'
+            };
+            colMainGrid = [
+                    {
+                        dataIndx: "state", Width: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                        editor: false, dataType: 'bool',
+                        title: "<input type='checkbox' />",
+                        cb: { select: true, all: false, header: true }
+                    },
+                    { title: "", dataIndx: "IssueDetailsId", width: 10, dataType: "integer", hidden: true },
+                    { title: "", dataIndx: "ItemId", width: 10, dataType: "integer", editable: false, resizable: false, hidden: true },                    
+                    { title: "Item Name", dataIndx: "ItemName", width: 200, dataType: "string", resizable: false, editable: false, align: "left" },
+                    { title: "Unit", dataIndx: "UnitName", width: 100, dataType: "string", resizable: false, editable: false, align: "left" },
+                    { title: "BatchId", dataIndx: "BatchId", dataType: "integer", hidden: true },
+                    { title: "Batch", dataIndx: "BatchName", width: 100, resizable: false, dataType: "string", editable: false, align: "left", hidden: false },
+                    { title: "Expiry Date", dataIndx: "ExpiryDate", width: 150, dataType: "string", hidden: true },
+                    { title: "Stock", dataIndx: "Item_Stock", width: 90, dataType: "float", align: "left", editable: false },
+                    { title: "Issue Qty", dataIndx: "IssuedQuantity", width: 90, dataType: "float", editable: false, align: "left" },
+                    { title: "Auth. Qty", dataIndx: "AuthorisedQuantity", width: 90, dataType: "float", align: "left" },
+                    { title: "Mrp", dataIndx: "MRP", width: 90, dataType: "float", align: "left", editable: false },
+                    {
+                        title: "Total Amt", dataIndx: "TotalAmt", minWidth: 120, dataType: "float", align: "left", format: '##,###.00',
+                        editable: false,
+                        formula: function (ui) {
+                            
+                            var rd = ui.rowData;
+                            return rd.AuthorisedQuantity * rd.MRP;
+                        }
+                    },
+                    //{
+                    //    title: "Total Amt", dataIndx: "TotalAmt", minWidth: 120, dataType: "float", align: "left", format: '##,###.00',
+                    //    editable: false,
+                    //    formula: function (ui) {
+                    //        
+                    //        var rd = ui.rowData;
+                    //        return rd.AuthorisedQuantity * rd.MRP;
+                           
+                    //    }
+                    //}
+            ];
+            setMainGrid = {
+                height: 300,
+                minWidth: 60,
+                sortable: false,
+                numberCell: { show: false },
+                selectionModel: { type: 'row' },
+                hoverMode: 'cell',
+                title: "Item Details",
+                editor: { type: 'textbox' },
+                showTop: true,
+                resizable: true,
+                virtualX: true,
+                virtualY: true,
+                columnBorders: true,
+                editModel: {
+                    saveKey: $.ui.keyCode.ENTER
+                },
+                cellSave: function (evt, ui) {
+                    this.refreshRow(ui);
+                },
+                draggable: false,
+                wrap: false,
+                colModel: colMainGrid,
+                dataModel: dataMainGrid,
+                pageModel: { type: "local", rPP: 20 },                
+            };
+
+            $MainGrid = $("#grid").pqGrid(setMainGrid);
+        });
+
+        /********* Search Grid *********/
+        $(document).ready(function () {
+            var dataSearchGrid = { location: "local", sorting: 'local' };
+            var colSearchGrid = [
+                    { title: "", dataIndx: "IssueId", dataType: "integer", hidden: true },
+                    { title: "", dataIndx: "Nature", dataType: "integer", hidden: true },
+                    { title: "", dataIndx: "StoreId", dataType: "integer", hidden: true },
+                      { title: "", dataIndx: "VendorId", dataType: "integer", hidden: true },
+                    {
+                        title: "Issue No", dataIndx: "IssueNo", width: 400,
+                        filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                    },
+                    {
+                        title: "Issue Date", dataIndx: "strIssueDate", width: 200, dataType: "date"
+                    },
+                    {
+                        title: "Project", dataIndx: "StoreName", width: 200,
+                        filter: {
+                            type: "select",
+                            condition: 'equal',
+                            prepend: { '': '--Select--' },
+                            valueIndx: "StoreName",
+                            labelIndx: "StoreName",
+                            listeners: ['change']
+                        }
+                    },
+                    {
+                        title: "Vendor", dataIndx: "Vendor", width: 200, filter: {
+                            type: "select",
+                            condition: 'equal',
+                            prepend: { '': '--Select--' },
+                            valueIndx: "Vendor",
+                            labelIndx: "Vendor",
+                            listeners: ['change']
+                        }
+                    },
+            ];
+
+            var setM = {
+                width: '100%',
+                height: 250,
+                sortable: false,
+                numberCell: { show: false },
+                showTop: false,
+                resizable: true,
+                scrollModel: { autoFit: true },
+                draggable: false,
+                wrap: false,
+                editable: false,
+                columnBorders: true,
+                selectionModel: { type: 'row', subtype: 'incr', cbHeader: true, cbAll: true },
+                filterModel: { on: true, mode: "AND", header: true },
+                colModel: colSearchGrid,
+                dataModel: dataSearchGrid,
+                pageModel: { type: "local", rPP: 20 },
+                rowClick: function (evt, ui) {
+                    ClearParamGrid("grid");
+                    if (ui.rowData) {
+                        var rowIndx = parseInt(ui.rowIndx);
+                        var record = ui.rowData;
+                        $("#IssueId").val(record.IssueId);
+                        $("#IssueNo").val(record.IssueNo);
+                        $("#Prioritystr").val(record.Nature);
+                        $("#IssueDate").val(record.strIssueDate);
+                        $("#StoreId").val(record.StoreId);
+                        $("#Store").val(record.StoreName);
+                        $("#VendorId").val(record.VendorId);
+                        $("#Vendor").val(record.Vendor);
+
+                        $.ajax({
+                            type: "GET",
+                            url: "/VendorMaterialIssue/VendorMaterialssueItems/",
+                            data: { IssueId: record.IssueId },
+                            datatype: "Json",
+                            async: true,
+                            beforeSend: function () {
+                                $MainGrid.pqGrid("showLoading");
+                            },
+                            complete: function () {
+                                $MainGrid.pqGrid("hideLoading");
+                            },
+                            success: function (data) {
+                                
+                                var dataMGrid = [];
+                                $.each(data, function (key, value) {
+                                    var grdData =
+                                    {
+                                        'ItemId': value.ItemId, 'ItemName': value.ItemName, 'UnitName': value.UnitName, 'BatchId': value.BatchId,
+                                        'BatchName': value.BatchName, 'ExpiryDate': value.ExpiryDate, 'Item_Stock': value.Item_Stock, 'IssuedQuantity': value.IssuedQuantity,
+                                        'AuthorisedQuantity': value.IssuedQuantity, 'MRP': value.MRP, 'state': true
+                                        
+                                    }
+                                    dataMGrid.push(grdData);
+                                });
+                               
+                                $MainGrid.pqGrid("hideLoading");
+                                $MainGrid.pqGrid("option", "dataModel.data", dataMGrid);
+                                $MainGrid.pqGrid("refreshDataAndView");
+                            },
+                            error: function (request, status, error) {
+                            ShowAlert("error", "Error while loading list");
+                            return;
+                        }
+                        });
+                    }
+                }
+            };
+            $SearchGrid = $("#searchgrid").pqGrid(setM)
+            LoadSearchGrid();
+        });
+        function ClearForm() {
+            $("#IssueId").val("");
+            $("#IssueDate").val("");
+            $("#IssueNo").val("");
+            $("#ddlFromStore").val("");
+            $("#Vendor").val("");
+            $("#VendorId").val("");
+            ClearParamGrid("grid");
+        }
+        $("#btnReset").on("click", ClearForm);
+    </script>
+}

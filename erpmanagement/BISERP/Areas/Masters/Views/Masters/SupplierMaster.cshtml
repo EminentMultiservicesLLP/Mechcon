@@ -1,0 +1,705 @@
+﻿@model BISERP.Areas.Masters.Models.SupplierMasterModel
+
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <h5 class="page-header orangeDottedBottomBorder">Supplier Master</h5>
+    <fieldset>
+
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-groupingBoder">
+                    <div class="panel-heading">
+                        <div class="panel-title">
+                            Supplier Detail Entry Form
+                        </div>
+                    </div>
+                    <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                        <div class="panel-body">
+                            <div class="fill">
+                                <div class="submit-row">
+                                    <button type="button" id="btnSave" class="btn btn-success">Save</button>
+                                    <button type="button" id="btnReset" class="btn btn-primary">Reset</button>
+                                    <button type="button" id="btnSearch" class="btn btn-info">Find</button>
+                                </div>
+                                <fieldset class="fieldsetCustom">
+                                    <legend class="legendCustom">Create</legend>
+                                    <div class="row">
+                                        <div class="col-md-5">
+                                            @Html.LabelFor(model => model.Code, new { @class = "required" })
+                                            @Html.TextBoxFor(model => model.Code, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.Code)
+                                            @Html.HiddenFor(model => model.ID)
+                                        </div>
+                                        <div class="col-md-5">
+                                            @Html.LabelFor(model => model.Name, new { @class = "required" })
+                                            @Html.TextBoxFor(model => model.Name, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.Name)
+                                        </div>
+                                        <div class="col-sm-2">
+                                            @Html.LabelFor(model => model.Deactive)
+                                            @Html.CheckBoxFor(model => model.Deactive, new { @checked = "checked", @disabled = "disabled" })
+                                        </div>
+                                    </div>
+
+                                </fieldset>
+                                <fieldset class="fieldsetCustom">
+                                    <legend class="legendCustom">Address</legend>
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.Society)
+                                            @Html.TextBoxFor(model => model.Society, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.Society)
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.Street)
+                                            @Html.TextBoxFor(model => model.Street, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.Street)
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.Landmark)
+                                            @Html.TextBoxFor(model => model.Landmark, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.Landmark)
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.Village)
+                                            @Html.TextBoxFor(model => model.Village, new { @class = "form-control" })
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.Pincode)
+                                            @Html.TextBoxFor(model => model.Pincode, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.Pincode)
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.Country)
+                                            @Html.DropDownList("ddlCountry", new SelectList(string.Empty, "Value", "Text"), "Select Country ", new { @class = "wrapperdropdown-content form-control" })
+                                            @Html.ValidationMessageFor(model => model.Country)
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.State)
+                                            @Html.DropDownList("ddlState", new SelectList(string.Empty, "Value", "Text"), "Select State ", new { @class = "wrapperdropdown-content form-control" })
+                                            @Html.ValidationMessageFor(model => model.State)
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.City)
+                                            @Html.DropDownList("ddlCity", new SelectList(string.Empty, "Value", "Text"), "Select City", new { @class = "wrapperdropdown-content form-control" })
+                                            @Html.ValidationMessageFor(model => model.City)
+                                        </div>
+                                    </div>
+                                </fieldset>
+                                <fieldset class="fieldsetCustom">
+                                    <legend class="legendCustom">Contact Person Details</legend>
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.ContactPerson)
+                                            @Html.TextBoxFor(model => model.ContactPerson, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.ContactPerson)
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.ContactDesignation)
+                                            @Html.TextBoxFor(model => model.ContactDesignation, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.ContactDesignation)
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.Phone1)
+                                            @Html.TextBoxFor(model => model.Phone1, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.Phone1)
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.Phone2)
+                                            @Html.TextBoxFor(model => model.Phone2, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.Phone2)
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.CellPhone)
+                                            @Html.TextBoxFor(model => model.CellPhone, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.CellPhone)
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.Fax)
+                                            @Html.TextBoxFor(model => model.Fax, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.Fax)
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.Web)
+                                            @Html.TextBoxFor(model => model.Web, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.Web)
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.Email)
+                                            @Html.TextBoxFor(model => model.Email, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.Email)
+                                        </div>
+                                    </div>
+                                </fieldset>
+
+                                <fieldset class="fieldsetCustom">
+                                    <legend class="legendCustom">Tax</legend>
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.VATTINNo)
+                                            @Html.TextBoxFor(model => model.VATTINNo, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.VATTINNo)
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.ServiceTaxNo)
+                                            @Html.TextBoxFor(model => model.ServiceTaxNo, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.ServiceTaxNo)
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.ExciseCode)
+                                            @Html.TextBoxFor(model => model.ExciseCode, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.ExciseCode)
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.PANNo)
+                                            @Html.TextBoxFor(model => model.PANNo, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.PANNo)
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.CST)
+                                            @Html.TextBoxFor(model => model.CST, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.CST)
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.IncomeTaxNo)
+                                            @Html.TextBoxFor(model => model.IncomeTaxNo, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.IncomeTaxNo)
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.CreditPeriod)
+                                            @Html.TextBoxFor(model => model.CreditPeriod, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.CreditPeriod)
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.DateOfAssociation)
+                                            @Html.TextBoxFor(model => model.DateOfAssociation, new { @class = "form-control datepicker" })
+                                            @Html.ValidationMessageFor(model => model.DateOfAssociation)
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.EligableForAdv)
+                                            @Html.CheckBoxFor(model => model.EligableForAdv)
+                                            @Html.ValidationMessageFor(model => model.EligableForAdv)
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.GSTIN)
+                                            @Html.TextBoxFor(model => model.GSTIN, new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                </fieldset>
+
+                                <fieldset class="fieldsetCustom">
+                                    <legend class="legendCustom">Bank Information</legend>
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.BankName)
+                                            @Html.TextBoxFor(model => model.BankName, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.BankName)
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.BankAcNo)
+                                            @Html.TextBoxFor(model => model.BankAcNo, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.BankAcNo)
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.RTGSCODE)
+                                            @Html.TextBoxFor(model => model.RTGSCODE, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.RTGSCODE)
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.BankBranch)
+                                            @Html.TextBoxFor(model => model.BankBranch, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.BankBranch)
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.MICRNo)
+                                            @Html.TextBoxFor(model => model.MICRNo, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.MICRNo)
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.IFSCCODE)
+                                            @Html.TextBoxFor(model => model.IFSCCODE, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.IFSCCODE)
+                                        </div>
+                                    </div>
+                                </fieldset>
+                                <fieldset class="fieldsetCustom">
+                                    @*<legend class="legendCustom">Upload Documents</legend>*@
+                                    <div class="row">
+                                        <div class="col-sm-2" style="text-align:start;">
+                                            <label for="mesmeMandate">MESME Mandate</label>
+                                            <select id="mesmeMandate" name="mesmeMandate" class="form-control">
+                                                <option value="">Select</option>
+                                                <option value="0">No</option>
+                                                <option value="1">Yes</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-sm-7">
+                                            <div class="col-sm-6 col-md-4">
+                                                @Html.Label("Upload", new { @id = "requiredUpload" })
+                                                <input type='file' id="files" multiple accept=".jpg,.jpeg,.png,.pdf" class="form-control btn-primary uploadup" />
+                                            </div>
+                                            <div class="col-sm-6 col-md-3"><ul class="list" id="appendImg"> </ul></div>
+                                            <div class="col-sm-6 col-md-3"><ul class="list" id="preApproveImg"> </ul></div>
+                                        </div>
+                                        <div class="col-sm-2" style="text-align:end;">
+                                            <br />
+                                            <button type="button" class="btn btn-primary" id="btnShowAttachments">View uploaded Files</button>
+                                        </div>
+                                    </div>
+                                </fieldset>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+
+
+    @* new addition 2024 *@
+    <div id="SearchGridModal" class="modal fade" role="dialog" data-backdrop="false">
+        <div class="modal-dialog find-search-grid-modal">
+            <div class="modal-content gridmodal-content">
+                <div class="modal-header gridmodal-header">
+                    <button type="button" class="close" onclick="closeModal()">&times;</button>
+                    <h4 class="modal-title">Item Details</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="fill">
+                        <div id="grid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @*The Modal*@
+    <div id="ViewModal" class="modal slideModal">
+        @*Modal content*@
+        <div class="modal-content slideContent">
+            <span class="close slideClose" onclick="closeModal()"> &#x2715 </span>
+            <div id="slideshow-container">
+                <!--Slidshow-->
+            </div>
+            <div>
+                <a class="prev slide-prev" onclick="plusSlides(-1)">❮</a>
+                <a class="next slide-next" onclick="plusSlides(1)">❯</a>
+            </div>
+        </div>
+    </div>
+
+}
+<script type="text/javascript">
+
+    var appSetting = '@BISERP.Common.Constants.ScandocUrl';
+    var grid;
+    var SuppId = 0;
+    $(".datepicker").datepicker({
+        showOn: "button",
+        buttonImage: "/Content/images/calendar.gif",
+        buttonImageOnly: true,
+        buttonText: "Select date",
+        'changeMonth': true,
+        'changeYear': true,
+        'yearRange': '2021:2030',
+        "format": "dd-MM-yyyy",
+        todayBtn: "linked",
+        pickerPosition: "bottom-left",
+        "todayHighlight": true,
+        autoclose: true,
+    }).datepicker("setDate", new Date());
+    $("#anim").change(function () {
+        $(".datepicker").datepicker("option", "showAnim", "fadeIn");
+    });
+    $.ajax({
+        type: "GET",
+        url: "/Master/AllStates",
+        datatype: "Json",
+        success: function (data) {
+            $.each(data, function (index, value) {
+                $('#ddlState').append('<option value="' + value.ID + '">' + value.StateName + '</option>');
+            });
+        }
+    });
+    $.ajax({
+        type: "GET",
+        url: "/Master/AllCountry",
+        datatype: "Json",
+        success: function (data) {
+            $.each(data, function (index, value) {
+                $('#ddlCountry').append('<option value="' + value.ID + '">' + value.CountryName + '</option>');
+            });
+        }
+    });
+
+    $('#ddlState').change(function () {
+        GetStatesCity();
+    });
+
+    function GetStatesCity(cityId) {
+        $('#ddlCity').empty();
+        var stateID = $('#ddlState').val();
+        $.ajax({
+            type: "GET",
+            url: "/Master/GetCityById",
+            datatype: "Json",
+            data: { stateId: stateID },
+            success: function (data) {
+                if (data.length > 0) {
+                    $.each(data, function (index, value) {
+                        $('#ddlCity').append('<option value="' + value.ID + '">' + value.CityName + '</option>');
+                    });
+                }
+                else {
+                    $('#ddlCity').append('<option value="0">No Data Found</option>');
+                }
+                if (cityId) {
+                    $('#ddlCity').val(cityId)
+                } else {
+                    $('#ddlCity').val("");
+                }
+            }
+        });
+    }
+
+    $("#mesmeMandate").on('change', function (e) {
+        if (e.currentTarget.value == '1') {
+            $("#requiredUpload").addClass("required");
+        }
+        else {
+            $("#requiredUpload").removeClass("required");
+
+        }
+    });
+
+    function loadGridData(){
+        grid = $("#grid").jsGrid({
+            width: "100%",
+            height: "500px",
+            filtering: true, //will display top 1st row as filter
+            selecting: true,
+
+            inserting: false, // false will not allow inserting new entry
+            editing: false,// false will not allow exisiting data entry
+            sorting: true,
+            autoload: false, // this statement require to load data using ajax call
+            paging: true,
+            pageSize: 20,
+            controller: {
+                loadData: function (filter) {
+                    var d = $.Deferred();
+                    $.ajax({
+                        type: 'GET',
+                        url: "/SupplierMaster/AllSupplier",
+                        @*url: '@Url.Action("AllSupplier", "SupplierMaster")',*@
+                        dataType: "json",
+                        data: { SearchName: filter.Name, SearchCode: filter.Code },
+                        success: function (data) {
+                            if (data.success) {
+                                d.resolve(data.records);
+                            } else {
+                                ShowAlert("error", data.Messsage);
+                                $(".jsgrid-load-panel").hide();
+                            }
+                        },
+                        error: function (e) {
+                            ShowAlert("error", "No Record Found");
+                        }
+                    });
+                    return d.promise();
+                },
+            },
+            fields: [
+                { name: "ID", visible: false, width: 0 },
+                { name: "Code", title: "Code", type: "text", validate: "required", width: 20 },
+                { name: "Name", title: "Name", type: "text", validate: "required" },
+                { name: "Deactive", title: "Deactive", type: "checkbox", filtering: false, width: 10 },
+                { name: "Society", visible: false, width: 0 },
+                { name: "Street", visible: false, width: 0 },
+                { name: "Landmark", visible: false, width: 0 },
+                { name: "Village", visible: false, width: 0 },
+                { name: "City", visible: false, width: 0 },
+                { name: "Pincode", visible: false, width: 0 },
+                { name: "State", visible: false, width: 0 },
+                { name: "Country", visible: false, width: 0 },
+                { name: "ContactPerson", visible: false, width: 0 },
+                { name: "ContactDesignation", visible: false, width: 0 },
+                { name: "CreditPeriod", visible: false, width: 0 },
+                { name: "DateOfAssociation", visible: false, width: 10, type: 'date', format: "dd/MM/yyyy" },
+                { name: "GroupID", visible: false, width: 0 },
+                { name: "Fax", visible: false, width: 0 },
+                { name: "Phone1", visible: false, width: 0 },
+                { name: "Phone2", visible: false, width: 0 },
+                { name: "CellPhone", visible: false, width: 0 },
+                { name: "Web", visible: false, width: 0 },
+                { name: "Email", visible: false, width: 0 },
+                { name: "CST", visible: false, width: 0 },
+                { name: "MST", visible: false, width: 0 },
+                { name: "TDS", visible: false, width: 0 },
+                { name: "ExciseCode", visible: false, width: 0 },
+                { name: "ExportCode", visible: false, width: 0 },
+                { name: "LedgerID", visible: false, width: 0 },
+                { name: "EligableForAdv", visible: false, width: 0 },
+                { name: "BankName", visible: false, width: 0 },
+                { name: "BankAcNo", visible: false, width: 0 },
+                { name: "MICRNo", visible: false, width: 0 },
+                { name: "BankBranch", visible: false, width: 0 },
+                { name: "Note", visible: false, width: 0 },
+                { name: "Proposed", visible: false, width: 0 },
+                { name: "IncomeTaxNo", visible: false, width: 0 },
+                { name: "SuppType", visible: false, width: 0 },
+                { name: "AccountId", visible: false, width: 0 },
+                { name: "Paytermsid", visible: false, width: 0 },
+                { name: "IFSCCODE", visible: false, width: 0 },
+                { name: "RTGSCODE", visible: false, width: 0 },
+                { name: "SupplierCategory", visible: false, width: 0 },
+                { name: "SupplierType", visible: false, width: 0 },
+                { name: "VATTINNo", visible: false, width: 0 },
+                { name: "ServiceTaxNo", visible: false, width: 0 },
+                { name: "PANNo", visible: false, width: 0 },
+                { name: "GSTIN", visible: false, width: 0 },
+                { name: "IsMesme", visible:false, width: 0 }
+                /*{ type: "control", editButton: false, deleteButton: false, clearFilterButton: true, modeSwitchButton: true, width: 10 }*/
+
+            ],
+            /********** Row Selection Event you can use in suupplier***********/
+            rowClick: function (args) {
+                var data = args.item;
+                SuppId = data.ID;
+                $("#ID").val(data.ID);
+                $("#Name").val(data.Name); $("#Code").val(data.Code); $("#Deactive").prop('checked', data.Deactive); $("#Society").val(data.Society); $("#Street").val(data.Street); $("#Landmark").val(data.Landmark);
+                $("#Village").val(data.Village); $("#Pincode").val(data.Pincode); $("#ddlState").val(data.State); $("#ddlCountry").val(data.Country);
+                GetStatesCity(data.City); /*$("#ddlCity").val(data.City);*/ $("#ContactPerson").val(data.ContactPerson);
+                $("#ContactDesignation").val(data.ContactDesignation); $("#Phone1").val(data.Phone1); $("#Phone2").val(data.Phone2); $("#CellPhone").val(data.CellPhone); $("#Fax").val(data.Fax);
+                $("#Web").val(data.Web); $("#Email").val(data.Email); $("#VATTINNo").val(data.VATTINNo); $("#ServiceTaxNo").val(data.ServiceTaxNo); $("#ExciseCode").val(data.ExciseCode); $("#PANNo").val(data.PANNo);
+                $("#CST").val(data.CST); $("#IncomeTaxNo").val(data.IncomeTaxNo); $("#RTGSCODE").val(data.RTGSCODE); $("#IFSCCODE").val(data.IFSCCODE); $("#CreditPeriod").val(data.CreditPeriod); $("#DateOfAssociation").val(data.strDateOfAssociation);
+                $("#EligableForAdv").prop('checked', data.EligableForAdv); $("#ExportCode").val(data.ExportCode); $("#BankName").val(data.BankName); $("#BankAcNo").val(data.BankAcNo); $("#MICRNo").val(data.MICRNo);
+                $("#BankBranch").val(data.BankBranch); $("#Note").val(data.Note); $("#GSTIN").val(data.GSTIN); $("#mesmeMandate").val(data.IsMesme); $("#mesmeMandate").trigger("change");
+                $("#SearchGridModal").modal('hide');
+                $("#preApproveImg").empty(); $("#appendImg").empty();
+                $("#files").val(null);
+                viewAttachments(data.ID);
+            },
+
+        });
+
+    }
+
+    validateFiles('files', 'preApproveImg');
+
+    $("#btnSave").click(function () {
+        if ($("#Code").val() == "") {
+            ShowAlert("error", "code is missing! Please enter the code");
+            return;
+        }
+        if ($("#Name").val() == "") {
+            ShowAlert("error", "Name is missing! Please enter the Name");
+            return;
+        }
+        if ($("#mesmeMandate").val() == '1' && SuppId == 0) {
+            if ($("#files").get(0).files.length <= 0) {
+                ShowAlert("warning", "Mandatory to Upload Required File !!")
+                return;
+            }
+        }
+        else if ($("#mesmeMandate").val() == '1' && SuppId != 0) {
+            if ($("#appendImg").find("li").length <= 0 && $("#files").get(0).files.length <= 0) {
+                ShowAlert("warning", "Mandatory to Upload Required File !!")
+                return;
+            }
+        }
+            $.ajax({
+                type: "POST", //HTTP POST Method
+                url: '/SupplierMaster/SaveSupplier', // Controller/View
+                data: { //Passing data
+                    ID: $("#ID").val(), //Reading text box values using Jquery
+                    Name: $("#Name").val(),
+                    Code: $("#Code").val(),
+                    Street: $("#Street").val(),
+                    Society: $("#Society").val(),
+                    Landmark: $("#Landmark").val(),
+                    Village: $("#Village").val(),
+                    City: $("#ddlCity").val(),
+                    Pincode: $("#Pincode").val(),
+                    State: $("#ddlState").val(),
+                    Country: $("#ddlCountry").val(),
+                    ContactPerson: $("#ContactPerson").val(),
+                    ContactDesignation: $("#ContactDesignation").val(),
+                    CreditPeriod: $("#CreditPeriod").val(),
+                    GroupID: $("#GroupID").val(),
+                    Fax: $("#Fax").val(),
+                    Phone1: $("#Phone1").val(),
+                    Phone2: $("#Phone2").val(),
+                    CellPhone: $("#CellPhone").val(),
+                    Web: $("#Web").val(),
+                    Email: $("#Email").val(),
+                    CST: $("#CST").val(),
+                    MST: $("#MST").val(),
+                    TDS: $("#TDS").val(),
+                    ExciseCode: $("#ExciseCode").val(),
+                    ExportCode: $("#ExportCode").val(),
+                    LedgerID: $("#LedgerID").val(),
+                    BankName: $("#BankName").val(),
+                    BankAcNo: $("#BankAcNo").val(),
+                    MICRNo: $("#MICRNo").val(),
+                    BankBranch: $("#BankBranch").val(),
+                    Note: $("#Note").val(),
+                    Proposed: $("#Proposed").val(),
+                    IncomeTaxNo: $("#IncomeTaxNo").val(),
+                    SuppType: $("#SuppType").val(),
+                    AccountId: $("#AccountId").val(),
+                    Paytermsid: $("#Paytermsid").val(),
+                    SupplierCategory: $("#SupplierCategory").val(),
+                    SupplierType: $("#SupplierType").val(),
+                    VATTINNo: $("#VATTINNo").val(),
+                    ServiceTaxNo: $("#ServiceTaxNo").val(),
+                    PANNo: $("#PANNo").val(),
+                    RTGSCODE: $("#RTGSCODE").val(),
+                    IFSCCODE: $("#IFSCCODE").val(),
+                    DateOfAssociation: $("#DateOfAssociation").val(),
+                    EligableForAdv: $("#EligableForAdv").prop('checked'),
+                    GSTIN: $("#GSTIN").val(),
+                    IsMesme: $("#mesmeMandate").val(),
+                    Deactive: $("#Deactive").prop('checked')
+                },
+                success: function (msg) {
+                    if (msg.success) {
+                        var data = msg.Data;
+                        var suppId;
+                        (data != undefined && data != null)? suppId = data.ID: suppId = $("#ID").val();
+                        SaveScandoc("files", suppId, "Master", "SupplierMaster");
+                        SuppId == 0 ? ShowAlert("success", "Supplier Master record added successfully to system.") : ShowAlert("success", "Supplier Master record updated successfully to system.");
+
+                        ClearForm();
+                        $("#grid").jsGrid("loadData");
+                    }
+                    else {
+                        ShowAlert("error", msg.Message);
+                    }
+                },
+            });
+        });
+
+    function ClearForm() {
+        $("#ID").val(""); $("#Name").val(""); $("#Code").val(""); $("#Society").val(""); $("#Street").val(""); $("#Landmark").val(""); $("#Village").val("");
+        $("#ddlCity").empty(); $("#Pincode").val("");
+        $("#ddlState").val(""); $("#ddlCountry").val(""); $("#ContactPerson").val(""); $("#ContactDesignation").val(""); $("#Phone1").val(""); $("#Phone2").val(""); $("#CellPhone").val(""); $("#Fax").val(""); $("#Web").val(""); $("#Email").val("");
+        $("#VATTINNo").val(""); $("#ServiceTaxNo").val(""); $("#ExciseCode").val(""); $("#PANNo").val(""); $("#CST").val(""); $("#IncomeTaxNo").val(""); $("#RTGSCODE").val(""); $("#IFSCCODE").val(""); $("#CreditPeriod").val("");
+        $("#EligableForAdv").prop('checked', false); $("#ExportCode").val(""); $("#BankName").val(""); $("#BankAcNo").val(""); $("#MICRNo").val(""); $("#BankBranch").val(""); $("#Note").val(""); $("#Deactive").prop('checked', true);
+        $("#Deactive").attr("disabled", true); $("#DateOfAssociation").datepicker().datepicker("setDate", new Date()); $("#GSTIN").val(""); $("#preApproveImg").empty(); $("#appendImg").empty(); $("#files").val(null); $("#mesmeMandate").val("");
+        $("#requiredUpload").removeClass("required");
+        SuppId = 0;
+    }
+
+
+    $("#btnSearch").on('click', function () {
+        loadGridData();
+        $("#grid").jsGrid("loadData");
+        $("#SearchGridModal").modal('show');
+    });
+
+
+    $("#btnReset").click(function () {
+        ClearForm();
+    });
+
+
+    //************View uploaded Images in List ******//
+    function viewAttachments(SupplierId) {
+        $.ajax({
+            type: "GET",
+            url: "/ScanDoc/ScanDoc/GetScanDocUrl",
+            data: { FileId: SupplierId, ScanDocSubTypeId: 16 },
+            datatype: "Json",
+            success: function (data) {
+                $.each(data, function (key, value) {
+                    DisplayUploadedDocuments("appendImg", value, appSetting, 16);
+                });
+            }
+        });
+    }
+    // on upload of Image and Video this function run
+    var fileTypes = ['jpg', 'jpeg', 'png', 'pdf'];
+    $(document).on("change", '.uploadup', function (z) {
+        let Img = $("#files").get(0).files;
+        uploadImg(Img, 'preApproveImg');
+    });
+
+    $(document).on("click", '.imgclick', function (e) {
+        let name = e.currentTarget.getAttribute("name");
+        let files = $("#files").get(0).files;
+        for (f = 0; f < files.length; f++) {
+            if (files.item(f).name == name) {
+                imagefile = $("#files").get(0).files[f];
+                imagefile_url = URL.createObjectURL(imagefile);
+                window.open(imagefile_url, '_blank');
+            }
+        }
+    });
+
+    // ********View Image modal ******//
+    $("#btnShowAttachments").click(function () {
+        let SupplierId = $('#ID').val();
+        $.ajax({
+            type: "GET",
+            url: "/ScanDoc/ScanDoc/GetScanDocUrl",
+            data: { FileId: SupplierId, ScanDocSubTypeId: 16 },
+            datatype: "Json",
+            success: function (data) {
+                if (data != '') {
+                    ViewSlideShow(data, 'slideshow-container', appSetting);
+                }
+                else {
+                    ShowAlert("error", "No Documents Found")
+                }
+            }
+        });
+    })
+
+    /////*********Image Slide Show in Modal**********************//
+    let ImgIndex = 1;
+
+    function plusSlides(n) {
+        showGallary(ImgIndex += n);
+    }
+    function showGallary(n) {
+        let i;
+        let ImgSlides = document.getElementsByClassName("imgSlide");
+        let video = document.getElementById("video");
+        if (n > ImgSlides.length) { ImgIndex = 1 }
+        if (n < 1) { ImgIndex = ImgSlides.length }
+        for (i = 0; i < ImgSlides.length; i++) {
+            ImgSlides[i].style.display = "none";
+        }
+        ImgSlides[ImgIndex - 1].style.display = "block";
+        if (video) {
+            video.play();
+        }
+    }
+
+    function closeModal() {
+        $("#slideshow-container").empty();
+        $("#ViewModal").css('display', 'none');
+        $("#SearchGridModal").modal('hide');
+    }
+    //***********Close SlideShow Modal*********************////
+
+</script>

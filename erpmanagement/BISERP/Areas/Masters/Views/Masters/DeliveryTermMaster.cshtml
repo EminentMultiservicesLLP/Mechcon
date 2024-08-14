@@ -1,0 +1,224 @@
+﻿
+@model BISERP.Areas.Masters.Models.DeliveryTermMasterModel
+@{
+    ViewBag.Title = "Delivery Term Master";
+}
+
+
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <h5 class="page-header orangeDottedBottomBorder"> DeliveryTerm </h5>
+    @* new addition 2024 *@
+    <div id="SearchGridModal" class="modal fade" role="dialog" data-backdrop="false">
+        <div class="modal-dialog find-search-grid-modal">
+            <div class="modal-content gridmodal-content">
+                <div class="modal-header gridmodal-header">
+                    <button type="button" class="close" onclick="closeModal()">&times;</button>
+                    <h4 class="modal-title"> Delivery Term Details</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="fill">
+                        <div id="grid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <a class="collapsediv" data-toggle="collapse" href="#DeliveryTermCreate">
+                            DeliveryTerm
+                        </a>
+                    </div>
+                </div>
+                <div id="DeliveryTermCreate" class="panel-collapse collapse in" aria-expanded="true">
+                    <div class="panel-body">
+                        <div class="fill">
+                            <div class="submit-row">
+                                <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                                <button type="button" class="btn btn-primary" id="btnreset" onclick="Clearform()">Reset</button>
+                                <button type="button" class="btn btn-info" id="btnSearch">Find</button>
+                            </div>
+                            <fieldset class="fieldsetCustom">
+                                <legend class="legendCustom">Create Delivery Term</legend>
+                                <div class="row">
+                                    <div class="col-sm-2">
+                                        <label for="DeliveryTermCode" class="required">DeliveryTerm Code</label>
+                                        <input class="form-control" placeholder="DeliveryTerm Code" id="DeliveryTermCode" type="text" />
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label for="DeliveryTermDesc" class="required">DeliveryTerm Desc</label>
+                                        <textarea class="form-control" placeholder="DeliveryTerm Desc" id="DeliveryTermDesc"></textarea>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <br />
+                                        <label for="Deactive">Deactive</label>
+                                        <input type="checkbox" id="Deactive" name="Deactive">
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    var tempID = 0;
+    var grid;
+    grid = $("#grid").jsGrid({
+        width: "100%",
+        height: "400px",
+        filtering: true, //will display top 1st row as filter
+        selecting: true,
+        sorting: true,
+        //inserting: true, // false will not allow inserting new entry
+        //editing: true,// false will not allow exisiting data entry
+        //autoload: true, // this statement require to load data using ajax call
+        paging: true,
+        pageSize: 20,
+
+        controller: {
+            loadData: function (filter) {
+                var d = $.Deferred();
+                $.ajax({
+                    type: 'GET',
+                    @*url: '@Url.Action("AllDeliveryTerms", "DeliveryTerm")',*@
+                    url: "/DeliveryTerm/AllDeliveryTerms",
+                    dataType: "json",
+                    data: { SearchName: filter.DeliveryTermDesc, Searchcode: filter.DeliveryTermCode },
+                    success: function (data) {
+                        if (data.success)
+                            d.resolve(data.records);
+                        else {
+                            ShowAlert("error", data.Messsage);
+                            $(".jsgrid-load-panel").hide();
+                        }
+                    },
+                    error: function (e) {
+                        ShowAlert("error", "No Record Found");
+                    }
+                });
+                return d.promise();
+            },
+            //insertItem: function (item) {
+            //    var d = $.Deferred();
+            //    $.ajax(
+            //    {
+            //        type: "POST", //HTTP POST Method
+            //        dataType: "json",
+            //        url: '/DeliveryTerm/SaveDeliveryTerm', // Controller/View
+            //        data: item,
+            //        success: function (msg) {
+            //            if (msg.success) {
+            //                ShowAlert("success", "DeliveryTerm Master added successfully to system.");
+            //            } else {
+            //                ShowAlert("error", msg.Message);
+            //            }
+            //        },
+            //    }).done(function (insertedItem) {
+            //        d.resolve(insertedItem.data);
+            //        $("#grid").jsGrid("loadData");
+            //    });
+            //    return d.promise();
+
+            //},
+            //updateItem: function (item) {
+            //    var d = $.Deferred();
+            //    $.ajax(
+            //    {
+            //        type: "POST", //HTTP POST Method
+            //        dataType: "json",
+            //        url: '/DeliveryTerm/SaveDeliveryTerm', // Controller/View
+            //        data: item,
+            //        success: function (msg) {
+            //            if (msg.success) {
+            //                ShowAlert("success", "DeliveryTerm Master updated successfully to system.");
+            //            } else {
+            //                ShowAlert("error", msg.Message);
+            //            }
+            //        },
+            //    }).done(function (insertedItem) {
+            //        d.resolve(insertedItem.data);
+            //        $("#grid").jsGrid("loadData");
+            //    });
+            //    return d.promise();
+            //}
+        },
+        fields: [
+            { name: "TermID", visible: false, width: 0 },
+            { name: "DeliveryTermCode", title: "Code", type: "text", validate: { validator: "required", message: "code is missing! Please enter the code." }, width: 20 },
+            { name: "DeliveryTermDesc", title: "Description", type: "textarea", validate: { validator: "required", message: "Description is missing! Please enter the description " } },
+            { name: "Deactive", title: "Deactive", type: "checkbox", filtering: false, width: 10, inserting: false },
+            //{ type: "control", deleteButton: false, width: 10 }
+        ],
+        rowClick: function (args) {
+            var data = args.item;
+            tempID = data.TermID;
+            $("#DeliveryTermCode").val(data.DeliveryTermCode);
+            $("#DeliveryTermDesc").val(data.DeliveryTermDesc);
+            $("#Deactive").prop('checked', data.Deactive);
+            closeModal();
+        }
+    });
+
+    $("#btnSave").click(function () {
+        if ($("#DeliveryTermCode").val() == "") {
+            ShowAlert("error", "DeliveryTermCode is missing! Please enter the code");
+            return;
+        }
+        if ($("#DeliveryTermDesc").val() == "") {
+            ShowAlert("error", "DeliveryTermDesc is missing! Please enter the DeliveryTermDesc");
+            return;
+        }
+        let items = JSON.stringify({ //Passing data
+            TermID: tempID,
+            DeliveryTermCode: $("#DeliveryTermCode").val(),
+            DeliveryTermDesc: $("#DeliveryTermDesc").val(),
+            Deactive: $("#Deactive").prop('checked'),
+        });
+        $.ajax(
+            {
+                type: "POST", //HTTP POST Method
+                traditional: true,
+                contentType: 'application/json; charset=utf-8',
+                url: '/DeliveryTerm/SaveDeliveryTerm', // Controller/View
+                data: items,
+                success: function (msg) {
+                    if (msg.success) {
+                        tempID == 0 ? ShowAlert("success", "DeliveryTerm added successfully to system.") : ShowAlert("success", "DeliveryTerm updated successfully to system.");
+                        Clearform();
+                    }
+                    else {
+                        ShowAlert("error", msg.Message);
+                    }
+                }
+            });
+    });
+
+    $("#btnSearch").on('click', function () {
+        $("#SearchGridModal").modal('show');
+        $("#grid").jsGrid("loadData");
+    });
+
+    function Clearform() {
+        tempID = 0;
+        $("#DeliveryTermCode").val("");
+        $("#DeliveryTermDesc").val("");
+        $("#Deactive").prop('checked', false);
+        $("#grid").jsGrid("loadData");
+    }
+
+    function closeModal() {
+        $("#SearchGridModal").modal('hide');
+    }
+
+</script>
