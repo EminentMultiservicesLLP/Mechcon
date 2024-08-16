@@ -237,6 +237,24 @@ namespace BISERPService.Controllers
             return states;
         }
 
+        [Route("getstatebycountryId/{CountryId}")]
+        [AcceptVerbs("GET", "POST")]
+        // GET api/values/5
+        public List<StateMasterEntities> GetStateByCountryId(int CountryId)
+        {
+            List<StateMasterEntities> states = null;
+            TryCatch.Run(() =>
+            {
+                var temp = AllState().ToList();
+                states = temp.Where(w => w.CountryID == CountryId).ToList();
+            }).IfNotNull(ex =>
+            {
+                _loggger.LogError("Error in GetStateById method of GenericController :" + Environment.NewLine + ex.StackTrace);
+                return InternalServerError();
+            });
+            return states;
+        }
+
         [Route("getstatebyid/{id}")]
         [AcceptVerbs("GET", "POST")]
         // GET api/values/5

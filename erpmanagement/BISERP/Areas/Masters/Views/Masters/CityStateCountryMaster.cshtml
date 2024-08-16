@@ -37,6 +37,10 @@
                             <legend class="legendCustom">Create City</legend>
                             <div class="row">
                                 <div class="col-sm-2">
+                                    @Html.Label("Select Country", new { @class = "required" })
+                                    @Html.DropDownList("ddlCountry1", new SelectList(string.Empty, "Value", "Text"), "Select Country", new { @class = "form-control" })
+                                </div>
+                                <div class="col-sm-2">
                                     @Html.Label("Select State", new { @class = "required" })
                                     @Html.DropDownList("ddlState", new SelectList(string.Empty, "Value", "Text"), "Select State", new { @class = "form-control" })
                                 </div>
@@ -95,16 +99,50 @@
     //City Master Starts Form Here
 
     var tempCityId = 0;
-    $.ajax({
-        type: "GET",
-        url: "/Master/AllStates",
-        datatype: "Json",
-        success: function (data) {
-            $.each(data, function (index, value) {
-                $('#ddlState').append('<option value="' + value.ID + '">' + value.StateName + '</option>');
-            });
-        }
+
+    $('#ddlCountry1').change(function () {
+        GetState();
     });
+
+    function GetState() {
+        $('#ddlState').empty();
+        var countryId = $('#ddlCountry1').val();
+        $.ajax({
+            type: "GET",
+            url: "/Master/GetStateByCountryId",
+            datatype: "Json",
+            data: { CountryId: countryId },
+            success: function (data) {
+                if (data.length > 0) {
+                    $.each(data, function (index, value) {
+                        $('#ddlState').append('<option value="' + value.ID + '">' + value.StateName + '</option>');
+                    });
+                }
+                else {
+                    $('#ddlState').append('<option value="">No State Found</option>');
+                }
+            }
+        });
+    }
+
+    function GetAllState(stateId) {
+        $.ajax({
+            type: "GET",
+            url: "/Master/AllStates",
+            datatype: "Json",
+            success: function (data) {
+                $.each(data, function (index, value) {
+                    $('#ddlState').append('<option value="' + value.ID + '">' + value.StateName + '</option>');
+                });
+                if (stateId) {
+                    $('#ddlState').val(stateId)
+                }
+                else {
+                    $('#ddlState').val("");
+                }
+            }
+        });
+    }
     var CityGrid = $("#CityGrid").jsGrid({
         width: "100%",
         height: "400px",
@@ -145,7 +183,8 @@
         ],
         rowClick: function (args) {
             var data = args.item;
-            $("#ddlState").val(data.StateId);
+            $("#ddlCountry1").val('');
+            GetAllState(data.StateId)
             $("#cityName").val(data.CityName);
             tempCityId = data.ID;
             closeModal();
@@ -185,7 +224,8 @@
         });
     }
     function clearCityForm() {
-        $("#ddlState").val('');
+        $("#ddlCountry1").val('');
+        $("#ddlState").empty();
         $("#cityName").val('');
         tempCityId = 0;
     }
@@ -196,20 +236,22 @@
     }
     //City Master Ends Here
 
-
-    //////////////////////////////////////////////////////////////////////////////////////State Master Starts Form Here//////////////////////////////////////////////////////////////////////////////////////
-
-    var tempStateId = 0;
     $.ajax({
         type: "GET",
         url: "/Master/AllCountry",
         datatype: "Json",
         success: function (data) {
             $.each(data, function (index, value) {
+                $('#ddlCountry1').append('<option value="' + value.ID + '">' + value.CountryName + '</option>');
                 $('#ddlCountry').append('<option value="' + value.ID + '">' + value.CountryName + '</option>');
             });
         }
     });
+
+    //////////////////////////////////////////////////////////////////////////////////////State Master Starts Form Here//////////////////////////////////////////////////////////////////////////////////////
+
+    var tempStateId = 0;
+   
     var StateGrid = $("#StateGrid").jsGrid({
         width: "100%",
         height: "400px",

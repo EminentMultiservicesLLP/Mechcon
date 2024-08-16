@@ -372,8 +372,8 @@ fields: [
         var data = args.item;
         $("#VendorId").val(data.VendorId);
         $("#Name").val(data.Name); $("#Code").val(data.Code); $("#Deactive").prop('checked', data.Deactive); $("#Society").val(data.Society); $("#Street").val(data.Street); $("#Landmark").val(data.Landmark);
-        $("#Village").val(data.Village);$("#Pincode").val(data.Pincode); $("#ddlState").val(data.State); $("#ddlCountry").val(data.Country);
-        GetStatesCity(data.City); $("#ContactPerson").val(data.ContactPerson);
+        $("#Village").val(data.Village);$("#Pincode").val(data.Pincode);/* $("#ddlState").val(data.State);*/ $("#ddlCountry").val(data.Country);
+        GetState(data.State); GetCity(data.City, data.State); $("#ContactPerson").val(data.ContactPerson);
         $("#ContactDesignation").val(data.ContactDesignation); $("#Phone1").val(data.Phone1); $("#Phone2").val(data.Phone2); $("#CellPhone").val(data.CellPhone); $("#Fax").val(data.Fax);
         $("#Web").val(data.Web); $("#Email").val(data.Email); $("#VATTINNo").val(data.VATTINNo); $("#ServiceTaxNo").val(data.ServiceTaxNo); $("#ExciseCode").val(data.ExciseCode); $("#PANNo").val(data.PANNo);
         $("#CST").val(data.CST); $("#IncomeTaxNo").val(data.IncomeTaxNo); $("#RTGSCODE").val(data.RTGSCODE); $("#IFSCCODE").val(data.IFSCCODE); $("#CreditPeriod").val(data.CreditPeriod); $("#DateOfAssociation").val(data.strDateOfAssociation);
@@ -465,18 +465,65 @@ $("#btnSave").click(function () {
 
         });
 });
+
+
+    $.ajax({
+        type: "GET",
+        url: "/Master/AllCountry",
+        datatype: "Json",
+        success: function (data) {
+            $.each(data, function (index, value) {
+                $('#ddlCountry').append('<option value="' + value.ID + '">' + value.CountryName + '</option>');
+            });
+        }
+    });
+
+    $('#ddlCountry').change(function () {
+        GetState();
+    });
+
+    function GetState(stateId) {
+        $('#ddlState').empty();
+        var countryId = $('#ddlCountry').val();
+        $.ajax({
+            type: "GET",
+            url: "/Master/GetStateByCountryId",
+            datatype: "Json",
+            data: { CountryId: countryId },
+            success: function (data) {
+                if (data.length > 0) {
+                    $.each(data, function (index, value) {
+                        $('#ddlState').append('<option value="' + value.ID + '">' + value.StateName + '</option>');
+                    });
+                }
+                else {
+                    $('#ddlState').append('<option value="">No State Found</option>');
+                }
+                if (stateId) {
+                    $('#ddlState').val(stateId)
+                }
+                else {
+                    $('#ddlState').val("");
+                }
+            }
+        });
+    }
+
+
 $('#ddlState').change(function () {
-    GetStatesCity();
+    GetCity();
 });
 
-    function GetStatesCity(cityId) {
+
+    function GetCity(cityId, stateID) {
         $('#ddlCity').empty();
-        var stateID = $('#ddlState').val();
+        var StateID = 0;
+        stateID ? StateID = stateID : StateID = $('#ddlState').val();
         $.ajax({
             type: "GET",
             url: "/Master/GetCityById",
             datatype: "Json",
-            data: { stateId: stateID },
+            data: { stateId: StateID },
             success: function (data) {
                 if (data.length > 0) {
                     $.each(data, function (index, value) {
@@ -484,16 +531,18 @@ $('#ddlState').change(function () {
                     });
                 }
                 else {
-                    $('#ddlCity').append('<option value="0">No Data Found</option>');
+                    $('#ddlCity').append('<option value="">No City Found</option>');
                 }
                 if (cityId) {
                     $('#ddlCity').val(cityId)
-                } else {
+                }
+                else {
                     $('#ddlCity').val("");
                 }
             }
         });
     }
+
 
 $.ajax({
     type: "GET",
@@ -505,26 +554,7 @@ $.ajax({
         });
     }
 });
-$.ajax({
-    type: "GET",
-    url: "/Master/AllStates",
-    datatype: "Json",
-    success: function (data) {
-        $.each(data, function (index, value) {
-            $('#ddlState').append('<option value="' + value.ID + '">' + value.StateName + '</option>');
-        });
-    }
-});
-$.ajax({
-    type: "GET",
-    url: "/Master/AllCountry",
-    datatype: "Json",
-    success: function (data) {
-        $.each(data, function (index, value) {
-            $('#ddlCountry').append('<option value="' + value.ID + '">' + value.CountryName + '</option>');
-        });
-    }
-});
+
 
 function ClearForm() {
     $("#VendorId").val(""); $("#Name").val(""); $("#Code").val(""); $("#Deactive").prop('checked', false); $("#Society").val(""); $("#Street").val(""); $("#Landmark").val(""); $("#ddlVillage").val(""); $("#ddlCity").val(""); $("#Pincode").val("");
