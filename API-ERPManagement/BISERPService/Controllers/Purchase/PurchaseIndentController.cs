@@ -395,5 +395,71 @@ namespace BISERPService.Controllers
             return InternalServerError();
         }
 
+        [Route("getProduct")]
+        [AcceptVerbs("GET", "POST")]
+        public IHttpActionResult GetProduct()
+        {
+            try
+            {
+                var sources = _ipIndent.GetProduct().ToList();
+
+                if (sources == null || !sources.Any())
+                {
+                    return NotFound();
+                }
+
+                return Ok(sources);
+            }
+            catch (Exception ex)
+            {
+                _loggger.LogError("Error in GetProduct method of PurchaseIndentController:" + Environment.NewLine + ex.ToString());
+                return InternalServerError(ex);
+            }
+        }
+
+        [Route("getProject/{ProductID}")]
+        [AcceptVerbs("GET", "POST")]
+        public IHttpActionResult GetProject(int ProductID)
+        {
+            try
+            {
+                var sources = _ipIndent.GetProject(ProductID).ToList();
+
+                if (sources == null || !sources.Any())
+                {
+                    return NotFound();
+                }
+
+                return Ok(sources);
+            }
+            catch (Exception ex)
+            {
+                _loggger.LogError("Error in GetProject method of PurchaseIndentController:" + Environment.NewLine + ex.ToString());
+                return InternalServerError(ex);
+            }
+        }
+
+        [Route("getProductItem/{ProductID}")]
+        [Route("getProductItem/{ProductID}/{ProjectID}")]
+        [HttpGet]
+        public IHttpActionResult GetProductItem(int ProductID, int? ProjectID = null)
+        {
+            try
+            {
+                var data = _ipIndent.GetProductItem(ProductID, ProjectID);
+
+                if (data == null)
+                {
+                    return NotFound(); // or return BadRequest("No data found for the specified enquiry ID.");
+                }
+
+                return Ok(data.ToList());
+            }
+            catch (Exception ex)
+            {
+                _loggger.LogError("Error in GetProductItem of ProductItemRegisterController : parameter :" + Environment.NewLine + ex.StackTrace);
+                return InternalServerError(ex);
+            }
+        }
     }
 }

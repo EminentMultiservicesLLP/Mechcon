@@ -129,6 +129,7 @@ namespace BISERPService.Controllers.Asset
                 return BadRequest();
 
         }
+
         [Route("UpdateClient")]
         [AcceptVerbs("POST")]
         public IHttpActionResult UpdateClient(ClientEntity Client)

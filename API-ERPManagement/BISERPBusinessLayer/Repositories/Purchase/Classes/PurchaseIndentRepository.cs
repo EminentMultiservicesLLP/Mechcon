@@ -72,6 +72,8 @@ namespace BISERPBusinessLayer.Repositories.Purchase.Classes
                                 DeliveryEndDate = row.Field<DateTime?>("DeliveryEndDate"),
                                 ItemCategoryId = row.Field<int?>("ItemCategoryId"),
                                 ItemCategory = row.Field<string>("ItemCategory"),
+                                ProductID = row.Field<int?>("ProductID"),
+                                ProductName = row.Field<string>("ProductName"),
                                 Status = row.Field<string>("Status"),
                                 AuthorisedRemarks = row.Field<string>("AuthorisedRemarks"),
                                 AuthorisedBy = row.Field<int?>("AuthorisedBy"),
@@ -106,6 +108,7 @@ namespace BISERPBusinessLayer.Repositories.Purchase.Classes
             paramCollection.Add(new DBParameter("DeliveryStartDate", entity.DeliveryStartDate, DbType.DateTime));
             paramCollection.Add(new DBParameter("DeliveryEndDate", entity.DeliveryEndDate, DbType.DateTime));
             paramCollection.Add(new DBParameter("ItemCategoryId", entity.ItemCategoryId, DbType.Int32));
+            paramCollection.Add(new DBParameter("ProductID", entity.ProductID, DbType.Int32));
             paramCollection.Add(new DBParameter("Status", entity.Status, DbType.String));
             paramCollection.Add(new DBParameter("ProcurementTypeID", entity.ProcurementTypeID, DbType.Int32));
             paramCollection.Add(new DBParameter("Storeid", entity.Storeid, DbType.Int32));
@@ -261,6 +264,7 @@ namespace BISERPBusinessLayer.Repositories.Purchase.Classes
             paramCollection.Add(new DBParameter("IndentId", entity.IndentId, DbType.Int32));
             paramCollection.Add(new DBParameter("Remarks", entity.Remarks, DbType.String));
             paramCollection.Add(new DBParameter("IndentNature", entity.IndentNature, DbType.String));
+            paramCollection.Add(new DBParameter("ProductID", entity.ProductID, DbType.Int32));
             paramCollection.Add(new DBParameter("RequiredDate", entity.RequiredDate, DbType.String));
             paramCollection.Add(new DBParameter("UpdatedBy", entity.InsertedBy, DbType.Int32));
             paramCollection.Add(new DBParameter("UpdatedOn", entity.InsertedON, DbType.DateTime));
@@ -415,5 +419,63 @@ namespace BISERPBusinessLayer.Repositories.Purchase.Classes
             }
             return Dtl;
         }
+
+        public IEnumerable<ProductEntities> GetProduct()
+        {
+            List<ProductEntities> data = null;
+            using (DBHelper dbHelper = new DBHelper())
+            {
+                DataTable dt = dbHelper.ExecuteDataTable(PurchaseQueries.GetProduct, CommandType.StoredProcedure);
+                data = dt.AsEnumerable()
+                            .Select(row => new ProductEntities
+                            {
+                                ProductID = row.Field<int>("ProductID"),
+                                ProductName = row.Field<string>("ProductName"),
+                                ProductDesc = row.Field<string>("ProductDesc"),
+                            }).ToList();
+            }
+            return data;
+        }
+
+        public IEnumerable<ProjectEntities> GetProject(int ProductID)
+        {
+            List<ProjectEntities> data = null;
+            using (DBHelper dbHelper = new DBHelper())
+            {
+                DBParameterCollection paramCollection = new DBParameterCollection();
+                paramCollection.Add(new DBParameter("ProductID", ProductID, DbType.Int32));
+                DataTable dt = dbHelper.ExecuteDataTable(PurchaseQueries.GetProject, paramCollection, CommandType.StoredProcedure);
+                data = dt.AsEnumerable()
+                            .Select(row => new ProjectEntities
+                            {
+                                ProjectID = row.Field<int>("ProjectID"),
+                                ProjectName = row.Field<string>("ProjectName")
+                            }).ToList();
+            }
+            return data;
+        }
+
+        public IEnumerable<ProductItemEntities> GetProductItem(int ProductID, int? ProjectID)
+        {
+            List<ProductItemEntities> data = null;
+            using (DBHelper dbHelper = new DBHelper())
+            {
+                DBParameterCollection paramCollection = new DBParameterCollection();
+                paramCollection.Add(new DBParameter("ProductID", ProductID, DbType.Int32));
+                paramCollection.Add(new DBParameter("ProjectID", ProjectID, DbType.Int32));
+                DataTable dt = dbHelper.ExecuteDataTable(PurchaseQueries.GetProductItem, paramCollection, CommandType.StoredProcedure);
+
+                data = dt.AsEnumerable()
+                            .Select(row => new ProductItemEntities
+                            {
+                                ProductName = row.Field<string>("ProductName"),
+                                ProjectName = row.Field<string>("ProjectName"),
+                                ItemName = row.Field<string>("ItemName"),
+                                ItemQty = row.Field<double>("ItemQty")
+                            }).ToList();
+            }
+            return data;
+        }
+
     }
 }

@@ -1,122 +1,179 @@
-﻿@using (Html.BeginForm())
-{
-    @Html.AntiForgeryToken()
-    <fieldset>
+﻿@model BISERP.Areas.Masters.Models.BasisMasterModel
+    @{
+        ViewBag.Title = "Basis Term Master";
+    }
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        <h5 class="page-header orangeDottedBottomBorder"> Basis Master </h5>
+        @* new addition 2024 *@
+        <div id="SearchGridModal" class="modal fade" role="dialog" data-backdrop="false">
+            <div class="modal-dialog find-search-grid-modal">
+                <div class="modal-content gridmodal-content">
+                    <div class="modal-header gridmodal-header">
+                        <button type="button" class="close" onclick="closeModal()">&times;</button>
+                        <h4 class="modal-title"> Basis Details</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="fill">
+                            <div id="grid"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="panel-group">
             <div class="panel panel-default">
                 <div class="panel-groupingBoder">
                     <div class="panel-heading">
                         <div class="panel-title">
-                          Price Basis Detail
+                            <a class="collapsediv" data-toggle="collapse" href="#BasisCreate">
+                                Basis Master
+                            </a>
                         </div>
                     </div>
-                    <div class="panel-collapse collapse in" aria-expanded="true" id="SearchDetails">
+                    <div id="BasisCreate" class="panel-collapse collapse in" aria-expanded="true">
                         <div class="panel-body">
-                            <div class="container fill">
-                                <div id="grid"></div>
+                            <div class="fill">
+                                <div class="submit-row">
+                                    <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                                    <button type="button" class="btn btn-primary" id="btnreset" onclick="Clearform()">Reset</button>
+                                    <button type="button" class="btn btn-info" id="btnSearch">Find</button>
+                                </div>
+                                <fieldset class="fieldsetCustom">
+                                    <legend class="legendCustom">Create Basis</legend>
+                                    <div class="row">
+                                        <div class="col-sm-2">
+                                            <label for="BasisCode" class="required">Basis Code</label>
+                                            <input class="form-control" placeholder="Basis Code" id="BasisCode" type="text" />
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label for="BasisDesc" class="required">Basis Desc</label>
+                                            <textarea class="form-control" placeholder="Basis Desc" id="BasisDesc"></textarea>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <br />
+                                            <label for="Deactive">Deactive</label>
+                                            <input type="checkbox" id="Deactive" name="Deactive">
+                                        </div>
+                                    </div>
+                                </fieldset>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </fieldset>
-}
+    }
 
-<script type="text/javascript">
-    var grid;
 
-    $(document).ready(function () {
-        grid = $("#grid").jsGrid({
-            width: "100%",
-            height: "400px",
-            filtering: true, //will display top 1st row as filter
-            selecting: true,
+    <script type="text/javascript">
+        var tempID = 0;
+        var grid;
 
-            inserting: true, // false will not allow inserting new entry
-            editing: true,// false will not allow exisiting data entry
-            sorting: true,
-            autoload: true, // this statement require to load data using ajax call
-            paging: true,
-            pageSize: 20,
+        $(document).ready(function () {
+            grid = $("#grid").jsGrid({
+                width: "100%",
+                height: "400px",
+                filtering: true, //will display top 1st row as filter
+                selecting: true,
+                sorting: true,
+                paging: true,
+                pageSize: 20,
 
-            controller: {
-                loadData: function (filter) {
-                    var d = $.Deferred();
-                    $.ajax({
-                        type: 'GET',
-                        url: "/OtherTermMaster/AllBasisTerm",
-                        dataType: "json",
-                        data: { searchName: filter.BasisDesc, searchcode: filter.BasisCode },
-                        success: function (data) {
-                            if (data.success) {
-                                d.resolve(data.records);
-                            } else {
-                                ShowAlert("error", data.message);
-                                $(".jsgrid-load-panel").hide();
+                controller: {
+                    loadData: function (filter) {
+                        var d = $.Deferred();
+                        $.ajax({
+                            type: 'GET',
+                            url: "/OtherTermMaster/AllBasisTerm",
+                            dataType: "json",
+                            data: { searchName: filter.BasisDesc, searchcode: filter.BasisCode },
+                            success: function (data) {
+                                if (data.success) {
+                                    d.resolve(data.records);
+                                } else {
+                                    ShowAlert("error", data.message);
+                                    $(".jsgrid-load-panel").hide();
+                                }
+                            },
+                            error: function () {
+                                ShowAlert("error", "Server Error! Please Contact administrator!");
                             }
-                        },
-                        error: function () {
-                            ShowAlert("error", "Server Error! Please Contact administrator!");
-                        }
-                    });
-                    return d.promise();
+                        });
+                        return d.promise();
+                    }
                 },
-                insertItem: function (item) {
-                    var d = $.Deferred();
-                    $.ajax(
-                    {
-                        type: "POST", //HTTP POST Method
-                        dataType: "json",
-                        url: '/OtherTermMaster/SaveBasisMaster', // Controller/View
-                        data: item,
-                        success: function (msg) {
-                            if (msg.success) {
-                                ShowAlert("success", "Inspection Matser added successfully.");
-                                return;
-                            } else {
-                                ShowAlert("error", msg.Message);
-                                return;
-                            }
-                        }
-                    }).done(function (insertedItem) {
-                        d.resolve(insertedItem.data);
-                        $("#grid").jsGrid("loadData");
-                    });
-                    return d.promise();
-                },
-                updateItem: function (item) {
-                    var d = $.Deferred();
-                    $.ajax(
-                    {
-                        type: "POST", //HTTP POST Method
-                        dataType: "json",
-                        url: '/OtherTermMaster/SaveBasisMaster', // Controller/View
-                        data: item,
-                        success: function (msg) {
-                            if (msg.success) {
-                                ShowAlert("success", "Inspection Matser updated successfully.");
-                            } else {
-                                ShowAlert("error", msg.Message);
-                            }
-                        }
-                    }).done(function (insertedItem) {
-                        d.resolve(insertedItem.data);
-                        $("#grid").jsGrid("loadData");
-                    });
-                    return d.promise();
+                fields: [
+                    { name: "BasisId", visible: false, width: 0 },
+                    { name: "BasisCode", title: "Code", type: "text", validate: { validator: "required", message: "code is missing! Please enter the code " }, width: 20 },
+                    { name: "BasisDesc", title: "Description", type: "textarea", validate: { validator: "required", message: "Description is missing! Please enter the Description " } },
+                    { name: "Deactive", title: "Deactive", type: "checkbox", filtering: false, width: 10, inserting: false },
+                    //{ type: "control", deleteButton: false, width: 10 }
+                ],
+                rowClick: function (args) {
+                    var data = args.item;
+                    tempID = data.BasisId;
+                    $("#BasisCode").val(data.BasisCode);
+                    $("#BasisDesc").val(data.BasisDesc);
+                    $("#Deactive").prop('checked', data.Deactive);
+                    closeModal();
                 }
-            },
-            fields: [
-                { name: "BasisID", visible: false, width: 0 },
-                { name: "BasisCode", title: "Code", type: "text", validate: { validator: "required", message: "code is missing! Please enter the code " }, width: 20 },
-                { name: "BasisDesc", title: "Description", type: "textarea", validate: { validator: "required", message: "Description is missing! Please enter the Description " } },
-                { name: "Deactive", title: "Deactive", type: "checkbox", filtering: false, width: 10, inserting: false },
-                { type: "control", deleteButton: false, width: 10 }
-            ]
 
 
+            });
         });
-    });
 
-</script>
+        $("#btnSave").click(function () {
+            if ($("#BasisCode").val() == "") {
+                ShowAlert("error", "BasisCode is missing! Please enter the code");
+                return;
+            }
+            if ($("#BasisDesc").val() == "") {
+                ShowAlert("error", "BasisDesc is missing! Please enter the BasisDesc");
+                return;
+            }
+            let items = JSON.stringify({ //Passing data
+                BasisID: tempID,
+                BasisCode: $("#BasisCode").val(),
+                BasisDesc: $("#BasisDesc").val(),
+                Deactive: $("#Deactive").prop('checked'),
+            });
+            $.ajax(
+                {
+                    type: "POST", //HTTP POST Method
+                    traditional: true,
+                    contentType: 'application/json; charset=utf-8',
+                    url: '/OtherTermMaster/SaveBasisMaster', // Controller/View
+                    data: items,
+                    success: function (msg) {
+                        if (msg.success) {
+                            tempID == 0 ? ShowAlert("success", "Basis added successfully to system.") : ShowAlert("success", "Basis updated successfully to system.");
+                            Clearform();
+                        }
+                        else {
+                            ShowAlert("error", msg.Message);
+                        }
+                    }
+                });
+        });
+
+        $("#btnSearch").on('click', function () {
+            $("#SearchGridModal").modal('show');
+            $("#grid").jsGrid("loadData");
+        });
+
+        function Clearform() {
+            tempID = 0;
+            $("#BasisCode").val("");
+            $("#BasisDesc").val("");
+            $("#Deactive").prop('checked', false);
+            $("#grid").jsGrid("loadData");
+        }
+
+        function closeModal() {
+            $("#SearchGridModal").modal('hide');
+        }
+
+    </script>

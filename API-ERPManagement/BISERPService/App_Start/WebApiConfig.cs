@@ -38,6 +38,8 @@ using BISERPBusinessLayer.Repositories.DashBoard.Interfaces;
 using BISERPBusinessLayer.Repositories.DashBoard.Classes;
 using BISERPBusinessLayer.Repositories.Configuration.Interfaces;
 using BISERPBusinessLayer.Repositories.Configuration.Classes;
+using BISERPBusinessLayer.Repositories.SM.Interfaces;
+using BISERPBusinessLayer.Repositories.SM.Classes;
 
 namespace BISERPService
 {
@@ -228,7 +230,7 @@ namespace BISERPService
             container.RegisterType<ITrainingCategoryRepository, TrainingCategoryRepository>();
             container.RegisterType<IBudgetHeadsRepository, BudgetHeadsRepository>();
             container.RegisterType<IGeneralBudgetProposalRepository, GeneralBudgetProposalRepository>();
-            
+
             container.RegisterType<ITrainingTemplateRepository, TrainingTemplateRepository>();
             container.RegisterType<IPettyCashRepository, PettyCashRepository>();
             container.RegisterType<IMonthlyExpenditureRepository, MonthlyExpenditureRepository>();
@@ -236,7 +238,7 @@ namespace BISERPService
             container.RegisterType<IEmployeeEnrollmentRepository, EmployeeEnrollmentRepository>();
             container.RegisterType<IRoleAccessRepository, RoleAccessRepository>();
             config.DependencyResolver = new UnityResolver(container);
-                        /***********billing Area*************/
+            /***********billing Area*************/
             container.RegisterType<IClientBillingRepository, ClientBillingRepository>();
             container.RegisterType<IClientBillCancelRepository, ClientBillCancelRepository>();
             container.RegisterType<ISupplierBillingRepository, SupplierBillingRepository>();
@@ -244,7 +246,7 @@ namespace BISERPService
             container.RegisterType<IPurchaseDashBoardRepository, PurchaseDashBoardRepository>();
             container.RegisterType<IPurchaseReportsRepository, PurchaseReportsRepository>();
 
-                        /***********Configuration Area*************/
+            /***********Configuration Area*************/
             container.RegisterType<IProjectLogicRepository, ProjectLogicRepository>();
             container.RegisterType<ISeriesLogicRepository, SeriesLogicRepository>();
             container.RegisterType<IStockViewRepository, StockViewRepository>();
@@ -255,9 +257,18 @@ namespace BISERPService
             container.RegisterType<IRequestForQuoteCommonRepository, RequestForQuoteCommonRepository>();
 
             //----------------------------WO----------------------------//
-            container.RegisterType<IWorkOrderRepository, WorkOrderRepository>();
+            container.RegisterType<BISERPBusinessLayer.Repositories.Purchase.Interfaces.IWorkOrderRepository, BISERPBusinessLayer.Repositories.Purchase.Classes.WorkOrderRepository>();
             container.RegisterType<IWorkOrderDetailRepository, WorkOrderDetailRepository>();
             container.RegisterType<IWorkOrderCommonRepository, WorkOrderCommonRepository>();
+
+
+            //----------------------------Marketing----------------------------//
+            container.RegisterType<IEnquiryRegisterRepository, EnquiryRegisterRepository>();
+            container.RegisterType<IEnquiryAllocationRepository, EnquiryAllocationRepository>();
+            container.RegisterType<IOfferRegisterRepository, OfferRegisterRepository>();
+            container.RegisterType<IOrderBookRepository, OrderBookRepository>();
+            container.RegisterType<ISM_WorkOrderRepository, SM_WorkOrderRepository>();
+
             //This line wil apply below attribute to all controllers at global level
             config.Filters.Add(new GZipCompressionAttribute());
 

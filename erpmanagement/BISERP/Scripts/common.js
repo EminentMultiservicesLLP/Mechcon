@@ -1981,11 +1981,11 @@ function validateFiles(inputId, preApproveImgId) {
                 ShowAlert("error", 'File "' + file.name + '" exceeds 1 MB.\n Please upload a smaller file.');
                 return;
             }
-            const specialCharsRegex = /[^a-zA-Z0-9_. -]/;
+            const specialCharsRegex = /[^a-zA-Z0-9_. ()-]/;
             if (specialCharsRegex.test(file.name)) {
                 $("#" + inputId).val(null);
                 $("#" + preApproveImgId).empty();
-                ShowAlert("error", "FileName " + file.name + " should not contain any special characters.\n ('!@#$%^&*()+={}[]|\:;'<>,?/~`)");
+                ShowAlert("error", `FileName "${file.name}" should not contain any special characters. ('!#$%^&*+={}[]|\\:;'<>,?/~\`` + "\`)");
                 return;
             }
         }
@@ -2031,3 +2031,17 @@ async function getSelectedItemDetails(selectedItems, storeID) {
     }
 }
 
+ // Example output: "20-Sept-24 (14:22:30)"
+function formatDateTime(date) {
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
+
+    let day = date.getDate();
+    let month = months[date.getMonth()];
+    let year = date.getFullYear().toString().slice(-2);
+
+    let hours = String(date.getHours()).padStart(2, '0');
+    let minutes = String(date.getMinutes()).padStart(2, '0');
+    let seconds = String(date.getSeconds()).padStart(2, '0');
+
+    return `${day}-${month}-${year} (${hours}:${minutes}:${seconds})`;
+}

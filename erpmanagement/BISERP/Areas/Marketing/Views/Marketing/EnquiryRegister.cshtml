@@ -1,0 +1,759 @@
+﻿@model BISERP.Areas.Marketing.Models.EnquiryRegisterModel
+@Scripts.Render("~/bundles/jquerymodels")
+
+<script>
+    $(function () {
+        $(".datepicker").datepicker({
+            showOn: "button",
+            buttonImage: "/Content/images/calendar.gif",
+            buttonImageOnly: true,
+            buttonText: "Selectdate",
+            'changeMonth': true,
+            'changeYear': true,
+            'yearRange': '2021:2030',
+            "format": "dd-M-yyyy",
+            todayBtn: "linked",
+            pickerPosition: "bottom-left",
+            "todayHighlight": true,
+            autoclose: true,
+        }).datepicker("setDate", new Date());
+        $("#anim").change(function () {
+            $(".datepicker").datepicker("option", "showAnim", "fadeIn");
+        });
+    });
+</script>
+
+<h5 class="page-header orangeDottedBottomBorder">Enquiry Register</h5>
+<div id="SearchGridModal" class="modal fade" role="dialog" data-backdrop="false">
+    <div class="modal-dialog find-search-grid-modal">
+        <div class="modal-content gridmodal-content">
+            <div class="modal-header gridmodal-header">
+                <button type="button" class="close" onclick="closeModal()">&times;</button>
+                <h4 class="modal-title">Entry Details.</h4>
+            </div>
+            <div class="modal-body">
+                <div class="fill">
+                    <div id="EnquiryGrid"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="panel-group">
+    <div class="panel panel-default">
+        <div class="panel-groupingBoder">
+            <div class="panel-heading">
+                <div class="panel-title">
+                    <a class="collapsediv" data-toggle="collapse" href="#SearchDetails">
+                        Enquiry Register
+                    </a>
+                </div>
+            </div>
+            <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                <div class="panel-body">
+                    <div class="fill">
+                        <div class="submit-row">
+                            <button type="button" id="btnSave" class="btn btn-success" onclick="SaveEnquiry()">Save</button>
+                            <button type="button" class="btn btn-warning" id="btnResetT" onclick="clearFormData()">Clear</button>
+                            <button type="button" id="btnFind" class="btn btn-primary" onclick="showModal()">Find</button>
+                        </div>
+                        <fieldset class="fieldsetCustom">
+                            <legend class="legendCustom">Create Entry</legend>
+
+                            <div class="row">
+                                <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                                    @Html.LabelFor(model => model.EnquiryNo, new { @class = "" })
+                                    @Html.TextBoxFor(model => model.EnquiryNo, new { @class = "form-control", placeholder = "Auto-generates", disabled = "disabled" })
+                                    @Html.HiddenFor(model => model.EnquiryID)
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                                    @Html.LabelFor(model => model.EnquiryDate, new { @class = "" })
+                                    @Html.TextBoxFor(model => model.EnquiryDate, new { @class = "form-control datepicker", disabled = "disabled" })
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                                    @Html.LabelFor(model => model.SourceID, new { @class = "required" })
+                                    @Html.DropDownListFor(model => model.SourceID, new SelectList(string.Empty, "Value", "Text"), "--Select Source--", new { @class = "wrapperdropdown-content form-control" })
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                                    @Html.LabelFor(model => model.ProductID, new { @class = "required" })
+                                    @Html.DropDownListFor(model => model.ProductID, new SelectList(string.Empty, "Value", "Text"), "--Select Product--", new { @class = "wrapperdropdown-content form-control" })
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                                    @Html.LabelFor(model => model.LocationID, new { @class = "required" })
+                                    @Html.DropDownListFor(model => model.LocationID, new SelectList(string.Empty, "Value", "Text"), "--Select Location--", new { @class = "wrapperdropdown-content form-control" })
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                                    @Html.LabelFor(model => model.TypeID, new { @class = "required" })
+                                    @Html.DropDownListFor(model => model.TypeID, new SelectList(string.Empty, "Value", "Text"), "--Select Type--", new { @class = "wrapperdropdown-content form-control" })
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                                    @Html.LabelFor(model => model.SectorID, new { @class = "required" })
+                                    @Html.DropDownListFor(model => model.SectorID, new SelectList(string.Empty, "Value", "Text"), "--Select Sector--", new { @class = "wrapperdropdown-content form-control" })
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                                    @Html.LabelFor(model => model.ZoneID, new { @class = "required" })
+                                    @Html.DropDownListFor(model => model.ZoneID, new SelectList(string.Empty, "Value", "Text"), "--Select Zone--", new { @class = "wrapperdropdown-content form-control" })
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-12 col-xs-12">
+                                    @Html.LabelFor(model => model.ClientID, new { @class = "required" })
+                                    @Html.DropDownListFor(model => model.ClientID, new SelectList(string.Empty, "Value", "Text"), "--Select Client--", new { @class = "wrapperdropdown-content form-control" })
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                                    @Html.LabelFor(model => model.ContactPerson, new { @class = "" })
+                                    @Html.TextBoxFor(model => model.ContactPerson, new { @class = "form-control", placeholder = "Enter Contact Person" })
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                                    @Html.LabelFor(model => model.ContactNo, new { @class = "" })
+                                    @Html.TextBoxFor(model => model.ContactNo, new { @class = "form-control", placeholder = "Enter Contact Number" })
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                                    @Html.LabelFor(model => model.EmailID, new { @class = "" })
+                                    @Html.TextBoxFor(model => model.EmailID, new { @class = "form-control", placeholder = "Enter Email Address", @type = "email" })
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                                    @Html.LabelFor(model => model.Place, new { @class = "" })
+                                    @Html.TextBoxFor(model => model.Place, new { @class = "form-control", placeholder = "Enter Place" })
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-12 col-xs-12">
+                                    @Html.LabelFor(model => model.StatusID, new { @class = "required" })
+                                    @Html.DropDownListFor(model => model.StatusID, new SelectList(string.Empty, "Value", "Text"), "--Select Status--", new { @class = "wrapperdropdown-content form-control" })
+                                </div>
+                                <div class="col-lg-4 col-md-8 col-sm-12 col-xs-12">
+                                    @Html.LabelFor(model => model.CustomerMailMsg, new { @class = "" })
+                                    @Html.TextAreaFor(model => model.CustomerMailMsg, new { @class = "form-control", placeholder = "Enter Customer Message", rows = 3 })
+                                </div>
+                                <div class="col-sm-2">
+                                    <br />
+                                    <button type="button" id="btnEnqRegFollowUp" class="btn btn-info" onclick="loadEnqRegFollowUpGrid()">Follow-Up History</button>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="EnqRegFollowUpGridModal" class="modal fade" role="dialog" data-backdrop="false">
+    <div class="modal-dialog find-search-grid-modal">
+        <div class="modal-content gridmodal-content">
+            <div class="modal-header gridmodal-header">
+                <button type="button" class="close" onclick="closeModal()">&times;</button>
+                <h4 class="modal-title">Entry Follow-Up Details.</h4>
+            </div>
+            <div class="modal-body">
+                <div class="fill">
+                    <div id="EnqRegFollowUpGrid"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var tempEnquiryID = 0;
+    var clientData = [];
+
+    function loadSource() {
+        $.ajax({
+            type: "GET",
+            url: "/EnquiryRegister/GetSource",
+            dataType: "json",
+            success: function (data) {
+                const $sourceID = $('#SourceID');
+                $sourceID.empty();
+
+                if (data.error) {
+                    $sourceID.append('<option value="">--Error loading sources--</option>');
+                    console.error("Error loading sources:", data.error);
+                    return;
+                }
+
+                $sourceID.append('<option value="">--Select Source--</option>');
+
+                data.forEach(function (source) {
+                    $sourceID.append(`<option value="${source.SourceID}">${source.Source}</option>`);
+                });
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                $('#SourceID').empty();
+                $('#SourceID').append('<option value="">--Error loading sources--</option>');
+                console.error("Error loading sources:", errorThrown);
+            }
+        });
+    }
+
+    function loadProducts() {
+        $.ajax({
+            type: "GET",
+            url: "/EnquiryRegister/GetProducts",
+            dataType: "json",
+            success: function (data) {
+                const $productDropdown = $('#ProductID');
+                $productDropdown.empty();
+
+                if (data.error) {
+                    $productDropdown.append('<option value="">--Error loading products--</option>');
+                    console.error("Error loading products:", data.error);
+                    return;
+                }
+
+                $productDropdown.append('<option value="">--Select Product--</option>');
+
+                data.forEach(function (product) {
+                    $productDropdown.append(`<option value="${product.ProductID}">${product.Product}</option>`);
+                });
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                $('#ProductID').empty();
+                $('#ProductID').append('<option value="">--Error loading products--</option>');
+                console.error("Error loading products:", errorThrown);
+            }
+        });
+    }
+
+    function loadLocations() {
+        $.ajax({
+            type: "GET",
+            url: "/EnquiryRegister/GetLocations",
+            dataType: "json",
+            success: function (data) {
+                const $locationDropdown = $('#LocationID');
+                $locationDropdown.empty();
+
+                if (data.error) {
+                    $locationDropdown.append('<option value="">--Error loading locations--</option>');
+                    console.error("Error loading locations:", data.error);
+                    return;
+                }
+
+                $locationDropdown.append('<option value="">--Select Location--</option>');
+
+                data.forEach(function (location) {
+                    $locationDropdown.append(`<option value="${location.LocationID}">${location.Location}</option>`);
+                });
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                $('#LocationID').empty();
+                $('#LocationID').append('<option value="">--Error loading locations--</option>');
+                console.error("Error loading locations:", errorThrown);
+            }
+        });
+    }
+
+    function loadTypes() {
+        $.ajax({
+            type: "GET",
+            url: "/EnquiryRegister/GetTypes",
+            dataType: "json",
+            success: function (data) {
+                const $typeDropdown = $('#TypeID');
+                $typeDropdown.empty();
+
+                if (data.error) {
+                    $typeDropdown.append('<option value="">--Error loading types--</option>');
+                    console.error("Error loading types:", data.error);
+                    return;
+                }
+
+                $typeDropdown.append('<option value="">--Select Type--</option>');
+
+                data.forEach(function (type) {
+                    $typeDropdown.append(`<option value="${type.TypeID}">${type.Type}</option>`);
+                });
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                $('#TypeID').empty();
+                $('#TypeID').append('<option value="">--Error loading types--</option>');
+                console.error("Error loading types:", errorThrown);
+            }
+        });
+    }
+
+    function loadSectors() {
+        $.ajax({
+            type: "GET",
+            url: "/EnquiryRegister/GetSectors",
+            dataSector: "json",
+            success: function (data) {
+                const $sectorDropdown = $('#SectorID');
+                $sectorDropdown.empty();
+
+                if (data.error) {
+                    $sectorDropdown.append('<option value="">--Error loading sectors--</option>');
+                    console.error("Error loading sectors:", data.error);
+                    return;
+                }
+
+                $sectorDropdown.append('<option value="">--Select Sector--</option>');
+
+                data.forEach(function (sector) {
+                    $sectorDropdown.append(`<option value="${sector.SectorID}">${sector.Sector}</option>`);
+                });
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                $('#SectorID').empty();
+                $('#SectorID').append('<option value="">--Error loading sectors--</option>');
+                console.error("Error loading sectors:", errorThrown);
+            }
+        });
+    }
+
+    function loadZones() {
+        $.ajax({
+            type: "GET",
+            url: "/EnquiryRegister/GetZones",
+            dataZone: "json",
+            success: function (data) {
+                const $zoneDropdown = $('#ZoneID');
+                $zoneDropdown.empty();
+
+                if (data.error) {
+                    $zoneDropdown.append('<option value="">--Error loading zones--</option>');
+                    console.error("Error loading zones:"+ data.error);
+                    return;
+                }
+
+                $zoneDropdown.append('<option value="">--Select Zone--</option>');
+
+                data.forEach(function (zone) {
+                    $zoneDropdown.append(`<option value="${zone.ZoneID}">${zone.Zone}</option>`);
+                });
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                $('#ZoneID').empty();
+                $('#ZoneID').append('<option value="">--Error loading zones--</option>');
+                console.error("Error loading zones:"+ errorThrown);
+            }
+        });
+    }
+
+    function loadStatus() {
+        $.ajax({
+            type: "GET",
+            url: "/EnquiryRegister/GetStatus",
+            dataType: "json",
+            success: function (data) {
+                const $statusDropdown = $('#StatusID');
+                $statusDropdown.empty();
+
+                if (data.error) {
+                    $statusDropdown.append('<option value="">--Error loading statuses--</option>');
+                    console.error("Error loading statuses:", data.error);
+                    return;
+                }
+
+                $statusDropdown.append('<option value="">--Select Status--</option>');
+
+                data.forEach(function (status) {
+                    $statusDropdown.append(`<option value="${status.StatusID}">${status.Status}</option>`);
+                });
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                $('#StatusID').empty();
+                $('#StatusID').append('<option value="">--Error loading statuses--</option>');
+                console.error("Error loading statuses:", errorThrown);
+            }
+        });
+    }
+
+    function getAllClient() {
+        $.ajax({
+            type: 'GET',
+            url: "/ClientMaster/AllClient",
+            dataType: "json",
+            data: {
+                SearchName: "",
+                SearchCode: ""
+            },
+            success: function (data) {
+                const $clientDropdown = $('#ClientID');
+                $clientDropdown.empty();
+
+                if (data.error || (data && !data.success)) {
+                    $clientDropdown.append('<option value="">--Error loading clients--</option>');
+                    let errorMessage = data.Message || data.error || "An error occurred while fetching client data.";
+                    ShowAlert("error", errorMessage);
+                    console.error("Error loading clients:", errorMessage);
+                    clientData = [];
+                    return;
+                }
+
+                $clientDropdown.append('<option value="">--Select Client--</option>');
+
+                data.records.forEach(function (client) {
+                    $clientDropdown.append(`<option value="${client.ClientId}">${client.Name}</option>`);
+                });
+                clientData = data.records;
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                $('#ClientID').empty();
+                $('#ClientID').append('<option value="">--Error loading clients--</option>');
+                let errorMsg = xhr.responseText || "No Record Found";
+                ShowAlert("error", errorMsg);
+                console.error("Error loading clients:", errorThrown);
+            }
+        });
+    }
+
+    loadSource();
+    loadProducts();
+    loadLocations();
+    loadTypes();
+    loadSectors();
+    loadZones();
+    loadStatus();
+    getAllClient();
+
+    //-----------------------------------EnquiryGrid (Starts here)-----------------------------------//
+    var EnquiryGrid_GDM = { location: "local" };
+    var EnquiryGrid_GCM = [
+        {
+            title: "Enquiry No", dataIndx: "EnquiryNo", width: '25%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "EnquiryDate", dataIndx: "strEnquiryDate", width: '25%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Client Name", dataIndx: "ClientName", width: '49%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        }];
+    var setEnquiryGrid = {
+        height: 300,
+        width: 'auto',
+        maxWidth: '100%',
+        minWidth: 800,
+        sortable: true,
+        autofill: true,
+        numberCell: { show: true },
+        hoverMode: 'row',
+        showTop: true,
+        showTitle: true,
+        showBottom: true,
+        resizable: true,
+        scrollModel: { autoFit: true },
+        filterModel: { on: true, mode: "AND", header: true },
+        draggable: false,
+        hwrap: false,
+        wrap: false,
+        editable: false,
+        columnBorders: true,
+        menuIcon: true,
+        selectionModel: { type: 'row', mode: 'single', cbHeader: false },
+        colModel: EnquiryGrid_GCM,
+        dataModel: EnquiryGrid_GDM,
+        pageModel: { type: "local" },
+        rowClick: function (evt, ui) {
+            if (ui.rowData) {
+                var data = ui.rowData;
+                clearFormData();
+                tempEnquiryID = data.EnquiryID;
+                GetEnquiryDetails(tempEnquiryID);
+                closeModal();
+            }
+        }
+
+    }
+    var $EnquiryGrid = $("#EnquiryGrid").pqGrid(setEnquiryGrid);
+    function loadEnquiryGrid() {
+        var antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            url: "/EnquiryRegister/GetEnquiry",
+            data: { statusID: null },
+            dataType: "json",
+
+            beforeSend: function () {
+                $("#EnquiryGrid").pqGrid("showLoading");
+            },
+
+            complete: function () {
+                $("#EnquiryGrid").pqGrid("hideLoading");
+            },
+
+            success: function (response) {
+                const grid = $("#EnquiryGrid").pqGrid();
+
+                if (response.success) {
+                    grid.pqGrid("option", "dataModel.data", response.records);
+                } else {
+                    console.warn("No data found or an issue occurred: ", response.message);
+                    grid.pqGrid("option", "dataModel.data", []);
+                }
+
+                grid.pqGrid("refreshDataAndView");
+                PqGridRefreshClick(grid);
+            },
+
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Error loading Enquiry Register grid:", textStatus, errorThrown);
+                console.error("Response text:", jqXHR.responseText);
+                $("#EnquiryGrid").pqGrid("hideLoading");
+            }
+        });
+
+    }
+    //-----------------------------------EnquiryGrid (Ends here)-----------------------------------//
+
+    //-----------------------------------EnqRegFollowUpGrid (Starts here)-----------------------------------//
+    var EnqRegFollowUpGrid_GDM = { location: "local" };
+    var EnqRegFollowUpGrid_GCM = [
+        {
+            title: "Follow-Up Date", dataIndx: "strFollowUpDate", width: '25%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Status", dataIndx: "Status", width: '25%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Client Msg", dataIndx: "CustomerMailMsg", width: '50%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        }
+    ];
+    var objEnqRegFollowUpGrid = {
+        height: 440,
+        width: 'auto',
+        maxWidth: '100%',
+        minWidth: 800,
+        sortable: true,
+        autofill: true,
+        numberCell: { show: true },
+        hoverMode: 'row',
+        showTop: false,
+        showTitle: true,
+        showBottom: true,
+        resizable: true,
+        filterModel: { on: true, mode: "AND", header: true },
+        draggable: false,
+        hwrap: false,
+        wrap: false,
+        editable: false,
+        columnBorders: true,
+        menuIcon: true,
+        selectionModel: { type: 'row', mode: 'single', cbHeader: false },
+        colModel: EnqRegFollowUpGrid_GCM,
+        dataModel: EnqRegFollowUpGrid_GDM,
+    }
+    var $EnqRegFollowUpGrid = $("#EnqRegFollowUpGrid").pqGrid(objEnqRegFollowUpGrid);
+    function loadEnqRegFollowUpGrid() {
+        if (tempEnquiryID == 0 || !tempEnquiryID) {
+            ShowAlert("error", "Please select enquiry first!");
+            return false
+        }
+
+        $("#EnqRegFollowUpGridModal").modal('show');
+
+        var antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            url: "/EnquiryRegister/GetEnqRegFollowUp",
+            data: { enquiryId: tempEnquiryID },
+            dataType: "json",
+
+            beforeSend: function () {
+                $("#EnqRegFollowUpGrid").pqGrid("showLoading");
+            },
+
+            complete: function () {
+                $("#EnqRegFollowUpGrid").pqGrid("hideLoading");
+            },
+
+            success: function (response) {
+                const grid = $("#EnqRegFollowUpGrid").pqGrid();
+
+                if (response.success) {
+                    grid.pqGrid("option", "dataModel.data", response.records);
+                } else {
+                    console.warn("No data found or an issue occurred: " + response.message);
+                    grid.pqGrid("option", "dataModel.data", []);
+                }
+
+                grid.pqGrid("refreshDataAndView");
+                PqGridRefreshClick(grid);
+            },
+
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Error loading Enquiry Follow-Up grid: "+ textStatus + errorThrown);
+                console.error("Response text: " + jqXHR.responseText);
+                $("#EnqRegFollowUpGrid").pqGrid("hideLoading");
+            }
+        });
+
+    }
+    //-----------------------------------EnqRegFollowUpGrid (Ends here)-----------------------------------//
+
+    $("#ClientID").change(() => {
+        const clientID = $("#ClientID").val();
+
+        if (clientID && clientID !== "0") {
+            const clientDetails = clientData.find(client => client.ClientId == clientID) || {};
+
+            const { ContactPerson = "", Phone1 = "", Email = "" } = clientDetails;
+            $("#ContactPerson").val(ContactPerson);
+            $("#ContactNo").val(Phone1);
+            $("#EmailID").val(Email);
+        } else {
+            $("#ContactPerson").val("");
+            $("#ContactNo").val("");
+            $("#EmailID").val("");
+        }
+    });
+
+    function GetEnquiryDetails(tempEnquiryID) {
+        var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            url: "/EnquiryRegister/GetEnquiryDetails",
+            data: { EnquiryID: tempEnquiryID },
+            dataType: "json",
+            success: function (response) {
+                if (response.success) {
+                    const details = response.record;
+
+                    $("#EnquiryNo").val(details.EnquiryNo);
+                    $("#EnquiryDate").datepicker("setDate", details.strEnquiryDate);
+                    $("#SourceID").val(details.SourceID).change();
+                    $("#ProductID").val(details.ProductID).change();
+                    $("#LocationID").val(details.LocationID).change();
+                    $("#TypeID").val(details.TypeID).change();
+                    $("#SectorID").val(details.SectorID).change();
+                    $("#ZoneID").val(details.ZoneID).change();
+                    $("#StatusID").val(details.StatusID).change();
+                    $("#ClientID").val(details.ClientID);
+                    $("#Place").val(details.Place);
+                    $("#ContactPerson").val(details.ContactPerson);
+                    $("#ContactNo").val(details.ContactNo);
+                    $("#EmailID").val(details.EmailID);
+                    $("#CustomerMailMsg").val("");
+                } else {
+                    console.warn("No details found or an issue occurred: ", response.message);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Error loading enquiry details: ", status, error);
+            }
+        });
+
+    }
+
+    function validateFormData() {
+        const fields = [
+            { selector: "#SourceID", placeholder: "Source" },
+            { selector: "#ProductID", placeholder: "Product" },
+            { selector: "#LocationID", placeholder: "Location" },
+            { selector: "#TypeID", placeholder: "Type" },
+            { selector: "#SectorID", placeholder: "Sector" },
+            { selector: "#ZoneID", placeholder: "Zone" },
+            { selector: "#ClientID", placeholder: "Customer Name" },
+            { selector: "#StatusID", placeholder: "Status ID" }
+        ];
+
+        for (let { selector, placeholder } of fields) {
+            const $field = $(selector);
+            const fieldValue = $field.val();
+            const fieldPlaceholder = $field.attr("placeholder") || placeholder;
+
+            if (!fieldValue) {
+                ShowAlert("error", `${fieldPlaceholder} is required!`);
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    function SaveEnquiry() {
+        if (!validateFormData()) {
+            return false;
+        }
+
+        const Details = {
+            EnquiryID: tempEnquiryID,
+            EnquiryDate: $("#EnquiryDate").val(),
+            SourceID: $("#SourceID").val(),
+            ProductID: $("#ProductID").val(),
+            LocationID: $("#LocationID").val(),
+            ClientID: $("#ClientID").val(),
+            Place: $("#Place").val(),
+            ContactPerson: $("#ContactPerson").val(),
+            ContactNo: $("#ContactNo").val(),
+            EmailID: $("#EmailID").val(),
+            StatusID: $("#StatusID").val(),
+            TypeID: $("#TypeID").val(),
+            SectorID: $("#SectorID").val(),
+            ZoneID: $("#ZoneID").val(),
+            CustomerMailMsg: $("#CustomerMailMsg").val(),
+        };
+
+        const antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: "POST",
+            contentType: 'application/json; charset=utf-8',
+            url: "/EnquiryRegister/SaveEnquiry",
+            data: JSON.stringify(Details),
+            success: function (response) {
+                if (response.success) {
+                    const message = Details.EnquiryID === 0 ? "Enquiry No : " + response.Data.EnquiryNo + " saved successfully!" : "Enquiry updated successfully!";
+                    ShowAlert("success", message);
+                    clearFormData();
+                } else {
+                    ShowAlert("error", response.message || "An error occurred while saving the enquiry.");
+                }
+            },
+            error: function (xhr, status, error) {
+                ShowAlert("error", "An unexpected error occurred: " + (xhr.responseText || error));
+            }
+        });
+
+    }
+
+    function clearFormData() {
+        tempEnquiryID = 0;
+
+        $("#EnquiryNo").val('');
+        $("#EnquiryDate").datepicker("setDate", new Date());
+        $("#SourceID").val('').trigger('change');
+        $("#ProductID").val('').trigger('change');
+        $("#LocationID").val('').trigger('change');
+        $("#ClientID").val('');
+        $("#Place").val('');
+        $("#ContactPerson").val('');
+        $("#ContactNo").val('');
+        $("#EmailID").val('');
+        $("#StatusID").val('').trigger('change');
+        $("#TypeID").val('').trigger('change');
+        $("#SectorID").val('').trigger('change');
+        $("#ZoneID").val('').trigger('change');
+        $("#CustomerMailMsg").val('');
+    }
+
+    function showModal() {
+        $("#SearchGridModal").modal('show');
+        loadEnquiryGrid();
+    }
+
+    function closeModal() {
+        $("#SearchGridModal").modal('hide');
+        $("#EnqRegFollowUpGridModal").modal('hide');
+    }
+</script>

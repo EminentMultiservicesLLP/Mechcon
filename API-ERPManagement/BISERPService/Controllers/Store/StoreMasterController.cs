@@ -534,5 +534,26 @@ namespace BISERPService.Controllers
             return InternalServerError();
         }
 
+        [System.Web.Http.Route("getEnqForProjectMaster/{UserID}")]
+        [System.Web.Http.HttpGet]
+        public IHttpActionResult GetEnqForProjectMaster(int UserID)
+        {
+            try
+            {
+                var details = _storeMaster.GetEnqForProjectMaster(UserID);
+
+                if (details == null)
+                {
+                    return NotFound(); // or return BadRequest("No details found for the specified enquiry ID.");
+                }
+
+                return Ok(details.ToList());
+            }
+            catch (Exception ex)
+            {
+                _loggger.LogError("Error in GetEnqForWorkOrder of WorkOrderController : parameter :" + Environment.NewLine + ex.StackTrace);
+                return InternalServerError(ex);
+            }
+        }
     }
 }

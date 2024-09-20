@@ -74,6 +74,9 @@ namespace BISERPBusinessLayer.QueryCollection.Purchase
         public const string PurchaseOrderClose = "dbsp_PurchaseOrderClose";
         public const string grnVSpoitemcomparison = "dbsp_grnVSpoitemcomparison";
         public const string GetPIRemarkLibrary = "dbsp_GetPIRemarkLibrary";
+        public const string GetProduct = "dbsp_GetProduct";
+        public const string GetProject = "dbsp_GetProject";
+        public const string GetProductItem = "dbsp_GetProductItem";
 
         /////////////////////////////////RFQ////////////////////////////////////
 

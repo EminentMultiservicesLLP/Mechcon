@@ -1,0 +1,993 @@
+﻿@Scripts.Render("~/bundles/jquerymodels")
+<script>
+    $(function () {
+        $(".datepicker").datepicker({
+            showOn: "button",
+            buttonImage: "/Content/images/calendar.gif",
+            buttonImageOnly: true,
+            buttonText: "Selectdate",
+            'changeMonth': true,
+            'changeYear': true,
+            'yearRange': '2021:2030',
+            "format": "dd-M-yyyy",
+            todayBtn: "linked",
+            pickerPosition: "bottom-left",
+            "todayHighlight": true,
+            autoclose: true,
+        }).datepicker("setDate", new Date());
+        $("#anim").change(function () {
+            $(".datepicker").datepicker("option", "showAnim", "fadeIn");
+        });
+    });
+</script>
+
+<h5 class="page-header orangeDottedBottomBorder">Offer Register</h5>
+
+<div id="SearchGridModal" class="modal fade" role="dialog" data-backdrop="false">
+    <div class="modal-dialog find-search-grid-modal">
+        <div class="modal-content gridmodal-content">
+            <div class="modal-header gridmodal-header">
+                <button type="button" class="close" onclick="closeModal()">&times;</button>
+                <h4 class="modal-title">Offer Register Details.</h4>
+            </div>
+            <div class="modal-body">
+                <div class="fill">
+                    <div id="OfferRegisterGrid"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel-group">
+    <div class="panel panel-default">
+        <div class="panel-groupingBoder">
+            <div class="panel-heading">
+                <div class="panel-title">
+                    <a class="collapsediv" data-toggle="collapse" href="#SearchDetails">
+                        Offer Register
+                    </a>
+                </div>
+            </div>
+            <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                <div class="panel-body">
+                    <div class="fill">
+                        <div class="submit-row">
+                            <button type="button" id="btnSave" class="btn btn-success" onclick="SaveOfferRegister()">Save</button>
+                            <button type="button" class="btn btn-warning" id="btnResetT" onclick="clearFormData()">Clear</button>
+                            <button type="button" id="btnFind" class="btn btn-primary" onclick="showModal()">Find</button>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-4 col-md-6 col-sm-12 mb-3">
+                                <label for="EnquiryLabel" class="required">Enquiry</label>
+                                <input id="EnquiryLabel" class="form-control" type="text" placeholder="Search by - (EnquiryNo) | (ClientName) | (EnquiryDate) | (AllocatedTo)">
+                                <input type="hidden" id="EnquiryID">
+                            </div>
+                        </div>
+
+                        <div class="divider"></div>
+                        <fieldset class="fieldsetCustom">
+                            <legend class="legendCustom">Enquiry Details</legend>
+
+                            <div class="row">
+                                <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                                    <label for="EnquiryNo">Enquiry No</label>
+                                    <input type="text" id="EnquiryNo" class="form-control" placeholder="Enquiry No" disabled>
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                                    <label for="EnquiryDate">Enquiry Date</label>
+                                    <input type="text" id="EnquiryDate" class="form-control" placeholder="Enquiry Date" disabled>
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                                    <label for="Source">Source</label>
+                                    <input type="text" id="Source" class="form-control" placeholder="Enquiry Source" disabled>
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                                    <label for="Product">Product</label>
+                                    <input type="text" id="Product" class="form-control" placeholder="Enquiry Product" disabled>
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                                    <label for="Location">Location</label>
+                                    <input type="text" id="Location" class="form-control" placeholder="Enquiry Location" disabled>
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                                    <label for="Type">Type</label>
+                                    <input type="text" id="Type" class="form-control" placeholder="Enquiry Type" disabled>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                                    <label for="Sector">Sector</label>
+                                    <input type="text" id="Sector" class="form-control" placeholder="Enquiry Sector" disabled>
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                                    <label for="Zone">Zone</label>
+                                    <input type="text" id="Zone" class="form-control" placeholder="Enquiry Zone" disabled>
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                                    <label for="ClientName">Client Name</label>
+                                    <input type="text" id="ClientName" class="form-control" placeholder="Enquiry Client Name" disabled>
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                                    <label for="ContactPerson">Contact Person</label>
+                                    <input type="text" id="ContactPerson" class="form-control" placeholder="Enquiry Contact Person" disabled>
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                                    <label for="ContactNo">Contact Number</label>
+                                    <input type="text" id="ContactNo" class="form-control" placeholder="Enquiry Contact Number" disabled>
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                                    <label for="EmailID">Email Address</label>
+                                    <input type="email" id="EmailID" class="form-control" placeholder="Enquiry Email Address" disabled>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                                    <label for="Place">Place</label>
+                                    <input type="text" id="Place" class="form-control" placeholder="Enquiry Place" disabled>
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                                    <label for="Status">Status</label>
+                                    <input type="text" id="Status" class="form-control" placeholder="Enquiry Status" disabled>
+                                </div>
+                                <div class="col-lg-4 col-md-8 col-sm-12 col-xs-12">
+                                    <label for="CustomerMailMsg">Customer Message</label>
+                                    <textarea id="CustomerMailMsg" class="form-control" placeholder="Enquiry Customer Message" rows="4" disabled></textarea>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <div class="divider"></div>
+                        <fieldset class="fieldsetCustom">
+                            <legend class="legendCustom">Offer Description & Remark</legend>
+                            <div class="submit-row">
+                                <button type="button" id="btnAddNew" class="btn btn-primary">Add Offer</button>
+                            </div>
+
+                            <div id="offerContainer"></div>
+                            <div class="divider"></div>
+                            <fieldset class="fieldsetCustom">
+                                <legend class="legendCustom">Others</legend>
+                                <div class="row">
+                                    <div class="col-lg-3 col-md-6 col-sm-12 mb-3" hidden>
+                                        @* Not in use now *@
+                                        <label for="QRDate">Questioner Receipt Date</label>
+                                        <input type="text" id="QRDate" class="form-control datepicker">
+                                    </div>
+
+                                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 mb-3">
+                                        <label for="OfferRegisterComment">Comment</label>
+                                        <textarea id="OfferRegisterComment" class="form-control" placeholder="Enter Comment" rows="4"></textarea>
+                                    </div>
+
+                                    <div class="col-lg-3 col-md-6 col-sm-12 mb-3">
+                                        <label class="" for="ProductID">Product ID</label>
+                                        <select id="ProductID" name="ProductID" class="form-control">
+                                            <option value="">--Select Product--</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-lg-3 col-md-6 col-sm-12 mb-3">
+                                        <label class="" for="StatusID">Status ID</label>
+                                        <select id="StatusID" name="StatusID" class="form-control">
+                                            <option value="">--Select Status--</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-lg-3 col-md-6 col-sm-12 mb-3">
+                                        <label class="required" for="IncoTermID">IncoTerm</label>
+                                        <select id="IncoTermID" name="IncoTermID" class="form-control">
+                                            <option value="">--Select IncoTerm--</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </fieldset>
+
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="ViewModal" class="modal slideModal">
+    <div class="modal-content slideContent">
+        <span class="close slideClose" onclick="closeImageModal()"> &#x2715 </span>
+        <div id="slideshow-container"></div>
+        <div>
+            <a class="prev slide-prev" onclick="plusSlides(-1)">❮</a>
+            <a class="next slide-next" onclick="plusSlides(1)">❯</a>
+        </div>
+    </div>
+</div>
+<script>
+    var appSetting = '@BISERP.Common.Constants.ScandocUrl';
+    var tempOfferRegisterID = 0;
+    var GSTRate = 0;
+
+    function getEnquiry() {
+        $("#EnquiryLabel").autocomplete({
+            source: [],
+            minLength: 0,
+            select: handleEnquirySelection,
+            change: handleEnquirySelection,
+        });
+
+        $.ajax({
+            type: "GET",
+            url: "/OfferRegister/GetEnqForOffer",
+            dataType: "json",
+            success: function (response) {
+                if (response.success && response.records.length > 0) {
+                    const suggestions = response.records.map(({ EnquiryID, EnquiryNo, ClientName, strEnquiryDate, AllocatedToName }) => ({
+                        label: `(${EnquiryNo}) | (${ClientName}) | (${strEnquiryDate}) | (${AllocatedToName})`,
+                        value: EnquiryID
+                    }));
+
+                    $("#EnquiryLabel").autocomplete("option", "source", suggestions);
+                } else {
+                    $("#EnquiryLabel").autocomplete("option", "source", [{ label: "--No Enquiry Found--", value: "" }]);
+                }
+            },
+            error: function () {
+                $("#EnquiryLabel").autocomplete("option", "source", [{ label: "--Error loading enquiries--", value: "" }]);
+            }
+        });
+    }
+    function handleEnquirySelection(event, ui) {
+        event.preventDefault();
+        const $enquiryLabel = $(event.target);
+        const $enquiryID = $("#EnquiryID");
+
+        if (ui.item && ui.item.value) {
+            if (ui.item.label === "--No Enquiry Found--" || ui.item.label === "--Error loading enquiries--") {
+                $enquiryLabel.val('');
+                $enquiryID.val('').trigger('change');
+            } else {
+                $enquiryLabel.val(ui.item.label);
+                $enquiryID.val(ui.item.value).trigger('change');
+            }
+        } else {
+            $enquiryLabel.val('');
+            $enquiryID.val('').trigger('change');
+        }
+    }
+    $("#EnquiryLabel").on("focus", function () {
+        $(this).autocomplete("search", "");
+    });
+
+    function loadProducts() {
+        $.ajax({
+            type: "GET",
+            url: "/EnquiryRegister/GetProducts",
+            dataType: "json",
+            success: function (data) {
+                const $productDropdown = $('#ProductID');
+                $productDropdown.empty();
+
+                if (data.error) {
+                    $productDropdown.append('<option value="">--Error loading products--</option>');
+                    console.error("Error loading products:", data.error);
+                    return;
+                }
+
+                $productDropdown.append('<option value="">--Select Product--</option>');
+
+                data.forEach(function (product) {
+                    $productDropdown.append(`<option value="${product.ProductID}">${product.Product}</option>`);
+                });
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                $('#ProductID').empty();
+                $('#ProductID').append('<option value="">--Error loading products--</option>');
+                console.error("Error loading products:", errorThrown);
+            }
+        });
+    }
+
+    function loadStatus() {
+        $.ajax({
+            type: "GET",
+            url: "/EnquiryRegister/GetStatus",
+            dataType: "json",
+            success: function (data) {
+                const $statusDropdown = $('#StatusID');
+                $statusDropdown.empty();
+
+                if (data.error) {
+                    $statusDropdown.append('<option value="">--Error loading statuses--</option>');
+                    console.error("Error loading statuses:", data.error);
+                    return;
+                }
+
+                $statusDropdown.append('<option value="">--Select Status--</option>');
+
+                data.forEach(function (status) {
+                    $statusDropdown.append(`<option value="${status.StatusID}">${status.Status}</option>`);
+                });
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                $('#StatusID').empty();
+                $('#StatusID').append('<option value="">--Error loading statuses--</option>');
+                console.error("Error loading statuses:", errorThrown);
+            }
+        });
+    }
+
+    function loadIncoTerm() {
+        $.ajax({
+            type: "GET",
+            url: "/OrderBook/GetIncoTerm",
+            dataType: "json",
+            success: function (data) {
+                const $incoTermDropdown = $('#IncoTermID');
+                $incoTermDropdown.empty();
+
+                if (data.error) {
+                    $incoTermDropdown.append('<option value="">--Error loading incoTermes--</option>');
+                    console.error("Error loading incoTermes:", data.error);
+                    return;
+                }
+
+                $incoTermDropdown.append('<option value="">--Select IncoTerm--</option>');
+
+                data.forEach(function (incoTerm) {
+                    $incoTermDropdown.append(`<option value="${incoTerm.IncoTermID}">${incoTerm.IncoTermCode}</option>`);
+                });
+            },
+            error: function (xhr, textIncoTerm, errorThrown) {
+                $('#IncoTermID').empty();
+                $('#IncoTermID').append('<option value="">--Error loading incoTermes--</option>');
+                console.error("Error loading incoTermes:", errorThrown);
+            }
+        });
+    }
+
+    $("#EnquiryID").change(() => {
+        const enquiryID = $("#EnquiryID").val();
+
+        if (enquiryID && enquiryID != 0) {
+            GetEnquiryDetails(enquiryID);
+        } else {
+            clearEnquiryDetails();
+        }
+    });
+
+    function GetEnquiryDetails(enquiryID) {
+        var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            url: "/EnquiryRegister/GetEnquiryDetails",
+            data: { EnquiryID: enquiryID },
+            dataType: "json",
+            success: function (response) {
+                if (response.success) {
+                    const details = response.record;
+
+                    $("#EnquiryNo").val(details.EnquiryNo);
+                    $("#EnquiryDate").val(details.strEnquiryDate);
+                    $("#Source").val(details.Source);
+                    $("#Product").val(details.Product);
+                    $("#ProductID").val(details.ProductID);
+                    $("#Location").val(details.Location);
+                    details.LocationID = 1 ? GSTRate = 18 : GSTRate = 0;
+                    $("#Type").val(details.Type);
+                    $("#Sector").val(details.Sector);
+                    $("#Zone").val(details.Zone);
+                    $("#Status").val(details.Status);
+                    $("#StatusID").val(details.StatusID);
+                    $("#ClientName").val(details.ClientName);
+                    $("#Place").val(details.Place);
+                    $("#ContactPerson").val(details.ContactPerson);
+                    $("#ContactNo").val(details.ContactNo);
+                    $("#EmailID").val(details.EmailID);
+                    $("#CustomerMailMsg").val(details.CustomerMailMsg);
+                } else {
+                    console.warn("No details found or an issue occurred: ", response.message);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Error loading enquiry details: ", status, error);
+            }
+        });
+    }
+
+    //-----------------------------------OfferRegisterGrid (Starts here)-----------------------------------//
+    var OfferRegisterGrid_GDM = { location: "local" };
+
+    var OfferRegisterGrid_GCM = [
+        {
+            title: "Enquiry No", dataIndx: "EnquiryNo", width: '39%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Enquiry Date", dataIndx: "strEnquiryDate", width: '20%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Client Name", dataIndx: "ClientName", width: '39%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        }
+    ];
+
+    var setOfferRegisterGrid = {
+        height: 300,
+        width: 'auto',
+        maxWidth: '100%',
+        minWidth: 800,
+        sortable: true,
+        autofill: true,
+        numberCell: { show: true },
+        hoverMode: 'row',
+        showTop: true,
+        showTitle: true,
+        showBottom: true,
+        resizable: true,
+        scrollModel: { autoFit: true },
+        filterModel: { on: true, mode: "AND", header: true },
+        draggable: false,
+        hwrap: false,
+        wrap: false,
+        editable: false,
+        columnBorders: true,
+        menuIcon: true,
+        selectionModel: { type: 'row', mode: 'single', cbHeader: false },
+        colModel: OfferRegisterGrid_GCM,
+        dataModel: OfferRegisterGrid_GDM,
+        pageModel: { type: "local" },
+        rowClick: function (evt, ui) {
+            if (ui.rowData) {
+                const data = ui.rowData;
+                clearFormData(true);
+                closeModal();
+                tempOfferRegisterID = data.OfferRegisterID;
+
+                const $enquiryLabel = $('#EnquiryLabel');
+                const $enquiryID = $('#EnquiryID');
+                $enquiryLabel.val(`(${data.EnquiryNo}) | (${data.ClientName}) | (${data.strEnquiryDate})`);
+                $enquiryID.val(data.EnquiryID);
+                $enquiryLabel.prop('disabled', true);
+
+                $("#QRDate").val(data.strQRDate);
+                $("#OfferRegisterComment").val(data.OfferRegisterComment);
+                $("#IncoTermID").val(data.IncoTermID);
+
+                GetEnquiryDetails(data.EnquiryID);
+                GetOfferDetails(data.OfferRegisterID)
+            }
+        }
+    }
+
+    var $OfferRegisterGrid = $("#OfferRegisterGrid").pqGrid(setOfferRegisterGrid);
+
+    function loadOfferRegisterGrid() {
+        var antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            url: "/OfferRegister/GetOffer",
+            dataType: "json",
+
+            beforeSend: function () {
+                $("#OfferRegisterGrid").pqGrid("showLoading");
+            },
+
+            complete: function () {
+                $("#OfferRegisterGrid").pqGrid("hideLoading");
+            },
+
+            success: function (response) {
+                const grid = $("#OfferRegisterGrid").pqGrid();
+
+                if (response.success) {
+                    grid.pqGrid("option", "dataModel.data", response.records);
+                } else {
+                    console.warn("No data found or an issue occurred: ", response.message);
+                    grid.pqGrid("option", "dataModel.data", []);
+                }
+
+                grid.pqGrid("refreshDataAndView");
+                PqGridRefreshClick(grid);
+            },
+
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Error loading OfferRegister grid:", textStatus, errorThrown);
+                console.error("Response text:", jqXHR.responseText);
+                $("#OfferRegisterGrid").pqGrid("hideLoading");
+            }
+        });
+
+    }
+    //-----------------------------------OfferRegisterGrid (Ends here)-----------------------------------//
+
+    //-----------------------------------Add Offer Click Starts-----------------------------------//
+    $("#btnAddNew").on('click', function () {
+        var enquiryID = $('#EnquiryID').val();
+        if (enquiryID) {
+            GetOfferID(enquiryID);
+        } else {
+            ShowAlert("error", "Please select an enquiry first");
+        }
+    });
+
+    function GetOfferID(enquiryID) {
+        var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            url: "/OfferRegister/GetOfferID",
+            data: { EnquiryID: enquiryID },
+            dataType: "json",
+            success: function (response) {
+                if (response.success) {
+                    const details = response.record;
+                    AddDiv(details.OfferID, details.OfferNo);
+                    $('#btnAddNew').prop('disabled', true);
+                } else {
+                    console.warn("No details found or an issue occurred: ", response.message);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Error loading enquiry details: ", status, error);
+            }
+        });
+    }
+
+    function AddDiv(OfferID, OfferNo, rowclick) {
+        let btnViewAttachment = '';
+        if (rowclick) {
+            btnViewAttachment = `
+        <div class="col-12 col-sm-1 col-md-1">
+            <br />
+            <button type="button" id="btnViewAttachment${OfferID}" class="btn btn-primary" onclick="viewAttachment(${OfferID})">View <i class="pe-va pe-7s-paperclip pe-2x"></i></button>
+        </div>`;
+        }
+
+        const divContent = `
+    <fieldset class="fieldsetCustom offer-div mb-4" id="Div_${OfferID}">
+        <legend class="legendCustom">${OfferNo}</legend>
+        <div class="row g-3">
+            <div class="col-12 col-sm-6 col-md-4" hidden>
+                <input type="hidden" name="OfferID${OfferID}" id="OfferID${OfferID}" value="${OfferID}" />
+                <label for="OfferNo${OfferID}" class="">Offer No</label>
+                <input class="form-control" id="OfferNo${OfferID}" type="text" value="${OfferNo}" disabled />
+            </div>
+            <div class="col-12 col-sm-6 col-md-2">
+                <label for="POBaseValue${OfferID}" class="required">PO Base Value</label>
+                <input class="form-control POBaseValue" id="POBaseValue${OfferID}" placeholder="Enter PO Base Value" type="number" />
+            </div>
+            <div class="col-12 col-sm-6 col-md-2">
+                <label for="GSTAmount${OfferID}" class="">GST Amount</label>
+                <input class="form-control" id="GSTAmount${OfferID}" placeholder="Enter GST Amount" type="number" disabled/>
+            </div>
+            <div class="col-12 col-sm-6 col-md-6">
+                <label for="OfferRemark${OfferID}" class="">Offer Remark</label>
+                <input class="form-control" id="OfferRemark${OfferID}" placeholder="Enter Offer Remark" type="text" />
+            </div>
+            <div class="col-12 col-sm-6 col-md-2">
+                <label for="CustRespDate${OfferID}" class="">Cust Resp Date</label>
+                <input type="text" id="CustRespDate${OfferID}" class="form-control" />
+            </div>
+            <div class="col-12 col-sm-6 col-md-6">
+                <label for="CustRemark${OfferID}" class="">Cust Remark</label>
+                <input class="form-control" id="CustRemark${OfferID}" placeholder="Enter Cust Remark" type="text" />
+            </div>
+            <div class="col-12 col-sm-6 col-md-2">
+                <label for="Attachment${OfferID}" class="">Attachment</label>
+                <input class="form-control btn-primary attachment" type="file" multiple accept=".jpg,.jpeg,.png,.pdf" id="Attachment${OfferID}" />
+            </div>
+            <div class="col-12 col-sm-6 col-md-2 align-self-end">
+                <div class="form-check" style="text-align: center;">
+                    <br />
+                    <label class="form-check-label" for="Deactive${OfferID}">Deactive</label>
+                    <input class="form-check-input" type="checkbox" id="Deactive${OfferID}" name="Deactive${OfferID}">
+                </div>
+            </div>
+            ${btnViewAttachment}
+        </div>
+    </fieldset>`;
+
+        $("#offerContainer").append(divContent);
+
+        $(`#Div_${OfferID} #CustRespDate${OfferID}`).datepicker({
+            showOn: "button",
+            buttonImage: "/Content/images/calendar.gif",
+            buttonImageOnly: true,
+            buttonText: "Select date",
+            changeMonth: true,
+            changeYear: true,
+            yearRange: '2021:2030',
+            format: "dd-M-yyyy",
+            todayBtn: "linked",
+            pickerPosition: "bottom-left",
+            todayHighlight: true,
+            autoclose: true,
+        });
+
+        $("#anim").change(function () {
+            $(`#Div_${OfferID} .datepicker`).datepicker("option", "showAnim", "fadeIn");
+        });
+    }
+
+    //-----------------------------------Add Offer Click Ends-----------------------------------//
+
+    $(document).on('change', '.POBaseValue', function (e) {
+        let $this = $(this);
+        let POBaseValueID = $this.attr('id');
+        let GSTAmountID = POBaseValueID.replace('POBaseValue', 'GSTAmount');
+
+        let POBaseValue = parseFloat($this.val()) || 0;
+        let gstAmount = POBaseValue * (GSTRate / 100);
+
+        $('#' + GSTAmountID).val(gstAmount.toFixed(2));
+    });
+
+    function GetOfferDetails(OfferRegisterID) {
+        var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            url: "/OfferRegister/GetOfferDetails",
+            data: { OfferRegisterID: OfferRegisterID },
+            dataType: "json",
+            success: function (response) {
+                if (response.success) {
+                    let details = response.records
+                    for (var i = 0; i < details.length; i++) {
+                        AddDiv(details[i].OfferID, details[i].OfferNo, true);
+                        $(`#POBaseValue${details[i].OfferID}`).val(details[i].POBaseValue);
+                        $(`#GSTAmount${details[i].OfferID}`).val(details[i].GSTAmount);
+                        $(`#OfferRemark${details[i].OfferID}`).val(details[i].OfferRemark);
+                        $(`#CustRespDate${details[i].OfferID}`).val(details[i].strCustRespDate);
+                        $(`#CustRemark${details[i].OfferID}`).val(details[i].CustRemark);
+                        if (details[i].Deactive) {
+                            $(`#Deactive${details[i].OfferID}`).prop('checked', true);
+                        }
+                    }
+
+                } else {
+                    console.warn("No details found or an issue occurred: ", response.message);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Error loading enquiry details: ", status, error);
+            }
+        });
+    }
+
+    $(document).on('change', '.attachment', function () {
+        const fileInput = this;
+        const files = fileInput.files;
+
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const fileSizeMB = file.size / (1024 * 1024); // Convert bytes to MB
+            const fileExtension = file.name.split('.').pop().toLowerCase(); // Get file extension
+
+            if (fileSizeMB > 1) {
+                $(fileInput).val(null);
+                ShowAlert("error", `File "${file.name}" exceeds 1 MB. Please upload a smaller file.`);
+                return;
+            }
+
+            if (fileExtension === 'docx') {
+                $(fileInput).val(null);
+                ShowAlert("error", `File "${file.name}" is not allowed. Please upload a different file.`);
+                return;
+            }
+
+            // Allow only alphanumeric characters, dots, underscores, spaces, hyphens, and parentheses
+            const specialCharsRegex = /[^a-zA-Z0-9_. ()-]/;
+            if (specialCharsRegex.test(file.name)) {
+                $(fileInput).val(null);
+                ShowAlert("error", `FileName "${file.name}" should not contain any special characters. ('!#$%^&*+={}[]|\\:;'<>,?/~\`` + "\`)");
+                return;
+            }
+        }
+    });
+
+    function validateFormData() {
+        const fields = [
+            { selector: "#EnquiryID", placeholder: "Enquiry" },
+            { selector: "#IncoTermID", placeholder: "IncoTerm" },
+        ];
+
+        for (const { selector, placeholder } of fields) {
+            const $field = $(selector);
+            const fieldValue = $field.val();
+            const fieldPlaceholder = $field.attr("placeholder") || placeholder;
+
+            if (!fieldValue) {
+                ShowAlert("error", `${fieldPlaceholder} is required!`);
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    function getOfferData() {
+        const offerDataArray = [];
+        let hasValidOfferDetail = false;
+        let firstErrorMessage = null;
+
+        $(".offer-div").each(function () {
+            const $offerDiv = $(this);
+            const offerID = $offerDiv.attr('id').split('_')[1];
+
+            const POBaseValue = parseFloat($(`#POBaseValue${offerID}`).val()) || 0;
+
+            if (POBaseValue > 0) {
+                offerDataArray.push({
+                    OfferID: offerID,
+                    OfferNo: $(`#OfferNo${offerID}`).val(),
+                    POBaseValue: POBaseValue,
+                    GSTAmount: parseFloat($(`#GSTAmount${offerID}`).val()) || 0,
+                    OfferRemark: $(`#OfferRemark${offerID}`).val(),
+                    CustRespDate: $(`#CustRespDate${offerID}`).val(),
+                    CustRemark: $(`#CustRemark${offerID}`).val(),
+                    Attachment: $(`#Attachment${offerID}`).val(),
+                    Deactive: $(`#Deactive${offerID}`).is(":checked")
+                });
+                hasValidOfferDetail = true;
+            } else {
+                if (!firstErrorMessage) {
+                    firstErrorMessage = `Each offer must either have a PO Base Value greater than 0`;
+                }
+            }
+        });
+
+        if (!hasValidOfferDetail) {
+            if (!firstErrorMessage) {
+                firstErrorMessage = "At least one valid offer detail is required.";
+            }
+        }
+
+        if (firstErrorMessage) {
+            ShowAlert("error", firstErrorMessage);
+            return false;
+        }
+
+        return offerDataArray;
+    }
+
+    function SaveOfferRegister() {
+        if (!validateFormData()) {
+            return false;
+        }
+
+        const offerDetails = getOfferData();
+        if (!offerDetails) {
+            return false;
+        }
+
+        const Details = {
+            OfferRegisterID: tempOfferRegisterID,
+            EnquiryID: $("#EnquiryID").val(),
+            QRDate: $("#QRDate").val(),
+            ProductID: $("#ProductID").val(),
+            StatusID: $("#StatusID").val(),
+            OfferRegisterComment: $("#OfferRegisterComment").val(),
+            IncoTermID: $("#IncoTermID").val(),
+            OfferDetails: offerDetails
+        };
+
+        const antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: "POST",
+            contentType: 'application/json; charset=utf-8',
+            url: "/OfferRegister/SaveOffer",
+            data: JSON.stringify(Details),
+            success: function (response) {
+                if (response.success) {
+                    let fileSaveMsg = "";
+                    try {
+                        offerDetails.forEach(({ OfferID }) => {
+                            SaveScandoc(`Attachment${OfferID}`, OfferID, "Marketing", "OfferRegister");
+                        });
+                    } catch (err) {
+                        fileSaveMsg = "But failed to save attached files.";
+                    } finally {
+                        const message = tempOfferRegisterID === 0 ? "Offer Register saved successfully!" : "Offer Register updated successfully!";
+                        ShowAlert("success", `${message}\n${fileSaveMsg}`);
+                        clearFormData();
+                    }
+                } else {
+                    ShowAlert("error", response.message || "An error occurred while saving the offer.");
+                }
+            },
+            error: function (xhr, status, error) {
+                ShowAlert("error", `An unexpected error occurred: ${xhr.responseText || error}`);
+            }
+        });
+
+    }
+
+    function clearFormData(rowclick) {
+        $("#EnquiryLabel").val('').prop('disabled', false);
+        if (!rowclick) {
+            getEnquiry();
+        }
+        tempOfferRegisterID = 0;
+        $(".datepicker").datepicker("setDate", new Date());
+        $("#OfferRegisterComment").val('');
+        $("#IncoTermID").val('');
+        $("#offerContainer").empty();
+        $('#btnAddNew').prop('disabled', false);
+        clearEnquiryDetails();
+    }
+
+    function clearEnquiryDetails() {
+        GSTRate = 0;
+        $("#EnquiryID").val('');
+        $("#EnquiryLabel").val('');
+        $("#EnquiryNo").val('');
+        $("#EnquiryDate").val('');
+        $("#Source").val('');
+        $("#Product").val('');
+        $("#ProductID").val('');
+        $("#Location").val('');
+        $("#ClientName").val('');
+        $("#Place").val('');
+        $("#ContactPerson").val('');
+        $("#ContactNo").val('');
+        $("#EmailID").val('');
+        $("#Status").val('');
+        $("#StatusID").val('');
+        $("#Type").val('');
+        $("#Sector").val('');
+        $("#Zone").val('');
+        $("#CustomerMailMsg").val('');
+    }
+
+    function showModal() {
+        $("#SearchGridModal").modal('show');
+        loadOfferRegisterGrid();
+    }
+
+    function closeModal() {
+        $("#SearchGridModal").modal('hide');
+    }
+
+    //---------------------------------------------------------------------Show Attachments-----------------------------------------------------------------//
+
+    function viewAttachment(fileID) {
+        $.ajax({
+            type: "GET",
+            url: "/ScanDoc/ScanDoc/GetScanDocUrl",
+            data: { FileId: fileID, ScanDocSubTypeId: 27 },
+            dataType: "json",
+            success: function (data) {
+                if (data && data.length) {
+                    closeImageModal();
+                    ViewSlideShow(data, 'slideshow-container', appSetting);
+                } else {
+                    ShowAlert("error", "No Documents Found");
+                }
+            }
+        });
+    }
+
+    function ViewSlideShow(ImageGallery, container, appSetting) {
+        if (ImageGallery.length === 0) {
+            ShowAlert("error", "No Attachment found");
+            return;
+        }
+
+        const supportedExtensions = new Set(['pdf', 'jpeg', 'jpg', 'png']);
+        const $container = $("#" + container);
+        let slidesHtml = '';
+
+        $container.empty();
+
+        ImageGallery.forEach(image => {
+            const filePath = image.FilePath;
+            const fileNameWithExtension = filePath.split('\\').pop();
+            const [name, extension] = fileNameWithExtension.split('.').map(part => part.toLowerCase());
+
+            if (!supportedExtensions.has(extension)) return;
+
+            const src = `${appSetting}${filePath}`;
+            const deleteItemHtml = `
+            <a href="javascript:void(0);" data-id="${image.FileId}" class="deleteItem fa fa-trash" style="font-size: x-large;"
+               onclick="Deletefile(${image.FileId}, ${image.ScanDocId}); return false;"></a>`;
+            const downloadHtml = '<a class="fa fa-download downloadFiles" href="' + src + '" download></a>';
+            const nameHtml = `<span class="text" style='font-weight: bold; font-size: large;'>${name}</span>`;
+            let contentHtml = '';
+
+            switch (extension) {
+                case 'pdf':
+                    contentHtml = `<object data="${src}#toolbar=0&navpanes=0&scrollbar=0" type="application/pdf" width="100%" height="500px"></object>`;
+                    break;
+                case 'jpeg':
+                case 'jpg':
+                case 'png':
+                    contentHtml = `<img src="${src}" style="width:800px;height:500px;">`;
+                    break;
+            }
+
+            slidesHtml += `
+            <div class="imgSlide">
+                ${contentHtml}
+                <div class="divider"></div>
+                <div class="row">
+                    <div class="col-sm-2">${deleteItemHtml}</div>
+                    <div class="col-sm-8 text-center">${nameHtml}</div>
+                    <div class="col-sm-2">${downloadHtml}</div>
+                </div>
+            </div>`;
+        });
+
+        $container.append(slidesHtml);
+        $("#ViewModal").css('display', 'block');
+        showGallery(1);
+    }
+
+    let ImgIndex = 1;
+
+    function plusSlides(n) {
+        showGallery(ImgIndex += n);
+    }
+
+    function showGallery(n) {
+        let i;
+        let ImgSlides = document.getElementsByClassName("imgSlide");
+        let video = document.getElementById("video");
+        if (n > ImgSlides.length) { ImgIndex = 1; }
+        if (n < 1) { ImgIndex = ImgSlides.length; }
+        for (i = 0; i < ImgSlides.length; i++) {
+            ImgSlides[i].style.display = "none";
+        }
+        ImgSlides[ImgIndex - 1].style.display = "block";
+        if (video) {
+            video.play();
+        }
+    }
+
+    function Deletefile(fId, sId) {
+        $.ajax({
+            type: "POST",
+            url: "/ScanDoc/ScanDoc/DeleteScanDocfile",
+            data: {
+                fileId: fId,
+                scanDocId: sId
+            },
+            success: function () {
+                $("#" + fId).parent().remove();
+                $("#appendImg").empty();
+                ShowAlert("success", "File Removed successfully");
+                closeImageModal();
+            },
+            error: function () {
+                ShowAlert("error", "Error deleting the file.");
+            }
+        });
+        return false;
+    }
+
+    function closeImageModal() {
+        $("#slideshow-container").empty();
+        $("#ViewModal").css('display', 'none');
+    }
+
+    //-----------------------------------On Load-----------------------------------//
+
+    getEnquiry();
+    loadProducts();
+    loadStatus();
+    loadIncoTerm();
+</script>

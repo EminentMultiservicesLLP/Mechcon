@@ -16,6 +16,7 @@ namespace BISERPBusinessLayer.Entities.Asset
         public string Street { get; set; }
         public string landmark { get; set; }
         public string Village { get; set; }
+        public string Division { get; set; }
         public Nullable<int> City { get; set; }
         public Nullable<int> State { get; set; }
         public Nullable<int> Country { get; set; }
@@ -60,6 +61,7 @@ namespace BISERPBusinessLayer.Entities.Asset
         public string IFSCCODE { get; set; }
         public string GSTIN { get; set; }
         public List<ConsigneeEntity> Consignee { get; set; }
+        public string FullAddress { get; set; }
     }
     public class ConsigneeEntity
     {

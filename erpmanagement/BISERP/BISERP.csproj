@@ -316,6 +316,18 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Areas\DashBoards\DashBoardsAreaRegistration.cs" />
+    <Compile Include="Areas\Marketing\Controllers\EnquiryAllocationController.cs" />
+    <Compile Include="Areas\Marketing\Controllers\EnquiryRegisterController.cs" />
+    <Compile Include="Areas\Marketing\Controllers\MarketingController.cs" />
+    <Compile Include="Areas\Marketing\Controllers\OfferRegisterController.cs" />
+    <Compile Include="Areas\Marketing\Controllers\OrderBookController.cs" />
+    <Compile Include="Areas\Marketing\Controllers\SM_WorkOrderController.cs" />
+    <Compile Include="Areas\Marketing\MarketingAreaRegistration.cs" />
+    <Compile Include="Areas\Marketing\Models\EnquiryAllocationModel.cs" />
+    <Compile Include="Areas\Marketing\Models\EnquiryRegisterModel.cs" />
+    <Compile Include="Areas\Marketing\Models\OfferRegisterModel.cs" />
+    <Compile Include="Areas\Marketing\Models\OrderBookModel.cs" />
+    <Compile Include="Areas\Marketing\Models\WorkOrderModel.cs" />
     <Compile Include="Areas\Masters\Controllers\CityStateCountryMasterController.cs" />
     <Compile Include="Areas\Masters\Controllers\ClearanceNoteController.cs" />
     <Compile Include="Areas\Masters\Controllers\ClientMasterController.cs" />
@@ -1030,6 +1042,12 @@
     <Content Include="Areas\Purchase\Views\Purchase\WOAuthorization.cshtml" />
     <Content Include="Areas\Configuration\Views\Configuration\StockView.cshtml" />
     <Content Include="Areas\AdminPanel\Views\AdminPanel\ChangePassword.cshtml" />
+    <Content Include="Areas\Marketing\Views\Web.config" />
+    <Content Include="Areas\Marketing\Views\Marketing\EnquiryRegister.cshtml" />
+    <Content Include="Areas\Marketing\Views\Marketing\EnquiryAllocation.cshtml" />
+    <Content Include="Areas\Marketing\Views\Marketing\OfferRegister.cshtml" />
+    <Content Include="Areas\Marketing\Views\Marketing\OrderBook.cshtml" />
+    <Content Include="Areas\Marketing\Views\Marketing\WorkOrder.cshtml" />
     <None Include="Content\DataSet\Billing.xsd" />
     <Content Include="Content\DataSet\Billing.xss">
       <DependentUpon>Billing.xsd</DependentUpon>
@@ -1225,6 +1243,7 @@
     <Content Include="Scripts\pqgrid\beautification\5.6.js" />
     <Content Include="Scripts\pqgrid\jquery.resize.js" />
     <Content Include="Scripts\pqgrid\jsZip-2.5.0\filesaver.js" />
+    <Content Include="Scripts\pqgrid\jsZip-2.5.0\jszip.js" />
     <Content Include="Scripts\pqgrid\jsZip-2.5.0\jszip.min.js" />
     <Content Include="Scripts\pqgrid\jsZip-2.5.0\jszip2.5.0.min.js" />
     <Content Include="Scripts\pqgrid\jsZip-2.5.0\MIT-License.txt" />
@@ -1553,6 +1572,7 @@
     <Folder Include="App_Data\" />
     <Folder Include="Areas\CommonUtilities\Views\Shared\" />
     <Folder Include="Areas\Configuration\Views\Shared\" />
+    <Folder Include="Areas\Marketing\Views\Shared\" />
     <Folder Include="Areas\Reports\Models\" />
     <Folder Include="Areas\ScanDoc\Views\Shared\" />
     <Folder Include="Models\Branch\" />

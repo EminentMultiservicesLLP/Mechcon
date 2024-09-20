@@ -13,6 +13,10 @@ namespace BISERP.Areas.AdminPanel.Models
         public string Password { get; set; }
         public string PasswordValidate { get; set; }
         public string UserID { get; set; }
+        public int DepartmentID { get; set; }
+        public string Department { get; set; }
+        public int DesignationID { get; set; }
+        public string Designation { get; set; }
         public string UpdatedMacName { get; set; }
         public string UpdatedMacID { get; set; }
         public string UpdatedIPAddress { get; set; }
@@ -25,5 +29,17 @@ namespace BISERP.Areas.AdminPanel.Models
         public string InsertedIPAddress { get; set; }
         public string Message { get; set; }
         public int IsDeactive { get; set; }
+    }
+    public class DepartmentModel
+    {
+        public int DepartmentID { get; set; }
+        public string Department { get; set; }
+        public bool Deactive { get; set; }
+    }
+    public class DesignationModel
+    {
+        public int DesignationID { get; set; }
+        public string Designation { get; set; }
+        public bool Deactive { get; set; }
     }
 }

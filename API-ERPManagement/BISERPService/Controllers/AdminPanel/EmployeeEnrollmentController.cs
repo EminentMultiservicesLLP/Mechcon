@@ -137,6 +137,51 @@ namespace BISERPService.Controllers.AdminPanel
             else
                 return BadRequest();
         }
+
+        [Route("GetDepartments")]
+        [AcceptVerbs("GET", "POST")]
+        public IHttpActionResult GetDepartments()
+        {
+            try
+            {
+                var departments = _EmployeeEnrollment.GetDepartments().ToList();
+
+                if (departments == null || !departments.Any())
+                {
+                    return NotFound();
+                }
+
+                return Ok(departments);
+            }
+            catch (Exception ex)
+            {
+                _loggger.LogError("Error in GetDepartments method of EmployeeEnrollmentController:" + Environment.NewLine + ex.ToString());
+                return InternalServerError(ex);
+            }
+        }
+
+        [Route("GetDesignations")]
+        [AcceptVerbs("GET", "POST")]
+        public IHttpActionResult GetDesignations()
+        {
+            try
+            {
+                var designations = _EmployeeEnrollment.GetDesignations().ToList();
+
+                if (designations == null || !designations.Any())
+                {
+                    return NotFound();
+                }
+
+                return Ok(designations);
+            }
+            catch (Exception ex)
+            {
+                _loggger.LogError("Error in GetDesignations method of EmployeeEnrollmentController:" + Environment.NewLine + ex.ToString());
+                return InternalServerError(ex);
+            }
+        }
+
     }
 
 }

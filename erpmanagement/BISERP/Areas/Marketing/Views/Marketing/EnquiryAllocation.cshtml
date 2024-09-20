@@ -1,0 +1,556 @@
+﻿@Scripts.Render("~/bundles/jquerymodels")
+<script>
+    $(function () {
+        $(".datepicker").datepicker({
+            showOn: "button",
+            buttonImage: "/Content/images/calendar.gif",
+            buttonImageOnly: true,
+            buttonText: "Selectdate",
+            'changeMonth': true,
+            'changeYear': true,
+            'yearRange': '2021:2030',
+            "format": "dd-M-yyyy",
+            todayBtn: "linked",
+            pickerPosition: "bottom-left",
+            "todayHighlight": true,
+            autoclose: true,
+        });
+        $("#anim").change(function () {
+            $(".datepicker").datepicker("option", "showAnim", "fadeIn");
+        });
+        $("#AllocationDate").datepicker("setDate", new Date())
+    });
+</script>
+
+<h5 class="page-header orangeDottedBottomBorder">Enquiry Allocation</h5>
+
+<div id="SearchGridModal" class="modal fade" role="dialog" data-backdrop="false">
+    <div class="modal-dialog find-search-grid-modal">
+        <div class="modal-content gridmodal-content">
+            <div class="modal-header gridmodal-header">
+                <button type="button" class="close" onclick="closeModal()">&times;</button>
+                <h4 class="modal-title">Allocation Details.</h4>
+            </div>
+            <div class="modal-body">
+                <div class="fill">
+                    <div id="AllocationGrid"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel-group">
+    <div class="panel panel-default">
+        <div class="panel-groupingBoder">
+            <div class="panel-heading">
+                <div class="panel-title">
+                    <a class="collapsediv" data-toggle="collapse" href="#SearchDetails">
+                        Enquiry Allocation
+                    </a>
+                </div>
+            </div>
+            <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                <div class="panel-body">
+                    <div class="fill">
+                        <div class="submit-row">
+                            <button type="button" id="btnSave" class="btn btn-success" onclick="SaveAllocation()">Save</button>
+                            <button type="button" class="btn btn-warning" id="btnResetT" onclick="clearFormData()">Clear</button>
+                            <button type="button" id="btnFind" class="btn btn-primary" onclick="showModal()">Find</button>
+                        </div>
+
+                        <fieldset class="fieldsetCustom">
+                            <legend class="legendCustom">Enquiry Allocation</legend>
+
+                            <div class="row">
+                                <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
+                                    <label for="StatusID" class="">Status</label>
+                                    <select id="StatusID" class="form-control">
+                                        <option value="null">All</option>
+                                    </select>
+                                </div>
+                                <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
+                                    <label for="EnquiryID" class="required">Enquiry</label>
+                                    <select id="EnquiryID" class="form-control">
+                                        <option value="">--Select Enquiry--</option>
+                                    </select>
+                                </div>
+                                <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
+                                    <label class="required">Feasibility Study</label>
+                                    <div class="form-inline" style="border: 1px solid #ccc; padding: 4px 4px 4px 10px; border-radius: 4px;">
+                                        <label class="radio-inline">
+                                            <input type="radio" name="FeasibilityStudy" id="FeasibilityStudyYes" value="Yes" checked> Yes
+                                        </label>
+                                        <label class="radio-inline">
+                                            <input type="radio" name="FeasibilityStudy" id="FeasibilityStudyNo" value="No"> No
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
+                                    <label for="AllocatedTo" class="required">Allocate To</label>
+                                    <select id="AllocatedTo" class="form-control">
+                                        <option value="">--Select--</option>
+                                    </select>
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-4 col-xs-6">
+                                    <label for="AllocationDate">Allocation Date</label>
+                                    <input type="text" id="AllocationDate" class="form-control datepicker" disabled>
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-12 col-xs-12">
+                                    <label for="QRDate" class="">Questioner Receipt Date</label>
+                                    <input type="text" id="QRDate" class="form-control datepicker">
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-4 col-md-8 col-sm-12 col-xs-12">
+                                    <label for="Comment">Comment</label>
+                                    <textarea id="Comment" class="form-control" placeholder="Enter Comment" rows="3"></textarea>
+                                </div>
+                            </div>
+                        </fieldset>
+
+                        <fieldset class="fieldsetCustom">
+                            <legend class="legendCustom">Enquiry Details</legend>
+
+                            <div class="row">
+                                <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                                    <label for="EnquiryNo">Enquiry No</label>
+                                    <input type="text" id="EnquiryNo" class="form-control" placeholder="Enquiry No" disabled>
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                                    <label for="EnquiryDate">Enquiry Date</label>
+                                    <input type="text" id="EnquiryDate" class="form-control" placeholder="Enquiry Date" disabled>
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                                    <label for="Source">Source</label>
+                                    <input type="text" id="Source" class="form-control" placeholder="Enquiry Source" disabled>
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                                    <label for="Product">Product</label>
+                                    <input type="text" id="Product" class="form-control" placeholder="Enquiry Product" disabled>
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                                    <label for="Location">Location</label>
+                                    <input type="text" id="Location" class="form-control" placeholder="Enquiry Location" disabled>
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                                    <label for="Type">Type</label>
+                                    <input type="text" id="Type" class="form-control" placeholder="Enquiry Type" disabled>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                                    <label for="Sector">Sector</label>
+                                    <input type="text" id="Sector" class="form-control" placeholder="Enquiry Sector" disabled>
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                                    <label for="Zone">Zone</label>
+                                    <input type="text" id="Zone" class="form-control" placeholder="Enquiry Zone" disabled>
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                                    <label for="ClientName">Client Name</label>
+                                    <input type="text" id="ClientName" class="form-control" placeholder="Enquiry Client Name" disabled>
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                                    <label for="ContactPerson">Contact Person</label>
+                                    <input type="text" id="ContactPerson" class="form-control" placeholder="Enquiry Contact Person" disabled>
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                                    <label for="ContactNo">Contact Number</label>
+                                    <input type="text" id="ContactNo" class="form-control" placeholder="Enquiry Contact Number" disabled>
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                                    <label for="EmailID">Email Address</label>
+                                    <input type="email" id="EmailID" class="form-control" placeholder="Enquiry Email Address" disabled>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                                    <label for="Place">Place</label>
+                                    <input type="text" id="Place" class="form-control" placeholder="Enquiry Place" disabled>
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-12 col-xs-12">
+                                    <label for="Status">Status</label>
+                                    <input type="text" id="Status" class="form-control" placeholder="Enquiry Status" disabled>
+                                </div>
+                                <div class="col-lg-4 col-md-8 col-sm-12 col-xs-12">
+                                    <label for="CustomerMailMsg">Customer Message</label>
+                                    <textarea id="CustomerMailMsg" class="form-control" placeholder="Enquiry Customer Message" rows="3" disabled></textarea>
+                                </div>
+                            </div>
+                        </fieldset>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var tempAllocationID = 0;
+
+    function loadStatus() {
+        $.ajax({
+            type: "GET",
+            url: "/EnquiryRegister/GetStatus",
+            dataType: "json",
+            success: function (data) {
+                const $statusDropdown = $('#StatusID');
+                $statusDropdown.empty();
+
+                if (data.error) {
+                    $statusDropdown.append('<option value="">--Error loading statuses--</option>');
+                    console.error("Error loading statuses:", data.error);
+                    return;
+                }
+
+                $statusDropdown.append('<option value="null">All</option>');
+
+                data.forEach(function (status) {
+                    $statusDropdown.append(`<option value="${status.StatusID}">${status.Status}</option>`);
+                });
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                $('#StatusID').empty();
+                $('#StatusID').append('<option value="">--Error loading statuses--</option>');
+                console.error("Error loading statuses:", errorThrown);
+            }
+        });
+    }
+
+    function loadUsers() {
+        var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+        $.ajax({
+            type: "GET",
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            url: "/RoleAccess/GetUsers",
+            success: function (data) {
+                data.data.forEach(function (status) {
+                    $('#AllocatedTo').append(`<option value="${status.UserId}">${status.UserName}</option>`);
+                });
+            }
+        });
+    }
+
+    $("#StatusID").change(() => {
+        const statusID = $("#StatusID").val();
+        getEnquiry(statusID);
+    });
+
+    $("#EnquiryID").change(() => {
+        const enquiryID = $("#EnquiryID").val();
+
+        if (enquiryID && enquiryID != 0) {
+            GetEnquiryDetails(enquiryID);
+        } else {
+            clearEnquiryDetails();
+        }
+    });
+
+    function getEnquiry(statusID) {
+        const $enquiryDropdown = $('#EnquiryID');
+
+        $.ajax({
+            type: "GET",
+            url: "/EnquiryAllocation/GetEnqForAllocation",
+            data: { statusID },
+            dataType: "json",
+            success: function (response) {
+                $enquiryDropdown.empty();
+                if (response.success && response.records.length > 0) {
+                    $enquiryDropdown.append('<option value="">--Select Enquiry--</option>');
+                    response.records.forEach(({ EnquiryID, EnquiryNo }) => {
+                        $enquiryDropdown.append(`<option value="${EnquiryID}">${EnquiryNo}</option>`);
+                    });
+                } else {
+                    $enquiryDropdown.append('<option value="">--No Enquiry Found--</option>');
+                }
+            },
+            error: function () {
+                $enquiryDropdown.empty().append('<option value="">--Error loading enquiries--</option>');
+            }
+        });
+    }
+
+    function GetEnquiryDetails(enquiryID) {
+        var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            url: "/EnquiryRegister/GetEnquiryDetails",
+            data: { EnquiryID: enquiryID },
+            dataType: "json",
+            success: function (response) {
+                if (response.success) {
+                    const details = response.record;
+
+                    $("#EnquiryNo").val(details.EnquiryNo);
+                    $("#EnquiryDate").val(details.strEnquiryDate);
+                    $("#Source").val(details.Source);
+                    $("#Product").val(details.Product);
+                    $("#Location").val(details.Location);
+                    $("#Type").val(details.Type);
+                    $("#Sector").val(details.Sector);
+                    $("#Zone").val(details.Zone);
+                    $("#Status").val(details.Status);
+                    $("#ClientName").val(details.ClientName);
+                    $("#Place").val(details.Place);
+                    $("#ContactPerson").val(details.ContactPerson);
+                    $("#ContactNo").val(details.ContactNo);
+                    $("#EmailID").val(details.EmailID);
+                    $("#CustomerMailMsg").val(details.CustomerMailMsg);
+                } else {
+                    console.warn("No details found or an issue occurred: ", response.message);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Error loading enquiry details: ", status, error);
+            }
+        });
+    }
+
+    //-----------------------------------AllocationGrid (Starts here)-----------------------------------//
+    var AllocationGrid_GDM = { location: "local" };
+
+    var AllocationGrid_GCM = [
+        {
+            title: "Enquiry No", dataIndx: "EnquiryNo", width: '35%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Allocated To", dataIndx: "AllocatedToName", width: '35%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "AllocationDate", dataIndx: "strAllocationDate", width: '20%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "FeasibilityStudy", dataIndx: "FeasibilityStudy", width: '10%',
+            render: function (ui) {
+                if (ui.rowData.FeasibilityStudy === true) { return "Yes" }
+                else { return "No" }
+            },
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] },
+        }
+    ];
+
+    var setAllocationGrid = {
+        height: 300,
+        width: 'auto',
+        maxWidth: '100%',
+        minWidth: 800,
+        sortable: true,
+        autofill: true,
+        numberCell: { show: true },
+        hoverMode: 'row',
+        showTop: true,
+        showTitle: true,
+        showBottom: true,
+        resizable: true,
+        //scrollModel: { autoFit: true },
+        filterModel: { on: true, mode: "AND", header: true },
+        draggable: false,
+        hwrap: false,
+        wrap: false,
+        editable: false,
+        columnBorders: true,
+        menuIcon: true,
+        selectionModel: { type: 'row', mode: 'single', cbHeader: false },
+        colModel: AllocationGrid_GCM,
+        dataModel: AllocationGrid_GDM,
+        pageModel: { type: "local" },
+        rowClick: function (evt, ui) {
+            if (ui.rowData) {
+                const data = ui.rowData;
+                clearFormData(true);
+
+                tempAllocationID = data.AllocationID;
+
+                const $enquiryDropdown = $('#EnquiryID');
+                $enquiryDropdown.empty().append(`<option value="${data.EnquiryID}">${data.EnquiryNo}</option>`);
+                $enquiryDropdown.val(data.EnquiryID).prop('disabled', true);
+
+                $("#StatusID").val('null').prop('disabled', true);
+
+                GetEnquiryDetails(data.EnquiryID);
+
+                const feasibilityOption = data.FeasibilityStudy ? 'Yes' : 'No';
+                $(`#FeasibilityStudy${feasibilityOption}`).prop('checked', true);
+
+                $("#AllocatedTo").val(data.AllocatedTo);
+                $("#AllocationDate").val(data.strAllocationDate);
+                $("#QRDate").val(data.strQRDate);
+                $("#Comment").val(data.Comment);
+
+                closeModal();
+            }
+        }
+
+
+    }
+
+    var $AllocationGrid = $("#AllocationGrid").pqGrid(setAllocationGrid);
+
+    function loadAllocationGrid() {
+        var antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            url: "/EnquiryAllocation/GetAllocation",
+            dataType: "json",
+
+            beforeSend: function () {
+                $("#AllocationGrid").pqGrid("showLoading");
+            },
+
+            complete: function () {
+                $("#AllocationGrid").pqGrid("hideLoading");
+            },
+
+            success: function (response) {
+                const grid = $("#AllocationGrid").pqGrid();
+
+                if (response.success) {
+                    grid.pqGrid("option", "dataModel.data", response.records);
+                } else {
+                    console.warn("No data found or an issue occurred: ", response.message);
+                    grid.pqGrid("option", "dataModel.data", []);
+                }
+
+                grid.pqGrid("refreshDataAndView");
+                PqGridRefreshClick(grid);
+            },
+
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Error loading Allocation grid:", textStatus, errorThrown);
+                console.error("Response text:", jqXHR.responseText);
+                $("#AllocationGrid").pqGrid("hideLoading");
+            }
+        });
+
+    }
+    //-----------------------------------AllocationGrid (Ends here)-----------------------------------//
+    function validateFormData() {
+        const fields = [
+            { selector: "#EnquiryID", placeholder: "Enquiry" }
+        ];
+
+        for (const { selector, placeholder } of fields) {
+            const fieldValue = $(selector).val();
+            const fieldPlaceholder = $(selector).attr("placeholder") || placeholder;
+
+            if (!fieldValue) {
+                ShowAlert("error", `${fieldPlaceholder} is required!`);
+                return false;
+            }
+        }
+
+        const feasibilityStudyValue = $("input[name='FeasibilityStudy']:checked").val();
+        if (feasibilityStudyValue === "Yes") {
+            const allocatedToValue = $("#AllocatedTo").val();
+            if (!allocatedToValue || allocatedToValue == 0) {
+                ShowAlert("error", "AllocatedTo is required when Feasibility Study is Yes!");
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    function SaveAllocation() {
+        if (!validateFormData()) {
+            return false;
+        }
+
+        const Details = {
+            AllocationID: tempAllocationID,
+            EnquiryID: $("#EnquiryID").val(),
+            FeasibilityStudy: $("input[name='FeasibilityStudy']:checked").val() === 'Yes',
+            AllocatedTo: $("#AllocatedTo").val(),
+            AllocationDate: $("#AllocationDate").val(),
+            QRDate: $("#QRDate").val(),
+            Comment: $("#Comment").val()
+        };
+
+        const antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: "POST",
+            contentType: 'application/json; charset=utf-8',
+            url: "/EnquiryAllocation/SaveAllocation",
+            data: JSON.stringify(Details),
+            success: function (response) {
+                if (response.success) {
+                    const message = Details.AllocationID === 0 ? "Allocation saved successfully!" : "Allocation updated successfully!";
+                    ShowAlert("success", message);
+                    clearFormData();
+                } else {
+                    ShowAlert("error", response.message || "An error occurred while saving the allocation.");
+                }
+            },
+            error: function (xhr, status, error) {
+                const errorMsg = xhr.responseText ? `Server Error: ${xhr.responseText}` : `Error: ${error}`;
+                ShowAlert("error", errorMsg);
+            }
+        });
+    }
+
+    function clearFormData(rowclick) {
+        tempAllocationID = 0;
+        rowclick ? $("#StatusID").val('null') : $("#StatusID").val('null').trigger('change');
+        $("#EnquiryID").val('').trigger('change');
+        $('#FeasibilityStudyYes').prop('checked', true).trigger('change');
+        $("#AllocatedTo").val('').trigger('change');
+        $("#AllocationDate").datepicker("setDate", new Date());
+        $("#QRDate").val('');
+        $("#Comment").val('');
+        clearEnquiryDetails();
+        $('#StatusID').prop('disabled', false);
+        $('#EnquiryID').prop('disabled', false);
+    }
+
+    function clearEnquiryDetails() {
+        $("#EnquiryNo").val('');
+        $("#EnquiryDate").val('');
+        $("#Source").val('');
+        $("#Product").val('');
+        $("#Location").val('');
+        $("#ClientName").val('');
+        $("#Place").val('');
+        $("#ContactPerson").val('');
+        $("#ContactNo").val('');
+        $("#EmailID").val('');
+        $("#Status").val('');
+        $("#Type").val('');
+        $("#Sector").val('');
+        $("#Zone").val('');
+        $("#CustomerMailMsg").val('');
+    }
+
+    function showModal() {
+        $("#SearchGridModal").modal('show');
+        loadAllocationGrid();
+    }
+
+    function closeModal() {
+        $("#SearchGridModal").modal('hide');
+    }
+
+    //-----------------------------------On Load-----------------------------------//
+
+    loadStatus();
+    loadUsers();
+    getEnquiry(null);
+
+</script>

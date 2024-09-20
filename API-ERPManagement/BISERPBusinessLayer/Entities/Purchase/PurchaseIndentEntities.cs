@@ -29,6 +29,8 @@ namespace BISERPBusinessLayer.Entities.Purchase
         public int? ProcurementTypeID { get; set; }
         public int? Storeid { get; set; }
         public string StoreName { get; set; }
+        public int? ProductID { get; set; }
+        public string ProductName { get; set; }
         public int? BranchID { get; set; }
         public string UpdatedMacName { get; set; }
         public string UpdatedMacID { get; set; }
@@ -76,5 +78,24 @@ namespace BISERPBusinessLayer.Entities.Purchase
         public string StoreName { get; set; }
         public int ItemId { get; set; }
         public string ItemName { get; set; }
+    }
+    public class ProductEntities
+    {
+        public int ProductID { get; set; }
+        public string ProductName { get; set; }
+        public string ProductDesc { get; set; }
+        public bool Deactive { get; set; }
+    }
+    public class ProjectEntities
+    {
+        public int ProjectID { get; set; }
+        public string ProjectName { get; set; }
+    }
+    public class ProductItemEntities
+    {
+        public string ProductName { get; set; }
+        public string ProjectName { get; set; }
+        public string ItemName { get; set; }
+        public double ItemQty { get; set; }
     }
 }

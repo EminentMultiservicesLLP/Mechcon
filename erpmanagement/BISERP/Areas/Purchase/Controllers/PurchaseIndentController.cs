@@ -130,6 +130,7 @@ namespace BISERP.Area.Purchase.Controllers
             mindent.IndentId = items.IndentId;
             mindent.IndentNature = items.IndentNature;
             mindent.Storeid = items.Storeid;
+            mindent.ProductID = items.ProductID;
             mindent.ItemCategoryId = items.ItemCategoryId;
             mindent.Remarks = items.Remarks;
             mindent.IndentDate = items.IndentDate;
@@ -493,5 +494,71 @@ namespace BISERP.Area.Purchase.Controllers
             return jResult;
         }
 
+        [HttpGet]
+        public async Task<JsonResult> GetProduct()
+        {
+            try
+            {
+                string _url = $"{url}/pindent/getProduct{Common.Constants.JsonTypeResult}";
+                List<ProductModel> data = await Common.AsyncWebCalls.GetAsync<List<ProductModel>>(client, _url, CancellationToken.None);
+
+                if (data == null || !data.Any())
+                {
+                    return Json(new { error = "No data found." }, JsonRequestBehavior.AllowGet);
+                }
+
+                return Json(data, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error in GetProduct method:" + Environment.NewLine + ex.ToString());
+                return Json(new { error = "An error occurred while retrieving the data." }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> GetProject(int ProductID)
+        {
+            try
+            {
+                string _url = $"{url}/pindent/getProject/{ProductID}{Common.Constants.JsonTypeResult}";
+                List<ProjectModel> data = await Common.AsyncWebCalls.GetAsync<List<ProjectModel>>(client, _url, CancellationToken.None);
+
+                if (data == null || !data.Any())
+                {
+                    return Json(new { error = "No data found." }, JsonRequestBehavior.AllowGet);
+                }
+
+                return Json(data, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error in GetProject method:" + Environment.NewLine + ex.ToString());
+                return Json(new { error = "An error occurred while retrieving the data." }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> GetProductItem(int ProductID, int? ProjectID)
+        {
+            string _url = $"{url}/pindent/getProductItem/{ProductID}/{ProjectID}{Common.Constants.JsonTypeResult}";
+
+            try
+            {
+                var records = await Common.AsyncWebCalls.GetAsync<List<ProductItemModel>>(client, _url, CancellationToken.None);
+
+                if (records == null)
+                {
+                    return Json(new { success = false, message = "No records found" }, JsonRequestBehavior.AllowGet);
+                }
+
+                return Json(new { success = true, records }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error in GetProductItem: {ex.Message} {Environment.NewLine} {ex.StackTrace}");
+                return Json(new { success = false, message = "An error occurred while retrieving enquiry" }, JsonRequestBehavior.AllowGet);
+            }
+        }
     }
 }

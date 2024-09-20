@@ -8,14 +8,14 @@
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    <h5 class="page-header orangeDottedBottomBorder">FREIGHT TERM MASTER</h5>
+    <h5 class="page-header orangeDottedBottomBorder">OTHER TERM MASTER</h5>
     <fieldset>
         <div class="panel-group">
             <div class="panel panel-default">
                 <div class="panel-groupingBoder">
                     <div class="panel-heading">
                         <div class="panel-title">
-                            <label id="EntryHeader">Freight Term Entry Form</label>
+                            <label id="EntryHeader">Other Term Entry Form</label>
                         </div>
                     </div>
                     <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
@@ -27,20 +27,20 @@
                                 @*<button type="button" class="btn btn-success">Report</button>*@
                             </div>
                             <fieldset class="fieldsetCustom">
-                                <legend class="legendCustom">Create Freight Term</legend>
+                                <legend class="legendCustom">Create Other Term</legend>
                                 <div class="row">
                                     <div class="col-sm-2">
                                         @Html.LabelFor(model => model.OthersTermCode, new { @class = "required" })
-                                        @Html.TextBoxFor(model => model.OthersTermCode, new { @class = "form-control" })
+                                        @Html.TextBoxFor(model => model.OthersTermCode, new { @class = "form-control", placeholder = "Enter Term Code" })
                                         @Html.ValidationMessageFor(model => model.OthersTermCode)
                                         @*@Html.HiddenFor(model => model.TermID)*@
                                     </div>
-                                    <div class="col-sm-2">
+                                    <div class="col-sm-4">
                                         @Html.LabelFor(model => model.OthersTermDesc, new { @class = "required" })
-                                        @Html.TextAreaFor(model => model.OthersTermDesc, new { @class = "form-control" })
+                                        @Html.TextAreaFor(model => model.OthersTermDesc, new { @class = "form-control", placeholder = "Enter Term Description" })
                                         @Html.ValidationMessageFor(model => model.OthersTermDesc)
                                     </div>
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-2">
                                         <br />
                                         @Html.CheckBoxFor(model => model.Deactive)
                                         @Html.LabelFor(model => model.Deactive)
@@ -117,49 +117,7 @@
                         }
                     });
                     return d.promise();
-                },
-                //insertItem: function (item) {
-                //    var d = $.Deferred();
-                //    $.ajax(
-                //    {
-                //        type: "POST", //HTTP POST Method
-                //        dataType: "json",
-                //        url: '/OtherTermMaster/SaveOtherTerm', // Controller/View
-                //        data: item,
-                //        success: function (msg) {
-                //            if (msg.success) {
-                //                ShowAlert("success", "OthersTerm added successfully.");
-                //            } else {
-                //                ShowAlert("error", msg.Message);
-                //            }
-                //        },
-                //    }).done(function (insertedItem) {
-                //        d.resolve(insertedItem.data);
-                //        $("#grid").jsGrid("loadData");
-                //    });
-                //    return d.promise();
-                //},
-                //updateItem: function (item) {
-                //    var d = $.Deferred();
-                //    $.ajax(
-                //    {
-                //        type: "POST", //HTTP POST Method
-                //        dataType: "json",
-                //        url: '/OtherTermMaster/SaveOtherTerm', // Controller/View
-                //        data: item,
-                //        success: function (msg) {
-                //            if (msg.success) {
-                //                ShowAlert("success", "OthersTerm updated successfully.");
-                //            } else {
-                //                ShowAlert("error", msg.Message);
-                //            }
-                //        },
-                //    }).done(function (insertedItem) {
-                //        d.resolve(insertedItem.data);
-                //        $("#grid").jsGrid("loadData");
-                //    });
-                //    return d.promise();
-                //}
+                }
             },
             fields: [
                 { name: "TermID", visible: false, width: 0 },

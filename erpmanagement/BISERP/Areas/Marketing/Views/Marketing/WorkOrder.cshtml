@@ -1,0 +1,1236 @@
+﻿@Scripts.Render("~/bundles/jquerymodels")
+<script>
+    $(function () {
+        $(".datepicker").datepicker({
+            showOn: "button",
+            buttonImage: "/Content/images/calendar.gif",
+            buttonImageOnly: true,
+            buttonText: "Selectdate",
+            'changeMonth': true,
+            'changeYear': true,
+            'yearRange': '2021:2030',
+            "format": "dd-M-yyyy",
+            todayBtn: "linked",
+            pickerPosition: "bottom-left",
+            "todayHighlight": true,
+            autoclose: true,
+        });
+        $("#anim").change(function () {
+            $(".datepicker").datepicker("option", "showAnim", "fadeIn");
+        });
+    });
+</script>
+<h5 class="page-header orangeDottedBottomBorder">Work Order</h5>
+
+<div id="SearchGridModal" class="modal fade" role="dialog" data-backdrop="false">
+    <div class="modal-dialog find-search-grid-modal">
+        <div class="modal-content gridmodal-content">
+            <div class="modal-header gridmodal-header">
+                <button type="button" class="close" onclick="closeModal()">&times;</button>
+                <h4 class="modal-title">Work Order Details.</h4>
+            </div>
+            <div class="modal-body">
+                <div class="fill">
+                    <div id="WorkOrderGrid"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel-group">
+    <div class="panel panel-default">
+        <div class="panel-groupingBoder">
+            <div class="panel-heading">
+                <div class="panel-title">
+                    <a class="collapsediv" data-toggle="collapse" href="#SearchDetails">
+                        Work Order
+                    </a>
+                </div>
+            </div>
+            <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                <div class="panel-body">
+                    <div class="fill">
+                        <div class="submit-row">
+                            <button type="button" id="btnSave" class="btn btn-success" onclick="SaveWorkOrder()">Save</button>
+                            <button type="button" class="btn btn-warning" id="btnResetT" onclick="clearFormData()">Clear</button>
+                            <button type="button" id="btnFind" class="btn btn-primary" onclick="showModal()">Find</button>
+                        </div>
+
+                        <fieldset class="fieldsetCustom">
+                            <legend class="legendCustom">Work Order Entry</legend>
+                            <table class="table table-hover">
+                                <tbody>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4" style="color: red;">Enquiry</div>
+                                                <div class="col-sm-8">
+                                                    <input id="EnquiryLabel" class="form-control" type="text" placeholder="Search by - (EnquiryNo) | (ClientName) | (EnquiryDate)">
+                                                    <input type="hidden" id="EnquiryID">
+                                                    <input type="hidden" id="OrderBookID">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">Project Code</div>
+                                                <div class="col-sm-8">
+                                                    <input type="hidden" id="ProjectID">
+                                                    <input type="text" class="form-control" id="ProjectCode" placeholder="Auto-Fetches" disabled>
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">Project Description</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" id="ProjectDescription" placeholder="Provide a brief project description">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">Material Of Construction</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" id="MaterialOfConstruction" placeholder="Specify the construction material">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">Area OF Installation</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" id="AreaOfInstallation" placeholder="Mention the installation area">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">Billed To</div>
+                                                <div class="col-sm-8">
+                                                    <select class="form-control" id="BilledTo" disabled>
+                                                        <option>Select the billing party</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">Project Location (Ship To)</div>
+                                                <div class="col-sm-8">
+                                                    <textarea id="ProjectLocation" class="form-control" placeholder="Enter full project location (shipping address)" rows="3"></textarea>
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">Technical Specification</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" id="TechnicalSpecification" placeholder="Enter technical specifications">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">Scope Of Supply</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" id="ScopeOfSupply" placeholder="Define the scope of supply">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">PO No</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" id="PONo" placeholder="Auto-Fetches" disabled>
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">PO Date</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control datepicker" id="PODate" placeholder="Auto-Fetches" disabled>
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">Delivery Date</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control datepicker" id="DeliveryDate" placeholder="Select the delivery date">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">Transport</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" id="Transport" placeholder="Specify transport details">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">Packaging</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" id="Packaging" placeholder="Enter packaging requirements">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">Insurance</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" id="Insurance" placeholder="Provide insurance details">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">Supervision of Installation & Commissioning</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" id="Supervision" placeholder="Details of installation supervision">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">Payment Terms</div>
+                                                <div class="col-sm-8">
+                                                    <button type="button" id="btnViewPaymentTerms" class="btn btn-primary" onclick="ViewPaymentTerms()">View Payment Terms</button>
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">LD Charges</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" id="LDCharges" placeholder="Enter LD charges">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">Contact At Site</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" id="ContactAtSite" placeholder="Site contact details">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">Contact At Purchase</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" id="ContactAtPurchase" placeholder="Purchase contact details">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">PI Submission Date for Advance</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control datepicker" id="PIAdvanceDate" placeholder="Select the PI submission date for advance">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">PI Submission Date before Dispatch</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control datepicker" id="PIPreDispatchDate" placeholder="Select the PI submission date before dispatch">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">1st Dispatch Date</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control datepicker" id="DispatchDate1" placeholder="Select the 1st dispatch date">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">2nd Dispatch Date</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control datepicker" id="DispatchDate2" placeholder="Select the 2nd dispatch date">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">3rd Dispatch Date</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control datepicker" id="DispatchDate3" placeholder="Select the 3rd dispatch date">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">4th Dispatch Date</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control datepicker" id="DispatchDate4" placeholder="Select the 4th dispatch date">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">5th Dispatch Date</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control datepicker" id="DispatchDate5" placeholder="Select the 5th dispatch date">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">Attachment</div>
+                                                <div class="col-sm-8">
+                                                    <input class="form-control btn-primary attachment" type="file" multiple accept=".jpg,.jpeg,.png,.pdf" id="Attachment" />
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">Brief Technical Specfication</div>
+                                                <div class="col-sm-8">
+                                                    <textarea id="BriefTechnicalSpecification" class="form-control" placeholder="Brief Technical Specification" rows="5"></textarea>
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="submit-row">
+                                <button type="button" id="btnAddOtherFields" class="btn btn-primary" onclick="addOtherFields()">Add Field</button>
+                                <button type="button" id="btnViewAttachment" class="btn btn-info" onclick="viewAttachment()">View <i class="pe-va pe-7s-paperclip pe-2x"></i></button>
+                            </div>
+                            <table class="table table-hover">
+                                <tbody id="OtherFields">
+                                </tbody>
+                            </table>
+                        </fieldset>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="PaymentTermGridModal" class="modal fade" role="dialog" data-backdrop="false">
+    <div class="modal-dialog find-search-grid-modal">
+        <div class="modal-content gridmodal-content">
+            <div class="modal-header gridmodal-header">
+                <button type="button" class="close" onclick="closeModal()">&times;</button>
+                <h4 class="modal-title">Payment Term Details.</h4>
+            </div>
+            <div class="modal-body">
+                <div class="fill">
+                    <div id="PaymentTermGrid"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="ViewModal" class="modal slideModal">
+    <div class="modal-content slideContent">
+        <span class="close slideClose" onclick="closeImageModal()"> &#x2715 </span>
+        <div id="slideshow-container"></div>
+        <div>
+            <a class="prev slide-prev" onclick="plusSlides(-1)">❮</a>
+            <a class="next slide-next" onclick="plusSlides(1)">❯</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    var appSetting = '@BISERP.Common.Constants.ScandocUrl';
+    var tempWorkOrderID = 0;
+    let otherFieldIndx = 0;
+    var clientData = [], orderBookData = [];
+
+    function getEnquiry() {
+        $("#EnquiryLabel").autocomplete({
+            source: [],
+            minLength: 0,
+            select: handleEnquirySelection,
+            change: handleEnquirySelection,
+        });
+
+        $.ajax({
+            type: "GET",
+            url: "/SM_WorkOrder/GetEnqForWorkOrder",
+            dataType: "json",
+            success: function (response) {
+                if (response.success && response.records.length > 0) {
+                    const suggestions = response.records.map(({ EnquiryID, EnquiryNo, ClientName, strEnquiryDate, OrderBookID, ClientID}) => ({
+                        label: `(${EnquiryNo}) | (${ClientName}) | (${strEnquiryDate})`,
+                        value: EnquiryID,
+                        orderBookID: OrderBookID,
+                        clientID: ClientID
+                    }));
+
+                    $("#EnquiryLabel").autocomplete("option", "source", suggestions);
+                } else {
+                    $("#EnquiryLabel").autocomplete("option", "source", [{ label: "--No Enquiry Found--", value: "" }]);
+                }
+            },
+            error: function () {
+                $("#EnquiryLabel").autocomplete("option", "source", [{ label: "--Error loading enquiries--", value: "" }]);
+            }
+        });
+    }
+    function handleEnquirySelection(event, ui) {
+        event.preventDefault();
+        const $enquiryLabel = $(event.target);
+        const $enquiryID = $("#EnquiryID");
+        const $orderBookID = $("#OrderBookID");
+        const $billedTo = $("#BilledTo");
+        if (ui.item && ui.item.value) {
+            if (ui.item.label === "--No Enquiry Found--" || ui.item.label === "--Error loading enquiries--") {
+                $enquiryLabel.val('');
+                $enquiryID.val('').trigger('change');
+                $orderBookID.val('');
+                $billedTo.val('').trigger('change');
+            } else {
+                $enquiryLabel.val(ui.item.label);
+                $enquiryID.val(ui.item.value).trigger('change');
+                $orderBookID.val(ui.item.orderBookID);
+                $billedTo.val(ui.item.clientID).trigger('change');
+            }
+        } else {
+            $enquiryLabel.val('');
+            $enquiryID.val('').trigger('change');
+            $orderBookID.val('');
+            $billedTo.val('').trigger('change');
+        }
+    }
+    $("#EnquiryLabel").on("focus", function () {
+        $(this).autocomplete("search", "");
+    });
+
+    function getAllClient() {
+        $.ajax({
+            type: 'GET',
+            url: "/ClientMaster/AllClient",
+            dataType: "json",
+            data: {
+                SearchName: "",
+                SearchCode: ""
+            },
+            success: function (data) {
+                const $clientDropdown = $('#BilledTo');
+                $clientDropdown.empty();
+
+                if (data.error || (data && !data.success)) {
+                    $clientDropdown.append('<option value="">--Error loading clients--</option>');
+                    let errorMessage = data.Message || data.error || "An error occurred while fetching client data.";
+                    ShowAlert("error", errorMessage);
+                    console.error("Error loading clients:", errorMessage);
+                    clientData = [];
+                    return;
+                }
+
+                $clientDropdown.append('<option value="">--Select Client--</option>');
+
+                data.records.forEach(function (client) {
+                    $clientDropdown.append(`<option value="${client.ClientId}">${client.Name}</option>`);
+                });
+                clientData = data.records;
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                $('#BilledTo').empty();
+                $('#BilledTo').append('<option value="">--Error loading clients--</option>');
+                let errorMsg = xhr.responseText || "No Record Found";
+                ShowAlert("error", errorMsg);
+                console.error("Error loading clients:", errorThrown);
+            }
+        });
+    }
+
+    function loadOrderBookData() {
+        var antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            url: "/OrderBook/GetOrderBook",
+            dataType: "json",
+            success: function (response) {
+                if (response.success) {
+                    orderBookData = response.records
+                } else {
+                    console.warn("No data found or an issue occurred: ", response.message);
+                    orderBookData = [];
+                }
+            },
+
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Error loading OrderBook Details:", textStatus, errorThrown);
+                console.error("Response text:", jqXHR.responseText);
+            }
+        });
+
+    }
+
+    $("#EnquiryID").change(() => {
+        const enquiryID = $("#EnquiryID").val();
+        if (enquiryID && enquiryID != 0) {
+            const orderBookDetails = orderBookData.filter(orderBook => orderBook.EnquiryID == enquiryID);
+            $("#PONo").val(orderBookDetails[0].PONo);
+            $("#PODate").datepicker("setDate", orderBookDetails[0].strPODate);
+            $("#ProjectID").val(orderBookDetails[0].ProjectID);
+            $("#ProjectCode").val(orderBookDetails[0].ProjectCode);
+        } else {
+            $("#PONo").val("");
+            $("#PODate").datepicker("setDate", null);
+            $("#ProjectID").val("");
+            $("#ProjectCode").val("");
+        }
+    });
+
+    $("#BilledTo").change(() => {
+        const clientID = $("#BilledTo").val();
+        if (clientID && clientID != 0) {
+            const clientDetails = clientData.filter(client => client.ClientId == clientID);
+            $("#ProjectLocation").val(clientDetails[0].FullAddress);
+        } else {
+            $("#ProjectLocation").val("");
+        }
+    });
+
+    //-----------------------------------WorkOrderGrid (Starts here)-----------------------------------//
+    var WorkOrderGrid_GDM = { location: "local" };
+
+    var WorkOrderGrid_GCM = [
+        {
+            title: "WorkOrder No", dataIndx: "WorkOrder", width: '20%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Enquiry No", dataIndx: "EnquiryNo", width: '20%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Enquiry Date", dataIndx: "strEnquiryDate", width: '10%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Customer Name", dataIndx: "ClientName", width: '30%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Project Code", dataIndx: "ProjectCode", width: '20%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        }
+    ];
+
+    var setWorkOrderGrid = {
+        height: 300,
+        width: 'auto',
+        maxWidth: '100%',
+        minWidth: 800,
+        sortable: true,
+        autofill: true,
+        numberCell: { show: true },
+        hoverMode: 'row',
+        showTop: true,
+        showTitle: true,
+        showBottom: true,
+        resizable: true,
+        //scrollModel: { autoFit: true },
+        filterModel: { on: true, mode: "AND", header: true },
+        draggable: false,
+        hwrap: false,
+        wrap: false,
+        editable: false,
+        columnBorders: true,
+        menuIcon: true,
+        selectionModel: { type: 'row', mode: 'single', cbHeader: false },
+        colModel: WorkOrderGrid_GCM,
+        dataModel: WorkOrderGrid_GDM,
+        pageModel: { type: "local" },
+        rowClick: function (evt, ui) {
+            if (ui.rowData) {
+                const data = ui.rowData;
+                clearFormData(true);
+                closeModal();
+                tempWorkOrderID = data.WorkOrderID;
+                tempOfferID = data.OfferID;
+
+                const $enquiryLabel = $('#EnquiryLabel');
+                const $enquiryID = $('#EnquiryID');
+                $enquiryLabel.val(`(${data.EnquiryNo}) | (${data.ClientName}) | (${data.strEnquiryDate})`);
+                $enquiryID.val(data.EnquiryID);
+                $enquiryLabel.prop('disabled', true);
+
+                GetWorkOrderDetails(tempWorkOrderID);
+                GetWOOtherDetails(tempWorkOrderID);
+            }
+        }
+    }
+
+    var $WorkOrderGrid = $("#WorkOrderGrid").pqGrid(setWorkOrderGrid);
+
+    function loadWorkOrderGrid() {
+        var antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            url: "/SM_WorkOrder/GetWorkOrder",
+            dataType: "json",
+
+            beforeSend: function () {
+                $("#WorkOrderGrid").pqGrid("showLoading");
+            },
+
+            complete: function () {
+                $("#WorkOrderGrid").pqGrid("hideLoading");
+            },
+
+            success: function (response) {
+                const grid = $("#WorkOrderGrid").pqGrid();
+
+                if (response.success) {
+                    grid.pqGrid("option", "dataModel.data", response.records);
+                } else {
+                    console.warn("No data found or an issue occurred: ", response.message);
+                    grid.pqGrid("option", "dataModel.data", []);
+                }
+
+                grid.pqGrid("refreshDataAndView");
+                PqGridRefreshClick(grid);
+            },
+
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Error loading WorkOrder grid:", textStatus, errorThrown);
+                console.error("Response text:", jqXHR.responseText);
+                $("#WorkOrderGrid").pqGrid("hideLoading");
+            }
+        });
+
+    }
+    //-----------------------------------WorkOrderGrid (Ends here)-----------------------------------//
+
+    $(document).on('change', '.attachment', function () {
+        const fileInput = this;
+        const files = fileInput.files;
+
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const fileSizeMB = file.size / (1024 * 1024); // Convert bytes to MB
+            const fileExtension = file.name.split('.').pop().toLowerCase(); // Get file extension
+
+            if (fileSizeMB > 1) {
+                $(fileInput).val(null);
+                ShowAlert("error", `File "${file.name}" exceeds 1 MB. Please upload a smaller file.`);
+                return;
+            }
+
+            if (fileExtension === 'docx') {
+                $(fileInput).val(null);
+                ShowAlert("error", `File "${file.name}" is not allowed. Please upload a different file.`);
+                return;
+            }
+
+            // Allow only alphanumeric characters, dots, underscores, spaces, hyphens, and parentheses
+            const specialCharsRegex = /[^a-zA-Z0-9_. ()-]/;
+            if (specialCharsRegex.test(file.name)) {
+                $(fileInput).val(null);
+                ShowAlert("error", `FileName "${file.name}" should not contain any special characters. ('!#$%^&*+={}[]|\\:;'<>,?/~\`` + "\`)");
+                return;
+            }
+        }
+    });
+
+    function validateFormData() {
+        const fields = [
+            { selector: "#EnquiryID", placeholder: "Enquiry" },
+            { selector: "#OrderBookID", placeholder: "Order Book ID" },
+            { selector: "#ProjectID", placeholder: "Project ID" },
+            { selector: "#BilledTo", placeholder: "Billed To", type: 'select' },
+        ];
+
+        for (const { selector, placeholder, type } of fields) {
+            const $field = $(selector);
+            const fieldValue = $field.val();
+            const fieldPlaceholder = $field.attr("placeholder") || placeholder;
+
+            if (!fieldValue.trim()) {
+                ShowAlert("error", `${fieldPlaceholder} is required!`);
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    function validateOtherFields() {
+        let isValid = true;
+
+        $("#OtherFields tr").each(function () {
+            const nameInput = $(this).find('input[id^="Name"]');
+            const valueInput = $(this).find('input[id^="Value"]');
+
+            const nameValue = nameInput.val().trim();
+            const valueValue = valueInput.val().trim();
+            const namePlaceholder = nameInput.attr('placeholder');
+            const valuePlaceholder = valueInput.attr('placeholder');
+
+            if (nameValue === "") {
+                ShowAlert("error", `${namePlaceholder} is required!`);
+                isValid = false;
+                return false;
+            }
+
+            if (valueValue === "") {
+                ShowAlert("error", `${valuePlaceholder} is required!`);
+                isValid = false;
+                return false;
+            }
+        });
+
+        return isValid;
+    }
+
+    function getOtherFeildDetails() {
+        const data = [];
+
+        $("#OtherFields tr").each(function () {
+            const index = $(this).attr('id').replace('tr', '');
+            const name = $(`#Name${index}`).val();
+            const value = $(`#Value${index}`).val();
+
+            if (name && value) {
+                data.push({
+                    Name: name,
+                    Value: value
+                });
+            }
+        });
+
+        return data;
+    }
+
+    function GetWorkOrderDetails(workOrderID) {
+        var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            url: "/SM_WorkOrder/GetWorkOrderDetails",
+            data: { WorkOrderID: workOrderID },
+            dataType: "json",
+            success: function (response) {
+                if (response.success) {
+                    const details = response.record;
+
+                    $("#OrderBookID").val(details.OrderBookID);
+                    $("#ProjectID").val(details.ProjectID);
+                    $("#ProjectCode").val(details.ProjectCode);
+                    $("#ProjectDescription").val(details.ProjectDescription);
+                    $("#MaterialOfConstruction").val(details.MaterialOfConstruction);
+                    $("#AreaOfInstallation").val(details.AreaOfInstallation);
+                    $("#BilledTo").val(details.BilledTo);
+                    $("#ProjectLocation").val(details.ProjectLocation);
+                    $("#TechnicalSpecification").val(details.TechnicalSpecification);
+                    $("#ScopeOfSupply").val(details.ScopeOfSupply);
+                    $("#PONo").val(details.PONo);
+                    $("#PODate").datepicker("setDate",details.strPODate);
+                    $("#DeliveryDate").datepicker("setDate",details.strDeliveryDate);
+                    $("#Transport").val(details.Transport);
+                    $("#Packaging").val(details.Packaging);
+                    $("#Insurance").val(details.Insurance);
+                    $("#Supervision").val(details.Supervision);
+                    $("#LDCharges").val(details.LDCharges);
+                    $("#ContactAtSite").val(details.ContactAtSite);
+                    $("#ContactAtPurchase").val(details.ContactAtPurchase);
+                    $("#PIAdvanceDate").datepicker("setDate",details.strPIAdvanceDate);
+                    $("#PIPreDispatchDate").datepicker("setDate",details.strPIPreDispatchDate);
+                    $("#DispatchDate1").datepicker("setDate",details.strDispatchDate1);
+                    $("#DispatchDate2").datepicker("setDate",details.strDispatchDate2);
+                    $("#DispatchDate3").datepicker("setDate",details.strDispatchDate3);
+                    $("#DispatchDate4").datepicker("setDate",details.strDispatchDate4);
+                    $("#DispatchDate5").datepicker("setDate",details.strDispatchDate5);
+                    $("#BriefTechnicalSpecification").val(details.BriefTechnicalSpecification);
+
+                } else {
+                    console.warn("No details found or an issue occurred: ", response.message);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Error loading enquiry details: ", status, error);
+            }
+        });
+    }
+
+    function GetWOOtherDetails(workOrderID) {
+        var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            url: "/SM_WorkOrder/GetWOOtherDetails",
+            data: { WorkOrderID: workOrderID },
+            dataType: "json",
+            success: function (response) {
+                if (response.success) {
+                    let details = response.records
+                    for (var i = 0; i < details.length; i++) {
+                        otherFieldIndx++
+                        addDiv(otherFieldIndx);
+                        $(`#Name${otherFieldIndx}`).val(details[i].Name);
+                        $(`#Value${otherFieldIndx}`).val(details[i].Value);
+                    }
+
+                } else {
+                    console.warn("No details found or an issue occurred: ", response.message);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Error loading otherDetails details: ", status, error);
+            }
+        });
+    }
+
+    function SaveWorkOrder() {
+        if (!validateFormData()) {
+            return false;
+        }
+        if (!validateOtherFields()) {
+            return false;
+        }
+
+        const Details = {
+            WorkOrderID: tempWorkOrderID,
+            EnquiryID: $("#EnquiryID").val(),
+            OrderBookID: $("#OrderBookID").val(),
+            ProjectID: $("#ProjectID").val(),
+            ProjectCode: $("#ProjectCode").val(),
+            ProjectDescription: $("#ProjectDescription").val(),
+            MaterialOfConstruction: $("#MaterialOfConstruction").val(),
+            AreaOfInstallation: $("#AreaOfInstallation").val(),
+            BilledTo: $("#BilledTo").val(),
+            ProjectLocation: $("#ProjectLocation").val(),
+            TechnicalSpecification: $("#TechnicalSpecification").val(),
+            ScopeOfSupply: $("#ScopeOfSupply").val(),
+            PONo: $("#PONo").val(),
+            PODate: $("#PODate").val(),
+            DeliveryDate: $("#DeliveryDate").val(),
+            Transport: $("#Transport").val(),
+            Packaging: $("#Packaging").val(),
+            Insurance: $("#Insurance").val(),
+            Supervision: $("#Supervision").val(),
+            LDCharges: $("#LDCharges").val(),
+            ContactAtSite: $("#ContactAtSite").val(),
+            ContactAtPurchase: $("#ContactAtPurchase").val(),
+            PIAdvanceDate: $("#PIAdvanceDate").val(),
+            PIPreDispatchDate: $("#PIPreDispatchDate").val(),
+            DispatchDate1: $("#DispatchDate1").val(),
+            DispatchDate2: $("#DispatchDate2").val(),
+            DispatchDate3: $("#DispatchDate3").val(),
+            DispatchDate4: $("#DispatchDate4").val(),
+            DispatchDate5: $("#DispatchDate5").val(),
+            BriefTechnicalSpecification: $("#BriefTechnicalSpecification").val(),
+            WOOtherDetails: getOtherFeildDetails()
+        };
+
+        const antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: "POST",
+            contentType: 'application/json; charset=utf-8',
+            url: "/SM_WorkOrder/SaveWorkOrder",
+            data: JSON.stringify(Details),
+            success: function (response) {
+                if (response.success) {
+                    let fileSaveMsg = "";
+                    try {
+                        SaveScandoc(`Attachment`, $("#ProjectID").val(), "Marketing", "WorkOrder");
+                    } catch (err) {
+                        fileSaveMsg = "But failed to save attached files.";
+                    } finally {
+                        const message = tempWorkOrderID === 0 ? `WorkOrder registered successfully!` : `WorkOrder updated successfully!`;
+                        ShowAlert("success", `${message} <br> ${fileSaveMsg}`);
+                        clearFormData();
+                    }
+                } else {
+                    ShowAlert("error", response.message || "An error occurred while saving the Work Order.");
+                }
+            },
+            error: function (xhr, status, error) {
+                ShowAlert("error", `An unexpected error occurred: ${xhr.responseText || error}`);
+            }
+        });
+    }
+
+    function clearFormData(rowclick) {
+        $("#EnquiryLabel").val('').prop('disabled', false);
+        if (!rowclick) {
+            getEnquiry();
+        }
+        tempWorkOrderID = 0;
+        $("#EnquiryLabel").val('');
+        $("#EnquiryID").val('');
+        $("#OrderBookID").val('');
+        $("#ProjectID").val('');
+        $("#ProjectCode").val('');
+        $("#ProjectDescription").val('');
+        $("#MaterialOfConstruction").val('');
+        $("#AreaOfInstallation").val('');
+        $("#BilledTo").val('');
+        $("#ProjectLocation").val('');
+        $("#TechnicalSpecification").val('');
+        $("#ScopeOfSupply").val('');
+        $("#PONo").val('');
+        $("#PODate").val('');
+        $("#DeliveryDate").val('');
+        $("#Transport").val('');
+        $("#Packaging").val('');
+        $("#Insurance").val('');
+        $("#Supervision").val('');
+        $("#LDCharges").val('');
+        $("#ContactAtSite").val('');
+        $("#ContactAtPurchase").val('');
+        $("#BriefTechnicalSpecification").val('');
+        $("#BilledTo").val($("#BilledTo option:first").val());
+        $(".datepicker").datepicker("setDate", null);
+        otherFieldIndx = 0;
+        $("#OtherFields").empty();
+        $("#Attachment").val(null);
+    }
+
+    function addOtherFields() {
+        otherFieldIndx++;
+        addDiv(otherFieldIndx);
+    }
+
+    function addDiv(index) {
+        const divContent = `
+            <tr id="tr${index}">
+                <th scope="row">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" id="Name${index}" placeholder="Enter Name${index}" style="background-color: gainsboro;">
+                        </div>
+                        <div class="col-sm-7">
+                            <input type="text" class="form-control" id="Value${index}" placeholder="Enter Value${index}">
+                        </div>
+                        <div class="col-sm-1" style="text-align: center;">
+                            <span><a class="btnDelete" onclick="deleteRow(${index})"><i class="fa fa-times-circle" style="color: red; font-size: 29px;"></i></a></span>
+                        </div>
+                    </div>
+                </th>
+            </tr>
+        `;
+
+        $("#OtherFields").append(divContent);
+    }
+
+    function deleteRow(index) {
+        $(`#tr${index}`).remove();
+    }
+
+    function showModal() {
+        $("#SearchGridModal").modal('show');
+        loadWorkOrderGrid();
+    }
+
+    function closeModal() {
+        $("#SearchGridModal").modal('hide');
+        $("#PaymentTermGridModal").modal('hide');
+    }
+    //------------------------------------------------ PaymentTerm Grid Strat--------------------------------------------------//
+    var dataPaymentTermGrid = { location: "local", sorting: 'local' }
+    var colPaymentTermGrid = [
+        { title: "", dataIndx: "PayTermID", dataType: "integer", hidden: true },
+        {
+            title: "Code", dataIndx: "PaymentTermCode", width: '25%', editable: false
+        },
+        {
+            title: "Name", dataIndx: "PaymentTermDesc", width: '75%', editable: false
+        }
+    ];
+    var objPaymentTermGrid = {
+        height: 300,
+        width: 'auto',
+        maxWidth: '100%',
+        minWidth: 800,
+        sortable: true,
+        autofill: true,
+        numberCell: { show: true },
+        hoverMode: 'row',
+        showTop: false,
+        showTitle: true,
+        showBottom: true,
+        resizable: true,
+        //scrollModel: { autoFit: true },
+        //filterModel: { on: true, mode: "AND", header: true },
+        draggable: false,
+        hwrap: false,
+        wrap: false,
+        editable: false,
+        columnBorders: true,
+        menuIcon: true,
+        selectionModel: { type: 'row', mode: 'single', cbHeader: false },
+        colModel: colPaymentTermGrid,
+        dataModel: dataPaymentTermGrid,
+        pageModel: { type: "local", rPP: 20 },
+    };
+    $PaymentTermGrid = $("#PaymentTermGrid").pqGrid(objPaymentTermGrid);
+    function loadOrderBookPaymentTermsGrid(orderBookID) {
+        var antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            url: "/OrderBook/GetOrderBookPaymentTerms",
+            data: { OrderBookID: orderBookID },
+            dataType: "json",
+
+            beforeSend: function () {
+                $("#PaymentTermGrid").pqGrid("showLoading");
+            },
+
+            complete: function () {
+                $("#PaymentTermGrid").pqGrid("hideLoading");
+            },
+
+            success: function (response) {
+                const grid = $("#PaymentTermGrid").pqGrid();
+
+                if (response.success) {
+                    grid.pqGrid("option", "dataModel.data", response.records);
+                } else {
+                    console.warn("No data found or an issue occurred: ", response.message);
+                    grid.pqGrid("option", "dataModel.data", []);
+                }
+
+                grid.pqGrid("refreshDataAndView");
+                PqGridRefreshClick(grid);
+            },
+
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Error loading OrderBookPaymentTerms grid:", textStatus, errorThrown);
+                console.error("Response text:", jqXHR.responseText);
+                $("#PaymentTermGrid").pqGrid("hideLoading");
+            }
+        });
+    }
+    function ViewPaymentTerms() {
+        var orderBookID = $("#OrderBookID").val();
+        if (orderBookID || !orderBookID == "0") {
+            $("#PaymentTermGridModal").modal('show');
+            loadOrderBookPaymentTermsGrid(orderBookID);
+        } else {
+            ShowAlert("error", `Please select enquiry first!`);
+            return false;
+        }
+    }
+    //------------------------------------------------ PaymentTerm Grid End--------------------------------------------------//
+
+    //---------------------------------------------------------------------Show Attachments-----------------------------------------------------------------//
+
+    function viewAttachment() {
+        const projectId = $("#ProjectID").val();
+
+        if (!projectId || projectId == 0) {
+            ShowAlert("error", "Please select a Work Order first.");
+            return false;
+        }
+
+        $.ajax({
+            type: "GET",
+            url: "/ScanDoc/ScanDoc/GetScanDocUrl",
+            data: { FileId: projectId, ScanDocSubTypeId: 28 },
+            dataType: "json",
+            success: function (data) {
+                if (data && data.length > 0) {
+                    closeImageModal();
+                    ViewSlideShow(data, 'slideshow-container', appSetting);
+                } else {
+                    ShowAlert("error", "No documents found.");
+                }
+            },
+            error: function (xhr, status, error) {
+                ShowAlert("error", "An error occurred while fetching documents. Please try again later.");
+                console.error("Error fetching documents:", status, error);
+            }
+        });
+    }
+
+    function ViewSlideShow(ImageGallery, container, appSetting) {
+        if (ImageGallery.length === 0) {
+            ShowAlert("error", "No Attachment found");
+            return;
+        }
+
+        const supportedExtensions = new Set(['pdf', 'jpeg', 'jpg', 'png']);
+        const $container = $("#" + container);
+        let slidesHtml = '';
+
+        $container.empty();
+
+        ImageGallery.forEach(image => {
+            const filePath = image.FilePath;
+            const fileNameWithExtension = filePath.split('\\').pop();
+            const [name, extension] = fileNameWithExtension.split('.').map(part => part.toLowerCase());
+
+            if (!supportedExtensions.has(extension)) return;
+
+            const src = `${appSetting}${filePath}`;
+            const deleteItemHtml = `
+            <a href="javascript:void(0);" data-id="${image.FileId}" class="deleteItem fa fa-trash" style="font-size: x-large;"
+               onclick="Deletefile(${image.FileId}, ${image.ScanDocId}); return false;"></a>`;
+            const downloadHtml = '<a class="fa fa-download downloadFiles" href="' + src + '" download></a>';
+            const nameHtml = `<span class="text" style='font-weight: bold; font-size: large;'>${name}</span>`;
+            let contentHtml = '';
+
+            switch (extension) {
+                case 'pdf':
+                    contentHtml = `<object data="${src}#toolbar=0&navpanes=0&scrollbar=0" type="application/pdf" width="100%" height="500px"></object>`;
+                    break;
+                case 'jpeg':
+                case 'jpg':
+                case 'png':
+                    contentHtml = `<img src="${src}" style="width:800px;height:500px;">`;
+                    break;
+            }
+
+            slidesHtml += `
+            <div class="imgSlide">
+                ${contentHtml}
+                <div class="divider"></div>
+                <div class="row">
+                    <div class="col-sm-2">${deleteItemHtml}</div>
+                    <div class="col-sm-8 text-center">${nameHtml}</div>
+                    <div class="col-sm-2">${downloadHtml}</div>
+                </div>
+            </div>`;
+        });
+
+        $container.append(slidesHtml);
+        $("#ViewModal").css('display', 'block');
+        showGallery(1);
+    }
+
+    let ImgIndex = 1;
+
+    function plusSlides(n) {
+        showGallery(ImgIndex += n);
+    }
+
+    function showGallery(n) {
+        let i;
+        let ImgSlides = document.getElementsByClassName("imgSlide");
+        let video = document.getElementById("video");
+        if (n > ImgSlides.length) { ImgIndex = 1; }
+        if (n < 1) { ImgIndex = ImgSlides.length; }
+        for (i = 0; i < ImgSlides.length; i++) {
+            ImgSlides[i].style.display = "none";
+        }
+        ImgSlides[ImgIndex - 1].style.display = "block";
+        if (video) {
+            video.play();
+        }
+    }
+
+    function Deletefile(fId, sId) {
+        $.ajax({
+            type: "POST",
+            url: "/ScanDoc/ScanDoc/DeleteScanDocfile",
+            data: {
+                fileId: fId,
+                scanDocId: sId
+            },
+            success: function () {
+                $("#" + fId).parent().remove();
+                $("#appendImg").empty();
+                ShowAlert("success", "File Removed successfully");
+                closeImageModal();
+            },
+            error: function () {
+                ShowAlert("error", "Error deleting the file.");
+            }
+        });
+        return false;
+    }
+
+    function closeImageModal() {
+        $("#slideshow-container").empty();
+        $("#ViewModal").css('display', 'none');
+    }
+
+    //------------------------------------------------ On Load--------------------------------------------------//
+    getEnquiry();
+    getAllClient();
+    loadOrderBookData();
+</script>

@@ -157,6 +157,51 @@ namespace BISERP.Areas.AdminPanel.Controllers
             else
                 return Json(new { success = true });
         }
+
+        [HttpGet]
+        public async Task<JsonResult> GetDepartments()
+        {
+            try
+            {
+                string _url = $"{url}/EmployeeEnrollment/GetDepartments{Common.Constants.JsonTypeResult}";
+                List<DepartmentModel> departments = await Common.AsyncWebCalls.GetAsync<List<DepartmentModel>>(client, _url, CancellationToken.None);
+
+                if (departments == null || !departments.Any())
+                {
+                    return Json(new { error = "No departments found." }, JsonRequestBehavior.AllowGet);
+                }
+
+                return Json(departments, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error in GetDepartments method:" + Environment.NewLine + ex.ToString());
+                return Json(new { error = "An error occurred while retrieving the departments." }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> GetDesignations()
+        {
+            try
+            {
+                string _url = $"{url}/EmployeeEnrollment/GetDesignations{Common.Constants.JsonTypeResult}";
+                List<DesignationModel> designations = await Common.AsyncWebCalls.GetAsync<List<DesignationModel>>(client, _url, CancellationToken.None);
+
+                if (designations == null || !designations.Any())
+                {
+                    return Json(new { error = "No designations found." }, JsonRequestBehavior.AllowGet);
+                }
+
+                return Json(designations, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error in GetDesignations method:" + Environment.NewLine + ex.ToString());
+                return Json(new { error = "An error occurred while retrieving the designations." }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
     }
 
 }

@@ -13,6 +13,10 @@ namespace BISERPBusinessLayer.Entities.AdminPanel
         public int UserID { get; set; }
         public string LoginName { get; set; }
         public string Password { get; set; }
+        public int DepartmentID { get; set; }
+        public string Department { get; set; }
+        public int DesignationID { get; set; }
+        public string Designation { get; set; }
         public Nullable<int> InsertedBy { get; set; }
         public Nullable<System.DateTime> InsertedON { get; set; }
         public string InsertedMacName { get; set; }
@@ -24,5 +28,17 @@ namespace BISERPBusinessLayer.Entities.AdminPanel
         public string UpdatedMacID { get; set; }
         public string UpdatedIPAddress { get; set; }
         public int IsDeactive { get; set; }
+    }
+    public class DepartmentModel
+    {
+        public int DepartmentID { get; set; }
+        public string Department { get; set; }
+        public bool Deactive { get; set; }
+    }
+    public class DesignationModel
+    {
+        public int DesignationID { get; set; }
+        public string Designation { get; set; }
+        public bool Deactive { get; set; }
     }
 }

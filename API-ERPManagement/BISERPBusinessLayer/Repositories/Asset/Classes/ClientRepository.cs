@@ -62,10 +62,10 @@ namespace BISERPBusinessLayer.Repositories.Asset.Classes
         {
             try
             {
-            
-            int iResult = 0;
 
-           
+                int iResult = 0;
+
+
                 DBParameterCollection paramCollection = new DBParameterCollection();
                 paramCollection.Add(new DBParameter("ClientId", ClientEntity.ClientId, DbType.Int32, ParameterDirection.Output));
                 paramCollection.Add(new DBParameter("ClientCode", ClientEntity.ClientCode, DbType.String));
@@ -88,6 +88,7 @@ namespace BISERPBusinessLayer.Repositories.Asset.Classes
                 paramCollection.Add(new DBParameter("Web", ClientEntity.Web, DbType.String));
                 paramCollection.Add(new DBParameter("Society", ClientEntity.Society, DbType.String));
                 paramCollection.Add(new DBParameter("Village", ClientEntity.Village, DbType.String));
+                paramCollection.Add(new DBParameter("Division", ClientEntity.Division, DbType.String));
                 paramCollection.Add(new DBParameter("Country", ClientEntity.Country, DbType.Int32));
                 paramCollection.Add(new DBParameter("Street", ClientEntity.Street, DbType.String));
                 paramCollection.Add(new DBParameter("State", ClientEntity.State, DbType.Int32));
@@ -118,7 +119,7 @@ namespace BISERPBusinessLayer.Repositories.Asset.Classes
 
                 iResult = dbHelper.ExecuteNonQueryForOutParameter<int>(AssetQueries.InsertClient, paramCollection, CommandType.StoredProcedure, "ClientId");
                 ClientEntity.ClientId = iResult;
-            return iResult;
+                return iResult;
             }
             catch (Exception ex)
             {
@@ -161,56 +162,57 @@ namespace BISERPBusinessLayer.Repositories.Asset.Classes
             }
             return iResult;
         }
-        
+
         public int UpdateClientMst(ClientEntity ClientEntity, DBHelper dbHelper)
         {
             int iResult = 0;
-            
-                DBParameterCollection paramCollection = new DBParameterCollection();
-                paramCollection.Add(new DBParameter("ClientId", ClientEntity.ClientId, DbType.Int32));
-                paramCollection.Add(new DBParameter("ClientCode", ClientEntity.ClientCode, DbType.String));
-                paramCollection.Add(new DBParameter("ClientName", ClientEntity.ClientName, DbType.String));
-                paramCollection.Add(new DBParameter("Address", ClientEntity.Address, DbType.String));
-                paramCollection.Add(new DBParameter("UpdatedBy", ClientEntity.InsertedBy, DbType.Int32));
-                paramCollection.Add(new DBParameter("UpdatedMacName", ClientEntity.InsertedMacName, DbType.String));
-                paramCollection.Add(new DBParameter("UpdatedIPAddress", ClientEntity.InsertedIPAddress, DbType.String));
-                paramCollection.Add(new DBParameter("UpdatedOn", ClientEntity.UpdatedOn, DbType.DateTime));
-                paramCollection.Add(new DBParameter("UpdatedMacID", ClientEntity.InsertedMacID, DbType.String));
-                paramCollection.Add(new DBParameter("City", ClientEntity.City, DbType.Int32));
-                paramCollection.Add(new DBParameter("Pin", ClientEntity.Pin, DbType.String));
-                paramCollection.Add(new DBParameter("ContactPerson", ClientEntity.ContactPerson, DbType.String));
-                paramCollection.Add(new DBParameter("ContactDesignation", ClientEntity.ContactDesignation, DbType.String));
-                paramCollection.Add(new DBParameter("Fax", ClientEntity.Fax, DbType.String));
-                paramCollection.Add(new DBParameter("Phone1", ClientEntity.Phone1, DbType.String));
-                paramCollection.Add(new DBParameter("Phone2", ClientEntity.Phone2, DbType.String));
-                paramCollection.Add(new DBParameter("CellPhone", ClientEntity.CellPhone, DbType.String));
-                paramCollection.Add(new DBParameter("Email", ClientEntity.Email, DbType.String));
-                paramCollection.Add(new DBParameter("Web", ClientEntity.Web, DbType.String));
-                paramCollection.Add(new DBParameter("Society", ClientEntity.Society, DbType.String));
-                paramCollection.Add(new DBParameter("Village", ClientEntity.Village, DbType.String));
-                paramCollection.Add(new DBParameter("Country", ClientEntity.Country, DbType.Int32));
-                paramCollection.Add(new DBParameter("Street", ClientEntity.Street, DbType.String));
-                paramCollection.Add(new DBParameter("State", ClientEntity.State, DbType.Int32));
-                paramCollection.Add(new DBParameter("Deactive", ClientEntity.Deactive, DbType.Boolean));
-                paramCollection.Add(new DBParameter("landmark", ClientEntity.landmark, DbType.String));
 
-                paramCollection.Add(new DBParameter("CreditPeriod", ClientEntity.CreditPeriod.GetValueOrDefault(), DbType.Int32));
-                paramCollection.Add(new DBParameter("DateOfAssociation", ClientEntity.DateOfAssociation, DbType.DateTime));
-                paramCollection.Add(new DBParameter("CST", ClientEntity.CST.NullToString(), DbType.String));
-                paramCollection.Add(new DBParameter("ExciseCode", ClientEntity.ExciseCode.NullToString(), DbType.String));
-                paramCollection.Add(new DBParameter("BankName", ClientEntity.BankName.NullToString(), DbType.String));
-                paramCollection.Add(new DBParameter("BankBranch", ClientEntity.BankBranch.NullToString(), DbType.String));
-                paramCollection.Add(new DBParameter("BankAcNo", ClientEntity.BankAcNo.NullToString(), DbType.String));
-                paramCollection.Add(new DBParameter("IncomeTaxNo", ClientEntity.IncomeTaxNo.NullToString(), DbType.String));
-                paramCollection.Add(new DBParameter("AccountId", ClientEntity.AccountId.GetValueOrDefault(), DbType.Int32));
-                paramCollection.Add(new DBParameter("RTGSCODE", ClientEntity.RTGSCODE.NullToString(), DbType.String));
-                paramCollection.Add(new DBParameter("IFSCCODE", ClientEntity.IFSCCODE.NullToString(), DbType.String));
-                paramCollection.Add(new DBParameter("GSTIN", ClientEntity.GSTIN.NullToString(), DbType.String));
-                paramCollection.Add(new DBParameter("MICRNo", ClientEntity.MICRNo.NullToString(), DbType.String));
-                paramCollection.Add(new DBParameter("VATTINNo", ClientEntity.VATTINNo.NullToString(), DbType.String));
-                paramCollection.Add(new DBParameter("ServiceTaxNo", ClientEntity.ServiceTaxNo.NullToString(), DbType.String));
-                paramCollection.Add(new DBParameter("PANNo", ClientEntity.PANNo.NullToString(), DbType.String));
-                iResult = dbHelper.ExecuteNonQuery(AssetQueries.InsertClient, paramCollection, CommandType.StoredProcedure);
+            DBParameterCollection paramCollection = new DBParameterCollection();
+            paramCollection.Add(new DBParameter("ClientId", ClientEntity.ClientId, DbType.Int32));
+            paramCollection.Add(new DBParameter("ClientCode", ClientEntity.ClientCode, DbType.String));
+            paramCollection.Add(new DBParameter("ClientName", ClientEntity.ClientName, DbType.String));
+            paramCollection.Add(new DBParameter("Address", ClientEntity.Address, DbType.String));
+            paramCollection.Add(new DBParameter("UpdatedBy", ClientEntity.InsertedBy, DbType.Int32));
+            paramCollection.Add(new DBParameter("UpdatedMacName", ClientEntity.InsertedMacName, DbType.String));
+            paramCollection.Add(new DBParameter("UpdatedIPAddress", ClientEntity.InsertedIPAddress, DbType.String));
+            paramCollection.Add(new DBParameter("UpdatedOn", ClientEntity.UpdatedOn, DbType.DateTime));
+            paramCollection.Add(new DBParameter("UpdatedMacID", ClientEntity.InsertedMacID, DbType.String));
+            paramCollection.Add(new DBParameter("City", ClientEntity.City, DbType.Int32));
+            paramCollection.Add(new DBParameter("Pin", ClientEntity.Pin, DbType.String));
+            paramCollection.Add(new DBParameter("ContactPerson", ClientEntity.ContactPerson, DbType.String));
+            paramCollection.Add(new DBParameter("ContactDesignation", ClientEntity.ContactDesignation, DbType.String));
+            paramCollection.Add(new DBParameter("Fax", ClientEntity.Fax, DbType.String));
+            paramCollection.Add(new DBParameter("Phone1", ClientEntity.Phone1, DbType.String));
+            paramCollection.Add(new DBParameter("Phone2", ClientEntity.Phone2, DbType.String));
+            paramCollection.Add(new DBParameter("CellPhone", ClientEntity.CellPhone, DbType.String));
+            paramCollection.Add(new DBParameter("Email", ClientEntity.Email, DbType.String));
+            paramCollection.Add(new DBParameter("Web", ClientEntity.Web, DbType.String));
+            paramCollection.Add(new DBParameter("Society", ClientEntity.Society, DbType.String));
+            paramCollection.Add(new DBParameter("Village", ClientEntity.Village, DbType.String));
+            paramCollection.Add(new DBParameter("Division", ClientEntity.Division, DbType.String));
+            paramCollection.Add(new DBParameter("Country", ClientEntity.Country, DbType.Int32));
+            paramCollection.Add(new DBParameter("Street", ClientEntity.Street, DbType.String));
+            paramCollection.Add(new DBParameter("State", ClientEntity.State, DbType.Int32));
+            paramCollection.Add(new DBParameter("Deactive", ClientEntity.Deactive, DbType.Boolean));
+            paramCollection.Add(new DBParameter("landmark", ClientEntity.landmark, DbType.String));
+
+            paramCollection.Add(new DBParameter("CreditPeriod", ClientEntity.CreditPeriod.GetValueOrDefault(), DbType.Int32));
+            paramCollection.Add(new DBParameter("DateOfAssociation", ClientEntity.DateOfAssociation, DbType.DateTime));
+            paramCollection.Add(new DBParameter("CST", ClientEntity.CST.NullToString(), DbType.String));
+            paramCollection.Add(new DBParameter("ExciseCode", ClientEntity.ExciseCode.NullToString(), DbType.String));
+            paramCollection.Add(new DBParameter("BankName", ClientEntity.BankName.NullToString(), DbType.String));
+            paramCollection.Add(new DBParameter("BankBranch", ClientEntity.BankBranch.NullToString(), DbType.String));
+            paramCollection.Add(new DBParameter("BankAcNo", ClientEntity.BankAcNo.NullToString(), DbType.String));
+            paramCollection.Add(new DBParameter("IncomeTaxNo", ClientEntity.IncomeTaxNo.NullToString(), DbType.String));
+            paramCollection.Add(new DBParameter("AccountId", ClientEntity.AccountId.GetValueOrDefault(), DbType.Int32));
+            paramCollection.Add(new DBParameter("RTGSCODE", ClientEntity.RTGSCODE.NullToString(), DbType.String));
+            paramCollection.Add(new DBParameter("IFSCCODE", ClientEntity.IFSCCODE.NullToString(), DbType.String));
+            paramCollection.Add(new DBParameter("GSTIN", ClientEntity.GSTIN.NullToString(), DbType.String));
+            paramCollection.Add(new DBParameter("MICRNo", ClientEntity.MICRNo.NullToString(), DbType.String));
+            paramCollection.Add(new DBParameter("VATTINNo", ClientEntity.VATTINNo.NullToString(), DbType.String));
+            paramCollection.Add(new DBParameter("ServiceTaxNo", ClientEntity.ServiceTaxNo.NullToString(), DbType.String));
+            paramCollection.Add(new DBParameter("PANNo", ClientEntity.PANNo.NullToString(), DbType.String));
+            iResult = dbHelper.ExecuteNonQuery(AssetQueries.InsertClient, paramCollection, CommandType.StoredProcedure);
             if (iResult > 0)
                 return iResult;
             else
@@ -234,6 +236,7 @@ namespace BISERPBusinessLayer.Repositories.Asset.Classes
                                 Street = row.Field<string>("Street"),
                                 Society = row.Field<string>("Society"),
                                 Village = row.Field<string>("Village"),
+                                Division = row.Field<string>("Division"),
                                 City = row.Field<int?>("City"),
                                 Pin = row.Field<string>("Pin"),
                                 Country = row.Field<int?>("Country"),
@@ -263,7 +266,8 @@ namespace BISERPBusinessLayer.Repositories.Asset.Classes
                                 CreditPeriod = row.Field<int>("CreditPeriod"),
                                 //strDateOfAssociation = row.Field<string>("DateOfAssociation").,
                                 strDateOfAssociation = Convert.ToDateTime(row.Field<DateTime>("DateOfAssociation")).ToString("dd-MMMM-yyyy"),
-                                MICRNo = row.Field<string>("MICRNo")
+                                MICRNo = row.Field<string>("MICRNo"),
+                                FullAddress = row.Field<string>("FullAddress")
                             }).ToList();
             }
             return client;
@@ -276,8 +280,8 @@ namespace BISERPBusinessLayer.Repositories.Asset.Classes
             paramCollection.Add(new DBParameter("ClientId", clientId, DbType.Int32));
             using (DBHelper dbHelper = new DBHelper())
             {
-               
-                DataTable dtvendor = dbHelper.ExecuteDataTable(AssetQueries.GetClientConsignee,paramCollection, CommandType.StoredProcedure);
+
+                DataTable dtvendor = dbHelper.ExecuteDataTable(AssetQueries.GetClientConsignee, paramCollection, CommandType.StoredProcedure);
                 client = dtvendor.AsEnumerable()
                             .Select(row => new ConsigneeEntity
                             {

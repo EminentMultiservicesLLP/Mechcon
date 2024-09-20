@@ -1,4 +1,5 @@
 ﻿using BISERPBusinessLayer.Entities.Masters;
+using BISERPBusinessLayer.Entities.SM;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,5 +36,7 @@ namespace BISERPBusinessLayer.Repositories.Master.Interfaces
         List<ProjectTransactionRecordEntities> GetProjectTransactionRecord(int StoreId);
         List<DeliverablesDetailEntities> GetDeliverablesDetail(int StoreId);
         List<BudgetStatusEntities> GetBudgetStatus();
+        IEnumerable<WorkOrderEntities> GetEnqForProjectMaster(int UserID);
+
     }
 }

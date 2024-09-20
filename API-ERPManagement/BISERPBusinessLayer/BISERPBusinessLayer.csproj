@@ -165,6 +165,11 @@
     <Compile Include="Entities\Purchase\RequestForQuoteEntities.cs" />
     <Compile Include="Entities\Purchase\WorkOrderEntities.cs" />
     <Compile Include="Entities\ScanDoc\ScanDocEntity.cs" />
+    <Compile Include="Entities\SM\EnquiryAllocationEntities.cs" />
+    <Compile Include="Entities\SM\EnquiryRegisterEntities.cs" />
+    <Compile Include="Entities\SM\OfferRegisterEntities.cs" />
+    <Compile Include="Entities\SM\OrderBookEntities.cs" />
+    <Compile Include="Entities\SM\WorkOrderEntities.cs" />
     <Compile Include="Entities\Store\AdjustmentVoucherDtEntity.cs" />
     <Compile Include="Entities\Store\AdjustmentVoucherEntity.cs" />
     <Compile Include="Entities\Store\BatchEntity.cs" />
@@ -255,6 +260,7 @@
     <Compile Include="QueryCollection\Masters\MasterQueries.cs" />
     <Compile Include="QueryCollection\Purchase\PurchaseQueries.cs" />
     <Compile Include="QueryCollection\ScanDoc\ScanDocQueries.cs" />
+    <Compile Include="QueryCollection\SM\MarketingQueries.cs" />
     <Compile Include="QueryCollection\Store\StoreQuery.cs" />
     <Compile Include="QueryCollection\Training\TrainingQueries.cs" />
     <Compile Include="QueryCollection\Transport\TransportQuery.cs" />
@@ -445,6 +451,16 @@
     <Compile Include="Repositories\Purchase\Interfaces\PurchaseOrderDetailEntities.cs" />
     <Compile Include="Repositories\ScanDoc\Classes\ScanDocRepository.cs" />
     <Compile Include="Repositories\ScanDoc\Interfaces\IScanDocRepository.cs" />
+    <Compile Include="Repositories\SM\Classes\EnquiryAllocationRepository.cs" />
+    <Compile Include="Repositories\SM\Classes\EnquiryRegisterRepository.cs" />
+    <Compile Include="Repositories\SM\Classes\OfferRegisterRepository.cs" />
+    <Compile Include="Repositories\SM\Classes\OrderBookRepository.cs" />
+    <Compile Include="Repositories\SM\Classes\SM_WorkOrderRepository.cs" />
+    <Compile Include="Repositories\SM\Interfaces\IEnquiryAllocationRepository.cs" />
+    <Compile Include="Repositories\SM\Interfaces\IEnquiryRegisterRepository.cs" />
+    <Compile Include="Repositories\SM\Interfaces\IOfferRegisterRepository.cs" />
+    <Compile Include="Repositories\SM\Interfaces\IOrderBookRepository.cs" />
+    <Compile Include="Repositories\SM\Interfaces\ISM_WorkOrderRepository.cs" />
     <Compile Include="Repositories\Store\Classes\AdjustmentVoucherCommonRepository.cs" />
     <Compile Include="Repositories\Store\Classes\AdjustmentVoucherDtRepository.cs" />
     <Compile Include="Repositories\Store\Classes\AdjustmentVoucherRepository.cs" />

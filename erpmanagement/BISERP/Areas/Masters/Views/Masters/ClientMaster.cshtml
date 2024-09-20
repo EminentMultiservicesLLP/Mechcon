@@ -49,43 +49,52 @@
                                     <legend class="legendCustom">Address</legend>
 
                                     <div class="row">
-                                        <div class="col-md-3">
+                                        <div class="col-md-6">
+                                            @Html.LabelFor(model => model.Address)
+                                            @Html.TextBoxFor(model => model.Address, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.Address)
+                                        </div>
+                                        <div class="col-md-2">
                                             @Html.LabelFor(model => model.Society)
                                             @Html.TextBoxFor(model => model.Society, new { @class = "form-control" })
                                             @Html.ValidationMessageFor(model => model.Society)
                                         </div>
-                                        <div class="col-md-3">
+                                        <div class="col-md-2">
                                             @Html.LabelFor(model => model.Street)
                                             @Html.TextBoxFor(model => model.Street, new { @class = "form-control" })
                                             @Html.ValidationMessageFor(model => model.Street)
                                         </div>
-                                        <div class="col-md-3">
+                                        <div class="col-md-2">
                                             @Html.LabelFor(model => model.Landmark)
                                             @Html.TextBoxFor(model => model.Landmark, new { @class = "form-control" })
                                             @Html.ValidationMessageFor(model => model.Landmark)
                                         </div>
-                                        <div class="col-md-3">
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-2">
                                             @Html.LabelFor(model => model.Village)
                                             @Html.TextBoxFor(model => model.Village, new { @class = "form-control" })
                                         </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-3">
+                                        <div class="col-md-2">
+                                            @Html.LabelFor(model => model.Division)
+                                            @Html.TextBoxFor(model => model.Division, new { @class = "form-control" })
+                                        </div>
+                                        <div class="col-md-2">
                                             @Html.LabelFor(model => model.Country)
                                             @Html.DropDownList("ddlCountry", new SelectList(string.Empty, "Value", "Text"), "Select Country ", new { @class = "wrapperdropdown-content form-control" })
                                             @Html.ValidationMessageFor(model => model.Country)
                                         </div>
-                                        <div class="col-md-3">
+                                        <div class="col-md-2">
                                             @Html.LabelFor(model => model.State)
                                             @Html.DropDownList("ddlState", new SelectList(string.Empty, "Value", "Text"), "Select State ", new { @class = "wrapperdropdown-content form-control" })
                                             @Html.ValidationMessageFor(model => model.State)
                                         </div>
-                                        <div class="col-md-3">
+                                        <div class="col-md-2">
                                             @Html.LabelFor(model => model.City)
                                             @Html.DropDownList("ddlCity", new SelectList(string.Empty, "Value", "Text"), "Select City", new { @class = "wrapperdropdown-content form-control" })
                                             @Html.ValidationMessageFor(model => model.City)
                                         </div>
-                                        <div class="col-md-3">
+                                        <div class="col-md-2">
                                             @Html.LabelFor(model => model.Pincode)
                                             @Html.TextBoxFor(model => model.Pincode, new { @class = "form-control" })
                                             @Html.ValidationMessageFor(model => model.Pincode)
@@ -372,10 +381,12 @@
                 { name: "Code", title: "Code", type: "text", validate: "required", width: 20 },
                 { name: "Name", title: "Name", type: "text", validate: "required" },
                 { name: "Deactive", title: "Deactive", type: "checkbox", filtering: false, width: 10 },
+                { name: "Address", visible: false, width: 0 },
                 { name: "Society", visible: false, width: 0 },
                 { name: "Street", visible: false, width: 0 },
                 { name: "Landmark", visible: false, width: 0 },
                 { name: "Village", visible: false, width: 0 },
+                { name: "Division", visible: false, width: 0 },
                 { name: "City", visible: false, width: 0 },
                 { name: "Pincode", visible: false, width: 0 },
                 { name: "State", visible: false, width: 0 },
@@ -420,11 +431,10 @@
             ],
             /********** Row Selection Event you can use in suupplier***********/
             rowClick: function (args) {
-                //var date1 = ToJavaScriptDate(data.DateOfAssociation);
                 var data = args.item;
                 $("#ClientId").val(data.ClientId);
-                $("#Name").val(data.Name); $("#Code").val(data.Code); $("#Deactive").prop('checked', data.Deactive); $("#Society").val(data.Society); $("#Street").val(data.Street); $("#Landmark").val(data.Landmark);
-                $("#Village").val(data.Village); $("#Pincode").val(data.Pincode);/* $("#ddlState").val(data.State); */$("#ddlCountry").val(data.Country);
+                $("#Name").val(data.Name); $("#Code").val(data.Code); $("#Deactive").prop('checked', data.Deactive); $("#Address").val(data.Address); $("#Society").val(data.Society); $("#Street").val(data.Street); $("#Landmark").val(data.Landmark);
+                $("#Village").val(data.Village); $("#Division").val(data.Division); $("#Pincode").val(data.Pincode);/* $("#ddlState").val(data.State); */$("#ddlCountry").val(data.Country);
                 GetState(data.State); GetCity(data.City, data.State); /*$("#ddlCity").val(data.City); */$("#ContactPerson").val(data.ContactPerson);
                 $("#ContactDesignation").val(data.ContactDesignation); $("#Phone1").val(data.Phone1); $("#Phone2").val(data.Phone2); $("#CellPhone").val(data.CellPhone); $("#Fax").val(data.Fax);
                 $("#Web").val(data.Web); $("#Email").val(data.Email); $("#VATTINNo").val(data.VATTINNo); $("#ServiceTaxNo").val(data.ServiceTaxNo); $("#ExciseCode").val(data.ExciseCode); $("#PANNo").val(data.PANNo);
@@ -551,9 +561,11 @@
                 Name: $("#Name").val(),
                 Code: $("#Code").val(),
                 Street: $("#Street").val(),
+                Address: $("#Address").val(),
                 Society: $("#Society").val(),
                 Landmark: $("#Landmark").val(),
                 Village: $("#Village").val(),
+                Division: $("#Division").val(),
                 City: $("#ddlCity").val(),
                 Pincode: $("#Pincode").val(),
                 State: $("#ddlState").val(),
@@ -709,7 +721,7 @@
     }
 
     function ClearForm() {
-        $("#ClientId").val(""); $("#Name").val(""); $("#Code").val(""); $("#Deactive").prop('checked', false); $("#Society").val(""); $("#Street").val(""); $("#Landmark").val(""); $("#Village").val("");
+        $("#ClientId").val(""); $("#Name").val(""); $("#Code").val(""); $("#Deactive").prop('checked', false); $("#Address").val(""); $("#Society").val(""); $("#Street").val(""); $("#Landmark").val(""); $("#Village").val(""); $("#Division").val("");
        /* $("#ddlCity").val("");*/  $("#ddlCity").empty();  $("#Pincode").val(""); $("#ddlState").val(""); $("#ddlCountry").val(""); $("#ContactPerson").val(""); $("#ContactDesignation").val(""); $("#Phone1").val("");
         $("#Phone2").val(""); $("#CellPhone").val(""); $("#Fax").val(""); $("#Web").val(""); $("#Email").val(""); $("#VATTINNo").val(""); $("#ServiceTaxNo").val(""); $("#ExciseCode").val("");
         $("#PANNo").val(""); $("#CST").val(""); $("#IncomeTaxNo").val(""); $("#RTGSCODE").val(""); $("#IFSCCODE").val(""); $("#CreditPeriod").val(""); $("#EligableForAdv").prop('checked', false);

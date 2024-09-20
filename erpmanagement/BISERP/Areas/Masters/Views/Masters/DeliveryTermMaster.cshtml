@@ -80,9 +80,6 @@
         filtering: true, //will display top 1st row as filter
         selecting: true,
         sorting: true,
-        //inserting: true, // false will not allow inserting new entry
-        //editing: true,// false will not allow exisiting data entry
-        //autoload: true, // this statement require to load data using ajax call
         paging: true,
         pageSize: 20,
 
@@ -108,50 +105,7 @@
                     }
                 });
                 return d.promise();
-            },
-            //insertItem: function (item) {
-            //    var d = $.Deferred();
-            //    $.ajax(
-            //    {
-            //        type: "POST", //HTTP POST Method
-            //        dataType: "json",
-            //        url: '/DeliveryTerm/SaveDeliveryTerm', // Controller/View
-            //        data: item,
-            //        success: function (msg) {
-            //            if (msg.success) {
-            //                ShowAlert("success", "DeliveryTerm Master added successfully to system.");
-            //            } else {
-            //                ShowAlert("error", msg.Message);
-            //            }
-            //        },
-            //    }).done(function (insertedItem) {
-            //        d.resolve(insertedItem.data);
-            //        $("#grid").jsGrid("loadData");
-            //    });
-            //    return d.promise();
-
-            //},
-            //updateItem: function (item) {
-            //    var d = $.Deferred();
-            //    $.ajax(
-            //    {
-            //        type: "POST", //HTTP POST Method
-            //        dataType: "json",
-            //        url: '/DeliveryTerm/SaveDeliveryTerm', // Controller/View
-            //        data: item,
-            //        success: function (msg) {
-            //            if (msg.success) {
-            //                ShowAlert("success", "DeliveryTerm Master updated successfully to system.");
-            //            } else {
-            //                ShowAlert("error", msg.Message);
-            //            }
-            //        },
-            //    }).done(function (insertedItem) {
-            //        d.resolve(insertedItem.data);
-            //        $("#grid").jsGrid("loadData");
-            //    });
-            //    return d.promise();
-            //}
+            }
         },
         fields: [
             { name: "TermID", visible: false, width: 0 },

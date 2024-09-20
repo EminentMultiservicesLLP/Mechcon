@@ -24,5 +24,8 @@ namespace BISERPBusinessLayer.Repositories.Purchase.Interfaces
         List<PurchaseIndentDetailEntities> GetIndentTemplateforId(int templateId);
         IEnumerable<PurchaseIndentEntities> GetPurchaseIndentForReport();
         List<PIRemarkLibrary> GetPIRemarkLibrary(int StoreId, int ItemId);
+        IEnumerable<ProductEntities> GetProduct();
+        IEnumerable<ProjectEntities> GetProject(int ProductID);
+        IEnumerable<ProductItemEntities> GetProductItem(int ProductID, int? ProjectID);
     }
 }

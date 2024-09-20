@@ -168,6 +168,7 @@ namespace BISERPBusinessLayer.QueryCollection.Masters
         public const string GetProjectTransactionRecord = "dbsp_GetProjectTransactionRecord";
         public const string GetDeliverablesDetail = "dbsp_GetDeliverablesDetail";
         public const string GetBudgetStatus = "dbsp_GetBudgetStatus";
+        public const string GetEnqForProjectMaster = "sp_SM_GetEnqForProjectMaster";
 
         public const string SaveClearanceNote = "sp_InsUpd_SaveClearanceNote";
         public const string GetClearanceNote = "dbsp_GetClearanceNote";

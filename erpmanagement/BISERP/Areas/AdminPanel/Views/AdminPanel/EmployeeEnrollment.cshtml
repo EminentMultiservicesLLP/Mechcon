@@ -39,27 +39,39 @@
                                 </div>
                                 <fieldset class="fieldsetCustom">
                                     <legend class="legendCustom">User Form</legend>
-                                    <div class="row">
-                                        <div class="col-sm-3" @*style="display:none"*@>
-                                            @Html.Label("User Code")
-                                            @Html.TextBox("UserCode", "", new { @class = "form-control " })
-                                        </div>
-                                        <div class="col-sm-3">
-                                            @Html.Label("Enter Employee Name")
-                                            @Html.TextBoxFor(M => M.UserName, new { @class = "form-control " })
-                                            @Html.HiddenFor(M => M.UserID)
-                                            @Html.HiddenFor(M => M.IsDeactive)
-                                        </div>
-                                        <div class="col-sm-3">
-                                            @Html.Label("User Name")
-                                            @Html.TextBoxFor(M => M.LoginName, new { @class = "form-control " })
-                                        </div>
-                                        <div class="col-sm-3">
-                                            @Html.Label("Password")
-                                            @Html.PasswordFor(M => M.Password, new { @class = "form-control " })
+                                    <div class="container-fluid">
+                                        <div class="row">
+                                            <div class="col-sm-12 col-md-4 col-lg-3">
+                                                @Html.Label("User Code", htmlAttributes: new { @class = "" })
+                                                @Html.TextBox("UserCode", "", new { @class = "form-control required" })
+                                            </div>
+                                            <div class="col-sm-12 col-md-4 col-lg-3">
+                                                @Html.Label("Employee Name", htmlAttributes: new { @class = "required" })
+                                                @Html.TextBoxFor(M => M.UserName, new { @class = "form-control required" })
+                                                @Html.HiddenFor(M => M.UserID)
+                                                @Html.HiddenFor(M => M.IsDeactive)
+                                            </div>
+                                            <div class="col-sm-12 col-md-4 col-lg-3">
+                                                @Html.Label("User Name", htmlAttributes: new { @class = "required" })
+                                                @Html.TextBoxFor(M => M.LoginName, new { @class = "form-control required" })
+                                            </div>
+                                            <div class="col-sm-12 col-md-4 col-lg-3">
+                                                @Html.Label("Password", htmlAttributes: new { @class = "required" })
+                                                @Html.PasswordFor(M => M.Password, new { @class = "form-control required" })
+                                            </div>
+                                            <div class="col-sm-12 col-md-4 col-lg-3">
+                                                @Html.Label("Department", htmlAttributes: new { @class = "required" })
+                                                @Html.DropDownListFor(M => M.DepartmentID, new SelectList(string.Empty, "Value", "Text"), "--Select Department--", new { @class = "form-control required" })
+                                            </div>
+                                            <div class="col-sm-12 col-md-4 col-lg-3">
+                                                @Html.Label("Designation", htmlAttributes: new { @class = "required" })
+                                                @Html.DropDownListFor(M => M.DesignationID, new SelectList(string.Empty, "Value", "Text"), "--Select Designation--", new { @class = "form-control required" })
+                                            </div>
                                         </div>
                                     </div>
                                 </fieldset>
+
+
                             </div>
                         </div>
                     </div>
@@ -82,6 +94,66 @@
         e.preventDefault();
         return false;
     });
+
+    function loadDepartments() {
+        $.ajax({
+            type: "GET",
+            url: "/EmployeeEnrollment/GetDepartments",
+            dataType: "json",
+            success: function (data) {
+                const $departmentDropdown = $('#DepartmentID');
+                $departmentDropdown.empty();
+
+                if (data.error) {
+                    $departmentDropdown.append('<option value="">--Error loading departments--</option>');
+                    console.error("Error loading departments:", data.error);
+                    return;
+                }
+
+                $departmentDropdown.append('<option value="">--Select Department--</option>');
+
+                data.forEach(function (department) {
+                    $departmentDropdown.append(`<option value="${department.DepartmentID}">${department.Department}</option>`);
+                });
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                $('#DepartmentID').empty();
+                $('#DepartmentID').append('<option value="">--Error loading departments--</option>');
+                console.error("Error loading departments:", errorThrown);
+            }
+        });
+    }
+
+    function loadDesignations() {
+        $.ajax({
+            type: "GET",
+            url: "/EmployeeEnrollment/GetDesignations",
+            dataType: "json",
+            success: function (data) {
+                const $designationDropdown = $('#DesignationID');
+                $designationDropdown.empty();
+
+                if (data.error) {
+                    $designationDropdown.append('<option value="">--Error loading designations--</option>');
+                    console.error("Error loading designations:", data.error);
+                    return;
+                }
+
+                $designationDropdown.append('<option value="">--Select Designation--</option>');
+
+                data.forEach(function (designation) {
+                    $designationDropdown.append(`<option value="${designation.DesignationID}">${designation.Designation}</option>`);
+                });
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                $('#DesignationID').empty();
+                $('#DesignationID').append('<option value="">--Error loading designations--</option>');
+                console.error("Error loading designations:", errorThrown);
+            }
+        });
+    }
+    loadDepartments();
+    loadDesignations();
 
     /****************GetUserCode Fn*******************/
     $("#btnAdd").click(function () {
@@ -131,18 +203,20 @@
 
     dataList = { location: 'local', sorting: 'local', paging: 'local', dataType: 'JSON' };
     var setUserCol = [
-        { title: "User Code", dataIndx: "UserCode", width: '15%' },
-        { title: "UserID", dataIndx: "UserID", width: '15%' },
+        { title: "UserID", dataIndx: "UserID", width: '7%' },
+        { title: "User Code", dataIndx: "UserCode", width: '13%' },
         {
-            title: "Employee Name", dataIndx: "UserName", width: '68%',
+            title: "Employee Name", dataIndx: "UserName", width: '30%',
             filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
         },
-        //{ title: "Active/Inactive", dataIndx: "IsDeactive", width: 90 },
-        { title: "Login Name", dataIndx: "LoginName", width: 90, hidden: true },
-        { title: "Password", dataIndx: "Password", width: 90, hidden: true },
-
-
-
+        {
+            title: "Department", dataIndx: "Department", width: '25%',
+            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+        },
+        {
+            title: "Designation", dataIndx: "Designation", width: '25%',
+            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+        },
     ];
     setUserList = {
         width: "auto", //auto width
@@ -168,6 +242,8 @@
                 $("#UserID").val(Details.UserID);
                 $("#LoginName").val(Details.LoginName);
                 $("#Password").val(Details.Password);
+                $("#DepartmentID").val(Details.DepartmentID);
+                $("#DesignationID").val(Details.DesignationID);
                 fieldsDisable(false);
                 closeModal();
             }
@@ -226,6 +302,8 @@
             LoginName: $("#LoginName").val(),
             Password: $("#Password").val(),
             UserID: $("#UserID").val(),
+            DepartmentID: $("#DepartmentID").val(),
+            DesignationID: $("#DesignationID").val()
         });
 
         $.ajax(
@@ -268,6 +346,14 @@
             ShowAlert("error", "Password is missing! Please enter the Password");
             return;
         }
+        if ($("#DepartmentID").val() == "") {
+            ShowAlert("error", "Department is missing! Please enter the Department");
+            return;
+        }
+        if ($("#DesignationID").val() == "") {
+            ShowAlert("error", "Designation is missing! Please enter the Designation");
+            return;
+        }
         saveUser();
     });
 
@@ -281,6 +367,8 @@
         $("#UserName").val("");
         $("#UserCode").val("");
         $("#UserID").val("");
+        $("#DepartmentID").val("");
+        $("#DesignationID").val("");
         fieldsDisable(true);
     }
     fieldsDisable(true);
@@ -288,6 +376,8 @@
         $("#UserName").prop("disabled", state);
         $("#LoginName").prop("disabled", state);
         $("#Password").prop("disabled", state);
+        $("#DepartmentID").prop("disabled", state);
+        $("#DesignationID").prop("disabled", state);
     }
     $("#btnSearch").on('click', function () {
         $("#SearchGridModal").modal('show');

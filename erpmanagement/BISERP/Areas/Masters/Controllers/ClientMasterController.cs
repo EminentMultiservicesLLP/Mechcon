@@ -110,7 +110,6 @@ namespace BISERP.Areas.Masters.Controllers
             return jResult;
         }
 
-
         [HttpGet]
         public async Task<JsonResult> GetClientConsignee(int clientId)
         {

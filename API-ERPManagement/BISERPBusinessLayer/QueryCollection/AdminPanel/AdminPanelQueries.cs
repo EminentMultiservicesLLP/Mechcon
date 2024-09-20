@@ -22,6 +22,8 @@ namespace BISERPBusinessLayer.QueryCollection.AdminPanel
         //public const string GetMenuByUser = "sp_GetMenuByUser";
         public const string CheckDuplicateItem = "sp_Check_DuplicateCode";
         public const string ChangePassword = "sp_ChangePassword";
+        public const string GetDepartments = "dbsp_MST_GetDepartment";
+        public const string GetDesignations = "dbsp_MST_GetDesignation";
 
         //---------------------------------new 2024
         public const string GetParentMenu = "sp_GetParentMenu";

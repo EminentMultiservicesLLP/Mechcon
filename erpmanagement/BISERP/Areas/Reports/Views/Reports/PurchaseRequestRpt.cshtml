@@ -17,46 +17,98 @@
         </div>
     </div>
 </div>
-<div class="panel-group">
-    <div class="panel panel-default">
-        <div class="panel-groupingBoder">
-            <div class="panel-heading">
-                <div class="panel-title">                 
-                </div>
-            </div>
-            <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
-                <div class="panel-body">
-                    <div class="submit-row">
-                        <div class="col-sm-12">
-                            <button type="button" class="btn btn-info" id="btnSearch">FIND</button>
-                            <button type="button" class="btn btn-primary" id="btnReset">RESET</button>
-                            @*<button type="button" class="btn btn-warning" id="btnReport">REPORT</button>*@
-                        </div>
-                    </div>
-                    <fieldset class="fieldsetCustom">
-                        <legend class="legendCustom">Purchase Request Report</legend>
-                        <div class="row">
-                            <div class="col-sm-5 col-lg-3">
-                                @Html.LabelFor(m => m.IndentNumber)
-                                @Html.TextBoxFor(m => m.IndentNumber, "", new { @readonly = "true", @class = "form-control" })
-                                @Html.HiddenFor(m => m.IndentId)
-                            </div>
-                            <div class="col-sm-5 col-lg-3">
-                                @Html.LabelFor(model => model.IndentDate)
-                                @Html.TextBoxFor(model => model.IndentDate, new { @readonly = "true", @class = "IndentDate form-control" })
-                            </div>
-                        </div>
-                    </fieldset>
-                        <div style="margin-top: 28px;">
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <iframe id="iframeReportViewer" style="width: 100%; height: 800px"></iframe>
+<div id="content">
+    <div id="content-tab">
+        <ul id="tabs" class="nav nav-tabs" data-tabs="tabs" style="padding: 1px; background: silver;">
+            <li class="active tab"><a href="#tab1" data-toggle="tab" style="margin: 0;">Purchase Report</a></li>
+            <li><a href="#tab2" data-toggle="tab" style="margin: 0;">Product Items Report</a></li>
+        </ul>
+        <fieldset class="fieldsetCustom">
+            <div id="my-tab-content" class="tab-content" style="border:none">
+                <div class="tab-pane active" id="tab1">
+                    <br>
+
+                    <div class="panel-group">
+                        <div class="panel panel-default">
+                            <div class="panel-groupingBoder">
+                                <div class="panel-heading">
+                                    <div class="panel-title">
+                                    </div>
+                                </div>
+                                <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                                    <div class="panel-body">
+                                        <div class="submit-row">
+                                            <div class="col-sm-12">
+                                                <button type="button" class="btn btn-info" id="btnSearch">FIND</button>
+                                                <button type="button" class="btn btn-primary" id="btnReset">RESET</button>
+                                                @*<button type="button" class="btn btn-warning" id="btnReport">REPORT</button>*@
+                                            </div>
+                                        </div>
+                                        <fieldset class="fieldsetCustom">
+                                            <legend class="legendCustom">Purchase Request Report</legend>
+                                            <div class="row">
+                                                <div class="col-sm-5 col-lg-3">
+                                                    @Html.LabelFor(m => m.IndentNumber)
+                                                    @Html.TextBoxFor(m => m.IndentNumber, "", new { @readonly = "true", @class = "form-control" })
+                                                    @Html.HiddenFor(m => m.IndentId)
+                                                </div>
+                                                <div class="col-sm-5 col-lg-3">
+                                                    @Html.LabelFor(model => model.IndentDate)
+                                                    @Html.TextBoxFor(model => model.IndentDate, new { @readonly = "true", @class = "IndentDate form-control" })
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                        <div style="margin-top: 28px;">
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <iframe id="iframeReportViewer" style="width: 100%; height: 800px"></iframe>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane" id="tab2">
+                    <br>
+
+                    <div class="panel-group">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <div class="fill">
+                                    <div class="submit-row">
+                                        <div class="col-sm-3">
+                                            <label for="ProductID" class="required">Product</label>
+                                            <select id="ProductID" name="ProductID" class="wrapperdropdown-content form-control">
+                                                <option value="">Select Product</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label for="ProjectID">Select Project</label>
+                                            <select id="ProjectID" name="ProjectID" class="form-control wrapperdropdown-content">
+                                                <option value="">All</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-3" style="text-align:center">
+                                            <br />
+                                            <button type="button" class="btn btn-primary" id="btnreset" onclick="clearProductItemForm()">Reset</button>
+                                        </div>
+                                    </div>
+                                    <div class="divider"></div>
+                                    <fieldset class="fieldsetCustom">
+                                        <legend class="legendCustom">Product Item Details</legend>
+                                        <div id="ProductItemGrid"></div>
+                                    </fieldset>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
+        </fieldset>
     </div>
 </div>
 <script type="text/javascript">
@@ -66,7 +118,6 @@
         $("#SearchGridModal").modal('show');
         LoadSearchgrid('authorised');
     });
-
     function LoadSearchgrid(status) {
         //ClearParamGrid("searchgrid");
         $.ajax({
@@ -82,9 +133,9 @@
             },
             success: function (data) {
                 if (data.mimodel) {
-                    
+
                     var dataMGrid = data.mimodel;
-                    
+
                     if (dataMGrid.length > 0) {
                         $searchgrid.pqGrid("hideLoading");
                         $searchgrid.pqGrid("option", "dataModel.data", dataMGrid);
@@ -156,11 +207,9 @@
             }
         }
         $searchgrid = $("#searchgrid").pqGrid(SetM);
-      
+
     });
 
-
-   
     function ReportValidationCheck(indentId, pIType) {
         var url = "";
         url = "../../Reports/ReportViewer.aspx?reportid=" + 237 + "&indentId=" + indentId + "&pIType=" + pIType;
@@ -190,4 +239,228 @@
         $("#SearchGridModal").modal('hide');
     }
 
+    //-------------------------------------Project Item Starts from here
+
+    function loadProduct() {
+        $.ajax({
+            type: "GET",
+            url: "/PurchaseIndent/GetProduct",
+            dataType: "json",
+            success: function (data) {
+                const $productID = $('#ProductID');
+                $productID.empty();
+
+                if (data.error) {
+                    $productID.append('<option value="">--Error loading products--</option>');
+                    console.error("Error loading products:", data.error);
+                    return;
+                }
+
+                $productID.append('<option value="">Select Product</option>');
+                data.forEach(function (product) {
+                    $productID.append(`<option value="${product.ProductID}">${product.ProductName}</option>`);
+                });
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                $('#ProductID').empty();
+                $('#ProductID').append('<option value="">--Error loading products--</option>');
+                console.error("Error loading products:", errorThrown);
+            }
+        });
+    }
+    loadProduct();
+
+    function loadProject(productID) {
+        $.ajax({
+            type: "GET",
+            url: "/PurchaseIndent/GetProject",
+            data: { ProductID: productID },
+            dataType: "json",
+            success: function (data) {
+                const $projectID = $('#ProjectID');
+                $projectID.empty();
+
+                if (data.error) {
+                    $projectID.append('<option value="">All</option>');
+                    console.error("Error loading projects:", data.error);
+                    return;
+                }
+
+                $projectID.append('<option value="">All</option>');
+                data.forEach(function (project) {
+                    $projectID.append(`<option value="${project.ProjectID}">${project.ProjectName}</option>`);
+                });
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                $('#ProjectID').empty();
+                $('#ProjectID').append('<option value="">--Error loading projects--</option>');
+                console.error("Error loading projects:", errorThrown);
+            }
+        });
+    }
+
+    $("#ProductID").change(() => {
+        const productID = $("#ProductID").val();
+
+        if (productID && productID != 0) {
+            loadProject(productID);
+            loadProductItemGrid(productID, null);
+        } else {
+            $('#ProjectID').empty().append('<option value="">All</option>');
+
+            const grid = $("#ProductItemGrid").pqGrid();
+            grid.pqGrid("option", "dataModel.data", []).pqGrid("refreshDataAndView");
+            PqGridRefreshClick(grid);
+        }
+    });
+
+
+    $("#ProjectID").change(() => {
+        const productID = $("#ProductID").val();
+        let projectID = $("#ProjectID").val();
+
+        if (productID && productID != 0) {
+            projectID = (projectID && projectID != 0) ? projectID : null;
+            loadProductItemGrid(productID, projectID);
+        } else {
+            $('#ProjectID').empty().append('<option value="">All</option>');
+
+            const grid = $("#ProductItemGrid").pqGrid();
+            grid.pqGrid("option", "dataModel.data", []).pqGrid("refreshDataAndView");
+            PqGridRefreshClick(grid);
+        }
+    });
+
+
+    //-----------------------------------ProductItemGrid (Starts here)-----------------------------------//
+    var ProductItemGrid_GDM = { location: "local" };
+    var ProductItemGrid_GCM = [
+        {
+            title: "Product", dataIndx: "ProductName", width: '25%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Project", dataIndx: "ProjectName", width: '25%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Item", dataIndx: "ItemName", width: '35%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Qty", dataIndx: "ItemQty", width: '15%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        }
+    ];
+    var objProductItemGrid = {
+        height: 500,
+        width: 'auto',
+        maxWidth: '100%',
+        minWidth: 800,
+        sortable: true,
+        autofill: true,
+        numberCell: { show: true },
+        hoverMode: 'row',
+        showTop: true,
+        showTitle: true,
+        showBottom: true,
+        resizable: true,
+        scrollModel: { autoFit: true },
+        filterModel: { on: true, mode: "AND", header: true },
+        draggable: false,
+        hwrap: false,
+        wrap: false,
+        editable: false,
+        columnBorders: true,
+        menuIcon: true,
+        selectionModel: { type: 'row', mode: 'single', cbHeader: false },
+        colModel: ProductItemGrid_GCM,
+        dataModel: ProductItemGrid_GDM,
+        //pageModel: { type: "local" },
+        toolbar: {
+            items: [
+                {
+                    type: "<label><b>Export data to Excel : </b> | </label>"
+                },
+                {
+                    type: 'button',
+                    label: "Export",
+                    icon: 'ui-icon-arrowthickstop-1-s',
+                    listener: function () {
+                        var format = 'xlsx',
+                        blob = workbook = this.exportData({
+                            format: format,
+                            workbook: true,
+                            render: true
+                        });
+
+                        blob = pq.excel.exportWb({ workbook: workbook })
+                        if (typeof blob === "string") {
+                            blob = new Blob([blob]);
+                        }
+
+                        var fileName = "ProductItemDetails_" + formatDateTime(new Date()) + "." + format;
+
+                        saveAs(blob, fileName);
+                    }
+                }
+            ]
+        }
+
+
+    }
+    var $ProductItemGrid = $("#ProductItemGrid").pqGrid(objProductItemGrid);
+    function loadProductItemGrid(productID, projectID) {
+        var antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            url: "/PurchaseIndent/GetProductItem",
+            data: { ProductID: productID, ProjectID: projectID },
+            dataType: "json",
+
+            beforeSend: function () {
+                $("#ProductItemGrid").pqGrid("showLoading");
+            },
+
+            complete: function () {
+                $("#ProductItemGrid").pqGrid("hideLoading");
+            },
+
+            success: function (response) {
+                const grid = $("#ProductItemGrid").pqGrid();
+
+                if (response.success) {
+                    grid.pqGrid("option", "dataModel.data", response.records);
+                } else {
+                    console.warn("No data found or an issue occurred: ", response.message);
+                    grid.pqGrid("option", "dataModel.data", []);
+                }
+
+                grid.pqGrid("refreshDataAndView");
+                PqGridRefreshClick(grid);
+            },
+
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Error loading ProductItem Register grid:", textStatus, errorThrown);
+                console.error("Response text:", jqXHR.responseText);
+                $("#ProductItemGrid").pqGrid("hideLoading");
+            }
+        });
+
+    }
+    //-----------------------------------ProductItemGrid (Ends here)-----------------------------------//
+
+    function clearProductItemForm() {
+        $("#ProductID").val('').trigger('change');
+        ClearParamGrid('ProductItemGrid');
+    }
+    $("#content-tab").tabs({
+        activate: function (event, ui) {
+            let tabIndx = ui.newTab.index();
+            tabIndx === 0 ? $searchgrid.pqGrid("refreshDataAndView") : $ProductItemGrid.pqGrid("refreshDataAndView");
+        }
+    });
 </script>

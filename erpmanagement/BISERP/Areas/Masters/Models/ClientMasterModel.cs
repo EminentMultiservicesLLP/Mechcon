@@ -187,6 +187,10 @@ namespace BISERP.Areas.Masters.Models
         [Display(Name = "Village")]
         public string Village { get; set; }
 
+        [JsonProperty("Division")]
+        [Display(Name = "Division")]
+        public string Division { get; set; }
+
         [JsonProperty("Country")]
         [Display(Name = "Country")]
         public int? Country { get; set; }
@@ -226,9 +230,8 @@ namespace BISERP.Areas.Masters.Models
         public List<CountryMasterModel> Countries { get; set; }
         public string strDateOfAssociation { get; set; }
         public string Message { get; set; }
-
         public List<ConsigneeModel> Consignee { get; set; }
-        
+        public string FullAddress { get; set; }
     }
 
     public class ConsigneeModel

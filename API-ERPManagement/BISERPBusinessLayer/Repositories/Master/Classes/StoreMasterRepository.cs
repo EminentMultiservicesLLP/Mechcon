@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using BISERPBusinessLayer.QueryCollection.Billing;
 using BISERPCommon;
 using BISERPCommon.Extensions;
+using BISERPBusinessLayer.Entities.SM;
 
 namespace BISERPBusinessLayer.Repositories.Master.Classes
 {
@@ -42,7 +43,6 @@ namespace BISERPBusinessLayer.Repositories.Master.Classes
             }
             return store;
         }
-
         public IEnumerable<StoreMasterEntities> GetAllStores()
         {
             List<StoreMasterEntities> stores = null;
@@ -103,7 +103,6 @@ namespace BISERPBusinessLayer.Repositories.Master.Classes
             }
             return stores;
         }
-
         public IEnumerable<StoreMasterEntities> GetAllMainStores()
         {
             List<StoreMasterEntities> stores = null;
@@ -127,7 +126,6 @@ namespace BISERPBusinessLayer.Repositories.Master.Classes
             }
             return stores;
         }
-
         public IEnumerable<StoreMasterEntities> GetUnitStores()
         {
             List<StoreMasterEntities> stores = null;
@@ -151,7 +149,6 @@ namespace BISERPBusinessLayer.Repositories.Master.Classes
             }
             return stores;
         }
-
         public IEnumerable<StoreMasterEntities> GetSubStores()
         {
             List<StoreMasterEntities> stores = null;
@@ -316,7 +313,6 @@ namespace BISERPBusinessLayer.Repositories.Master.Classes
 
             return entity;
         }
-
         public StoreMasterEntities UpdateStore(StoreMasterEntities entity)
         {
             bool isSucecss = false;
@@ -398,7 +394,6 @@ namespace BISERPBusinessLayer.Repositories.Master.Classes
             else
                 return false;
         }
-
         public bool DeleteStore(StoreMasterEntities entity)
         {
             int iResult = 0;
@@ -471,7 +466,6 @@ namespace BISERPBusinessLayer.Repositories.Master.Classes
 
             return bResult;
         }
-
         public bool CheckDuplicateupdate(string Code, int Id)
         {
             bool bResult = false;
@@ -487,7 +481,6 @@ namespace BISERPBusinessLayer.Repositories.Master.Classes
             }
             return bResult;
         }
-
         public IEnumerable<StoreMasterEntities> BranchStoreMasters(int BranchId, int UserId)
         {
             List<StoreMasterEntities> unit = null;
@@ -554,7 +547,6 @@ namespace BISERPBusinessLayer.Repositories.Master.Classes
             }
             return unit;
         }
-
         public IEnumerable<ProjectBudgetDtlEntity> GetProjectBudget(int storeId, int ID)
         {
             List<ProjectBudgetDtlEntity> unit = null;
@@ -596,7 +588,6 @@ namespace BISERPBusinessLayer.Repositories.Master.Classes
             }
             return unit;
         }
-
         public IEnumerable<StoreMasterEntities> GetBudgetUtilzedDetails(int ProjectID, int ItemTypeId)
         {
             List<StoreMasterEntities> unit = null;
@@ -637,7 +628,6 @@ namespace BISERPBusinessLayer.Repositories.Master.Classes
             }
             return items;
         }
-
         public IEnumerable<ProjectTCMasterEntities> GetStorewiseProjectTC(int Id)
         {
             List<ProjectTCMasterEntities> ProjectTC = null;
@@ -712,7 +702,6 @@ namespace BISERPBusinessLayer.Repositories.Master.Classes
             }
             return dt;
         }
-
         public List<ProjectTransactionRecordEntities> GetProjectTransactionRecord(int StoreId)
         {
             List<ProjectTransactionRecordEntities> Dtl = null;
@@ -733,7 +722,6 @@ namespace BISERPBusinessLayer.Repositories.Master.Classes
             }
             return Dtl;
         }
-
         public List<DeliverablesDetailEntities> GetDeliverablesDetail(int StoreId)
         {
             List<DeliverablesDetailEntities> Dtl = null;
@@ -751,7 +739,6 @@ namespace BISERPBusinessLayer.Repositories.Master.Classes
             }
             return Dtl;
         }
-
         public List<BudgetStatusEntities> GetBudgetStatus()
         {
             List<BudgetStatusEntities> Dtl = null;
@@ -772,6 +759,28 @@ namespace BISERPBusinessLayer.Repositories.Master.Classes
                             }).ToList();
             }
             return Dtl;
+        }
+        public IEnumerable<WorkOrderEntities> GetEnqForProjectMaster(int UserID)
+        {
+            List<WorkOrderEntities> workOrders = null;
+            using (DBHelper dbHelper = new DBHelper())
+            {
+                DBParameter param = new DBParameter("UserID", UserID, DbType.Int32);
+                DataTable dt = dbHelper.ExecuteDataTable(MasterQueries.GetEnqForProjectMaster, param, CommandType.StoredProcedure);
+
+
+                workOrders = dt.AsEnumerable()
+                               .Select(row => new WorkOrderEntities
+                               {
+                                   WorkOrderID = row.Field<int>("WorkOrderID"),
+                                   EnquiryID = row.Field<int>("EnquiryID"),
+                                   EnquiryNo = row.Field<string>("EnquiryNo"),
+                                   strEnquiryDate = Convert.ToDateTime(row.Field<DateTime>("EnquiryDate")).ToString("dd-MMMM-yyyy"),
+                                   ClientName = row.Field<string>("ClientName"),
+                                   ProjectCode = row.Field<string>("ProjectCode"),
+                               }).ToList();
+            }
+            return workOrders;
         }
 
     }

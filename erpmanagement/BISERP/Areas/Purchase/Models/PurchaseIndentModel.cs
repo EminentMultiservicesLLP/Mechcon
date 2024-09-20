@@ -75,6 +75,11 @@ namespace BISERP.Area.Purchase.Models
         public int? Storeid { get; set; }
         public string StoreName { get; set; }
 
+        [Display(Name = "Product")]
+        [JsonProperty("ProductID")]
+        public int? ProductID { get; set; }
+        public string ProductName { get; set; }
+
         [Display(Name = "Location")]
         [JsonProperty("LocationID")]
         public int? LocationID { get; set; }
@@ -132,5 +137,25 @@ namespace BISERP.Area.Purchase.Models
         public string StoreName { get; set; }
         public int ItemId { get; set; }
         public string ItemName { get; set; }
+    }
+
+    public class ProductModel
+    {
+        public int ProductID { get; set; }
+        public string ProductName { get; set; }
+        public string ProductDesc { get; set; }
+        public bool Deactive { get; set; }
+    }
+    public class ProjectModel
+    {
+        public int ProjectID { get; set; }
+        public string ProjectName { get; set; }
+    }
+    public class ProductItemModel
+    {
+        public string ProductName { get; set; }
+        public string ProjectName { get; set; }
+        public string ItemName { get; set; }
+        public double ItemQty { get; set; }
     }
 }

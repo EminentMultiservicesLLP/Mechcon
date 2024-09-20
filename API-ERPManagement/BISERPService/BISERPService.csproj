@@ -185,6 +185,11 @@
     <Compile Include="Controllers\Purchase\RequestForQuoteController.cs" />
     <Compile Include="Controllers\Purchase\WorkOrderController.cs" />
     <Compile Include="Controllers\ScanDoc\ScanDocController.cs" />
+    <Compile Include="Controllers\SM\EnquiryAllocationController.cs" />
+    <Compile Include="Controllers\SM\EnquiryRegisterController.cs" />
+    <Compile Include="Controllers\SM\OfferRegisterController.cs" />
+    <Compile Include="Controllers\SM\OrderBookController.cs" />
+    <Compile Include="Controllers\SM\SM_WorkOrderController.cs" />
     <Compile Include="Controllers\Store\AdjustmentVoucherController.cs" />
     <Compile Include="Controllers\Store\BillCreationController.cs" />
     <Compile Include="Controllers\Store\BranchController.cs" />

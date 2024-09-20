@@ -47,6 +47,10 @@ namespace BISERPBusinessLayer.Repositories.AdminPanel.Classes
                                 IsDeactive = row.Field<int>("IsDeactive"),
                                 LoginName = row.Field<string>("LoginName"),
                                 Password = row.Field<string>("Password"),
+                                DepartmentID = row.Field<int>("DepartmentID"),
+                                Department = row.Field<string>("Department"),
+                                DesignationID = row.Field<int>("DesignationID"),
+                                Designation = row.Field<string>("Designation"),
 
                             }).ToList();
 
@@ -59,20 +63,19 @@ namespace BISERPBusinessLayer.Repositories.AdminPanel.Classes
             using (DBHelper dbHelper = new DBHelper())
             {
                 DBParameterCollection paramCollection = new DBParameterCollection();
-                                paramCollection.Add(new DBParameter("UserID", Items.UserID, DbType.Int32));
-                                paramCollection.Add(new DBParameter("UserCode", Items.UserCode, DbType.String));
-                                paramCollection.Add(new DBParameter("UserName", Items.UserName, DbType.String));
-                                paramCollection.Add(new DBParameter("LoginName", Items.LoginName, DbType.String));
-                                paramCollection.Add(new DBParameter("Password", Items.Password, DbType.String));
-                                paramCollection.Add(new DBParameter("InsertedBy", Items.InsertedBy, DbType.Int32));
-                                paramCollection.Add(new DBParameter("InsertedON", Items.InsertedON, DbType.DateTime));
-                                paramCollection.Add(new DBParameter("InsertedIPAddress", Items.InsertedIPAddress, DbType.String));
-                                paramCollection.Add(new DBParameter("InsertedMacName", Items.InsertedMacName, DbType.String));
-                                paramCollection.Add(new DBParameter("InsertedMacID", Items.InsertedMacID, DbType.String));
-                                //iResult = dbHelper.ExecuteNonQueryForOutParameter<int>(AdminPanelQueries.SaveUser, paramCollection, CommandType.StoredProcedure);
-                                iResult = dbHelper.ExecuteNonQuery(AdminPanelQueries.SaveUser, paramCollection, CommandType.StoredProcedure);
-
-                            
+                paramCollection.Add(new DBParameter("UserID", Items.UserID, DbType.Int32));
+                paramCollection.Add(new DBParameter("UserCode", Items.UserCode, DbType.String));
+                paramCollection.Add(new DBParameter("UserName", Items.UserName, DbType.String));
+                paramCollection.Add(new DBParameter("LoginName", Items.LoginName, DbType.String));
+                paramCollection.Add(new DBParameter("Password", Items.Password, DbType.String));
+                paramCollection.Add(new DBParameter("DepartmentID", Items.DepartmentID, DbType.String));
+                paramCollection.Add(new DBParameter("DesignationID", Items.DesignationID, DbType.String));
+                paramCollection.Add(new DBParameter("InsertedBy", Items.InsertedBy, DbType.Int32));
+                paramCollection.Add(new DBParameter("InsertedON", Items.InsertedON, DbType.DateTime));
+                paramCollection.Add(new DBParameter("InsertedIPAddress", Items.InsertedIPAddress, DbType.String));
+                paramCollection.Add(new DBParameter("InsertedMacName", Items.InsertedMacName, DbType.String));
+                paramCollection.Add(new DBParameter("InsertedMacID", Items.InsertedMacID, DbType.String));
+                iResult = dbHelper.ExecuteNonQuery(AdminPanelQueries.SaveUser, paramCollection, CommandType.StoredProcedure);
 
             }
             return iResult;
@@ -135,5 +138,38 @@ namespace BISERPBusinessLayer.Repositories.AdminPanel.Classes
             }
             return iResult;
         }
+        public IEnumerable<DepartmentModel> GetDepartments()
+        {
+            List<DepartmentModel> departments = null;
+            using (DBHelper dbHelper = new DBHelper())
+            {
+                DataTable dt = dbHelper.ExecuteDataTable(AdminPanelQueries.GetDepartments, CommandType.StoredProcedure);
+                departments = dt.AsEnumerable()
+                                .Select(row => new DepartmentModel
+                                {
+                                    DepartmentID = row.Field<int>("DepartmentID"),
+                                    Department = row.Field<string>("Department"),
+                                    Deactive = row.Field<bool>("Deactive")
+                                }).ToList();
+            }
+            return departments;
+        }
+        public IEnumerable<DesignationModel> GetDesignations()
+        {
+            List<DesignationModel> designations = null;
+            using (DBHelper dbHelper = new DBHelper())
+            {
+                DataTable dt = dbHelper.ExecuteDataTable(AdminPanelQueries.GetDesignations, CommandType.StoredProcedure);
+                designations = dt.AsEnumerable()
+                                 .Select(row => new DesignationModel
+                                 {
+                                     DesignationID = row.Field<int>("DesignationID"),
+                                     Designation = row.Field<string>("Designation"),
+                                     Deactive = row.Field<bool>("Deactive")
+                                 }).ToList();
+            }
+            return designations;
+        }
+
     }
 }
