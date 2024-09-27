@@ -57,6 +57,8 @@ namespace BISERP.Area.Purchase.Models
         public int IndentIdTemplateId { get; set; }
         public string ItemsRequiredDate { get; set; }
         public double? TaxRate { get; set; }
+        public string ItemMake { get; set; }
+        public string ItemMaterialOfConstruct { get; set; }
 
     }
 }

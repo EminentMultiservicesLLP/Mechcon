@@ -147,7 +147,7 @@ namespace BISERPService.Controllers
                 _loggger.LogError("Error in GetAllPurchaseIndent method of PurchaseIndentController :" + Environment.NewLine + ex.StackTrace);
                 return InternalServerError();
             });
-            if (purchaseIndent.Count==0)
+            if (purchaseIndent.Count == 0)
                 return Ok(purchaseIndent);
             else if (purchaseIndent.Any())
                 return Ok(purchaseIndent);
@@ -164,13 +164,13 @@ namespace BISERPService.Controllers
             TryCatch.Run(() =>
             {
                 var list = _ipIndent.GetAuthorizedPurchaseIndent(StoreId);
-                if (list .IsNotNull() && list.Any())
+                if (list.IsNotNull() && list.Any())
                     purchaseIndent = list.ToList();
             }).IfNotNull(ex =>
             {
                 purchaseIndent = null;
                 _loggger.LogError("Error in GetAuthorizedPurchaseIndent method of PurchaseIndentController :" + Environment.NewLine + ex.StackTrace);
-               
+
             });
             if (purchaseIndent.IsNotNull())
                 return Ok(purchaseIndent);
@@ -190,7 +190,7 @@ namespace BISERPService.Controllers
                 if (entity.IndentId == 0)
                 {
                     isSucecss = false;
-                }                
+                }
             }).IfNotNull(ex =>
             {
                 _loggger.LogError("Error in CreatePurchaseIndent method of PurchaseIndentController : parameter :" + Environment.NewLine + ex.StackTrace);
@@ -228,7 +228,7 @@ namespace BISERPService.Controllers
             bool isSucecss = false;
             TryCatch.Run(() =>
             {
-                isSucecss = _ipIndentCommon.UpdatePurchaseIndent(entity);                
+                isSucecss = _ipIndentCommon.UpdatePurchaseIndent(entity);
             }).IfNotNull(ex =>
             {
                 _loggger.LogError("Error in UpdatePurchaseIndent method of PurchaseIndentController : parameter :" + Environment.NewLine + ex.StackTrace);
@@ -248,7 +248,7 @@ namespace BISERPService.Controllers
             bool isSucecss = false;
             TryCatch.Run(() =>
             {
-                isSucecss = _ipIndentDetails.DeleteIndentItem(IndentDetailId);                
+                isSucecss = _ipIndentDetails.DeleteIndentItem(IndentDetailId);
             }).IfNotNull(ex =>
             {
                 _loggger.LogError("Error in DeleteIndentItem method of PurchaseIndentController : parameter :" + Environment.NewLine + ex.StackTrace);
@@ -316,7 +316,7 @@ namespace BISERPService.Controllers
             List<IndentTepmlateClass> purchaseIndent = new List<IndentTepmlateClass>();
             TryCatch.Run(() =>
             {
-                var list = _ipIndent.GetAllIndentTemplate(StoreId,ItemCategoryId);
+                var list = _ipIndent.GetAllIndentTemplate(StoreId, ItemCategoryId);
                 if (list.IsNotNull() && list.Any())
                     purchaseIndent = list.ToList();
             }).IfNotNull(ex =>
@@ -376,7 +376,7 @@ namespace BISERPService.Controllers
         [Route("GetPIRemarkLibrary/{StoreId}/{ItemId}")]
         [AcceptVerbs("GET", "POST")]
         // GET api/values/5
-        public IHttpActionResult GetPIRemarkLibrary(int StoreId , int ItemId)
+        public IHttpActionResult GetPIRemarkLibrary(int StoreId, int ItemId)
         {
             List<PIRemarkLibrary> Dtl = new List<PIRemarkLibrary>();
             TryCatch.Run(() =>

@@ -39,12 +39,18 @@ namespace BISERPBusinessLayer.Repositories.Purchase.Classes
                                 AuthorisedRemarks = row.Field<string>("AuthorisedRemarks"),
                                 AuthorisedBy = row.Field<int?>("AuthorisedBy"),
                                 AuthorisedOn = row.Field<DateTime?>("AuthorisedOn"),
+                                strAuthorisedOn = Convert.ToDateTime(row.Field<DateTime?>("AuthorisedOn")).ToString("dd-MMMM-yyyy"),
                                 //Authorised = row.Field<bool>("Authorised"),
                                 ProcurementTypeID = row.Field<int?>("ProcurementTypeID"),
                                 Storeid = row.Field<int?>("Storeid"),
                                 StoreName = row.Field<string>("StoreName"),
                                 BranchID = row.Field<int?>("BranchID"),
                                 RequiredDate = row.Field<string>("RequiredDate"),
+                                AuthorizedByName = row.Field<string>("AuthorizedByName"),
+                                VerifiedByName = row.Field<string>("VerifiedByName"),
+                                InsertedByName = row.Field<string>("InsertedByName"),
+                                ProductName = row.Field<string>("ProductName")
+
                             }).FirstOrDefault();
             }
             return pindent;

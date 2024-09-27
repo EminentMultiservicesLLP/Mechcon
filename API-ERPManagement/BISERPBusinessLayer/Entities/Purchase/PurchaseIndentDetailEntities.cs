@@ -59,9 +59,11 @@ namespace BISERPBusinessLayer.Entities.Purchase
         public string DescriptiveName { get; set; }
         public string HSNCode { get; set; }
         public string IndentRemark { get; set; }
-        public int IndentIdTemplateId { get; set; }   
+        public int IndentIdTemplateId { get; set; }
         public string ItemsRequiredDate { get; set; }
         public double? TaxRate { get; set; }
+        public string ItemMake { get; set; }
+        public string ItemMaterialOfConstruct { get; set; }
 
     }
 }
