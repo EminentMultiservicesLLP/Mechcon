@@ -632,7 +632,14 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=IIF(Fields!ItemMake.Value = "", Fields!ItemMaterialOfConstruct.Value, Fields!ItemMake.Value &amp; "/" &amp; Fields!ItemMaterialOfConstruct.Value)</Value>
+                              <Value>=IIF(IsNothing(Fields!ItemMake.Value) OR Fields!ItemMake.Value = "" AND 
+     IsNothing(Fields!ItemMaterialOfConstruct.Value) OR Fields!ItemMaterialOfConstruct.Value = "", 
+    "", 
+    IIF(IsNothing(Fields!ItemMake.Value) OR Fields!ItemMake.Value = "", 
+        Fields!ItemMaterialOfConstruct.Value, 
+        IIF(IsNothing(Fields!ItemMaterialOfConstruct.Value) OR Fields!ItemMaterialOfConstruct.Value = "", 
+            Fields!ItemMake.Value, 
+            Fields!ItemMake.Value &amp; "/" &amp; Fields!ItemMaterialOfConstruct.Value)))</Value>
                               <Style>
                                 <FontFamily>Calibri</FontFamily>
                                 <FontSize>9pt</FontSize>
@@ -662,6 +669,7 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
+                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
                 <TablixCell>

@@ -117,8 +117,8 @@
           <DataField>VerifiedByName</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="AuthorisedByName">
-          <DataField>AuthorisedByName</DataField>
+        <Field Name="AuthorizedByName">
+          <DataField>AuthorizedByName</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="ItemMake">
@@ -504,6 +504,7 @@
                                                 <Value>=Fields!ProductName.Value</Value>
                                                 <Style>
                                                   <FontFamily>calibri</FontFamily>
+                                                  <FontSize>9pt</FontSize>
                                                 </Style>
                                               </TextRun>
                                             </TextRuns>
@@ -646,7 +647,10 @@
                                             <TextRuns>
                                               <TextRun>
                                                 <Value>=Fields!strAuthorisedOn.Value</Value>
-                                                <Style />
+                                                <Style>
+                                                  <FontFamily>Calibri</FontFamily>
+                                                  <FontSize>9pt</FontSize>
+                                                </Style>
                                               </TextRun>
                                             </TextRuns>
                                             <Style />
@@ -968,7 +972,7 @@
                                   </Style>
                                 </TextRun>
                                 <TextRun>
-                                  <Value>=Fields!AuthorisedByName.Value</Value>
+                                  <Value>=Fields!AuthorizedByName.Value</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                   </Style>
