@@ -1192,7 +1192,6 @@
             type: "GET",
             url: "/Master/AllActiveUnit",
             success: function (data) {
-                debugger
                 $.each(data, function (index, value) {
                     unitList.push(value.UnitName)
                 });
@@ -1204,7 +1203,6 @@
             type: "GET",
             url: "/Master/AllItemPackSize",
             success: function (data) {
-                debugger
                 $.each(data, function (index, value) {
                     packsizes.push(value.Name)
                 });

@@ -316,7 +316,7 @@
             else
                 cancel = true;
 
-            var getData = $("#grid").pqGrid("getData", { dataIndx: ['state', 'ID', 'ItemID', 'GrnID', 'PackSizeId', 'Amount', 'Qty', 'ItemName', 'Rate'] });
+            var getData = $("#grid").pqGrid("getData", { dataIndx: ['state', 'ID', 'ItemID', 'GrnID', 'PackSizeId','UnitId', 'Amount', 'Qty', 'ItemName', 'Rate'] });
 
             if (getData != undefined) {
                 var selectedItemsMainGrid = jLinq.from(getData).equals("state", true).select();
@@ -493,6 +493,7 @@
             { title: "", dataIndx: "GrnID", width: 10, dataType: "integer", editable: false, resizable: false, hidden: true },
             { title: "", dataIndx: "Status", width: 10, dataType: "string", editable: false, resizable: false, hidden: true },
             { title: "", dataIndx: "PackSizeId", width: 200, dataType: "integer", resizable: false, editable: false, hidden: true },
+            { title: "", dataIndx: "UnitId", width: 200, dataType: "integer", resizable: false, editable: false, hidden: true },
             { title: "Amount", dataIndx: "Amount", width: 150, dataType: "double", resizable: false, editable: false, hidden: true },
             { title: "ItemCode", dataIndx: "ItemCode", width: 150, dataType: "string", resizable: false, editable: false, hidden: true },
             { title: "Item Name & Description", dataIndx: "ItemName", width: 750, resizable: false, dataType: "string", editable: false },
@@ -501,8 +502,9 @@
                 title: "Description", dataIndx: "DescriptiveName", minWidth: 300, dataType: "string", editable: true,
                 editor: { type: "textarea", attr: "rows=5" }, hidden: true
             },
-            { title: "Unit", dataIndx: "UnitName", width: 150, dataType: "double", resizable: false, editable: false },
-            { title: "Pack Size", dataIndx: "PackSize", width: 150, dataType: "double", resizable: false, editable: false },
+            { title: "Unit", dataIndx: "UnitName", width: 150, dataType: "string", resizable: false, editable: false },
+            { title: "Size/Wt.", dataIndx: "SizeOrWeight", width: 90, dataType: "string", resizable: true, editable: false },
+            { title: "Pack Size", dataIndx: "PackSize", width: 150, dataType: "double", resizable: false, editable: false, hidden: true },
 
             { title: "BatchNo", dataIndx: "BatchName", width: 150, dataType: "float", resizable: false, editable: false, hidden: true },
             { title: "Expiry Date", dataIndx: "strExpiryDate", width: 150, dataType: "DateTime", resizable: false, editable: false, hidden: true },

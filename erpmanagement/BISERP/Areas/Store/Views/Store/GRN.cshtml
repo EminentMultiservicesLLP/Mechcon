@@ -1037,7 +1037,7 @@
                     { title: "Size/Wt.", dataIndx: "SizeOrWeight", width: 90, dataType: "string", resizable: true, editable: false },
                     { title: "PackSizeId", dataIndx: "PackSizeId", dataType: "integer", editable: false, hidden: true },
                     {
-                        title: "Pack Size", dataIndx: "PackSize", width: 90, resizable: true, hidden: false, editable: false,
+                        title: "Pack Size", dataIndx: "PackSize", width: 90, resizable: true, hidden: false, editable: false, hidden: true,
                         editor: {
                             type: autoCompleteEditor
                         },
@@ -1537,7 +1537,6 @@
 
                             var dataMGrid = [];
                             $.each(data, function (index, value) {
-                                debugger
                                 var grdData = {
                                     'ItemID': value.ItemID, 'PackSizeId': value.PackSizeId, 'UnitId': value.OrderingUnitId, 'ItemName': value.ItemName, 'CBatch': value.ItemCode, 'BatchName': value.ItemCode, 'UnitName': value.OrderingUnit, 'SizeOrWeight': value.SizeOrWeight,
                                     'PackSize': value.PackSize, 'CQty': value.Qty, 'Qty': 0, 'CRate': value.Rate, 'CMrp': value.MRP, 'TaxRates': value.Tax, 'TaxAmount': value.TaxAmount,
