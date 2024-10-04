@@ -15,7 +15,9 @@ namespace BISERP.Areas.Store.Models.Store
         public Nullable<double> Qty { get; set; }
         public int PackSizeId { get; set; }
         public string PackSize { get; set; }
+        public int UnitId { get; set; }
         public string UnitName { get; set; }
+        public string SizeOrWeight { get; set; }
         public Nullable<double> FreeQty { get; set; }
         public Nullable<double> Rate { get; set; }
         public int BatchID { get; set; }

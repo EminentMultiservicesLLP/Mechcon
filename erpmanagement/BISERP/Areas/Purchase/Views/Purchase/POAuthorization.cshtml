@@ -448,6 +448,7 @@ var dataDetail = { location: 'local', sorting: 'local', paging: 'local', dataTyp
         { title: "HSNCode", dataIndx: "HSNCode", width: 150, resizable: false, dataType: "string", editable: false },
         { title: "Item TaxRate", dataIndx: "TaxRate", width: 100, dataType: "string", editable: false, hidden: true },
         { title: "Unit", dataIndx: "OrderingUnit", width: 100, dataType: "string", editable: false },
+        { title: "Size/Wt.", dataIndx: "SizeOrWeight", width: 100, dataType: "string", editable: false },
         { title: "PR PendingQty", dataIndx: "PendingQty", width: 70, dataType: "float", align: "left", editable: false, hidden: true },
         { title: "Qty", dataIndx: "Qty", width: 70, dataType: "float", align: "left", editable: true },
         { title: "Free Qty", dataIndx: "FreeQty", width: 90, dataType: "float", align: "left", hidden: true, editable: false },
@@ -850,7 +851,7 @@ var setM = {
                     $.each(data.PODetails, function (index, value) {
                         var grdData = {
                             'ID': value.ID, 'POIndDtlId': value.POIndDtlId, 'ItemID': value.ItemID, 'ItemName': value.ItemName, 'TaxRate': value.TaxRate, 'Qty': value.Qty, 'PackSize': value.PackSize, 'Rate': value.Rate, 'MRP': value.MRP,
-                            'OrderingUnit': value.OrderingUnit, 'FreeQty': value.FreeQty, 'Amount': value.Amount, 'TaxIds': value.TaxIds, 'Tax': value.Tax, 'TaxAmount': value.TaxAmount, 'TransC': value.TransC, 'OctroiC': value.OctroiC,
+                            'OrderingUnit': value.OrderingUnit, 'SizeOrWeight': value.SizeOrWeight,'FreeQty': value.FreeQty, 'Amount': value.Amount, 'TaxIds': value.TaxIds, 'Tax': value.Tax, 'TaxAmount': value.TaxAmount, 'TransC': value.TransC, 'OctroiC': value.OctroiC,
                             'OtherC': value.OtherC, 'LoadUnloadC': value.LoadUnloadC, 'DiscountPer': value.discountper, 'Discount': value.Discount, 'NetAmount': value.NetAmount,
                             'SupplierName': value.SupplierName, 'DescriptiveName': value.DescriptiveName, 'SGST': value.SGST, 'CGST': value.CGST, 'IGST': value.IGST, 'UGST': value.UGST, 'HSNCode': value.HSNCode, 'SavedQty': value.Qty
                         }

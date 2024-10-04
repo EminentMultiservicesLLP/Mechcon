@@ -8,6 +8,10 @@ namespace BISERP.Areas.Marketing.Controllers
 {
     public class MarketingController : Controller
     {
+        public ActionResult ResourceTarget()
+        {
+            return PartialView();
+        }
         public ActionResult EnquiryRegister()
         {
             return PartialView();

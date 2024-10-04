@@ -29,6 +29,7 @@ namespace BISERP.Areas.Marketing.Controllers
             client.DefaultRequestHeaders.Accept.Clear();
         }
 
+        [HttpGet]
         public async Task<JsonResult> GetSource()
         {
             try
