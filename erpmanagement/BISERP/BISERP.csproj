@@ -13,7 +13,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>BISERP</RootNamespace>
     <AssemblyName>BISERP</AssemblyName>
-    <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
@@ -472,6 +472,11 @@
     <Compile Include="Content\DataSet\dsStore.Designer.cs" />
     <Compile Include="Content\DataSet\dsTransport.Designer.cs" />
     <Compile Include="Content\DataSet\PackingList.Designer.cs" />
+    <Compile Include="Content\DataSet\PackingList1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PackingList.xsd</DependentUpon>
+    </Compile>
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BranchController.cs" />
     <Compile Include="Areas\Store\Controllers\BranchMasterController.cs" />
