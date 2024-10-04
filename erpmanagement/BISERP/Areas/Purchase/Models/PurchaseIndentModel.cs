@@ -62,12 +62,13 @@ namespace BISERP.Area.Purchase.Models
         public string AuthorisedRemarks { get; set; }
         public int? AuthorisedBy { get; set; }
         public DateTime? AuthorisedOn { get; set; }
+        public string strAuthorisedOn { get; set; }
         public bool Authorised { get; set; }
         [JsonProperty("CancellationRemark")]
         public string CancellationRemark { get; set; }
         public int? CancelledBy { get; set; }
         public DateTime? CancelledOn { get; set; }
-        public  Nullable<bool> Cancelled { get; set; }
+        public Nullable<bool> Cancelled { get; set; }
         public int? ProcurementTypeID { get; set; }
 
         [Display(Name = "Project")]

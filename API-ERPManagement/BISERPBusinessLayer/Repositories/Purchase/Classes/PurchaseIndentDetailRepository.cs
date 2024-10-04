@@ -94,7 +94,9 @@ namespace BISERPBusinessLayer.Repositories.Purchase.Classes
                                 DescriptiveName = row.Field<string>("DescriptiveName"),
                                 IndentRemark = row.Field<string>("IndentRemark"),
                                 HSNCode = row.Field<string>("HSNCode"),
-                                ItemsRequiredDate = row.Field<string>("RequiredDate")
+                                ItemsRequiredDate = row.Field<string>("RequiredDate"),
+                                ItemMake = row.Field<string>("Make"),
+                                ItemMaterialOfConstruct = row.Field<string>("MaterialOfConstruct")
                             }).ToList();
             }
             return pindentDetail;

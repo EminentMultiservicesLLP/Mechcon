@@ -14,7 +14,7 @@ namespace BISERPBusinessLayer.Entities.Purchase
         public string strIndentDate { get; set; }
         public int? DepartmentId { get; set; }
         public int? BudgetId { get; set; }
-        public string Remarks { get; set; }        
+        public string Remarks { get; set; }
         public string IndentNature { get; set; }
         public string strIndentNature { get; set; }
         public DateTime? DeliveryStartDate { get; set; }
@@ -25,6 +25,7 @@ namespace BISERPBusinessLayer.Entities.Purchase
         public string AuthorisedRemarks { get; set; }
         public int? AuthorisedBy { get; set; }
         public DateTime? AuthorisedOn { get; set; }
+        public string strAuthorisedOn { get; set; }
         public bool Authorised { get; set; }
         public int? ProcurementTypeID { get; set; }
         public int? Storeid { get; set; }
