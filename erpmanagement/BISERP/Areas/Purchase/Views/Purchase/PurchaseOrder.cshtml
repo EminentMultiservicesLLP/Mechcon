@@ -776,6 +776,10 @@
                         ShowAlert("error", "Please Select PackSize");
                         return;
                     }
+                    if (jLinq.from(podetails).empty("OrderingUnit").or(undefined).count() > 0) {
+                        ShowAlert("error", "Please Select Unit");
+                        return;
+                    }
                 }
                 else {
                     ShowAlert("error", "No Items to save.");
@@ -1183,11 +1187,24 @@
 
     /********* PO Grid *********/
     $(document).ready(function () {
+        var unitList = [];
+        $.ajax({
+            type: "GET",
+            url: "/Master/AllActiveUnit",
+            success: function (data) {
+                debugger
+                $.each(data, function (index, value) {
+                    unitList.push(value.UnitName)
+                });
+            }
+        });
+
         var packsizes = [];
         $.ajax({
             type: "GET",
             url: "/Master/AllItemPackSize",
             success: function (data) {
+                debugger
                 $.each(data, function (index, value) {
                     packsizes.push(value.Name)
                 });
@@ -1205,26 +1222,26 @@
             }
         });
 
-        var autoCompleteEditor = function (ui) {
-            var $cell = ui.$cell,
-                rowData = ui.rowData,
-                dataIndx = ui.dataIndx,
-                width = ui.column.width,
-                cls = ui.cls;
-            var dc = $.trim(rowData[dataIndx]);
+        const autoCompleteEditor = function (ui) {
+            const { $cell, rowData, dataIndx, column: { width }, cls } = ui;
+            const currentValue = $.trim(rowData[dataIndx]);
 
-            var $inp = $("<input type='text' name='" + dataIndx + "' class='" + cls + " pq-ac-editor' />")
-                .width(width - 6)
-                .appendTo($cell)
-                .val(dc);
+            const $input = $("<input>", {
+                type: 'text',
+                name: dataIndx,
+                class: `${cls} pq-ac-editor`,
+                width: width - 6,
+                val: currentValue
+            }).appendTo($cell);
 
-            $inp.autocomplete({
-                source: (dataIndx == "SupplierName" ? suppliers : packsizes),
+            $input.autocomplete({
+                source: dataIndx === "SupplierName" ? suppliers : (dataIndx === "OrderingUnit" ? unitList : packsizes),
                 minLength: 0
             }).focus(function () {
                 $(this).autocomplete("search", "");
             });
-        }
+        };
+
         var dataModel = { location: 'remote', sorting: 'local', paging: 'local', dataType: 'JSON' };
 
         var setIID = {
@@ -1300,12 +1317,28 @@
                 },
                 { title: "HSNCode", dataIndx: "HSNCode", width: 150, resizable: false, dataType: "string", editable: false },
                 { title: "Item TaxRate", dataIndx: "TaxRate", width: 100, dataType: "string", editable: false },
-                { title: "Unit", dataIndx: "OrderingUnit", width: 100, dataType: "string", editable: false },
+                {
+                    title: "Unit", dataIndx: "OrderingUnit", width: 100, dataType: "string", editable: true,
+                    editor: { type: autoCompleteEditor },
+                    validations: [
+                        { type: 'minLen', value: 1, msg: "Required" },
+                        {
+                            type: function (ui) {
+                                var value = ui.value;
+                                if ($.inArray(ui.value, unitList) == -1) {
+                                    ui.msg = value + " not found in list";
+                                    return false;
+                                }
+                            }
+                        }
+                    ]
+                },
+                { title: "Size/Wt.", dataIndx: "SizeOrWeight", width: 70, dataType: "string", align: "left", editable: true },
                 { title: "PR PendingQty", dataIndx: "PendingQty", width: 70, dataType: "float", align: "left", editable: false },
                 { title: "Qty", dataIndx: "Qty", width: 70, dataType: "float", align: "left" },
                 { title: "Free Qty", dataIndx: "FreeQty", width: 90, dataType: "float", align: "left", hidden: true},
                 {
-                    title: "Pack Size", dataIndx: "PackSize", width: 120, dataType: "string", editable: false,
+                    title: "Pack Size", dataIndx: "PackSize", width: 120, dataType: "string", editable: false, hidden: true,
                     editor: { type: autoCompleteEditor },
                     validations: [
                         { type: 'minLen', value: 1, msg: "Required" },
@@ -1616,7 +1649,7 @@
                             $.each(data.PODetails, function (index, value) {
                                 var grdData = {
                                     'ID': value.ID, 'POIndDtlId': value.POIndDtlId, 'ItemID': value.ItemID, 'ItemName': value.ItemName, 'TaxRate': value.TaxRate, 'Qty': value.Qty, 'PackSize': value.PackSize, 'Rate': value.Rate, 'MRP': value.MRP,
-                                    'OrderingUnit': value.OrderingUnit, 'FreeQty': value.FreeQty, 'Amount': value.Amount, 'TaxIds': value.TaxIds, 'Tax': value.Tax, 'TaxAmount': value.TaxAmount, 'TransC': value.TransC, 'OctroiC': value.OctroiC,
+                                    'OrderingUnit': value.OrderingUnit, 'SizeOrWeight': value.SizeOrWeight, 'FreeQty': value.FreeQty, 'Amount': value.Amount, 'TaxIds': value.TaxIds, 'Tax': value.Tax, 'TaxAmount': value.TaxAmount, 'TransC': value.TransC, 'OctroiC': value.OctroiC,
                                     'OtherC': value.OtherC, 'LoadUnloadC': value.LoadUnloadC, 'DiscountPer': value.discountper, 'Discount': value.Discount, 'NetAmount': value.NetAmount,
                                     'SupplierName': value.SupplierName, 'DescriptiveName': value.DescriptiveName, 'SGST': value.SGST, 'CGST': value.CGST, 'IGST': value.IGST, 'UGST': value.UGST, 'HSNCode': value.HSNCode, 'SavedQty': value.Qty
                                 }

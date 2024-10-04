@@ -263,6 +263,7 @@ namespace BISERPService
 
 
             //----------------------------Marketing----------------------------//
+            container.RegisterType<IResourceTargetRepository, ResourceTargetRepository>();
             container.RegisterType<IEnquiryRegisterRepository, EnquiryRegisterRepository>();
             container.RegisterType<IEnquiryAllocationRepository, EnquiryAllocationRepository>();
             container.RegisterType<IOfferRegisterRepository, OfferRegisterRepository>();

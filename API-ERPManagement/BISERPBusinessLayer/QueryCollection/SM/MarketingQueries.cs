@@ -8,6 +8,12 @@ namespace BISERPBusinessLayer.QueryCollection.SM
 {
     class MarketingQueries
     {
+        //ResourceTarget
+        public const string GetFinancialYear = "sp_SM_GetFinancialYear";
+        public const string SaveResourceTargetDetail = "sp_SM_SaveResourceTargetDetail";
+        public const string GetResourceTargetDetail = "sp_SM_GetResourceTargetDetail";
+
+
         //EnquiryRegister
         public const string GetSources = "sp_SM_GetSources";
         public const string GetProducts = "sp_SM_GetProducts";

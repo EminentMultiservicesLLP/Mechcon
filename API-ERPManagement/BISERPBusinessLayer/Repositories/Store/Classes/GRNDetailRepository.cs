@@ -94,6 +94,9 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
             paramCollection.Add(new DBParameter("Qty", entity.Qty, DbType.Double));
             paramCollection.Add(new DBParameter("PackSize", entity.PackSize, DbType.String));
             paramCollection.Add(new DBParameter("PackSizeId", entity.PackSizeId, DbType.Int32));
+            paramCollection.Add(new DBParameter("UnitName", entity.UnitName, DbType.String));
+            paramCollection.Add(new DBParameter("UnitId", entity.UnitId, DbType.Int32));
+            paramCollection.Add(new DBParameter("SizeOrWeight", entity.SizeOrWeight, DbType.String));
             paramCollection.Add(new DBParameter("FreeQty", entity.FreeQty, DbType.Double));
             paramCollection.Add(new DBParameter("Rate", entity.Rate, DbType.Double));
             paramCollection.Add(new DBParameter("TaxRate", entity.TaxRate, DbType.Double));
@@ -156,6 +159,9 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
             paramCollection.Add(new DBParameter("Qty", entity.Qty, DbType.Double));
             paramCollection.Add(new DBParameter("PackSize", entity.PackSize, DbType.String));
             paramCollection.Add(new DBParameter("PackSizeId", entity.PackSizeId, DbType.Int32));
+            paramCollection.Add(new DBParameter("UnitName", entity.UnitName, DbType.String));
+            paramCollection.Add(new DBParameter("UnitId", entity.UnitId, DbType.Int32));
+            paramCollection.Add(new DBParameter("SizeOrWeight", entity.SizeOrWeight, DbType.String));
             paramCollection.Add(new DBParameter("FreeQty", entity.FreeQty, DbType.Double));
             paramCollection.Add(new DBParameter("Rate", entity.Rate, DbType.Double));
             paramCollection.Add(new DBParameter("TaxRate", entity.TaxRate, DbType.Double));

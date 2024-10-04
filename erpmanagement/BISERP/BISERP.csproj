@@ -321,12 +321,14 @@
     <Compile Include="Areas\Marketing\Controllers\MarketingController.cs" />
     <Compile Include="Areas\Marketing\Controllers\OfferRegisterController.cs" />
     <Compile Include="Areas\Marketing\Controllers\OrderBookController.cs" />
+    <Compile Include="Areas\Marketing\Controllers\ResourceTargetController.cs" />
     <Compile Include="Areas\Marketing\Controllers\SM_WorkOrderController.cs" />
     <Compile Include="Areas\Marketing\MarketingAreaRegistration.cs" />
     <Compile Include="Areas\Marketing\Models\EnquiryAllocationModel.cs" />
     <Compile Include="Areas\Marketing\Models\EnquiryRegisterModel.cs" />
     <Compile Include="Areas\Marketing\Models\OfferRegisterModel.cs" />
     <Compile Include="Areas\Marketing\Models\OrderBookModel.cs" />
+    <Compile Include="Areas\Marketing\Models\ResourceTargetModel.cs" />
     <Compile Include="Areas\Marketing\Models\WorkOrderModel.cs" />
     <Compile Include="Areas\Masters\Controllers\CityStateCountryMasterController.cs" />
     <Compile Include="Areas\Masters\Controllers\ClearanceNoteController.cs" />
@@ -1048,6 +1050,7 @@
     <Content Include="Areas\Marketing\Views\Marketing\OfferRegister.cshtml" />
     <Content Include="Areas\Marketing\Views\Marketing\OrderBook.cshtml" />
     <Content Include="Areas\Marketing\Views\Marketing\WorkOrder.cshtml" />
+    <Content Include="Areas\Marketing\Views\Marketing\ResourceTarget.cshtml" />
     <None Include="Content\DataSet\Billing.xsd" />
     <Content Include="Content\DataSet\Billing.xss">
       <DependentUpon>Billing.xsd</DependentUpon>

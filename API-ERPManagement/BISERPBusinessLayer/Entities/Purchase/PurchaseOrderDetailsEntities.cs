@@ -19,7 +19,9 @@ namespace BISERPBusinessLayer.Entities.Purchase
         public string PackSize { get; set; }
         public double? Rate { get; set; }
         public double? Amount { get; set; }
+        public int OrderingUnitId { get; set; }
         public string OrderingUnit { get; set; }
+        public string SizeOrWeight { get; set; }
         public double? FreeQty { get; set; }
         public double? Discount { get; set; }
         public double? Tax { get; set; }

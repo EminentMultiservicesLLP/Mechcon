@@ -33,9 +33,11 @@ namespace BISERPBusinessLayer.Repositories.Purchase.Classes
                                 Qty = row.Field<double?>("Qty"),
                                 PackSizeId = row.Field<int>("PackSizeId"),
                                 PackSize = row.Field<string>("PackSize"),
+                                OrderingUnitId = row.Field<int>("OrderingUnitId"),
+                                OrderingUnit = row.Field<string>("OrderingUnit"),
+                                SizeOrWeight = row.Field<string>("SizeOrWeight"),
                                 SupplierId = row.Field<int?>("SupplierId"),
                                 SupplierName = row.Field<string>("SupplierName"),
-                                OrderingUnit = row.Field<string>("OrderingUnit"),
                                 Rate = row.Field<double?>("Rate"),
                                 Amount = row.Field<double?>("Amount"),
                                 FreeQty = row.Field<double?>("FreeQty"),
@@ -73,6 +75,9 @@ namespace BISERPBusinessLayer.Repositories.Purchase.Classes
             paramCollection.Add(new DBParameter("Qty", entity.Qty, DbType.Double));
             paramCollection.Add(new DBParameter("PackSizeId", entity.PackSizeId, DbType.Int32));
             paramCollection.Add(new DBParameter("PackSize", entity.PackSize, DbType.String));
+            paramCollection.Add(new DBParameter("OrderingUnitId", entity.OrderingUnitId, DbType.Int32));
+            paramCollection.Add(new DBParameter("OrderingUnit", entity.OrderingUnit, DbType.String));
+            paramCollection.Add(new DBParameter("SizeOrWeight", entity.SizeOrWeight, DbType.String));
             paramCollection.Add(new DBParameter("SupplierName", entity.SupplierName, DbType.String));
             paramCollection.Add(new DBParameter("SupplierId", entity.SupplierId, DbType.Int32));
             paramCollection.Add(new DBParameter("Rate", entity.Rate, DbType.Double));

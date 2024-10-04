@@ -169,6 +169,7 @@
     <Compile Include="Entities\SM\EnquiryRegisterEntities.cs" />
     <Compile Include="Entities\SM\OfferRegisterEntities.cs" />
     <Compile Include="Entities\SM\OrderBookEntities.cs" />
+    <Compile Include="Entities\SM\ResourceTargetEntities.cs" />
     <Compile Include="Entities\SM\WorkOrderEntities.cs" />
     <Compile Include="Entities\Store\AdjustmentVoucherDtEntity.cs" />
     <Compile Include="Entities\Store\AdjustmentVoucherEntity.cs" />
@@ -455,11 +456,13 @@
     <Compile Include="Repositories\SM\Classes\EnquiryRegisterRepository.cs" />
     <Compile Include="Repositories\SM\Classes\OfferRegisterRepository.cs" />
     <Compile Include="Repositories\SM\Classes\OrderBookRepository.cs" />
+    <Compile Include="Repositories\SM\Classes\ResourceTargetRepository.cs" />
     <Compile Include="Repositories\SM\Classes\SM_WorkOrderRepository.cs" />
     <Compile Include="Repositories\SM\Interfaces\IEnquiryAllocationRepository.cs" />
     <Compile Include="Repositories\SM\Interfaces\IEnquiryRegisterRepository.cs" />
     <Compile Include="Repositories\SM\Interfaces\IOfferRegisterRepository.cs" />
     <Compile Include="Repositories\SM\Interfaces\IOrderBookRepository.cs" />
+    <Compile Include="Repositories\SM\Interfaces\IResourceTargetRepository.cs" />
     <Compile Include="Repositories\SM\Interfaces\ISM_WorkOrderRepository.cs" />
     <Compile Include="Repositories\Store\Classes\AdjustmentVoucherCommonRepository.cs" />
     <Compile Include="Repositories\Store\Classes\AdjustmentVoucherDtRepository.cs" />
