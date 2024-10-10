@@ -145,6 +145,14 @@
           <DataField>InsertedByName</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="strVerifiedOn">
+          <DataField>strVerifiedOn</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="strInsertedOn">
+          <DataField>strInsertedOn</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>dsPurchase</rd:DataSetName>
@@ -862,7 +870,7 @@
                                   </Style>
                                 </TextRun>
                                 <TextRun>
-                                  <Value>=Fields!InsertedByName.Value</Value>
+                                  <Value>=Fields!InsertedByName.Value +"/"+ Fields!strInsertedOn.Value</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                   </Style>
@@ -917,7 +925,7 @@
                                   </Style>
                                 </TextRun>
                                 <TextRun>
-                                  <Value>=Fields!VerifiedByName.Value</Value>
+                                  <Value>=IIF(Fields!VerifiedByName.Value &lt;&gt; "",Fields!VerifiedByName.Value +"/"+Fields!strVerifiedOn.Value, "")</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                   </Style>
@@ -972,7 +980,7 @@
                                   </Style>
                                 </TextRun>
                                 <TextRun>
-                                  <Value>=Fields!AuthorizedByName.Value</Value>
+                                  <Value>=IIF(Fields!AuthorizedByName.Value &lt;&gt; "", Fields!AuthorizedByName.Value +"/"+ Fields!strAuthorisedOn.Value,"")</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                   </Style>

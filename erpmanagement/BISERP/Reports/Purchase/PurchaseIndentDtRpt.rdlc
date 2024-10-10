@@ -632,14 +632,11 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=IIF(IsNothing(Fields!ItemMake.Value) OR Fields!ItemMake.Value = "" AND 
-     IsNothing(Fields!ItemMaterialOfConstruct.Value) OR Fields!ItemMaterialOfConstruct.Value = "", 
-    "", 
-    IIF(IsNothing(Fields!ItemMake.Value) OR Fields!ItemMake.Value = "", 
-        Fields!ItemMaterialOfConstruct.Value, 
-        IIF(IsNothing(Fields!ItemMaterialOfConstruct.Value) OR Fields!ItemMaterialOfConstruct.Value = "", 
-            Fields!ItemMake.Value, 
-            Fields!ItemMake.Value &amp; "/" &amp; Fields!ItemMaterialOfConstruct.Value)))</Value>
+                              <Value>=IIF(Fields!ItemMake.Value &lt;&gt; "" AND Fields!ItemMaterialOfConstruct.Value = "", 
+    Fields!ItemMake.Value, 
+    IIF(Fields!ItemMake.Value = "" AND Fields!ItemMaterialOfConstruct.Value &lt;&gt; "", Fields!ItemMaterialOfConstruct.Value, 
+        IIF(Fields!ItemMaterialOfConstruct.Value &lt;&gt;"" AND Fields!ItemMake.Value &lt;&gt; "", 
+            Fields!ItemMake.Value + "/" + Fields!ItemMaterialOfConstruct.Value,"")))</Value>
                               <Style>
                                 <FontFamily>Calibri</FontFamily>
                                 <FontSize>9pt</FontSize>
@@ -925,7 +922,7 @@
         <DataSetName>dsPurchaseIndentDt</DataSetName>
         <Left>0.00529cm</Left>
         <Height>0.44792in</Height>
-        <Width>8.00459in</Width>
+        <Width>8.00458in</Width>
         <Style>
           <Border>
             <Style>None</Style>

@@ -126,5 +126,11 @@ namespace BISERPBusinessLayer.Entities.Purchase
         public string VerifiedByName { get; set; }
         public string AuthorizedByName { get; set; }
         public string CancelledByName { get; set; }
+        public int? ProductID { get; set; }
+        public string ProductName { get; set; }
+        public DateTime? VerifiedOn { get; set; }
+        public string strPreparedOn { get; set; }
+        public string strVerifiedOn { get; set; }
+        public string strAuthorisedOn { get; set; }
     }
 }
