@@ -18,7 +18,6 @@
                         <div class="submit-row">
                             <button type="button" id="btnSave" class="btn btn-success" onclick="SaveResourceTarget()">Save</button>
                             <button type="button" class="btn btn-warning" id="btnResetT" onclick="clearFormData()">Clear</button>
-                            <button type="button" id="btnFind" class="btn btn-primary" onclick="showModal()">Find</button>
                         </div>
                         <div class="row">
                             <div class="col-lg-2 col-md-4 col-sm-12 mb-3">
@@ -26,6 +25,10 @@
                                 <select id="FinancialYearID" name="FinancialYearID" class="form-control">
                                     <option value="">--Select Financial Year--</option>
                                 </select>
+                            </div>
+                            <div class="col-lg-2 col-md-4 col-sm-12 mb-3">
+                                <br />
+                                <button type="button" id="btnGo" class="btn btn-primary" onclick="go()">Go</button>
                             </div>
                         </div>
                         <fieldset class="fieldsetCustom">
@@ -72,27 +75,151 @@
         });
     }
 
+    function go() {
+        const financialYearID = $("#FinancialYearID").val();
+
+        if (!financialYearID || financialYearID == 0) {
+            ShowAlert("error", "Please select a Financial Year first.");
+            return false;
+        }
+
+        loadResourceTargetGrid(financialYearID);
+    }
+
+
     // ResourceTargetGrid configuration
     const ResourceTargetGrid_GDM = { location: "local" };
+
     const ResourceTargetGrid_GCM = [
+        { title: "Resource", dataIndx: "Resource", width: 150, editable: false},
+        { title: "Financial Year", dataIndx: "FinancialYear", width: 100, hidden: true },
+        { title: "Target ID", dataIndx: "TargetID", width: 100, hidden: true },
+        { title: "Financial Year ID", dataIndx: "FinancialYearID", width: 100, hidden: true },
+        { title: "Resource ID", dataIndx: "ResourceID", width: 100, hidden: true },
+        { title: "TargetEdited", dataIndx: "TargetEdited", width: 150, editable: false, hidden: true, dataType: 'int' },
         {
-            title: "Resource Target No", dataIndx: "ResourceTargetGridNo", width: '25%',
-            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            title: "Target", dataIndx: "Target", width: 150, format: '##,###.00', editable: true,
+            render: function (ui) {
+                const targetEdited = isNaN(ui.rowData.TargetEdited) ? 1 : ui.rowData.TargetEdited;
+                if (targetEdited !== 1) {
+                    return { style: 'pointer-events: none;' };
+                }
+            }
         },
         {
-            title: "Resource Target Date", dataIndx: "strResourceTargetGridDate", width: '25%',
-            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            title: "Apr", dataIndx: "Apr", width: 100, format: '##,###.00', editable: true,
+            render: function (ui) {
+                const targetEdited = isNaN(ui.rowData.TargetEdited) ? 0 : ui.rowData.TargetEdited;
+                if (targetEdited !== 0) {
+                    return { style: 'pointer-events: none;' };
+                }
+            }
         },
         {
-            title: "Client Name", dataIndx: "ClientName", width: '49%',
-            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            title: "May", dataIndx: "May", width: 100, format: '##,###.00', editable: true,
+            render: function (ui) {
+                const targetEdited = isNaN(ui.rowData.TargetEdited) ? 0 : ui.rowData.TargetEdited;
+                if (targetEdited !== 0) {
+                    return { style: 'pointer-events: none;' };
+                }
+            }
+        },
+        {
+            title: "Jun", dataIndx: "Jun", width: 100, format: '##,###.00', editable: true,
+            render: function (ui) {
+                const targetEdited = isNaN(ui.rowData.TargetEdited) ? 0 : ui.rowData.TargetEdited;
+                if (targetEdited !== 0) {
+                    return { style: 'pointer-events: none;' };
+                }
+            }
+        },
+        {
+            title: "Jul", dataIndx: "Jul", width: 100, format: '##,###.00', editable: true,
+            render: function (ui) {
+                const targetEdited = isNaN(ui.rowData.TargetEdited) ? 0 : ui.rowData.TargetEdited;
+                if (targetEdited !== 0) {
+                    return { style: 'pointer-events: none;' };
+                }
+            }
+        },
+        {
+            title: "Aug", dataIndx: "Aug", width: 100, format: '##,###.00', editable: true,
+            render: function (ui) {
+                const targetEdited = isNaN(ui.rowData.TargetEdited) ? 0 : ui.rowData.TargetEdited;
+                if (targetEdited !== 0) {
+                    return { style: 'pointer-events: none;' };
+                }
+            }
+        },
+        {
+            title: "Sep", dataIndx: "Sep", width: 100, format: '##,###.00', editable: true,
+            render: function (ui) {
+                const targetEdited = isNaN(ui.rowData.TargetEdited) ? 0 : ui.rowData.TargetEdited;
+                if (targetEdited !== 0) {
+                    return { style: 'pointer-events: none;' };
+                }
+            }
+        },
+        {
+            title: "Oct", dataIndx: "Oct", width: 100, format: '##,###.00', editable: true,
+            render: function (ui) {
+                const targetEdited = isNaN(ui.rowData.TargetEdited) ? 0 : ui.rowData.TargetEdited;
+                if (targetEdited !== 0) {
+                    return { style: 'pointer-events: none;' };
+                }
+            }
+        },
+        {
+            title: "Nov", dataIndx: "Nov", width: 100, format: '##,###.00', editable: true,
+            render: function (ui) {
+                const targetEdited = isNaN(ui.rowData.TargetEdited) ? 0 : ui.rowData.TargetEdited;
+                if (targetEdited !== 0) {
+                    return { style: 'pointer-events: none;' };
+                }
+            }
+        },
+        {
+            title: "Dec", dataIndx: "Dec", width: 100, format: '##,###.00', editable: true,
+            render: function (ui) {
+                const targetEdited = isNaN(ui.rowData.TargetEdited) ? 0 : ui.rowData.TargetEdited;
+                if (targetEdited !== 0) {
+                    return { style: 'pointer-events: none;' };
+                }
+            }
+        },
+        {
+            title: "Jan", dataIndx: "Jan", width: 100, format: '##,###.00', editable: true,
+            render: function (ui) {
+                const targetEdited = isNaN(ui.rowData.TargetEdited) ? 0 : ui.rowData.TargetEdited;
+                if (targetEdited !== 0) {
+                    return { style: 'pointer-events: none;' };
+                }
+            }
+        },
+        {
+            title: "Feb", dataIndx: "Feb", width: 100, format: '##,###.00', editable: true,
+            render: function (ui) {
+                const targetEdited = isNaN(ui.rowData.TargetEdited) ? 0 : ui.rowData.TargetEdited;
+                if (targetEdited !== 0) {
+                    return { style: 'pointer-events: none;' };
+                }
+            }
+        },
+        {
+            title: "Mar", dataIndx: "Mar", width: 100, format: '##,###.00', editable: true,
+            render: function (ui) {
+                const targetEdited = isNaN(ui.rowData.TargetEdited) ? 0 : ui.rowData.TargetEdited;
+                if (targetEdited !== 0) {
+                    return { style: 'pointer-events: none;' };
+                }
+            }
         }
     ];
 
     const setResourceTargetGrid = {
-        height: 300,
+        height: 500,
         width: 'auto',
-        maxWidth: '100%',
+        maxWidth: '150%',
         minWidth: 800,
         sortable: true,
         autofill: true,
@@ -103,24 +230,52 @@
         showBottom: true,
         resizable: true,
         scrollModel: { autoFit: true },
-        filterModel: { on: true, mode: "AND", header: true },
+        filterModel: { on: false, mode: "AND", header: false },
         draggable: false,
         hwrap: false,
         wrap: false,
-        editable: false,
+        editable: true,
         columnBorders: true,
         menuIcon: true,
         selectionModel: { type: 'row', mode: 'single', cbHeader: false },
         colModel: ResourceTargetGrid_GCM,
         dataModel: ResourceTargetGrid_GDM,
-        pageModel: { type: "local" },
-        rowClick: function (evt, ui) {
-            if (ui.rowData) {
-                var data = ui.rowData; // handle row click event
+        pageModel: { type: "local", rPP: 20 },
+        cellSave: function (evt, ui) {
+            const grid = $("#ResourceTargetGrid").pqGrid();
+            const gridData = grid.pqGrid("option", "dataModel.data");
+
+            const oldValue = parseFloat(ui.oldVal) || 0;
+            const newValue = parseFloat(ui.newVal) || 0;
+            const months = ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar"];
+            const MONTH_COUNT = months.length;
+
+            if (ui.dataIndx === 'Target') {
+                const perMonthValue = newValue / MONTH_COUNT;
+
+                gridData[ui.rowIndx]['TargetEdited'] = (oldValue !== newValue) ? 1 : gridData[ui.rowIndx]['TargetEdited'];
+
+                months.forEach(month => {
+                    gridData[ui.rowIndx][month] = perMonthValue;
+                });
+
+            } else {
+                gridData[ui.rowIndx]['TargetEdited'] = (oldValue !== newValue) ? 0 : gridData[ui.rowIndx]['TargetEdited'];
+
+                const totalTarget = months.reduce((sum, month) => {
+                    return sum + (parseFloat(gridData[ui.rowIndx][month]) || 0);
+                }, 0);
+
+                gridData[ui.rowIndx]['Target'] = totalTarget;
             }
+
+            grid.pqGrid("option", "dataModel.data", gridData);
+            grid.pqGrid("refreshDataAndView");
         }
+
     };
 
+    // Initialize the grid
     const $ResourceTargetGrid = $("#ResourceTargetGrid").pqGrid(setResourceTargetGrid);
 
     function loadResourceTargetGrid(financialYearID) {
@@ -168,7 +323,6 @@
             FinancialYearID: financialYearID,
             ResourceTargetList: $("#ResourceTargetGrid").pqGrid("option", "dataModel.data")
         };
-
         const antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
         $.ajax({
             headers: {
@@ -176,11 +330,11 @@
             },
             type: "POST",
             contentType: 'application/json; charset=utf-8',
-            url: "/ResourceTarget/SaveResourceTarget",
+            url: "/ResourceTarget/SaveResourceTargetDetail",
             data: JSON.stringify(Details),
             success: function (response) {
                 if (response.success) {
-                    ShowAlert("success", response.message);
+                    ShowAlert("success", "Target details saved successfully!");
                     clearFormData();
                 } else {
                     ShowAlert("error", response.message);

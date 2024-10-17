@@ -30,7 +30,7 @@ namespace BISERPBusinessLayer.Repositories.SM.Classes
                             {
                                 EnquiryID = row.Field<int>("EnquiryID"),
                                 EnquiryNo = row.Field<string>("EnquiryNo"),
-                                strEnquiryDate = Convert.ToDateTime(row.Field<DateTime>("EnquiryDate")).ToString("dd-MMMM-yyyy"),
+                                strEnquiryDate = row.Field<DateTime?>("EnquiryDate") != null ? Convert.ToDateTime(row.Field<DateTime?>("EnquiryDate")).ToString("dd-MMMM-yyyy") : string.Empty,
                                 ClientName = row.Field<string>("ClientName"),
                                 AllocatedToName = row.Field<string>("AllocatedToName"),
                             }).ToList();
@@ -112,12 +112,12 @@ namespace BISERPBusinessLayer.Repositories.SM.Classes
                             .Select(row => new OfferRegisterEntities
                             {
                                 OfferRegisterID = row.Field<int>("OfferRegisterID"),
-                                strQRDate = Convert.ToDateTime(row.Field<DateTime>("QRDate")).ToString("dd-MMMM-yyyy"),
+                                strQRDate = row.Field<DateTime?>("QRDate") != null ? Convert.ToDateTime(row.Field<DateTime?>("QRDate")).ToString("dd-MMMM-yyyy"): string.Empty,
                                 OfferRegisterComment = row.Field<string>("OfferRegisterComment"),
                                 IncoTermID = row.Field<int?>("IncoTermID"),
                                 EnquiryID = row.Field<int?>("EnquiryID"),
                                 EnquiryNo = row.Field<string>("EnquiryNo"),
-                                strEnquiryDate = Convert.ToDateTime(row.Field<DateTime>("EnquiryDate")).ToString("dd-MMMM-yyyy"),
+                                strEnquiryDate = row.Field<DateTime?>("EnquiryDate") != null ? Convert.ToDateTime(row.Field<DateTime?>("EnquiryDate")).ToString("dd-MMMM-yyyy") : string.Empty,
                                 ClientName = row.Field<string>("ClientName")
                             }).ToList();
             }
@@ -137,7 +137,7 @@ namespace BISERPBusinessLayer.Repositories.SM.Classes
                             {
                                 OfferID = row.Field<int>("OfferID"),
                                 OfferNo = row.Field<string>("OfferNo"),
-                                strOfferDate = Convert.ToDateTime(row.Field<DateTime>("OfferDate")).ToString("dd-MMMM-yyyy"),
+                                strOfferDate = row.Field<DateTime?>("OfferDate") != null ? Convert.ToDateTime(row.Field<DateTime?>("OfferDate")).ToString("dd-MMMM-yyyy") : string.Empty,
                                 OfferRemark = row.Field<string>("OfferRemark"),
                                 POBaseValue = row.Field<double>("POBaseValue"),
                                 GSTAmount = row.Field<double>("GSTAmount"),

@@ -1,0 +1,224 @@
+﻿<h5 class="page-header orangeDottedBottomBorder">Resource Wise Monthly Status Report</h5>
+
+<div class="panel-group">
+    <div class="panel panel-default">
+        <div class="panel-groupingBoder">
+            <div class="panel-heading">
+                <div class="panel-title">
+                    <a class="collapsediv" data-toggle="collapse" href="#SearchDetails">
+                        Resource Wise Monthly Status Report
+                    </a>
+                </div>
+            </div>
+            <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                <div class="panel-body">
+                    <div class="fill" id="fill">
+                        <div class="submit-row">
+                            <div class="col-lg-2 col-md-4 col-sm-12 mb-3">
+                                <label class="required" for="FinancialYearID">Financial Year</label>
+                                <select id="FinancialYearID" name="FinancialYearID" class="form-control">
+                                    <option value="">--Select Financial Year--</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-2 col-md-4 col-sm-12 mb-3">
+                                <br />
+                                <button type="button" id="btnGo" class="btn btn-primary" onclick="go()">GO</button>
+                                <button type="button" class="btn btn-warning" id="btnResetT" onclick="clearFormData()">Clear</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        loadFinancialYear();
+    });
+
+    function loadFinancialYear() {
+        $.ajax({
+            type: "GET",
+            url: "/ResourceTarget/GetFinancialYear",
+            dataType: "json",
+            success: function (data) {
+                const $financialYearID = $('#FinancialYearID').empty();
+
+                if (data.error) {
+                    console.error("Error loading financial years:", data.error);
+                    return $financialYearID.append('<option value="">--Error loading financial years--</option>');
+                }
+
+                $financialYearID.append('<option value="">--Select Financial Year--</option>');
+                data.forEach(financialYear =>
+                    $financialYearID.append(`<option value="${financialYear.FinancialYearID}">${financialYear.FinancialYear}</option>`)
+                );
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                console.error("Error loading sources:", errorThrown);
+                $('#FinancialYearID').empty().append('<option value="">--Error loading sources--</option>');
+            }
+        });
+    }
+
+    function go() {
+        const financialYearID = $("#FinancialYearID").val();
+        if (!financialYearID) {
+            ShowAlert("error", "Please select a Financial Year first.");
+            return false;
+        }
+        loadResourceWiseMonthlyStatusReportGrid(financialYearID);
+    }
+
+    function loadResourceWiseMonthlyStatusReportGrid(financialYearID) {
+        const antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+
+        $.ajax({
+            headers: { "__RequestVerificationToken": antiForgeryToken },
+            type: 'GET',
+            url: "/SM_Reports/SM_Reports/GetResourceWiseMonthlyStatusRpt",
+            data: { financialYearID },
+            dataType: "json",
+            success: function (response) {
+                if (response.success && response.records.length) {
+                    // Group records by month
+                    const groupedData = groupBy(response.records, 'Month');
+
+                    // Extract unique resources from the records
+                    const uniqueResources = [...new Set(response.records.map(d => d.Resource))];
+
+                    var mergeColCSS = ["bg-primary header-text-light", "bg-success header-text-dark"];
+                    var aryIdx = 0;
+
+                    // Create dynamic columns based on unique resources
+                    const dynamicColumns = uniqueResources.flatMap(resource => {
+                        const colClass = mergeColCSS[aryIdx % 2];
+                        aryIdx++;
+
+                        return [
+                            {
+                                title: `${resource}`,
+                                dataType: "string",
+                                align: "center",
+                                dataIndx: "resource",
+                                cls: colClass,
+                                colModel: [
+                                    { title: 'Month', dataIndx: `${resource}Month`, width: 50 },
+                                    { title: 'Targeted Value', dataIndx: `${resource}TargetValue`, width: 90, format: '##,###.00' },
+                                    { title: 'Offered Value', dataIndx: `${resource}OfferValue`, width: 90, format: '##,###.00' },
+                                    { title: 'Won Value', dataIndx: `${resource}WonValue`, width: 90, format: '##,###.00' }
+                                ]
+                            }
+                        ];
+                    });
+
+                    // Transform grouped data into a format suitable for the grid
+                    const transformedData = Object.keys(groupedData).map(month => {
+                        return groupedData[month].reduce((rowData, item) => {
+                            rowData[item.Resource] = item.Resource;
+                            rowData[`${item.Resource}Month`] = item.Month;
+                            rowData[`${item.Resource}TargetValue`] = item.TargetValue;
+                            rowData[`${item.Resource}OfferValue`] = item.OfferValue;
+                            rowData[`${item.Resource}WonValue`] = item.WonValue;
+                            return rowData;
+                        }, {});
+                    });
+
+                    // Calculate totals for summary row
+                    const summaryData = {};
+                    uniqueResources.forEach(resource => {
+                        summaryData[`${resource}Month`] ='Total'
+                        summaryData[`${resource}TargetValue`] = transformedData.reduce((sum, row) => sum + (row[`${resource}TargetValue`] || 0), 0);
+                        summaryData[`${resource}OfferValue`] = transformedData.reduce((sum, row) => sum + (row[`${resource}OfferValue`] || 0), 0);
+                        summaryData[`${resource}WonValue`] = transformedData.reduce((sum, row) => sum + (row[`${resource}WonValue`] || 0), 0);
+                    });
+
+                    appendGridSection();
+
+                    initializeGrid(transformedData, dynamicColumns, summaryData);
+                } else {
+                    ShowAlert("error", "No Record found for selected Financial Year.");
+                    removeGridSection();
+                    return false;
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Error loading Order Book Report grid:", textStatus, errorThrown);
+                console.error("Response text:", jqXHR.responseText);
+            }
+        });
+    }
+
+    function initializeGrid(transformedData, dynamicColumns, summaryData) {
+        debugger
+        const $grid = $("#ResourceWiseMonthlyStatusReportGrid");
+
+        const gridOptions = {
+            height: 497,
+            width: 'auto',
+            maxWidth: '100%',
+            minWidth: 800,
+            sortable: true,
+            autofill: true,
+            numberCell: { show: false },
+            hoverMode: 'row',
+            showTop: true,
+            showTitle: true,
+            showBottom: true,
+            resizable: true,
+            scrollModel: { autoFit: false },
+            filterModel: { on: false, mode: "AND", header: false },
+            draggable: false,
+            editable: false,
+            columnBorders: true,
+            menuIcon: true,
+            selectionModel: { type: 'row', mode: 'single', cbHeader: false },
+            colModel: dynamicColumns,
+            dataModel: { data: transformedData },
+            toolbar: {
+                items: [
+                    { type: "<label><b>Export data to Excel: </b> | </label>" },
+                    {
+                        type: 'button',
+                        label: "Export",
+                        icon: 'ui-icon-arrowthickstop-1-s',
+                        listener: function () {
+                            const workbook = this.exportData({ format: 'xlsx', workbook: true, render: true });
+                            const blob = pq.excel.exportWb({ workbook });
+                            saveAs(new Blob([blob]), `OrderBookReport_${formatDateTime(new Date())}.xlsx`);
+                        }
+                    }
+                ]
+            },
+            summaryData: [summaryData],
+        };
+
+        $grid.pqGrid(gridOptions);
+        $grid.pqGrid("refreshDataAndView");
+        PqGridRefreshClick($grid);
+    }
+
+    function appendGridSection() {
+        removeGridSection();
+        const grid = `
+            <fieldset class="fieldsetCustom" id="appendGridSection">
+                <legend class="legendCustom">Details</legend>
+                <div id="ResourceWiseMonthlyStatusReportGrid"></div>
+            </fieldset>
+        `;
+
+        $('#fill').append(grid);
+    }
+
+    function removeGridSection() {
+        $('#appendGridSection').remove();
+    }
+
+    function clearFormData() {
+        $("#FinancialYearID").val('');
+        removeGridSection();
+    }
+</script>
+

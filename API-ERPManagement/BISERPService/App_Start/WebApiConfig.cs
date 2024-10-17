@@ -269,6 +269,9 @@ namespace BISERPService
             container.RegisterType<IOfferRegisterRepository, OfferRegisterRepository>();
             container.RegisterType<IOrderBookRepository, OrderBookRepository>();
             container.RegisterType<ISM_WorkOrderRepository, SM_WorkOrderRepository>();
+            //SM_Reports
+            container.RegisterType<ISM_ReportsRepository, SM_ReportsRepository>();
+
 
             //This line wil apply below attribute to all controllers at global level
             config.Filters.Add(new GZipCompressionAttribute());

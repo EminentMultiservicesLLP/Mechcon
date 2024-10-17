@@ -2043,5 +2043,21 @@ function formatDateTime(date) {
     let minutes = String(date.getMinutes()).padStart(2, '0');
     let seconds = String(date.getSeconds()).padStart(2, '0');
 
-    return `${day}-${month}-${year} (${hours}:${minutes}:${seconds})`;
+    return `${day}-${month}-${year} (${hours}-${minutes}-${seconds})`;
+}
+
+function groupBy(array, key) {
+    return array.reduce((acc, obj) => {
+        // Get the value of the key to group by
+        const keyValue = obj[key];
+
+        // Initialize the array for this key if it doesn't exist
+        if (!acc[keyValue]) {
+            acc[keyValue] = [];
+        }
+
+        // Push the current object to the array for this key
+        acc[keyValue].push(obj);
+        return acc;
+    }, {});
 }

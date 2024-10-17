@@ -71,7 +71,7 @@ namespace BISERP.Areas.Marketing.Controllers
                 model.UpdatedMacName = BISERP.Common.Constants.MacName;
                 model.UpdatedIPAddress = BISERP.Common.Constants.IpAddress;
 
-                _url = url + "/orderBook/saveResourceTargetDetail" + Common.Constants.JsonTypeResult;
+                _url = url + "/resourceTarget/saveResourceTargetDetail" + Common.Constants.JsonTypeResult;
 
                 var result = client.PostAsync(_url, model, new JsonMediaTypeFormatter()).Result;
 

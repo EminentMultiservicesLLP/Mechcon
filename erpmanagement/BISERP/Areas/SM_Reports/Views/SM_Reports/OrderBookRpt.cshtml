@@ -1,0 +1,323 @@
+﻿<h5 class="page-header orangeDottedBottomBorder">Order Book Report</h5>
+
+<div class="panel-group">
+    <div class="panel panel-default">
+        <div class="panel-groupingBoder">
+            <div class="panel-heading">
+                <div class="panel-title">
+                    <a class="collapsediv" data-toggle="collapse" href="#SearchDetails">
+                        Order Book Report
+                    </a>
+                </div>
+            </div>
+            <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                <div class="panel-body">
+                    <div class="fill">
+                        <div class="submit-row">
+                            <div class="col-lg-2 col-md-4 col-sm-12 mb-3">
+                                <label class="required" for="FinancialYearID">Financial Year</label>
+                                <select id="FinancialYearID" name="FinancialYearID" class="form-control">
+                                    <option value="">--Select Financial Year--</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-2 col-md-4 col-sm-12 mb-3">
+                                <br />
+                                <button type="button" id="btnGo" class="btn btn-primary" onclick="go()">GO</button>
+                                <button type="button" class="btn btn-warning" id="btnResetT" onclick="clearFormData()">Clear</button>
+                            </div>
+
+                        </div>
+                        <fieldset class="fieldsetCustom">
+                            <legend class="legendCustom">Details</legend>
+                            <div id="OrderBookReportGrid"></div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function loadFinancialYear() {
+        $.ajax({
+            type: "GET",
+            url: "/ResourceTarget/GetFinancialYear",
+            dataType: "json",
+            success: function (data) {
+                const $financialYearID = $('#FinancialYearID');
+                $financialYearID.empty();
+
+                if (data.error) {
+                    $financialYearID.append('<option value="">--Error loading financial years--</option>');
+                    console.error("Error loading financial years:", data.error);
+                    return;
+                }
+
+                $financialYearID.append('<option value="">--Select Financial Year--</option>');
+                data.forEach(function (financialYear) {
+                    $financialYearID.append(`<option value="${financialYear.FinancialYearID}">${financialYear.FinancialYear}</option>`);
+                });
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                $('#FinancialYearID').empty();
+                $('#FinancialYearID').append('<option value="">--Error loading sources--</option>');
+                console.error("Error loading sources:", errorThrown);
+            }
+        });
+    }
+    loadFinancialYear();
+
+    function go() {
+        const financialYearID = $("#FinancialYearID").val();
+
+        if (!financialYearID || financialYearID == 0) {
+            ShowAlert("error", "Please select a Financial Year first.");
+            return false;
+        }
+
+        loadOrderBookReportGrid(financialYearID);
+    }
+
+    //-----------------------------------OrderBookReportGrid (Starts here)-----------------------------------//
+    var OrderBookReportGrid_GDM = { location: "local" };
+    var OrderBookReportGrid_GCM = [
+        {
+            title: "Enquiry No",
+            dataIndx: "EnquiryNo",
+            width: 150,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Enquiry Date",
+            dataIndx: "strEnquiryDate",
+            width: 100,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Enquiry Year",
+            dataIndx: "EnquiryYear",
+            width: 75,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Client Name",
+            dataIndx: "ClientName",
+            width: 200,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Location",
+            dataIndx: "Location",
+            width: 100,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Source",
+            dataIndx: "Source",
+            width: 100,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Product",
+            dataIndx: "Product",
+            width: 100,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Type",
+            dataIndx: "Type",
+            width: 100,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Sector",
+            dataIndx: "Sector",
+            width: 100,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Contact Person",
+            dataIndx: "ContactPerson",
+            width: 200,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Contact No",
+            dataIndx: "ContactNo",
+            width: 100,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Email ID",
+            dataIndx: "EmailID",
+            width: 200,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "PO Base Value",
+            dataIndx: "POBaseValue",
+            width: 86,
+            dataType: 'float',
+            format: '##,###.00',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Order Book Date",
+            dataIndx: "strOrderBookDate",
+            width: 100,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "PO Date",
+            dataIndx: "strPODate",
+            width: 100,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "PO No",
+            dataIndx: "PONo",
+            width: 100,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "PI Submission date for advance",
+            dataIndx: "strPIAdvSubmitDate",
+            width: 177,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "ABG Submit Date",
+            dataIndx: "strABGSubmitDate",
+            width: 101,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "PI Submission date for ABG advance",
+            dataIndx: "strPIABGAdvSubmitDate",
+            width: 204,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Project Code",
+            dataIndx: "ProjectCode",
+            width: 100,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Status",
+            dataIndx: "Status",
+            width: 100,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Allocated To",
+            dataIndx: "AllocatedTo",
+            width: 200,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        }
+    ];
+
+    var setOrderBookReportGrid = {
+        height: 500,
+        width: 'auto',
+        maxWidth: '100%',
+        minWidth: 800,
+        sortable: true,
+        autofill: true,
+        numberCell: { show: true },
+        hoverMode: 'row',
+        showTop: true,
+        showTitle: true,
+        showBottom: true,
+        resizable: true,
+        scrollModel: { autoFit: false },
+        filterModel: { on: true, mode: "AND", header: true },
+        draggable: false,
+        hwrap: false,
+        wrap: false,
+        editable: false,
+        columnBorders: true,
+        menuIcon: true,
+        selectionModel: { type: 'row', mode: 'single', cbHeader: false },
+        colModel: OrderBookReportGrid_GCM,
+        dataModel: OrderBookReportGrid_GDM,
+        pageModel: { type: "local", rPP: 50 },
+        toolbar: {
+            items: [
+                {
+                    type: "<label><b>Export data to Excel : </b> | </label>"
+                },
+                {
+                    type: 'button',
+                    label: "Export",
+                    icon: 'ui-icon-arrowthickstop-1-s',
+                    listener: function () {
+                        var format = 'xlsx',
+                            blob = workbook = this.exportData({
+                                format: format,
+                                workbook: true,
+                                render: true
+                            });
+
+                        blob = pq.excel.exportWb({ workbook: workbook })
+                        if (typeof blob === "string") {
+                            blob = new Blob([blob]);
+                        }
+
+                        var fileName = "OrderBookReport_" + formatDateTime(new Date()) + "." + format;
+
+                        saveAs(blob, fileName);
+                    }
+                }
+            ]
+        }
+    }
+    var $OrderBookReportGrid = $("#OrderBookReportGrid").pqGrid(setOrderBookReportGrid);
+    function loadOrderBookReportGrid(financialYearID) {
+        var antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            url: "/SM_Reports/SM_Reports/GetOrderBookRpt",
+            data: { financialYearID: financialYearID },
+            dataType: "json",
+
+            beforeSend: function () {
+                $("#OrderBookReportGrid").pqGrid("showLoading");
+            },
+
+            complete: function () {
+                $("#OrderBookReportGrid").pqGrid("hideLoading");
+            },
+
+            success: function (response) {
+                const grid = $("#OrderBookReportGrid").pqGrid();
+
+                if (response.success) {
+                    grid.pqGrid("option", "dataModel.data", response.records);
+                } else {
+                    console.warn("No data found or an issue occurred: ", response.message);
+                    grid.pqGrid("option", "dataModel.data", []);
+                }
+
+                grid.pqGrid("refreshDataAndView");
+                PqGridRefreshClick(grid);
+            },
+
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Error loading Order Book Report grid:", textStatus, errorThrown);
+                console.error("Response text:", jqXHR.responseText);
+                $("#OrderBookReportGrid").pqGrid("hideLoading");
+            }
+        });
+
+    }
+    //-----------------------------------OrderBookReportGrid (Ends here)-----------------------------------//
+
+    function clearFormData() {
+        $("#FinancialYearID").val('');
+        ClearParamGrid('OrderBookReportGrid');
+    }
+</script>

@@ -11,7 +11,7 @@ namespace BISERP.Areas.Marketing.Models
         public int? EnquiryID { get; set; }
         public string EnquiryNo { get; set; }
         public string strEnquiryDate { get; set; }
-        public string CustomerName { get; set; }
+        public string ClientName { get; set; }
         public DateTime? QRDate { get; set; }
         public string strQRDate { get; set; }
         public string OfferRegisterComment { get; set; }

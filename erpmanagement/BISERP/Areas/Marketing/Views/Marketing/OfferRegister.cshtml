@@ -540,78 +540,92 @@
             }
         });
     }
-
     function AddDiv(OfferID, OfferNo, rowclick) {
-        let btnViewAttachment = '';
-        if (rowclick) {
-            btnViewAttachment = `
+        let btnViewAttachment = rowclick ? `
         <div class="col-12 col-sm-1 col-md-1">
             <br />
-            <button type="button" id="btnViewAttachment${OfferID}" class="btn btn-primary" onclick="viewAttachment(${OfferID})">View <i class="pe-va pe-7s-paperclip pe-2x"></i></button>
-        </div>`;
-        }
+            <button type="button" id="btnViewAttachment${OfferID}" class="btn btn-primary" onclick="viewAttachment(${OfferID})">
+                View <i class="pe-va pe-7s-paperclip pe-2x"></i>
+            </button>
+        </div>` : '';
 
         const divContent = `
-    <fieldset class="fieldsetCustom offer-div mb-4" id="Div_${OfferID}">
-        <legend class="legendCustom">${OfferNo}</legend>
-        <div class="row g-3">
-            <div class="col-12 col-sm-6 col-md-4" hidden>
-                <input type="hidden" name="OfferID${OfferID}" id="OfferID${OfferID}" value="${OfferID}" />
-                <label for="OfferNo${OfferID}" class="">Offer No</label>
-                <input class="form-control" id="OfferNo${OfferID}" type="text" value="${OfferNo}" disabled />
-            </div>
-            <div class="col-12 col-sm-6 col-md-2">
-                <label for="POBaseValue${OfferID}" class="required">PO Base Value</label>
-                <input class="form-control POBaseValue" id="POBaseValue${OfferID}" placeholder="Enter PO Base Value" type="number" />
-            </div>
-            <div class="col-12 col-sm-6 col-md-2">
-                <label for="GSTAmount${OfferID}" class="">GST Amount</label>
-                <input class="form-control" id="GSTAmount${OfferID}" placeholder="Enter GST Amount" type="number" disabled/>
-            </div>
-            <div class="col-12 col-sm-6 col-md-6">
-                <label for="OfferRemark${OfferID}" class="">Offer Remark</label>
-                <input class="form-control" id="OfferRemark${OfferID}" placeholder="Enter Offer Remark" type="text" />
-            </div>
-            <div class="col-12 col-sm-6 col-md-2">
-                <label for="CustRespDate${OfferID}" class="">Cust Resp Date</label>
-                <input type="text" id="CustRespDate${OfferID}" class="form-control" />
-            </div>
-            <div class="col-12 col-sm-6 col-md-6">
-                <label for="CustRemark${OfferID}" class="">Cust Remark</label>
-                <input class="form-control" id="CustRemark${OfferID}" placeholder="Enter Cust Remark" type="text" />
-            </div>
-            <div class="col-12 col-sm-6 col-md-2">
-                <label for="Attachment${OfferID}" class="">Attachment</label>
-                <input class="form-control btn-primary attachment" type="file" multiple accept=".jpg,.jpeg,.png,.pdf" id="Attachment${OfferID}" />
-            </div>
-            <div class="col-12 col-sm-6 col-md-2 align-self-end">
-                <div class="form-check" style="text-align: center;">
-                    <br />
-                    <label class="form-check-label" for="Deactive${OfferID}">Deactive</label>
-                    <input class="form-check-input" type="checkbox" id="Deactive${OfferID}" name="Deactive${OfferID}">
+        <fieldset class="fieldsetCustom offer-div mb-4" id="Div_${OfferID}">
+            <legend class="legendCustom">${OfferNo}</legend>
+            <div class="row g-3">
+                <div class="col-12 col-sm-6 col-md-4" hidden>
+                    <input type="hidden" name="OfferID${OfferID}" id="OfferID${OfferID}" value="${OfferID}" />
+                    <label for="OfferNo${OfferID}">Offer No</label>
+                    <input class="form-control" id="OfferNo${OfferID}" type="text" value="${OfferNo}" disabled />
                 </div>
+                <div class="col-12 col-sm-6 col-md-2" hidden>
+                    <label for="OfferDate${OfferID}">Offer Date</label>
+                    <input type="text" id="OfferDate${OfferID}" class="form-control datepicker" />
+                </div>
+                <div class="col-12 col-sm-6 col-md-2">
+                    <label for="POBaseValue${OfferID}" class="required">PO Base Value</label>
+                    <input class="form-control POBaseValue" id="POBaseValue${OfferID}" placeholder="Enter PO Base Value" type="number" />
+                </div>
+                <div class="col-12 col-sm-6 col-md-2">
+                    <label for="GSTAmount${OfferID}">GST Amount</label>
+                    <input class="form-control" id="GSTAmount${OfferID}" placeholder="Enter GST Amount" type="number" disabled />
+                </div>
+                <div class="col-12 col-sm-6 col-md-6">
+                    <label for="OfferRemark${OfferID}">Offer Remark</label>
+                    <input class="form-control" id="OfferRemark${OfferID}" placeholder="Enter Offer Remark" type="text" />
+                </div>
+                <div class="col-12 col-sm-6 col-md-2">
+                    <label for="CustRespDate${OfferID}">Cust Resp Date</label>
+                    <input type="text" id="CustRespDate${OfferID}" class="form-control datepicker" />
+                </div>
+                <div class="col-12 col-sm-6 col-md-6">
+                    <label for="CustRemark${OfferID}">Cust Remark</label>
+                    <input class="form-control" id="CustRemark${OfferID}" placeholder="Enter Cust Remark" type="text" />
+                </div>
+                <div class="col-12 col-sm-6 col-md-2">
+                    <label for="Attachment${OfferID}">Attachment</label>
+                    <input class="form-control btn-primary attachment" type="file" multiple accept=".jpg,.jpeg,.png,.pdf" id="Attachment${OfferID}" />
+                </div>
+                <div class="col-12 col-sm-6 col-md-2 align-self-end">
+                    <div class="form-check text-center">
+                        <br />
+                        <label class="form-check-label" for="Deactive${OfferID}">Deactive</label>
+                        <input class="form-check-input" type="checkbox" id="Deactive${OfferID}" name="Deactive${OfferID}">
+                    </div>
+                </div>
+                ${btnViewAttachment}
             </div>
-            ${btnViewAttachment}
-        </div>
-    </fieldset>`;
+        </fieldset>`;
 
+        // Append to the container
         $("#offerContainer").append(divContent);
 
-        $(`#Div_${OfferID} #CustRespDate${OfferID}`).datepicker({
-            showOn: "button",
-            buttonImage: "/Content/images/calendar.gif",
-            buttonImageOnly: true,
-            buttonText: "Select date",
-            changeMonth: true,
-            changeYear: true,
-            yearRange: '2021:2030',
-            format: "dd-M-yyyy",
-            todayBtn: "linked",
-            pickerPosition: "bottom-left",
-            todayHighlight: true,
-            autoclose: true,
+        // Initialize datepickers and set current date only for OfferDate
+        $(`#Div_${OfferID} .datepicker`).each(function () {
+            let isOfferDate = $(this).attr("id").includes("OfferDate");
+
+            $(this).datepicker({
+                showOn: "button",
+                buttonImage: "/Content/images/calendar.gif",
+                buttonImageOnly: true,
+                buttonText: "Select date",
+                changeMonth: true,
+                changeYear: true,
+                yearRange: '2021:2030',
+                format: "dd-M-yyyy",
+                todayBtn: "linked",
+                pickerPosition: "bottom-left",
+                todayHighlight: true,
+                autoclose: true
+            });
+
+            // Set current date if it's the OfferDate field
+            if (isOfferDate) {
+                $(this).datepicker("setDate", new Date());
+            }
         });
 
+        // Handle animations for the datepicker
         $("#anim").change(function () {
             $(`#Div_${OfferID} .datepicker`).datepicker("option", "showAnim", "fadeIn");
         });
@@ -645,6 +659,7 @@
                     let details = response.records
                     for (var i = 0; i < details.length; i++) {
                         AddDiv(details[i].OfferID, details[i].OfferNo, true);
+                        $(`#OfferDate${details[i].OfferID}`).val(details[i].strOfferDate);
                         $(`#POBaseValue${details[i].OfferID}`).val(details[i].POBaseValue);
                         $(`#GSTAmount${details[i].OfferID}`).val(details[i].GSTAmount);
                         $(`#OfferRemark${details[i].OfferID}`).val(details[i].OfferRemark);
@@ -731,6 +746,7 @@
                 offerDataArray.push({
                     OfferID: offerID,
                     OfferNo: $(`#OfferNo${offerID}`).val(),
+                    OfferDate: $(`#OfferDate${offerID}`).val(),
                     POBaseValue: POBaseValue,
                     GSTAmount: parseFloat($(`#GSTAmount${offerID}`).val()) || 0,
                     OfferRemark: $(`#OfferRemark${offerID}`).val(),
