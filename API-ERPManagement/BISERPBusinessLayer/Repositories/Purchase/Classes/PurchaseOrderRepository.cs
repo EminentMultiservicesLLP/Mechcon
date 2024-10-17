@@ -64,9 +64,9 @@ namespace BISERPBusinessLayer.Repositories.Purchase.Classes
                                 Preparedby=row.Field<string>("InsertedBy"),
                                 AuthorisedByName=row.Field<string>("AuthorisedBy"),
                                 VerifiedByName=row.Field<string>("VerifiedBy"),
-                                strPreparedOn = Convert.ToDateTime(row.Field<DateTime>("InsertedOn")).ToString("dd-MMM-yyyy"),
-                                strVerifiedOn = Convert.ToDateTime(row.Field<DateTime>("VerifiedOn")).ToString("dd-MMM-yyyy"),
-                                strAuthorisedOn = Convert.ToDateTime(row.Field<DateTime>("AuthorisedOn")).ToString("dd-MMM-yyyy"),
+                                strPreparedOn = row.Field<DateTime?>("InsertedOn") != null ? Convert.ToDateTime(row.Field<DateTime?>("InsertedOn")).ToString("dd-MMM-yyyy") : string.Empty,
+                                strVerifiedOn = row.Field<DateTime?>("VerifiedOn") != null ? Convert.ToDateTime(row.Field<DateTime?>("VerifiedOn")).ToString("dd-MMM-yyyy") : string.Empty,
+                                strAuthorisedOn = row.Field<DateTime?>("AuthorisedOn") != null ? Convert.ToDateTime(row.Field<DateTime?>("AuthorisedOn")).ToString("dd-MMM-yyyy") : string.Empty,
                                 ProductName = row.Field<string>("ProductName")
                             }).FirstOrDefault();
             }
