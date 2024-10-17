@@ -39,7 +39,6 @@ namespace BISERPBusinessLayer.Repositories.Purchase.Classes
                                 AuthorisedRemarks = row.Field<string>("AuthorisedRemarks"),
                                 AuthorisedBy = row.Field<int?>("AuthorisedBy"),
                                 AuthorisedOn = row.Field<DateTime?>("AuthorisedOn"),
-                                strAuthorisedOn = Convert.ToDateTime(row.Field<DateTime?>("AuthorisedOn")).ToString("dd-MMMM-yyyy"),
                                 //Authorised = row.Field<bool>("Authorised"),
                                 ProcurementTypeID = row.Field<int?>("ProcurementTypeID"),
                                 Storeid = row.Field<int?>("Storeid"),
@@ -49,6 +48,10 @@ namespace BISERPBusinessLayer.Repositories.Purchase.Classes
                                 AuthorizedByName = row.Field<string>("AuthorizedByName"),
                                 VerifiedByName = row.Field<string>("VerifiedByName"),
                                 InsertedByName = row.Field<string>("InsertedByName"),
+                                strAuthorisedOn = Convert.ToDateTime(row.Field<DateTime?>("AuthorisedOn")).ToString("dd-MMM-yyyy"),
+                                strInsertedOn = Convert.ToDateTime(row.Field<DateTime?>("InsertedOn")).ToString("dd-MMM-yyyy"),
+                                strVerifiedOn = Convert.ToDateTime(row.Field<DateTime?>("VerifiedOn")).ToString("dd-MMM-yyyy"),
+
                                 ProductName = row.Field<string>("ProductName")
 
                             }).FirstOrDefault();

@@ -121,8 +121,8 @@
           <DataField>SupEmail</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="PurchaseIndentNo">
-          <DataField>PurchaseIndentNo</DataField>
+        <Field Name="RFQNo">
+          <DataField>RFQNo</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="RefNo">
@@ -141,10 +141,34 @@
           <DataField>AuthorisedByName</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="ProductName">
+          <DataField>ProductName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="VerifiedByName">
+          <DataField>VerifiedByName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="AuthorizedByName">
+          <DataField>AuthorizedByName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="strPreparedOn">
+          <DataField>strPreparedOn</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="strVerifiedOn">
+          <DataField>strVerifiedOn</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="strAuthorisedOn">
+          <DataField>strAuthorisedOn</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>dsPurchase</rd:DataSetName>
-        <rd:SchemaPath>D:\Admin\Mechon\erpmanagement\BISERP\Content\DataSet\dsPurchase.xsd</rd:SchemaPath>
+        <rd:SchemaPath>D:\Admin\MechconGIT\Mechcon\erpmanagement\BISERP\Content\DataSet\dsPurchase.xsd</rd:SchemaPath>
         <rd:TableName>POmaster</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
@@ -486,7 +510,7 @@
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>Reference No.</Value>
+                                                <Value>Equipment No.</Value>
                                                 <Style>
                                                   <FontFamily>Calibri</FontFamily>
                                                   <FontWeight>Bold</FontWeight>
@@ -521,7 +545,7 @@
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Fields!RefNo.Value</Value>
+                                                <Value>=Fields!ProductName.Value</Value>
                                                 <Style>
                                                   <FontFamily>Calibri</FontFamily>
                                                 </Style>
@@ -628,7 +652,7 @@
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>Requisition No.</Value>
+                                                <Value>Purchase Request No.</Value>
                                                 <Style>
                                                   <FontFamily>Calibri</FontFamily>
                                                   <FontWeight>Bold</FontWeight>
@@ -666,7 +690,7 @@
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Fields!PurchaseIndentNo.Value</Value>
+                                                <Value>=Fields!RFQNo.Value</Value>
                                                 <Style>
                                                   <FontFamily>Calibri</FontFamily>
                                                 </Style>
@@ -2010,37 +2034,22 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Prepared By :  </Value>
+                                  <Value>Prepared By </Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
                                 <TextRun>
-                                  <Value>=Fields!Preparedby.Value</Value>
+                                  <Value>: </Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                   </Style>
                                 </TextRun>
                                 <TextRun>
-                                  <Value>                                            Authorized By :</Value>
+                                  <Value>=Fields!Preparedby.Value +"/"+Fields!strPreparedOn.Value</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
-                                    <FontWeight>Bold</FontWeight>
-                                  </Style>
-                                </TextRun>
-                                <TextRun>
-                                  <Value>=Fields!AuthorisedByName.Value</Value>
-                                  <Style>
-                                    <FontFamily>Calibri</FontFamily>
-                                    <FontWeight>Bold</FontWeight>
-                                  </Style>
-                                </TextRun>
-                                <TextRun>
-                                  <Value>                                            Supervised By : </Value>
-                                  <Style>
-                                    <FontFamily>Calibri</FontFamily>
-                                    <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -2058,15 +2067,93 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <ColSpan>9</ColSpan>
+                        <ColSpan>3</ColSpan>
                       </CellContents>
                     </TablixCell>
                     <TablixCell />
                     <TablixCell />
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox9">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Verified By :</Value>
+                                  <Style>
+                                    <FontFamily>Calibri</FontFamily>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                                <TextRun>
+                                  <Value>=IIF(Fields!VerifiedByName.Value &lt;&gt; "", Fields!VerifiedByName.Value + "/" + Fields!strVerifiedOn.Value, "")</Value>
+                                  <Style>
+                                    <FontFamily>Calibri</FontFamily>
+                                    <FontWeight>Normal</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox9</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <ColSpan>3</ColSpan>
+                      </CellContents>
+                    </TablixCell>
                     <TablixCell />
                     <TablixCell />
-                    <TablixCell />
-                    <TablixCell />
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox14">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Authorized By : </Value>
+                                  <Style>
+                                    <FontFamily>Calibri</FontFamily>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                                <TextRun>
+                                  <Value>=IIf(Fields!AuthorisedByName.Value &lt;&gt; "",Fields!AuthorisedByName.Value +"/"+Fields!strAuthorisedOn.Value,"")</Value>
+                                  <Style>
+                                    <FontFamily>Calibri</FontFamily>
+                                    <FontWeight>Normal</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox14</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <ColSpan>3</ColSpan>
+                      </CellContents>
+                    </TablixCell>
                     <TablixCell />
                     <TablixCell />
                   </TablixCells>

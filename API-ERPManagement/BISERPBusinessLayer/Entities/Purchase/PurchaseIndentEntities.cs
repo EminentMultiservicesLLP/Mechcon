@@ -64,7 +64,10 @@ namespace BISERPBusinessLayer.Entities.Purchase
         public string UpdatedByName { get; set; }
         public string VerifiedByName { get; set; }
         public string AuthorizedByName { get; set; }
-        public string CancelledByName { get; set; }
+        public string CancelledByName { get; set; }       
+        public DateTime? VerifiedOn { get; set; }
+        public string strInsertedOn { get; set; }
+        public string strVerifiedOn { get; set; }
     }
     public class IndentTepmlateClass
     {
