@@ -168,7 +168,7 @@
                                     </div>
 
                                     <div class="col-lg-3 col-md-6 col-sm-12 mb-3">
-                                        <label class="" for="StatusID">Status ID</label>
+                                        <label class="required" for="StatusID">OFR Status</label>
                                         <select id="StatusID" name="StatusID" class="form-control">
                                             <option value="">--Select Status--</option>
                                         </select>
@@ -379,7 +379,6 @@
                     $("#Sector").val(details.Sector);
                     $("#Zone").val(details.Zone);
                     $("#Status").val(details.Status);
-                    $("#StatusID").val(details.StatusID);
                     $("#ClientName").val(details.ClientName);
                     $("#Place").val(details.Place);
                     $("#ContactPerson").val(details.ContactPerson);
@@ -454,6 +453,7 @@
 
                 $("#QRDate").val(data.strQRDate);
                 $("#OfferRegisterComment").val(data.OfferRegisterComment);
+                $("#StatusID").val(data.StatusID);
                 $("#IncoTermID").val(data.IncoTermID);
 
                 GetEnquiryDetails(data.EnquiryID);
@@ -714,6 +714,7 @@
     function validateFormData() {
         const fields = [
             { selector: "#EnquiryID", placeholder: "Enquiry" },
+            { selector: "#StatusID", placeholder: "Status" },
             { selector: "#IncoTermID", placeholder: "IncoTerm" },
         ];
 
@@ -842,6 +843,7 @@
         $(".datepicker").datepicker("setDate", new Date());
         $("#OfferRegisterComment").val('');
         $("#IncoTermID").val('');
+        $("#StatusID").val('');
         $("#offerContainer").empty();
         $('#btnAddNew').prop('disabled', false);
         clearEnquiryDetails();
@@ -863,7 +865,6 @@
         $("#ContactNo").val('');
         $("#EmailID").val('');
         $("#Status").val('');
-        $("#StatusID").val('');
         $("#Type").val('');
         $("#Sector").val('');
         $("#Zone").val('');

@@ -15,6 +15,7 @@ namespace BISERPBusinessLayer.Repositories.SM.Interfaces
         IEnumerable<TypeEntities> GetTypes();
         IEnumerable<SectorEntities> GetSectors();
         IEnumerable<ZoneEntities> GetZones();
+        IEnumerable<StatusEntities> GetEnqStatus();
         IEnumerable<StatusEntities> GetStatus();
         EnquiryRegisterEntities SaveEnquiry(EnquiryRegisterEntities model);
         IEnumerable<EnquiryRegisterEntities> GetEnquiry(int? statusID);

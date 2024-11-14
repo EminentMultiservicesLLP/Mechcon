@@ -115,6 +115,7 @@ namespace BISERPBusinessLayer.Repositories.SM.Classes
                                 strQRDate = row.Field<DateTime?>("QRDate") != null ? Convert.ToDateTime(row.Field<DateTime?>("QRDate")).ToString("dd-MMMM-yyyy"): string.Empty,
                                 OfferRegisterComment = row.Field<string>("OfferRegisterComment"),
                                 IncoTermID = row.Field<int?>("IncoTermID"),
+                                StatusID = row.Field<int?>("StatusID"),
                                 EnquiryID = row.Field<int?>("EnquiryID"),
                                 EnquiryNo = row.Field<string>("EnquiryNo"),
                                 strEnquiryDate = row.Field<DateTime?>("EnquiryDate") != null ? Convert.ToDateTime(row.Field<DateTime?>("EnquiryDate")).ToString("dd-MMMM-yyyy") : string.Empty,

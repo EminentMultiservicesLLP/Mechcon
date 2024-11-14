@@ -162,6 +162,28 @@ namespace BISERP.Areas.Marketing.Controllers
         }
 
         [HttpGet]
+        public async Task<JsonResult> GetEnqStatus()
+        {
+            try
+            {
+                string _url = $"{url}/enquiryRegister/getEnqStatus{Common.Constants.JsonTypeResult}";
+                List<StatusModel> status = await Common.AsyncWebCalls.GetAsync<List<StatusModel>>(client, _url, CancellationToken.None);
+
+                if (status == null || !status.Any())
+                {
+                    return Json(new { error = "No statuses found." }, JsonRequestBehavior.AllowGet);
+                }
+
+                return Json(status, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error in GetEnqStatus method:" + Environment.NewLine + ex.ToString());
+                return Json(new { error = "An error occurred while retrieving the statuses." }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpGet]
         public async Task<JsonResult> GetStatus()
         {
             try

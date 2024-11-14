@@ -883,10 +883,10 @@
     function CalculateTotalAmount() {
         var getData = $grid.pqGrid("option", "dataModel.data");
         var grossAmt = 0, taxAmount = 0, otherAmount = 0, DiscountAmount = 0, grandTotal = 0, rndGrandTotal = 0;
-        var bedAmt = $("#BED").val(), eduAmt = $("#Edu").val(), sheAmt = $("#SHECess").val();
-        if (bedAmt == undefined || bedAmt === "") bedAmt = 0;
-        if (eduAmt == undefined || eduAmt === "") eduAmt = 0;
-        if (sheAmt == undefined || sheAmt === "") sheAmt = 0;
+        var bedAmt = parseFloat($("#BED").val()) || 0;
+        var eduAmt = parseFloat($("#Edu").val()) || 0;
+        var sheAmt = parseFloat($("#SHECess").val()) || 0;
+
         $.each(getData, function (_, item) {
             if (!isNaN(item.ItemTotal) && item.ItemTotal != null)
                 grossAmt += parseFloat(item.ItemTotal);
@@ -904,22 +904,25 @@
                 otherAmount += parseFloat(item.ServiceAmt);
             if (!isNaN(item.Discount) && item.Discount != null)
                 DiscountAmount += parseFloat(item.Discount);
-
         });
+
         var bedAmount = grossAmt * (bedAmt / 100);
         var eduAmount = grossAmt * (eduAmt / 100);
         var sheAmount = grossAmt * (sheAmt / 100);
-        var extraAmt = parseFloat(bedAmount) + parseFloat(eduAmount) + parseFloat(sheAmount);
-        grandTotal = parseFloat(grossAmt) + parseFloat(taxAmount) + parseFloat(otherAmount) - parseFloat(DiscountAmount) + parseFloat(extraAmt);
+        var extraAmt = bedAmount + eduAmount + sheAmount;
+
+        grandTotal = grossAmt + taxAmount + otherAmount - DiscountAmount + extraAmt;
         rndGrandTotal = Math.round(grandTotal);
 
-        $("#GrossAmount").val(grossAmt.toFixed(2));
-        $("#TaxAmount").val(taxAmount.toFixed(2));
-        $("#OtherCharges").val(otherAmount.toFixed(2));
-        $("#Discount").val(DiscountAmount.toFixed(2));
-        $("#GrandTotal").val(grandTotal.toFixed(2));
-        $("#Rounding_Off").val(rndGrandTotal);
+        // Updating the fields with two decimal precision
+        $("#GrossAmount").val(Math.round(grossAmt));
+        $("#TaxAmount").val(Math.round(taxAmount));
+        $("#OtherCharges").val(Math.round(otherAmount));
+        $("#Discount").val(Math.round(DiscountAmount));
+        $("#GrandTotal").val(Math.round(grandTotal));
+        $("#Rounding_Off").val(Math.round(rndGrandTotal));
     }
+
     function editRow(rowIndx, grid, edit) {
         if (rowIndx != null) {
             var row = $grid.pqGrid('getRowData', { rowIndx: rowIndx });
@@ -1027,7 +1030,7 @@
                 title: "Item Details", align: "center", colModel: [
                     { title: "Item Name & Description", dataIndx: "ItemName", width: 350, dataType: "string", resizable: true, editable: false },
 
-                    { title: "HSN Code", dataIndx: "HSNCode", width: 150, dataType: "string", resizable: true, editable: false },
+                    { title: "HSN Code", dataIndx: "HSNCode", width: 150, dataType: "string", resizable: true, editable: false, hidden: true},
                     {
                         title: "Description", dataIndx: "DescriptiveName", width: 200, dataType: "string", editable: true,
                         editor: { type: "textarea", attr: "rows=5" }, hidden: true
@@ -1220,15 +1223,15 @@
                     var MarkupPercentage = rd.MarkupPercentage;
                     var mrp = 0;
                     if (MarkupPercentage == "" || MarkupPercentage == undefined) {
-                        mrp = rd.CMrp;
+                        mrp = parseFloat(rd.CMrp || 0); // Ensure mrp is a number
                     }
                     else {
-                        mrp = rd.CRate + ((rd.CRate * MarkupPercentage) / 100);
+                        mrp = parseFloat(rd.CRate) + ((parseFloat(rd.CRate) * parseFloat(MarkupPercentage)) / 100);
                     }
-                    return mrp;
+                    return parseFloat(mrp).toFixed(2); // Apply toFixed only after confirming mrp is a number
                 }],
                 ["CItemTotal", function (rd) {
-                    return rd.CQty * rd.CRate;
+                    return (parseFloat(rd.CQty) * parseFloat(rd.CRate)).toFixed(2);
                 }],
                 ["BatchName", function (rd) {
                     return rd.CBatch;
@@ -1243,85 +1246,66 @@
                         return rd.FreeQty;
                 }],
                 ["Rate", function (rd) {
-                    return rd.CRate;
+                    return parseFloat(rd.CRate).toFixed(2);
                 }],
                 ["MRP", function (rd) {
-                    return rd.CMrp;
+                    return parseFloat(rd.CMrp || 0).toFixed(2);
                 }],
                 ["ItemTotal", function (rd) {
-                    return rd.Qty * rd.Rate;
+                    return (parseFloat(rd.Qty) * parseFloat(rd.Rate)).toFixed(2);
                 }],
                 ["TaxableValue", function (rd) {
-                    var amount = rd.Qty * rd.Rate;;
-                    var disc = rd.Discount;
-                    if (disc == undefined) disc = 0;
-
-                    return amount - disc;
+                    var amount = parseFloat(rd.Qty) * parseFloat(rd.Rate);
+                    var disc = parseFloat(rd.Discount || 0);
+                    return (amount - disc).toFixed(2);
                 }],
                 ["TaxAmount", function (rd) {
-                    var amount = rd.TaxableValue;
-                    if (amount == undefined) amount = 0;
-                    var taxper = rd.TaxRates;
-                    if (taxper == undefined) taxper = 0;
-                    return amount * taxper / 100;
+                    var amount = parseFloat(rd.TaxableValue || 0);
+                    var taxper = parseFloat(rd.TaxRates || 0);
+                    return (amount * taxper / 100).toFixed(2);
                 }],
                 ["SGSTAmt", function (rd) {
-                    var amount = rd.TaxableValue, sgstAmt = 0, sgstPer = rd.SGST;
-                    if (amount == undefined) amount = 0;
-                    if (sgstPer == undefined) sgstPer = 0;
-                    sgstAmt = amount * (sgstPer / 100);
-                    return sgstAmt;
+                    var amount = parseFloat(rd.TaxableValue || 0);
+                    var sgstPer = parseFloat(rd.SGST || 0);
+                    return (amount * sgstPer / 100).toFixed(2);
                 }],
                 ["CGSTAmt", function (rd) {
-                    var amount = rd.TaxableValue, cgstAmt = 0, cgstPer = rd.CGST;
-                    if (amount == undefined) amount = 0;
-                    if (cgstPer == undefined) cgstPer = 0;
-                    cgstAmt = amount * (cgstPer / 100);
-                    return cgstAmt;
+                    var amount = parseFloat(rd.TaxableValue || 0);
+                    var cgstPer = parseFloat(rd.CGST || 0);
+                    return (amount * cgstPer / 100).toFixed(2);
                 }],
                 ["IGSTAmt", function (rd) {
-                    var amount = rd.TaxableValue, igstAmt = 0, igstPer = rd.IGST;
-                    if (amount == undefined) amount = 0;
-                    if (igstPer == undefined) igstPer = 0;
-                    igstAmt = amount * (igstPer / 100);
-                    return igstAmt;
+                    var amount = parseFloat(rd.TaxableValue || 0);
+                    var igstPer = parseFloat(rd.IGST || 0);
+                    return (amount * igstPer / 100).toFixed(2);
                 }],
                 ["UGSTAmt", function (rd) {
-                    var amount = rd.TaxableValue, ugstAmt = 0, ugstPer = rd.UGST;
-                    if (amount == undefined) amount = 0;
-                    if (ugstPer == undefined) ugstPer = 0;
-                    ugstAmt = amount * (ugstPer / 100);
-                    return ugstAmt;
+                    var amount = parseFloat(rd.TaxableValue || 0);
+                    var ugstPer = parseFloat(rd.UGST || 0);
+                    return (amount * ugstPer / 100).toFixed(2);
                 }],
                 ["Amount", function (rd) {
-                    var itemTotal = rd.ItemTotal, discount = rd.Discount, taxAmount = rd.TaxAmount;
-                    var TransC = rd.TransC, InstallC = rd.InstallC, ServiceAmt = rd.ServiceAmt, OtherC = rd.OtherC, CustomDuty = rd.CustomDuty;
-                    if (itemTotal == undefined || itemTotal == null || isNaN(itemTotal)) itemTotal = 0;
-                    if (discount == undefined || discount == null || isNaN(discount)) discount = 0;
-                    if (taxAmount == undefined || taxAmount == null || isNaN(taxAmount)) taxAmount = 0;
+                    var itemTotal = parseFloat(rd.ItemTotal || 0);
+                    var discount = parseFloat(rd.Discount || 0);
+                    var taxAmount = parseFloat(rd.TaxAmount || 0);
+                    var TransC = parseFloat(rd.TransC || 0);
+                    var InstallC = parseFloat(rd.InstallC || 0);
+                    var ServiceAmt = parseFloat(rd.ServiceAmt || 0);
+                    var OtherC = parseFloat(rd.OtherC || 0);
+                    var CustomDuty = parseFloat(rd.CustomDuty || 0);
 
-                    if (TransC == undefined || TransC == null || isNaN(TransC)) TransC = 0;
-                    if (InstallC == undefined || InstallC == null || isNaN(InstallC)) InstallC = 0;
-                    if (ServiceAmt == undefined || ServiceAmt == null || isNaN(ServiceAmt)) ServiceAmt = 0;
-                    if (OtherC == undefined || OtherC == null || isNaN(OtherC)) OtherC = 0;
-                    if (CustomDuty == undefined || CustomDuty == null || isNaN(CustomDuty)) CustomDuty = 0;
-
-                    var otherCharges = parseFloat(InstallC) + parseFloat(TransC) + parseFloat(ServiceAmt) + parseFloat(OtherC) + parseFloat(CustomDuty);
-                    var NetAmt = parseFloat(itemTotal) + parseFloat(otherCharges) + parseFloat(taxAmount);
-                    NetAmt = NetAmt - discount;
-                    return NetAmt;
+                    var otherCharges = InstallC + TransC + ServiceAmt + OtherC + CustomDuty;
+                    var NetAmt = itemTotal + otherCharges + taxAmount - discount;
+                    return NetAmt.toFixed(2);
                 }],
                 ["Discount", function (rd) {
-                    var amount = rd.Amount;
-                    if (amount == undefined) amount = 0;
-                    var discper = rd.DiscountPer;
-                    if (discper == undefined) discper = 0;
-                    var discamt = rd.Discount;
-                    if (discamt == undefined) discamt = 0;
+                    var amount = parseFloat(rd.Amount || 0);
+                    var discper = parseFloat(rd.DiscountPer || 0);
+                    var discamt = parseFloat(rd.Discount || 0);
                     if (discper > 0) {
                         discamt = amount * discper / 100;
                     }
-                    return discamt;
+                    return discamt.toFixed(2);
                 }],
             ],
             pageModel: { type: "local", rPP: 20 },

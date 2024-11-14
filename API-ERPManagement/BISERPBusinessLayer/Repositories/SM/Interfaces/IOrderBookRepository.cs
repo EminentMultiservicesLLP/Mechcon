@@ -13,6 +13,7 @@ namespace BISERPBusinessLayer.Repositories.SM.Interfaces
         OfferDetailEntities GetFinalOffer(int EnquiryID);
         OrderBookEntities SaveOrderBook(OrderBookEntities model);
         IEnumerable<OrderBookEntities> GetOrderBook(int UserID);
+        IEnumerable<OrderBookOtherDetail> GetOBOtherDetails(int OrderBookID);
         IEnumerable<ProjectTCDetails> GetOrderBookProjectTC(int orderBookID);
         IEnumerable<PaymentTermDetails> GetOrderBookPaymentTerms(int orderBookID);
         IEnumerable<DeliveryTermDetails> GetOrderBookDeliveryTerms(int orderBookID);

@@ -190,6 +190,7 @@
     <Compile Include="Controllers\SM\OfferRegisterController.cs" />
     <Compile Include="Controllers\SM\OrderBookController.cs" />
     <Compile Include="Controllers\SM\ResourceTargetController.cs" />
+    <Compile Include="Controllers\SM\SM_ReportsController.cs" />
     <Compile Include="Controllers\SM\SM_WorkOrderController.cs" />
     <Compile Include="Controllers\Store\AdjustmentVoucherController.cs" />
     <Compile Include="Controllers\Store\BillCreationController.cs" />

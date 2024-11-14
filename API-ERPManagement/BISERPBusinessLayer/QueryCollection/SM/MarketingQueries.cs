@@ -21,6 +21,7 @@ namespace BISERPBusinessLayer.QueryCollection.SM
         public const string GetTypes = "sp_SM_GetTypes";
         public const string GetSectors = "sp_SM_GetSectors";
         public const string GetZones = "sp_SM_GetZones";
+        public const string GetEnqStatus = "sp_SM_GetEnqStatus";
         public const string GetStatus = "sp_SM_GetStatus";
         public const string SaveEnquiry = "sp_SM_SaveEnquiryRegister";
         public const string GetEnquiry = "sp_SM_GetEnquiry";
@@ -48,6 +49,7 @@ namespace BISERPBusinessLayer.QueryCollection.SM
         public const string GetOrderBookPaymentTerms = "sp_SM_GetOrderBookPaymentTerms";
         public const string GetOrderBookDeliveryTerms = "sp_SM_GetOrderBookDeliveryTerms";
         public const string GetIncoTerm = "sp_SM_GetIncoTerms";
+        public const string GetOBOtherDetails = "sp_SM_GetOBOtherDetails";
 
         //WorkOrder
         public const string GetEnqForWorkOrder = "sp_SM_GetEnqForWorkOrder";

@@ -497,7 +497,7 @@
             { title: "Amount", dataIndx: "Amount", width: 150, dataType: "double", resizable: false, editable: false, hidden: true },
             { title: "ItemCode", dataIndx: "ItemCode", width: 150, dataType: "string", resizable: false, editable: false, hidden: true },
             { title: "Item Name & Description", dataIndx: "ItemName", width: 750, resizable: false, dataType: "string", editable: false },
-            { title: "HSNCode", dataIndx: "HSNCode", width: 150, resizable: false, dataType: "string", editable: false },
+            { title: "HSNCode", dataIndx: "HSNCode", width: 150, resizable: false, dataType: "string", editable: false, hidden: true},
             {
                 title: "Description", dataIndx: "DescriptiveName", minWidth: 300, dataType: "string", editable: true,
                 editor: { type: "textarea", attr: "rows=5" }, hidden: true
@@ -541,6 +541,7 @@
             colModel: colIID,
             dataModel: dataIID,
             pageModel: { type: "local", rPP: 20 },
+            scrollModel: { autoFit: true },
         };
         $DetailsGrid = $("#grid").pqGrid(setIID);
     });

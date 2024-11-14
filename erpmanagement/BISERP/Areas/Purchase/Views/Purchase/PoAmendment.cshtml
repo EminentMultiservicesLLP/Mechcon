@@ -1090,19 +1090,19 @@
                     //},
                     { title: "", dataIndx: "ItemID", width: 10, dataType: "integer", hidden: true },
                     { title: "Item Name & Description", dataIndx: "ItemName", width: 400, dataType: "string", editable: false },
-                    { title: "HSNCode", dataIndx: "HSNCode", width: 150, resizable: false, dataType: "string", editable: false },
+                    { title: "HSNCode", dataIndx: "HSNCode", width: 150, resizable: false, dataType: "string", editable: false, hidden: true},
                     {
                         title: "Description", dataIndx: "DescriptiveName", width: 200, dataType: "string", editable: true ,
                         editor: { type: "textarea", attr: "rows=5" }, hidden: true
                     },
-                    { title: "Item TaxRate", dataIndx: "TaxRate", width: 100, dataType: "string", editable: false },
+                    { title: "Tax Rate", dataIndx: "TaxRate", width: 100, dataType: "string", editable: false },
                     { title: "Unit", dataIndx: "OrderingUnit", width: 100, dataType: "string", editable: false }, 
 
                     { title: "Qty", dataIndx: "Qty", width: 70, dataType: "float", align: "left"},
                     { title: "Free Qty", dataIndx: "FreeQty", width: 90, dataType: "float", align: "left", editable: false, hidden: true  },
                     {
                         title: "Pack Size", dataIndx: "PackSize", width: 120, dataType: "string", editable: false,
-                        editor: { type: autoCompleteEditor },
+                        editor: { type: autoCompleteEditor }, hidden: true,
                         validations: [
                             { type: 'minLen', value: 1, msg: "Required" },
                                 {

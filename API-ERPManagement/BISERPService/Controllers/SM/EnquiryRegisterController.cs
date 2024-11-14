@@ -155,6 +155,28 @@ namespace BISERPService.Controllers.SM
             }
         }
 
+        [Route("getEnqStatus")]
+        [AcceptVerbs("GET", "POST")]
+        public IHttpActionResult GetEnqStatus()
+        {
+            try
+            {
+                var enqStatus = _enquiryRegister.GetEnqStatus().ToList();
+
+                if (enqStatus == null || !enqStatus.Any())
+                {
+                    return NotFound();
+                }
+
+                return Ok(enqStatus);
+            }
+            catch (Exception ex)
+            {
+                _loggger.LogError("Error in GetEnqStatus method of EnquiryRegisterController:" + Environment.NewLine + ex.ToString());
+                return InternalServerError(ex);
+            }
+        }
+
         [Route("getStatus")]
         [AcceptVerbs("GET", "POST")]
         public IHttpActionResult GetStatus()

@@ -137,7 +137,6 @@
                                 </div>
                             </div>
                         </fieldset>
-                        <div class="divider"></div>
 
                         <fieldset class="fieldsetCustom">
                             <legend class="legendCustom">Summary</legend>
@@ -166,15 +165,214 @@
                                     <label for="PIABGAdvSubmitDate" class="">PI Submission date for ABG advance</label>
                                     <input type="text" id="PIABGAdvSubmitDate" class="form-control datepicker" placeholder="PI Submission date for ABG advance">
                                 </div>
-                                <div class="col-lg-2 col-md-4 col-sm-12 mb-3" hidden>
-                                    <label class="required" for="IncoTermID">IncoTerm</label>
-                                    <select id="IncoTermID" name="IncoTermID" class="form-control">
-                                        <option value="">--Select IncoTerm--</option>
-                                    </select>
-                                </div>
                             </div>
                         </fieldset>
 
+                        <fieldset class="fieldsetCustom">
+                            <legend class="legendCustom">Work Order Entry</legend>
+                            <table class="table table-hover">
+                                <tbody>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">Project Description</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" id="ProjectDescription" placeholder="Provide a brief project description">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">Material Of Construction</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" id="MaterialOfConstruction" placeholder="Specify the construction material">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">Area OF Installation</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" id="AreaOfInstallation" placeholder="Mention the installation area">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">Technical Specification</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" id="TechnicalSpecification" placeholder="Enter technical specifications">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">Scope Of Supply</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" id="ScopeOfSupply" placeholder="Define the scope of supply">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">Packaging</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" id="Packaging" placeholder="Enter packaging requirements">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">Insurance</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" id="Insurance" placeholder="Provide insurance details">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">Supervision of Installation & Commissioning</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" id="Supervision" placeholder="Details of installation supervision">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">LD Charges</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" id="LDCharges" placeholder="Enter LD charges">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">Contact At Site</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" id="ContactAtSite" placeholder="Site contact details">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">Contact At Purchase</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" id="ContactAtPurchase" placeholder="Purchase contact details">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">Delivery Date</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control datepicker" id="DeliveryDate" placeholder="Select the delivery date">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">1st Dispatch Date</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control datepicker" id="DispatchDate1" placeholder="Select the 1st dispatch date">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">2nd Dispatch Date</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control datepicker" id="DispatchDate2" placeholder="Select the 2nd dispatch date">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">3rd Dispatch Date</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control datepicker" id="DispatchDate3" placeholder="Select the 3rd dispatch date">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">4th Dispatch Date</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control datepicker" id="DispatchDate4" placeholder="Select the 4th dispatch date">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">5th Dispatch Date</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control datepicker" id="DispatchDate5" placeholder="Select the 5th dispatch date">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">Attachment</div>
+                                                <div class="col-sm-8">
+                                                    <input class="form-control btn-primary attachment" type="file" multiple accept=".jpg,.jpeg,.png,.pdf" id="Attachment" />
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">Brief Technical Specfication</div>
+                                                <div class="col-sm-8">
+                                                    <textarea id="BriefTechnicalSpecification" class="form-control" placeholder="Brief Technical Specification" rows="5"></textarea>
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="submit-row">
+                                <button type="button" id="btnAddOtherFields" class="btn btn-primary" onclick="addOtherFields()">Add Field</button>
+                                <button type="button" id="btnViewAttachment" class="btn btn-info" onclick="viewAttachment()">View <i class="pe-va pe-7s-paperclip pe-2x"></i></button>
+                            </div>
+                            <table class="table table-hover">
+                                <tbody id="OtherFields">
+                                </tbody>
+                            </table>
+                        </fieldset>
                     </div>
                 </div>
             </div>
@@ -252,9 +450,10 @@
 </div>
 
 <script>
-     var appSetting = '@BISERP.Common.Constants.ScandocUrl';
+    var appSetting = '@BISERP.Common.Constants.ScandocUrl';
     var tempOrderBookID = 0;
     var tempOfferID = 0;
+    let otherFieldIndx = 0;
 
     function getEnquiry() {
         $("#EnquiryLabel").autocomplete({
@@ -316,36 +515,6 @@
             clearEnquiryDetails();
         }
     });
-
-
-    function loadIncoTerm() {
-        $.ajax({
-            type: "GET",
-            url: "/OrderBook/GetIncoTerm",
-            dataType: "json",
-            success: function (data) {
-                const $incoTermDropdown = $('#IncoTermID');
-                $incoTermDropdown.empty();
-
-                if (data.error) {
-                    $incoTermDropdown.append('<option value="">--Error loading incoTermes--</option>');
-                    console.error("Error loading incoTermes:", data.error);
-                    return;
-                }
-
-                $incoTermDropdown.append('<option value="">--Select IncoTerm--</option>');
-
-                data.forEach(function (incoTerm) {
-                    $incoTermDropdown.append(`<option value="${incoTerm.IncoTermID}">${incoTerm.IncoTermCode}</option>`);
-                });
-            },
-            error: function (xhr, textIncoTerm, errorThrown) {
-                $('#IncoTermID').empty();
-                $('#IncoTermID').append('<option value="">--Error loading incoTermes--</option>');
-                console.error("Error loading incoTermes:", errorThrown);
-            }
-        });
-    }
 
     function GetEnquiryDetails(enquiryID) {
         var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
@@ -462,6 +631,7 @@
         pageModel: { type: "local" },
         rowClick: function (evt, ui) {
             if (ui.rowData) {
+                debugger
                 const data = ui.rowData;
                 clearFormData(true);
                 closeModal();
@@ -480,9 +650,26 @@
                 $("#PIAdvSubmitDate").datepicker("setDate", data.strPIAdvSubmitDate);
                 $("#ABGSubmitDate").datepicker("setDate", data.strABGSubmitDate);
                 $("#PIABGAdvSubmitDate").datepicker("setDate", data.strPIABGAdvSubmitDate);
-                $("#IncoTermID").val(data.IncoTermID);
-
+                $("#ProjectDescription").val(data.ProjectDescription);
+                $("#MaterialOfConstruction").val(data.MaterialOfConstruction);
+                $("#AreaOfInstallation").val(data.AreaOfInstallation);
+                $("#TechnicalSpecification").val(data.TechnicalSpecification);
+                $("#ScopeOfSupply").val(data.ScopeOfSupply);
+                $("#Packaging").val(data.Packaging);
+                $("#Insurance").val(data.Insurance);
+                $("#Supervision").val(data.Supervision);
+                $("#LDCharges").val(data.LDCharges);
+                $("#ContactAtSite").val(data.ContactAtSite);
+                $("#ContactAtPurchase").val(data.ContactAtPurchase);
+                $("#DeliveryDate").datepicker("setDate", data.strDeliveryDate);
+                $("#DispatchDate1").datepicker("setDate", data.strDispatchDate1);
+                $("#DispatchDate2").datepicker("setDate", data.strDispatchDate2);
+                $("#DispatchDate3").datepicker("setDate", data.strDispatchDate3);
+                $("#DispatchDate4").datepicker("setDate", data.strDispatchDate4);
+                $("#DispatchDate5").datepicker("setDate", data.strDispatchDate5);
+                $("#BriefTechnicalSpecification").val(data.BriefTechnicalSpecification);
                 GetEnquiryDetails(data.EnquiryID);
+                GetOBOtherDetails(tempOrderBookID);
                 loadOrderBookProjectTCGrid(tempOrderBookID);
                 loadOrderBookPaymentTermsGrid(tempOrderBookID);
                 loadOrderBookDeliveryTermsGrid(tempOrderBookID);
@@ -533,6 +720,37 @@
 
     }
     //-----------------------------------OrderBookGrid (Ends here)-----------------------------------//
+
+
+    function GetOBOtherDetails(orderBookID) {
+        var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            url: "/OrderBook/GetOBOtherDetails",
+            data: { OrderBookID: orderBookID },
+            dataType: "json",
+            success: function (response) {
+                if (response.success) {
+                    let details = response.records
+                    for (var i = 0; i < details.length; i++) {
+                        otherFieldIndx++
+                        addDiv(otherFieldIndx);
+                        $(`#Name${otherFieldIndx}`).val(details[i].Name);
+                        $(`#Value${otherFieldIndx}`).val(details[i].Value);
+                    }
+
+                } else {
+                    console.warn("No details found or an issue occurred: ", response.message);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Error loading otherDetails details: ", status, error);
+            }
+        });
+    }
 
     function loadOrderBookProjectTCGrid(orderBookID) {
         var antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
@@ -664,7 +882,6 @@
             { selector: "#PODate", placeholder: "PO Date" },
             { selector: "#POBaseValue", placeholder: "PO Value" },
             { selector: "#ABGSubmitDate", placeholder: "ABG Submit Date" },
-            //{ selector: "#IncoTermID", placeholder: "IncoTerm" },
         ];
 
         for (const { selector, placeholder } of fields) {
@@ -689,6 +906,24 @@
         return true;
     }
 
+    function getOtherFeildDetails() {
+        const data = [];
+
+        $("#OtherFields tr").each(function () {
+            const index = $(this).attr('id').replace('tr', '');
+            const name = $(`#Name${index}`).val();
+            const value = $(`#Value${index}`).val();
+
+            if (name && value) {
+                data.push({
+                    Name: name,
+                    Value: value
+                });
+            }
+        });
+
+        return data;
+    }
 
     function SaveOrderBook() {
         if (!validateFormData()) {
@@ -709,7 +944,25 @@
             PIAdvSubmitDate: $("#PIAdvSubmitDate").val(),
             ABGSubmitDate: $("#ABGSubmitDate").val(),
             PIABGAdvSubmitDate: $("#PIABGAdvSubmitDate").val(),
-            IncoTermID: $("#IncoTermID").val(),
+            ProjectDescription: $("#ProjectDescription").val(),
+            MaterialOfConstruction: $("#MaterialOfConstruction").val(),
+            AreaOfInstallation: $("#AreaOfInstallation").val(),
+            TechnicalSpecification: $("#TechnicalSpecification").val(),
+            ScopeOfSupply: $("#ScopeOfSupply").val(),
+            Packaging: $("#Packaging").val(),
+            Insurance: $("#Insurance").val(),
+            Supervision: $("#Supervision").val(),
+            LDCharges: $("#LDCharges").val(),
+            ContactAtSite: $("#ContactAtSite").val(),
+            ContactAtPurchase: $("#ContactAtPurchase").val(),
+            DeliveryDate: $("#DeliveryDate").val(),
+            DispatchDate1: $("#DispatchDate1").val(),
+            DispatchDate2: $("#DispatchDate2").val(),
+            DispatchDate3: $("#DispatchDate3").val(),
+            DispatchDate4: $("#DispatchDate4").val(),
+            DispatchDate5: $("#DispatchDate5").val(),
+            BriefTechnicalSpecification: $("#BriefTechnicalSpecification").val(),
+            OBOtherDetails: getOtherFeildDetails(),
             ProjectTCList: projectTCData,
             PaymentTermList: paygridData,
             DeliveryTermList: delgridData,
@@ -727,9 +980,16 @@
             data: JSON.stringify(Details),
             success: function (response) {
                 if (response.success) {
-                    const message = tempOrderBookID === 0 ? `OrderBook registered successfully !<br> Project Code : <b>${response.Data.ProjectCode}</b>` : `OrderBook updated successfully !<br> Project Code : <b>${response.Data.ProjectCode}</b>`;
-                    ShowAlert("success", message);
-                    clearFormData();
+                    let fileSaveMsg = "";
+                    try {
+                        SaveScandoc(`Attachment`, $("#ProjectID").val(), "Marketing", "WorkOrder");
+                    } catch (err) {
+                        fileSaveMsg = "But failed to save attached files.";
+                    } finally {
+                        const message = tempOrderBookID === 0 ? `OrderBook registered successfully!<br> Project Code : <b>${response.Data.ProjectCode}</b>` : `OrderBook updated successfully!<br> Project Code : <b>${response.Data.ProjectCode}</b>`;
+                        ShowAlert("success", `${message} <br> ${fileSaveMsg}`);
+                        clearFormData();
+                    }
                 } else {
                     ShowAlert("error", response.message || "An error occurred while saving the offer.");
                 }
@@ -747,15 +1007,60 @@
             getEnquiry();
         }
         tempOrderBookID = 0;
-        $(".datepicker").datepicker("setDate", new Date());
+
         $("#PONo").val('');
+        $("#ProjectDescription").val('');
+        $("#MaterialOfConstruction").val('');
+        $("#AreaOfInstallation").val('');
+        $("#TechnicalSpecification").val('');
+        $("#ScopeOfSupply").val('');
+        $("#Packaging").val('');
+        $("#Insurance").val('');
+        $("#Supervision").val('');
+        $("#LDCharges").val('');
+        $("#ContactAtSite").val('');
+        $("#ContactAtPurchase").val('');
+        $("#BriefTechnicalSpecification").val('');
+        $("#OtherFields").empty();
         $(".datepicker").datepicker("setDate", null);
-        $("#IncoTermID").val('');
+        $("#Attachment").val(null);
         ClearParamGrid("ProjectTCgrid");
         ClearParamGrid("PaymentTermgrid");
         ClearParamGrid("DeliveryTermgrid");
         clearEnquiryDetails();
     }
+
+    function addOtherFields() {
+        otherFieldIndx++;
+        addDiv(otherFieldIndx);
+    }
+
+    function addDiv(index) {
+        const divContent = `
+            <tr id="tr${index}">
+                <th scope="row">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" id="Name${index}" placeholder="Enter Name${index}" style="background-color: gainsboro;">
+                        </div>
+                        <div class="col-sm-7">
+                            <input type="text" class="form-control" id="Value${index}" placeholder="Enter Value${index}">
+                        </div>
+                        <div class="col-sm-1" style="text-align: center;">
+                            <span><a class="btnDelete" onclick="deleteRow(${index})"><i class="fa fa-times-circle" style="color: red; font-size: 29px;"></i></a></span>
+                        </div>
+                    </div>
+                </th>
+            </tr>
+        `;
+
+        $("#OtherFields").append(divContent);
+    }
+
+    function deleteRow(index) {
+        $(`#tr${index}`).remove();
+    }
+
     $("#PIAdvSubmitDate").change(() => {
         if ($("#PIAdvSubmitDate").val() != "") {
             $("#PIABGAdvSubmitDate").datepicker("setDate", null);
@@ -767,7 +1072,6 @@
             $("#PIAdvSubmitDate").datepicker("setDate", null);
         }
     });
-
 
     function clearEnquiryDetails() {
         tempOfferID = 0;
@@ -1205,5 +1509,4 @@
 
     //-----------------------------------On Load-----------------------------------//
     getEnquiry();
-    //loadIncoTerm();
 </script>

@@ -154,6 +154,29 @@ namespace BISERP.Areas.Marketing.Controllers
         }
 
         [HttpGet]
+        public async Task<JsonResult> GetOBOtherDetails(int OrderBookID)
+        {
+            string _url = $"{url}/orderBook/getOBOtherDetails/{OrderBookID}{Common.Constants.JsonTypeResult}";
+
+            try
+            {
+                var records = await Common.AsyncWebCalls.GetAsync<List<WorkOrderOtherDetail>>(client, _url, CancellationToken.None);
+
+                if (records == null)
+                {
+                    return Json(new { success = false, message = "No records found" }, JsonRequestBehavior.AllowGet);
+                }
+
+                return Json(new { success = true, records }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error in GetOBOtherDetails: {ex.Message} {Environment.NewLine} {ex.StackTrace}");
+                return Json(new { success = false, message = "An error occurred while retrieving GetOBOtherDetails" }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpGet]
         public async Task<JsonResult> GetOrderBookProjectTC(int OrderBookID)
         {
             string _url = $"{url}/orderBook/getOrderBookProjectTC/{OrderBookID}";

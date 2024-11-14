@@ -378,6 +378,9 @@
     <Compile Include="Areas\ScanDoc\Models\ScanDocModel.cs" />
     <Compile Include="Areas\ScanDoc\ScanDocAreaRegistration.cs" />
     <Compile Include="Areas\DashBoards\Controllers\DashBoardController.cs" />
+    <Compile Include="Areas\SM_Reports\Controllers\SM_ReportsController.cs" />
+    <Compile Include="Areas\SM_Reports\Models\SM_ReportsModel.cs" />
+    <Compile Include="Areas\SM_Reports\SM_ReportsAreaRegistration.cs" />
     <Compile Include="Areas\Store\Controllers\BillCreationController.cs" />
     <Compile Include="Areas\Store\Controllers\StoreController.cs" />
     <Compile Include="Areas\Miscellaneous\Controllers\StoreQuantityLimitsController.cs" />
@@ -474,11 +477,6 @@
     <Compile Include="Content\DataSet\dsStore.Designer.cs" />
     <Compile Include="Content\DataSet\dsTransport.Designer.cs" />
     <Compile Include="Content\DataSet\PackingList.Designer.cs" />
-    <Compile Include="Content\DataSet\PackingList1.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>PackingList.xsd</DependentUpon>
-    </Compile>
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BranchController.cs" />
     <Compile Include="Areas\Store\Controllers\BranchMasterController.cs" />
@@ -1056,6 +1054,14 @@
     <Content Include="Areas\Marketing\Views\Marketing\OrderBook.cshtml" />
     <Content Include="Areas\Marketing\Views\Marketing\WorkOrder.cshtml" />
     <Content Include="Areas\Marketing\Views\Marketing\ResourceTarget.cshtml" />
+    <Content Include="Areas\SM_Reports\Views\SM_Reports\EnquiryRegisterReport.cshtml" />
+    <Content Include="Areas\SM_Reports\Views\SM_Reports\LocationWiseSalesRpt.cshtml" />
+    <Content Include="Areas\SM_Reports\Views\SM_Reports\MasterListProjectsRpt.cshtml" />
+    <Content Include="Areas\SM_Reports\Views\SM_Reports\OrderBookRpt.cshtml" />
+    <Content Include="Areas\SM_Reports\Views\SM_Reports\ProductWiseSalesRpt.cshtml" />
+    <Content Include="Areas\SM_Reports\Views\SM_Reports\ResourceWiseMonthlyStatusRpt.cshtml" />
+    <Content Include="Areas\SM_Reports\Views\SM_Reports\SectorWiseSalesRpt.cshtml" />
+    <Content Include="Areas\SM_Reports\Views\Web.config" />
     <None Include="Content\DataSet\Billing.xsd" />
     <Content Include="Content\DataSet\Billing.xss">
       <DependentUpon>Billing.xsd</DependentUpon>
@@ -1583,6 +1589,7 @@
     <Folder Include="Areas\Marketing\Views\Shared\" />
     <Folder Include="Areas\Reports\Models\" />
     <Folder Include="Areas\ScanDoc\Views\Shared\" />
+    <Folder Include="Areas\SM_Reports\Views\Shared\" />
     <Folder Include="Models\Branch\" />
     <Folder Include="Models\Purchase\" />
     <Folder Include="Views\Master\" />

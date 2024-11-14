@@ -24,11 +24,11 @@
     var ProjectLogicColList = [
 
         {
-            title: "Code", dataIndx: "Code", dataType: "string", width: '49%', editable: false,
+            title: "Code", dataIndx: "Code", dataType: "string", width: '50%', editable: false,
             filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
         },
         {
-            title: "FinancialYear", dataIndx: "FinancialYear", dataType: "string", width: '49%', editable: false,
+            title: "FinancialYear", dataIndx: "FinancialYear", dataType: "string", width: '50%', editable: false,
             filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
         }
     ];
@@ -46,7 +46,6 @@
         showBottom: true,
         sortable: true,
         resizable: true,
-        scrollModel: { autoFit: true },
         draggable: false,
         hwrap: false,
         wrap: false,
@@ -56,6 +55,7 @@
         filterModel: { on: true, mode: "AND", header: true },
         selectionModel: { type: 'row', mode: 'single', cbHeader: false },
         pageModel: { type: "local" },
+        scrollModel: { autoFit: true },
         colModel: ProjectLogicColList,
         dataModel: ProjectLogicDataModel
     }

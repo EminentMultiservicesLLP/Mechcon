@@ -66,6 +66,7 @@ namespace BISERPBusinessLayer.Repositories.SM.Classes
 
         public OrderBookEntities SaveOrderBook(OrderBookEntities entity)
         {
+            var OBOtherDetails = entity.OBOtherDetails != null ? Commons.ToXML(entity.OBOtherDetails) : null;
             var ProjectTCList = entity.ProjectTCList != null ? Commons.ToXML(entity.ProjectTCList) : null;
             var PaymentTermList = entity.PaymentTermList != null ? Commons.ToXML(entity.PaymentTermList) : null;
             var DeliveryTermList = entity.DeliveryTermList != null ? Commons.ToXML(entity.DeliveryTermList) : null;
@@ -84,7 +85,25 @@ namespace BISERPBusinessLayer.Repositories.SM.Classes
                     paramCollection.Add(new DBParameter("PIAdvSubmitDate", entity.PIAdvSubmitDate, DbType.DateTime));
                     paramCollection.Add(new DBParameter("ABGSubmitDate", entity.ABGSubmitDate, DbType.DateTime));
                     paramCollection.Add(new DBParameter("PIABGAdvSubmitDate", entity.PIABGAdvSubmitDate, DbType.DateTime));
-                    paramCollection.Add(new DBParameter("IncoTermID", entity.IncoTermID, DbType.Int32));
+                    paramCollection.Add(new DBParameter("ProjectDescription", entity.ProjectDescription, DbType.String));
+                    paramCollection.Add(new DBParameter("MaterialOfConstruction", entity.MaterialOfConstruction, DbType.String));
+                    paramCollection.Add(new DBParameter("AreaOfInstallation", entity.AreaOfInstallation, DbType.String));
+                    paramCollection.Add(new DBParameter("TechnicalSpecification", entity.TechnicalSpecification, DbType.String));
+                    paramCollection.Add(new DBParameter("ScopeOfSupply", entity.ScopeOfSupply, DbType.String));
+                    paramCollection.Add(new DBParameter("Packaging", entity.Packaging, DbType.String));
+                    paramCollection.Add(new DBParameter("Insurance", entity.Insurance, DbType.String));
+                    paramCollection.Add(new DBParameter("Supervision", entity.Supervision, DbType.String));
+                    paramCollection.Add(new DBParameter("LDCharges", entity.LDCharges, DbType.Single));
+                    paramCollection.Add(new DBParameter("ContactAtSite", entity.ContactAtSite, DbType.String));
+                    paramCollection.Add(new DBParameter("ContactAtPurchase", entity.ContactAtPurchase, DbType.String));
+                    paramCollection.Add(new DBParameter("DeliveryDate", entity.DeliveryDate, DbType.DateTime));
+                    paramCollection.Add(new DBParameter("DispatchDate1", entity.DispatchDate1, DbType.DateTime));
+                    paramCollection.Add(new DBParameter("DispatchDate2", entity.DispatchDate2, DbType.DateTime));
+                    paramCollection.Add(new DBParameter("DispatchDate3", entity.DispatchDate3, DbType.DateTime));
+                    paramCollection.Add(new DBParameter("DispatchDate4", entity.DispatchDate4, DbType.DateTime));
+                    paramCollection.Add(new DBParameter("DispatchDate5", entity.DispatchDate5, DbType.DateTime));
+                    paramCollection.Add(new DBParameter("BriefTechnicalSpecification", entity.BriefTechnicalSpecification, DbType.String));
+                    paramCollection.Add(new DBParameter("OBOtherDetails", OBOtherDetails, DbType.Xml));
                     paramCollection.Add(new DBParameter("ProjectTCList", ProjectTCList, DbType.Xml));
                     paramCollection.Add(new DBParameter("PaymentTermList", PaymentTermList, DbType.Xml));
                     paramCollection.Add(new DBParameter("DeliveryTermList", DeliveryTermList, DbType.Xml));
@@ -143,13 +162,48 @@ namespace BISERPBusinessLayer.Repositories.SM.Classes
                                    strPIAdvSubmitDate = row.Field<string>("strPIAdvSubmitDate"),
                                    strABGSubmitDate = row.Field<string>("strABGSubmitDate"),
                                    strPIABGAdvSubmitDate = row.Field<string>("strPIABGAdvSubmitDate"),
-                                   IncoTermID = row.Field<int>("IncoTermID"),
-                                   Deactive = row.Field<bool>("Deactive"),
                                    ProjectID = row.Field<int>("ProjectID"),
                                    ProjectCode = row.Field<string>("ProjectCode"),
+                                   ProjectDescription = row.Field<string>("ProjectDescription"),
+                                   MaterialOfConstruction = row.Field<string>("MaterialOfConstruction"),
+                                   AreaOfInstallation = row.Field<string>("AreaOfInstallation"),
+                                   TechnicalSpecification = row.Field<string>("TechnicalSpecification"),
+                                   ScopeOfSupply = row.Field<string>("ScopeOfSupply"),
+                                   Packaging = row.Field<string>("Packaging"),
+                                   Insurance = row.Field<string>("Insurance"),
+                                   Supervision = row.Field<string>("Supervision"),
+                                   LDCharges = row.Field<double?>("LDCharges"),
+                                   ContactAtSite = row.Field<string>("ContactAtSite"),
+                                   ContactAtPurchase = row.Field<string>("ContactAtPurchase"),
+                                   strDeliveryDate = row.Field<string>("strDeliveryDate"),
+                                   strDispatchDate1 = row.Field<string>("strDispatchDate1"),
+                                   strDispatchDate2 = row.Field<string>("strDispatchDate2"),
+                                   strDispatchDate3 = row.Field<string>("strDispatchDate3"),
+                                   strDispatchDate4 = row.Field<string>("strDispatchDate4"),
+                                   strDispatchDate5 = row.Field<string>("strDispatchDate5"),
+                                   BriefTechnicalSpecification = row.Field<string>("BriefTechnicalSpecification"),
+                                   Deactive = row.Field<bool>("Deactive"),
                                }).ToList();
             }
             return orderBooks;
+        }
+
+        public IEnumerable<OrderBookOtherDetail> GetOBOtherDetails(int OrderBookID)
+        {
+            List<OrderBookOtherDetail> others = null;
+            using (DBHelper dbHelper = new DBHelper())
+            {
+                DBParameter param = new DBParameter("OrderBookID", OrderBookID, DbType.Int32);
+                DataTable dt = dbHelper.ExecuteDataTable(MarketingQueries.GetOBOtherDetails, param, CommandType.StoredProcedure);
+
+                others = dt.AsEnumerable()
+                            .Select(row => new OrderBookOtherDetail
+                            {
+                                Name = row.Field<string>("Name"),
+                                Value = row.Field<string>("Value")
+                            }).ToList();
+            }
+            return others;
         }
 
         public IEnumerable<ProjectTCDetails> GetOrderBookProjectTC(int orderBookID)

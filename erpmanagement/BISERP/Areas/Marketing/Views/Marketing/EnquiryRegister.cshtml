@@ -119,7 +119,7 @@
                                     @Html.TextBoxFor(model => model.Place, new { @class = "form-control", placeholder = "Enter Place" })
                                 </div>
                                 <div class="col-lg-2 col-md-4 col-sm-12 col-xs-12">
-                                    @Html.LabelFor(model => model.StatusID, new { @class = "required" })
+                                    @Html.Label("Enq Status", new { @class = "required" })
                                     @Html.DropDownListFor(model => model.StatusID, new SelectList(string.Empty, "Value", "Text"), "--Select Status--", new { @class = "wrapperdropdown-content form-control" })
                                 </div>
                                 <div class="col-lg-4 col-md-8 col-sm-12 col-xs-12">
@@ -331,10 +331,10 @@
         });
     }
 
-    function loadStatus() {
+    function loadEnqStatus() {
         $.ajax({
             type: "GET",
-            url: "/EnquiryRegister/GetStatus",
+            url: "/EnquiryRegister/GetEnqStatus",
             dataType: "json",
             success: function (data) {
                 const $statusDropdown = $('#StatusID');
@@ -405,7 +405,7 @@
     loadTypes();
     loadSectors();
     loadZones();
-    loadStatus();
+    loadEnqStatus();
     getAllClient();
 
     //-----------------------------------EnquiryGrid (Starts here)-----------------------------------//

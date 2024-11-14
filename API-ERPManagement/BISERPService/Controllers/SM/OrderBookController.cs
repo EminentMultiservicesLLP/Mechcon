@@ -110,6 +110,28 @@ namespace BISERPService.Controllers.SM
             }
         }
 
+        [Route("getOBOtherDetails/{OrderBookID}")]
+        [HttpGet]
+        public IHttpActionResult GetOBOtherDetails(int OrderBookID)
+        {
+            try
+            {
+                var details = _orderBook.GetOBOtherDetails(OrderBookID);
+
+                if (details == null)
+                {
+                    return NotFound(); // or return BadRequest("No details found for the specified enquiry ID.");
+                }
+
+                return Ok(details.ToList());
+            }
+            catch (Exception ex)
+            {
+                _loggger.LogError("Error in GetOBOtherDetails of OrderBookController : parameter :" + Environment.NewLine + ex.StackTrace);
+                return InternalServerError(ex);
+            }
+        }
+
         [Route("getOrderBookProjectTC/{OrderBookID}")]
         [HttpGet]
         public IHttpActionResult GetOrderBookProjectTC(int OrderBookID)

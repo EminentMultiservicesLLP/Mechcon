@@ -445,8 +445,8 @@ var dataDetail = { location: 'local', sorting: 'local', paging: 'local', dataTyp
         { title: "", dataIndx: "ItemID", width: 10, dataType: "integer", hidden: true, editable: false },
         { title: "Item Name & Description", dataIndx: "ItemName", width: 500, dataType: "string", editable: false },
         { title: "Description", dataIndx: "DescriptiveName", width: 200, dataType: "string", editable: false, editor: { type: "textarea", attr: "rows=5" }, hidden: true },
-        { title: "HSNCode", dataIndx: "HSNCode", width: 150, resizable: false, dataType: "string", editable: false },
-        { title: "Item TaxRate", dataIndx: "TaxRate", width: 100, dataType: "string", editable: false, hidden: true },
+        { title: "HSNCode", dataIndx: "HSNCode", width: 150, resizable: false, dataType: "string", editable: false, hidden: true },
+        { title: "Tax Rate", dataIndx: "TaxRate", width: 100, dataType: "string", editable: false, hidden: true },
         { title: "Unit", dataIndx: "OrderingUnit", width: 100, dataType: "string", editable: false },
         { title: "Size/Wt.", dataIndx: "SizeOrWeight", width: 100, dataType: "string", editable: false },
         { title: "PR PendingQty", dataIndx: "PendingQty", width: 70, dataType: "float", align: "left", editable: false, hidden: true },
@@ -519,84 +519,70 @@ var setdetail = {
     dataModel: dataDetail,
     formulas: [
         ["MRP", function (rd) {
-            if (isNaN(rd.MRP))
-                return rd.Rate;
-            else
-                return rd.MRP;
+            if (isNaN(rd.MRP)) return parseFloat(rd.Rate).toFixed(2);
+            return parseFloat(rd.MRP).toFixed(2);
         }],
-        ["Amount", function (rd) { return (rd.Qty * rd.Rate); }],
+        ["Amount", function (rd) {
+            return (parseFloat(rd.Qty) * parseFloat(rd.Rate)).toFixed(2);
+        }],
         ["Discount", function (rd) {
-            var amount = rd.Amount;
-            if (amount == undefined) amount = 0;
-            var discper = rd.DiscountPer;
-            if (discper == undefined) discper = 0;
-            var discamt = rd.Discount;
-            if (discamt == undefined) discamt = 0;
+            var amount = parseFloat(rd.Amount) || 0;
+            var discper = parseFloat(rd.DiscountPer) || 0;
+            var discamt = parseFloat(rd.Discount) || 0;
             if (discper > 0) {
-                discamt = amount * discper / 100;
+                discamt = (amount * discper) / 100;
             }
-            return discamt;
+            return discamt.toFixed(2);
         }],
         ["TaxableValue", function (rd) {
-            var amount = rd.Qty * rd.Rate;;
-            var disc = rd.Discount;
-            if (disc == undefined) disc = 0;
-
-            return amount - disc;
+            var amount = parseFloat(rd.Qty) * parseFloat(rd.Rate);
+            var disc = parseFloat(rd.Discount) || 0;
+            return (amount - disc).toFixed(2);
         }],
         ["TaxAmount", function (rd) {
-            var amount = rd.TaxableValue;
-            if (amount == undefined) amount = 0;
-            var taxper = rd.Tax;
-            if (taxper == undefined) taxper = 0;
-            return amount * taxper / 100;
+            var amount = parseFloat(rd.TaxableValue) || 0;
+            var taxper = parseFloat(rd.Tax) || 0;
+            return (amount * taxper / 100).toFixed(2);
         }],
         ["SGSTAmt", function (rd) {
-            var amount = rd.TaxableValue, sgstAmt = 0, sgstPer = rd.SGST;
-            if (amount == undefined) amount = 0;
-            if (sgstPer == undefined) sgstPer = 0;
-            sgstAmt = amount * (sgstPer / 100);
-            return sgstAmt;
+            var amount = parseFloat(rd.TaxableValue) || 0;
+            var sgstPer = parseFloat(rd.SGST) || 0;
+            return (amount * (sgstPer / 100)).toFixed(2);
         }],
         ["CGSTAmt", function (rd) {
-            var amount = rd.TaxableValue, cgstAmt = 0, cgstPer = rd.CGST;
-
-            cgstAmt = amount * (cgstPer / 100);
-            return cgstAmt;
+            var amount = parseFloat(rd.TaxableValue) || 0;
+            var cgstPer = parseFloat(rd.CGST) || 0;
+            return (amount * (cgstPer / 100)).toFixed(2);
         }],
         ["IGSTAmt", function (rd) {
-            var amount = rd.TaxableValue, igstAmt = 0, igstPer = rd.IGST;
-            igstAmt = amount * (igstPer / 100);
-            return igstAmt;
+            var amount = parseFloat(rd.TaxableValue) || 0;
+            var igstPer = parseFloat(rd.IGST) || 0;
+            return (amount * (igstPer / 100)).toFixed(2);
         }],
         ["UGSTAmt", function (rd) {
-            var amount = rd.TaxableValue, ugstAmt = 0, ugstPer = rd.UGST;
-            if (amount == undefined) amount = 0;
-            if (ugstPer == undefined) ugstPer = 0;
-            ugstAmt = amount * (ugstPer / 100);
-            return ugstAmt;
+            var amount = parseFloat(rd.TaxableValue) || 0;
+            var ugstPer = parseFloat(rd.UGST) || 0;
+            return (amount * (ugstPer / 100)).toFixed(2);
         }],
         ["NetAmount", function (rd) {
-            var amount = rd.TaxableValue, taxamount = rd.TaxAmount, discamt = rd.Discount;
-            var transc = rd.TransC, octroic = rd.OctroiC, otherc = rd.OtherC, handlec = rd.LoadUnloadC;
-            if (amount == undefined) amount = 0;
-            if (taxamount == undefined) taxamount = 0;
-            if (discamt == undefined) discamt = 0;
+            var amount = parseFloat(rd.TaxableValue) || 0;
+            var taxamount = parseFloat(rd.TaxAmount) || 0;
+            var discamt = parseFloat(rd.Discount) || 0;
+            var transc = parseFloat(rd.TransC) || 0;
+            var octroic = parseFloat(rd.OctroiC) || 0;
+            var otherc = parseFloat(rd.OtherC) || 0;
+            var handlec = parseFloat(rd.LoadUnloadC) || 0;
 
-            if (transc == undefined) transc = 0;
-            if (octroic == undefined) octroic = 0;
-            if (otherc == undefined) otherc = 0;
-            if (handlec == undefined) handlec = 0;
-            var tempnet = parseFloat(amount) + parseFloat(taxamount) + parseFloat(transc) + parseFloat(octroic) + parseFloat(otherc) + parseFloat(handlec);
-            var netAmount = parseFloat(tempnet);
-            return netAmount;
-        }],
+            var tempnet = amount + taxamount + transc + octroic + otherc + handlec;
+            return tempnet.toFixed(2);
+        }]
     ],
     editModel: {
         saveKey: "",
         keyUpDown: false
     },
     pageModel: { type: "local", rPP: 20 },
+    scrollModel: { autoFit: true },
     filterModel: { on: false, mode: "AND", header: false },
 }
 $detailgrid = $("#detailgrid").pqGrid(setdetail);
@@ -704,42 +690,41 @@ $detailgrid = $("#detailgrid").pqGrid(setdetail);
         var getData = $detailgrid.pqGrid("option", "dataModel.data");
 
         var totalAmount = 0, totalTaxAmount = 0, totalOtherCharges = 0, totalDiscount = 0, totalNetAmt = 0;
-        var bedAmt = $("#BED").val(), eduAmt = $("#Edu").val(), sheAmt = $("#SHECess").val();
-        $.each(getData, function (_, item) {
-            var TransC = item.TransC, OtherC = item.OtherC, LoadUnloadC = item.LoadUnloadC, OctroiC = item.OctroiC;
-            var Amount = item.Amount, TaxAmount = item.TaxAmount, Discount = item.Discount, NetAmt = item.NetAmount;
-            var otherCharges = 0;
-            if (TransC == undefined || TransC == null) TransC = 0;
-            if (OtherC == undefined || OtherC == null) OtherC = 0;
-            if (LoadUnloadC == undefined || LoadUnloadC == null) LoadUnloadC = 0;
-            if (OctroiC == undefined || OctroiC == null) OctroiC = 0;
+        var bedAmt = parseFloat($("#BED").val()) || 0;
+        var eduAmt = parseFloat($("#Edu").val()) || 0;
+        var sheAmt = parseFloat($("#SHECess").val()) || 0;
 
-            if (Amount == undefined || Amount == null) Amount = 0;
-            if (TaxAmount == undefined || TaxAmount == null) TaxAmount = 0;
-            if (Discount == undefined || Discount == null) Discount = 0;
-            if (NetAmt == undefined || NetAmt == null) NetAmt = 0;
-            if (bedAmt == undefined || bedAmt === "") bedAmt = 0;
-            if (eduAmt == undefined || eduAmt === "") eduAmt = 0;
-            if (sheAmt == undefined || sheAmt === "") sheAmt = 0;
-            otherCharges = parseFloat(TransC) + parseFloat(OtherC) + parseFloat(LoadUnloadC) + parseFloat(OctroiC);
-            totalAmount = totalAmount + parseFloat(Amount);
-            totalTaxAmount = totalTaxAmount + parseFloat(TaxAmount);
-            totalOtherCharges = totalOtherCharges + parseFloat(otherCharges);
-            totalDiscount = totalDiscount + parseFloat(Discount);
-            totalNetAmt = totalNetAmt + parseFloat(NetAmt);
+        $.each(getData, function (_, item) {
+            var TransC = parseFloat(item.TransC) || 0;
+            var OtherC = parseFloat(item.OtherC) || 0;
+            var LoadUnloadC = parseFloat(item.LoadUnloadC) || 0;
+            var OctroiC = parseFloat(item.OctroiC) || 0;
+            var Amount = parseFloat(item.Amount) || 0;
+            var TaxAmount = parseFloat(item.TaxAmount) || 0;
+            var Discount = parseFloat(item.Discount) || 0;
+            var NetAmt = parseFloat(item.NetAmount) || 0;
+
+            var otherCharges = TransC + OtherC + LoadUnloadC + OctroiC;
+
+            totalAmount += Amount;
+            totalTaxAmount += TaxAmount;
+            totalOtherCharges += otherCharges;
+            totalDiscount += Discount;
+            totalNetAmt += NetAmt;
         });
+
         var bedAmount = totalAmount * (bedAmt / 100);
         var eduAmount = totalAmount * (eduAmt / 100);
         var sheAmount = totalAmount * (sheAmt / 100);
         var extraAmt = parseFloat(bedAmount) + parseFloat(eduAmount) + parseFloat(sheAmount);
-        totalNetAmt = totalNetAmt + parseFloat(extraAmt);
-        $("#Amount").val(totalAmount);
+        totalNetAmt += parseFloat(extraAmt);
+
+        $("#Amount").val(Math.round(totalAmount));
         $("#Tax").val(Math.round(totalTaxAmount));
-        $("#OtherCharges").val(totalOtherCharges);
-        $("#Discount").val(totalDiscount);
+        $("#OtherCharges").val(Math.round(totalOtherCharges));
+        $("#Discount").val(Math.round(totalDiscount));
         $("#GrandTotal").val(Math.round(totalNetAmt));
     }
-
 
 var budgetbalanc = 0;
 

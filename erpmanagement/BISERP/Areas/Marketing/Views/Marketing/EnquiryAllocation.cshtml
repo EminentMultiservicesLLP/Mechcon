@@ -64,7 +64,7 @@
 
                             <div class="row">
                                 <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
-                                    <label for="StatusID" class="">Status</label>
+                                    <label for="StatusID" class="">Enq Status</label>
                                     <select id="StatusID" class="form-control">
                                         <option value="null">All</option>
                                     </select>
@@ -193,7 +193,7 @@
     function loadStatus() {
         $.ajax({
             type: "GET",
-            url: "/EnquiryRegister/GetStatus",
+            url: "/EnquiryRegister/GetEnqStatus",
             dataType: "json",
             success: function (data) {
                 const $statusDropdown = $('#StatusID');

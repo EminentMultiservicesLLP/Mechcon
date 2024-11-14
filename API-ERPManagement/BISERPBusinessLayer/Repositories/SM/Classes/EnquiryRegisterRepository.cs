@@ -112,6 +112,22 @@ namespace BISERPBusinessLayer.Repositories.SM.Classes
             return zones;
         }
 
+        public IEnumerable<StatusEntities> GetEnqStatus()
+        {
+            List<StatusEntities> enqStatus = null;
+            using (DBHelper dbHelper = new DBHelper())
+            {
+                DataTable dt = dbHelper.ExecuteDataTable(MarketingQueries.GetEnqStatus, CommandType.StoredProcedure);
+                enqStatus = dt.AsEnumerable()
+                           .Select(row => new StatusEntities
+                           {
+                               StatusID = row.Field<int>("StatusID"),
+                               Status = row.Field<string>("Status")
+                           }).ToList();
+            }
+            return enqStatus;
+        }
+
         public IEnumerable<StatusEntities> GetStatus()
         {
             List<StatusEntities> status = null;
