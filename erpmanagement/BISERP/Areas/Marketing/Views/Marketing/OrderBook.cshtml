@@ -982,7 +982,7 @@
                 if (response.success) {
                     let fileSaveMsg = "";
                     try {
-                        SaveScandoc(`Attachment`, $("#ProjectID").val(), "Marketing", "WorkOrder");
+                        SaveScandoc(`Attachment`, response.Data.ProjectID, "Marketing", "OrderBook");
                     } catch (err) {
                         fileSaveMsg = "But failed to save attached files.";
                     } finally {
