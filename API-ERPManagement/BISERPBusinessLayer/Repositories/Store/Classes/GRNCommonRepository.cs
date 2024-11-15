@@ -152,6 +152,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                                 InwardDate = row.Field<DateTime?>("InwardDate"),
                                 strInwardDate = row.Field<DateTime?>("InwardDate").DateTimeFormat1(),
                                 PONo = row.Field<string>("PONo"),
+                                PODate = row.Field<DateTime?>("PODate"),
                                 strPODate = row.Field<DateTime?>("PODate").DateTimeFormat1(),
                                 TotalAmount = row.Field<double?>("TotalAmount"),
                                 AuthorisedAmt = row.Field<double?>("AuthorisedAmt"),

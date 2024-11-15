@@ -12,6 +12,7 @@ namespace BISERPBusinessLayer.Entities.Store
         public int GrnTypeID { get; set; }
         public int PoID { get; set; }
         public string PONo { get; set; }
+        public Nullable<DateTime> PODate { get; set; }
         public string strPODate { get; set; }
         public int PrID { get; set; }
         public int Storeid { get; set; }
