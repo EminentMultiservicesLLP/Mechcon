@@ -1,4 +1,11 @@
 ﻿@Scripts.Render("~/bundles/jquerymodels")
+
+<style>
+    .tbl-required {
+        color:red;
+    }
+</style>
+
 <script>
     $(function () {
         $(".datepicker").datepicker({
@@ -20,6 +27,7 @@
         });
     });
 </script>
+
 <h5 class="page-header orangeDottedBottomBorder">Order Book</h5>
 
 <div id="SearchGridModal" class="modal fade" role="dialog" data-backdrop="false">
@@ -66,7 +74,6 @@
 
                         </div>
 
-                        <div class="divider"></div>
                         <fieldset class="fieldsetCustom">
                             <legend class="legendCustom">Enquiry Details</legend>
 
@@ -139,39 +146,69 @@
                         </fieldset>
 
                         <fieldset class="fieldsetCustom">
-                            <legend class="legendCustom">Summary</legend>
-                            <div class="row">
-                                <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12 mb-3">
-                                    <label for="PONo" class="required">PO No</label>
-                                    <input type="text" id="PONo" class="form-control" placeholder="PO No">
-                                </div>
-                                <div class="col-lg-2 col-md-4 col-sm-12 mb-3">
-                                    <label for="PODate" class="required">PO Date</label>
-                                    <input type="text" id="PODate" class="form-control datepicker" placeholder="PO Date">
-                                </div>
-                                <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12 mb-3">
-                                    <label for="POBaseValue" class="required">PO Value</label>
-                                    <input type="text" id="POBaseValue" class="form-control" placeholder="PO Value">
-                                </div>
-                                <div class="col-lg-2 col-md-4 col-sm-12 mb-3">
-                                    <label for="PIAdvSubmitDate" class="">PI Submission date for advance</label>
-                                    <input type="text" id="PIAdvSubmitDate" class="form-control datepicker" placeholder="PI Submission date for advance">
-                                </div>
-                                <div class="col-lg-2 col-md-4 col-sm-12 mb-3">
-                                    <label for="ABGSubmitDate" class="required">ABG Submit Date</label>
-                                    <input type="text" id="ABGSubmitDate" class="form-control datepicker" placeholder="ABG Submission Date">
-                                </div>
-                                <div class="col-lg-2 col-md-4 col-sm-12 mb-3">
-                                    <label for="PIABGAdvSubmitDate" class="">PI Submission date for ABG advance</label>
-                                    <input type="text" id="PIABGAdvSubmitDate" class="form-control datepicker" placeholder="PI Submission date for ABG advance">
-                                </div>
-                            </div>
-                        </fieldset>
-
-                        <fieldset class="fieldsetCustom">
-                            <legend class="legendCustom">Work Order Entry</legend>
+                            <legend class="legendCustom"> Summary </legend>
                             <table class="table table-hover">
                                 <tbody>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4 tbl-required">PO No</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" id="PONo" class="form-control" placeholder="PO No">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4 tbl-required">PO Date</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" id="PODate" class="form-control datepicker" placeholder="PO Date">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4 tbl-required">PO Value</div>
+                                                <div class="col-sm-8">
+                                                    <input type="number" id="POBaseValue" class="form-control" placeholder="PO Value">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">PI Submission date for advance</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" id="PIAdvSubmitDate" class="form-control datepicker" placeholder="PI Submission date for advance">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4 tbl-required">ABG Submit Date</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" id="ABGSubmitDate" class="form-control datepicker" placeholder="ABG Submission Date">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">PI Submission date for ABG advance</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" id="PIABGAdvSubmitDate" class="form-control datepicker" placeholder="PI Submission date for ABG advance">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
                                     <tr>
                                         <th scope="row">
                                             <div class="row">
@@ -449,9 +486,21 @@
     <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="closeTermModal()">Close</button>
 </div>
 
+<div id="ViewModal" class="modal slideModal">
+    <div class="modal-content slideContent">
+        <span class="close slideClose" onclick="closeImageModal()"> &#x2715 </span>
+        <div id="slideshow-container"></div>
+        <div>
+            <a class="prev slide-prev" onclick="plusSlides(-1)">❮</a>
+            <a class="next slide-next" onclick="plusSlides(1)">❯</a>
+        </div>
+    </div>
+</div>
+
 <script>
     var appSetting = '@BISERP.Common.Constants.ScandocUrl';
     var tempOrderBookID = 0;
+    var tempProjectID = 0;
     var tempOfferID = 0;
     let otherFieldIndx = 0;
 
@@ -636,6 +685,7 @@
                 clearFormData(true);
                 closeModal();
                 tempOrderBookID = data.OrderBookID;
+                tempProjectID = data.ProjectID;
                 tempOfferID = data.OfferID;
 
                 const $enquiryLabel = $('#EnquiryLabel');
@@ -982,7 +1032,7 @@
                 if (response.success) {
                     let fileSaveMsg = "";
                     try {
-                        SaveScandoc(`Attachment`, $("#ProjectID").val(), "Marketing", "WorkOrder");
+                        SaveScandoc(`Attachment`, response.Data.ProjectID, "Marketing", "OrderBook");
                     } catch (err) {
                         fileSaveMsg = "But failed to save attached files.";
                     } finally {
@@ -1007,7 +1057,7 @@
             getEnquiry();
         }
         tempOrderBookID = 0;
-
+        tempProjectID = 0;
         $("#PONo").val('');
         $("#ProjectDescription").val('');
         $("#MaterialOfConstruction").val('');
@@ -1506,6 +1556,137 @@
             tabIndx === 0 ? $ProjectTCgrid.pqGrid("refreshDataAndView") : tabIndx === 1 ? $PaymentTermgrid.pqGrid("refreshDataAndView") : $DeliveryTermgrid.pqGrid("refreshDataAndView");
         }
     });
+
+    //---------------------------------------------------------------------Show Attachments-----------------------------------------------------------------//
+
+    function viewAttachment() {
+
+        if (!tempProjectID || tempProjectID == 0) {
+            ShowAlert("error", "Please select a OrederBook first.");
+            return false;
+        }
+
+        $.ajax({
+            type: "GET",
+            url: "/ScanDoc/ScanDoc/GetScanDocUrl",
+            data: { FileId: tempProjectID, ScanDocSubTypeId: 28 },
+            dataType: "json",
+            success: function (data) {
+                if (data && data.length > 0) {
+                    closeImageModal();
+                    ViewSlideShow(data, 'slideshow-container', appSetting);
+                } else {
+                    ShowAlert("error", "No documents found.");
+                }
+            },
+            error: function (xhr, status, error) {
+                ShowAlert("error", "An error occurred while fetching documents. Please try again later.");
+                console.error("Error fetching documents:", status, error);
+            }
+        });
+    }
+
+    function ViewSlideShow(ImageGallery, container, appSetting) {
+        if (ImageGallery.length === 0) {
+            ShowAlert("error", "No Attachment found");
+            return;
+        }
+
+        const supportedExtensions = new Set(['pdf', 'jpeg', 'jpg', 'png']);
+        const $container = $("#" + container);
+        let slidesHtml = '';
+
+        $container.empty();
+
+        ImageGallery.forEach(image => {
+            const filePath = image.FilePath;
+            const fileNameWithExtension = filePath.split('\\').pop();
+            const [name, extension] = fileNameWithExtension.split('.').map(part => part.toLowerCase());
+
+            if (!supportedExtensions.has(extension)) return;
+
+            const src = `${appSetting}${filePath}`;
+            const deleteItemHtml = `
+            <a href="javascript:void(0);" data-id="${image.FileId}" class="deleteItem fa fa-trash" style="font-size: x-large;"
+               onclick="Deletefile(${image.FileId}, ${image.ScanDocId}); return false;"></a>`;
+            const downloadHtml = '<a class="fa fa-download downloadFiles" href="' + src + '" download></a>';
+            const nameHtml = `<span class="text" style='font-weight: bold; font-size: large;'>${name}</span>`;
+            let contentHtml = '';
+
+            switch (extension) {
+                case 'pdf':
+                    contentHtml = `<object data="${src}#toolbar=0&navpanes=0&scrollbar=0" type="application/pdf" width="100%" height="500px"></object>`;
+                    break;
+                case 'jpeg':
+                case 'jpg':
+                case 'png':
+                    contentHtml = `<img src="${src}" style="width:800px;height:500px;">`;
+                    break;
+            }
+
+            slidesHtml += `
+            <div class="imgSlide">
+                ${contentHtml}
+                <div class="divider"></div>
+                <div class="row">
+                    <div class="col-sm-2">${deleteItemHtml}</div>
+                    <div class="col-sm-8 text-center">${nameHtml}</div>
+                    <div class="col-sm-2">${downloadHtml}</div>
+                </div>
+            </div>`;
+        });
+
+        $container.append(slidesHtml);
+        $("#ViewModal").css('display', 'block');
+        showGallery(1);
+    }
+
+    let ImgIndex = 1;
+
+    function plusSlides(n) {
+        showGallery(ImgIndex += n);
+    }
+
+    function showGallery(n) {
+        let i;
+        let ImgSlides = document.getElementsByClassName("imgSlide");
+        let video = document.getElementById("video");
+        if (n > ImgSlides.length) { ImgIndex = 1; }
+        if (n < 1) { ImgIndex = ImgSlides.length; }
+        for (i = 0; i < ImgSlides.length; i++) {
+            ImgSlides[i].style.display = "none";
+        }
+        ImgSlides[ImgIndex - 1].style.display = "block";
+        if (video) {
+            video.play();
+        }
+    }
+
+    function Deletefile(fId, sId) {
+        $.ajax({
+            type: "POST",
+            url: "/ScanDoc/ScanDoc/DeleteScanDocfile",
+            data: {
+                fileId: fId,
+                scanDocId: sId
+            },
+            success: function () {
+                $("#" + fId).parent().remove();
+                $("#appendImg").empty();
+                ShowAlert("success", "File Removed successfully");
+                closeImageModal();
+            },
+            error: function () {
+                ShowAlert("error", "Error deleting the file.");
+            }
+        });
+        return false;
+    }
+
+    function closeImageModal() {
+        $("#slideshow-container").empty();
+        $("#ViewModal").css('display', 'none');
+    }
 
     //-----------------------------------On Load-----------------------------------//
     getEnquiry();

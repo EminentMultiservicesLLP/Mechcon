@@ -51,7 +51,7 @@
                                     </div>
                                     <div class="col-sm-2">
                                         @Html.Label("Grn No")
-                                        @Html.TextBoxFor(model => model.Grnno, new { @readonly = "readonly", @class = "form-control" })
+                                        @Html.TextBoxFor(model => model.Grnno, new { @disabled = "disabled" , @class = "form-control" })
                                     </div>
                                     <div class="col-sm-2">
                                         @Html.Label("Return Date")
@@ -64,7 +64,7 @@
                                     </div>
                                     <div class="col-sm-2">
                                         @Html.Label("Supplier")
-                                        @Html.TextBoxFor(model => model.Supplier, new { @readonly = "readonly", @class = "form-control" })
+                                        @Html.TextBoxFor(model => model.Supplier, new { @disabled = "disabled" , @class = "form-control" })
                                     </div>
                                 </div>
                                 <div class="row">

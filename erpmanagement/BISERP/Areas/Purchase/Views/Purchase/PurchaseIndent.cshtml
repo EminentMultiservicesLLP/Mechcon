@@ -87,7 +87,7 @@
 
                                 <div class="col-sm-2">
                                     @Html.LabelFor(m => m.IndentDate)
-                                    @Html.TextBoxFor(model => model.IndentDate, new { @class = "form-control datepicker", @readonly = "true" })
+                                    @Html.TextBoxFor(model => model.IndentDate, new { @class = "form-control datepicker", @disabled = "disabled" })
                                     @Html.HiddenFor(model => model.IndentId)
                                     @Html.HiddenFor(model => model.IndentNumber)
                                 </div>

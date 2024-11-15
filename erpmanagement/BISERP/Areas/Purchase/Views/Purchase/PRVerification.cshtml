@@ -51,20 +51,20 @@
                             <div class="row">
                                 <div class="col-sm-2">
                                     @Html.LabelFor(m => m.IndentNumber)
-                                    @Html.TextBoxFor(m => m.IndentNumber, "", new { @readonly = "true", @class = "form-control" })
+                                    @Html.TextBoxFor(m => m.IndentNumber, "", new { @disabled = "disabled" , @class = "form-control" })
                                     @Html.HiddenFor(m => m.IndentId)
                                 </div>
                                 <div class="col-sm-2">
                                     @Html.LabelFor(model => model.IndentDate)
-                                    @Html.TextBoxFor(model => model.IndentDate, new { @readonly = "true", @class = "IndentDate form-control" })
+                                    @Html.TextBoxFor(model => model.IndentDate, new { @disabled = "disabled" , @class = "IndentDate form-control" })
                                 </div>
                                 <div class="col-sm-2">
                                     @Html.LabelFor(model => model.IndentNature)
-                                    @Html.TextBoxFor(model => model.IndentNature, new { @readonly = "true", @class = "form-control" })
+                                    @Html.TextBoxFor(model => model.IndentNature, new { @disabled = "disabled" , @class = "form-control" })
                                 </div>
                                 <div class="col-sm-3">
                                     @Html.LabelFor(m => m.Remarks)
-                                    @Html.TextAreaFor(model => model.Remarks, new { @readonly = "true", @class = "form-control" })
+                                    @Html.TextAreaFor(model => model.Remarks, new { @disabled = "disabled" , @class = "form-control" })
                                 </div>
                                 <div class="col-sm-3">
                                     <fieldset class="fieldsetCustom">

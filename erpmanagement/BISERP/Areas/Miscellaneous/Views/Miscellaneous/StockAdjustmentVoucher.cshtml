@@ -48,21 +48,21 @@
                             <div class="row">
                                 <div class="col-sm-2">
                                     @Html.Label("Voucher Date")
-                                    @Html.TextBox("VoucherDate", "", new { @class = "form-control datepicker", @readonly = "true" })
+                                    @Html.TextBox("VoucherDate", "", new { @class = "form-control datepicker", @disabled = "disabled"  })
                                 </div>
                                 <div class="col-sm-2">
                                     @Html.Label("Discrepancy No", new { @class = "required" })
-                                    @Html.TextBox("DiscrepancyNo", "", new { @class = "form-control", @readonly = "true" })
+                                    @Html.TextBox("DiscrepancyNo", "", new { @class = "form-control", @disabled = "disabled"  })
                                     @Html.Hidden("DiscrepancyId")
                                     @Html.Hidden("StoreId")
                                 </div>
                                 <div class="col-sm-2">
                                     @Html.Label("Project")
-                                    @Html.TextBox("StoreName", "", new { @class = "form-control", @readonly = "true" })
+                                    @Html.TextBox("StoreName", "", new { @class = "form-control", @disabled = "disabled"  })
                                 </div>
                                 <div class="col-sm-3">
                                     @Html.Label("Discrepancy Remark")
-                                    @Html.TextArea("DiscrepancyRemark", "", new { @class = "form-control", @readonly = "true" })
+                                    @Html.TextArea("DiscrepancyRemark", "", new { @class = "form-control", @disabled = "disabled"  })
                                 </div>
                                 <div class="col-sm-3">
                                     @Html.Label("Remark", new { @class = "required" })

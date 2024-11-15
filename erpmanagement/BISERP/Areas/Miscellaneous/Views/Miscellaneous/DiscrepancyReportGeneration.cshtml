@@ -50,12 +50,12 @@
                             <div class="row">
                                 <div class="col-sm-2">
                                     @Html.Label("Date")
-                                    @Html.TextBox("Date", "", new { @class = "form-control datepicker", @readonly = "true" })
+                                    @Html.TextBox("Date", "", new { @class = "form-control datepicker", @disabled = "disabled" })
                                 </div>
 
                                 <div class="col-sm-2">
                                     @Html.Label("Discrepancy No")
-                                    @Html.TextBox("DNO", "", new { @class = "form-control", @readonly = "true" })
+                                    @Html.TextBox("DNO", "", new { @class = "form-control", @disabled = "disabled" })
                                 </div>
                                 <div class="col-sm-2">
                                     @Html.Label("Project")

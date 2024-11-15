@@ -110,12 +110,12 @@
 
                                     <div class="col-sm-2">
                                         @Html.Label("Supplier")
-                                        @Html.TextBoxFor(model => model.Supplier, new { @readonly = "readonly", @class = "form-control" })
+                                        @Html.TextBoxFor(model => model.Supplier, new { @disabled = "disabled" , @class = "form-control" })
                                         @Html.HiddenFor(m => m.supplierid)
                                     </div>
                                     <div class="col-sm-2">
                                         @Html.Label("Return No")
-                                        @Html.TextBoxFor(model => model.PRNo, new { @readonly = "readonly", @class = "form-control" })
+                                        @Html.TextBoxFor(model => model.PRNo, new { @disabled = "disabled" , @class = "form-control" })
                                     </div>
                                     <div class="col-sm-2">
                                         @Html.Label("Return Date")

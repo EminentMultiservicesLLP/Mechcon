@@ -114,7 +114,7 @@
                                 <div class="form-group form-horizontal">
                                     <div class="col-sm-3">
                                         @Html.Label("Supplier")
-                                        @Html.TextBoxFor(model => model.Supplier, new { @readonly = "readonly", @class = "form-control" })
+                                        @Html.TextBoxFor(model => model.Supplier, new { @disabled = "disabled" , @class = "form-control" })
                                         @Html.HiddenFor(m => m.supplierid)
                                     </div>
                                 </div>
@@ -132,7 +132,7 @@
                                 <div class="form-group form-horizontal">
                                     <div class="col-sm-3">
                                         @Html.Label("Return No")
-                                        @Html.TextBoxFor(model => model.PRNo, new { @readonly = "readonly", @class = "form-control" })
+                                        @Html.TextBoxFor(model => model.PRNo, new { @disabled = "disabled" , @class = "form-control" })
                                     </div>
                                 </div>
                                 <div class="form-group form-horizontal">

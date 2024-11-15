@@ -65,22 +65,22 @@
                                 <div class="row">
                                     <div class="col-sm-2">
                                         @Html.LabelFor(m => m.ReturnDate)
-                                        @Html.TextBoxFor(m => m.ReturnDate, new { @readonly = "readonly", @class = "form-control" })
+                                        @Html.TextBoxFor(m => m.ReturnDate, new { @disabled = "disabled" ", @class = "form-control" })
                                     </div>
                                     <div class="col-sm-2">
                                         @Html.LabelFor(m => m.ReturnNo)
-                                        @Html.TextBoxFor(m => m.ReturnNo, new { @readonly = "readonly", @class = "form-control" })
+                                        @Html.TextBoxFor(m => m.ReturnNo, new { @disabled = "disabled" ", @class = "form-control" })
                                         @Html.HiddenFor(m => m.ReturnID)
                                     </div>
 
                                     <div class="col-sm-2">
                                         @Html.LabelFor(m => m.ReturnFrom)
-                                        @Html.TextBoxFor(m => m.StrReturnFrom, new { @readonly = "readonly", @class = "form-control" })
+                                        @Html.TextBoxFor(m => m.StrReturnFrom, new { @disabled = "disabled" ", @class = "form-control" })
                                         @Html.HiddenFor(m => m.ReturnFrom)
                                     </div>
                                     <div class="col-sm-2">
                                         @Html.LabelFor(m => m.ReturnTo)
-                                        @Html.TextBoxFor(m => m.StrReturnTo, new { @readonly = "readonly", @class = "form-control" })
+                                        @Html.TextBoxFor(m => m.StrReturnTo, new { @disabled = "disabled" ", @class = "form-control" })
                                         @Html.HiddenFor(m => m.ReturnTo)
                                     </div>
 

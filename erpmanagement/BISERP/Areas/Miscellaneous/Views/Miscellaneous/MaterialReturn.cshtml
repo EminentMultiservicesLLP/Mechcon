@@ -50,11 +50,11 @@
                                 <div class="row">
                                     <div class="col-sm-2">
                                         @Html.Label("Material Return No")
-                                        @Html.TextBoxFor(m => m.ReturnNo, new { @readonly = "readonly", Value = "Auto", @class = "form-control" })
+                                        @Html.TextBoxFor(m => m.ReturnNo, new { @disabled = "disabled", Value = "Auto", @class = "form-control" })
                                     </div>
                                     <div class="col-sm-2">
                                         @Html.Label("Return Date")
-                                        @Html.TextBoxFor(m => m.ReturnDate, new { @class = "form-control datepicker", @readonly = "true" })
+                                        @Html.TextBoxFor(m => m.ReturnDate, new { @class = "form-control datepicker", @disabled = "disabled" })
                                     </div>
                                     <div class="col-sm-2">
                                         @Html.Label("Return Type")
@@ -74,12 +74,12 @@
                                     </div>
                                     <div class="col-sm-2">
                                         @Html.LabelFor(model => model.ReturnFrom)
-                                        @Html.TextBoxFor(m => m.FromStore, new { @readonly = "readonly", @class = "form-control" })
+                                        @Html.TextBoxFor(m => m.FromStore, new { @disabled = "disabled" , @class = "form-control" })
                                         @Html.HiddenFor(m => m.FromStoreID)
                                     </div>
                                     <div class="col-sm-2">
                                         @Html.LabelFor(model => model.ReturnTo)
-                                        @Html.TextBoxFor(m => m.ToStore, new { @readonly = "readonly", @class = "form-control" })
+                                        @Html.TextBoxFor(m => m.ToStore, new { @disabled = "disabled" , @class = "form-control" })
                                         @Html.HiddenFor(m => m.ToStoreID)
                                     </div>
                                 </div>
