@@ -27,7 +27,7 @@
                             <div class="row">
                                 <div class="col-sm-3">
                                     @Html.LabelFor(m => m.IssueDate)
-                                    @Html.TextBoxFor(m => m.IssueDate, new { @class = "form-control datepicker", @readonly = "true" })
+                                    @Html.TextBoxFor(m => m.IssueDate, new { @class = "form-control datepicker", @disabled = "disabled"  })
                                 </div>
                                 <div class="col-sm-3">
                                     @Html.LabelFor(m => m.IssueNo)
@@ -43,12 +43,12 @@
                             <div class="row">
                                 <div class="col-sm-3">
                                     @Html.LabelFor(m => m.FromStore, "From Project")
-                                    @Html.TextBoxFor(m => m.FromStore, new { @readonly = "readonly", @class = "form-control" })
+                                    @Html.TextBoxFor(m => m.FromStore, new { @disabled = "disabled" , @class = "form-control" })
                                     @Html.HiddenFor(m => m.FromStoreId)
                                 </div>
                                 <div class="col-sm-3">
                                     @Html.LabelFor(m => m.ToStore, "To Project")
-                                    @Html.TextBoxFor(m => m.ToStore, new { @readonly = "readonly", @class = "form-control" })
+                                    @Html.TextBoxFor(m => m.ToStore, new { @disabled = "disabled" , @class = "form-control" })
                                     @Html.HiddenFor(m => m.StoreId)
                                 </div>
                             </div>

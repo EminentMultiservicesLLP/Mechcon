@@ -59,21 +59,21 @@
                             <div class="row">
                                 <div class="col-sm-2">
                                     @Html.LabelFor(m => m.IssueDate)
-                                    @Html.TextBoxFor(m => m.IssueDate, new { @readonly = "readonly", @class = "form-control" })
+                                    @Html.TextBoxFor(m => m.IssueDate, new { @disabled = "disabled" , @class = "form-control" })
                                 </div>
                                 <div class="col-sm-2">
                                     @Html.LabelFor(m => m.IssueNo)
-                                    @Html.TextBoxFor(m => m.IssueNo, new { @readonly = "readonly", @class = "form-control" })
+                                    @Html.TextBoxFor(m => m.IssueNo, new { @disabled = "disabled" , @class = "form-control" })
                                     @Html.HiddenFor(m => m.IssueId)
                                 </div>
                                 <div class="col-sm-2" hidden>
                                     @Html.LabelFor(m => m.FromStore, "From Project")
-                                    @Html.TextBoxFor(m => m.FromStore, new { @readonly = "readonly", @class = "form-control" })
+                                    @Html.TextBoxFor(m => m.FromStore, new { @disabled = "disabled" , @class = "form-control" })
                                     @Html.HiddenFor(m => m.FromStoreId)
                                 </div>
                                 <div class="col-sm-2">
                                     @Html.LabelFor(m => m.ToStore, "Project")
-                                    @Html.TextBoxFor(m => m.ToStore, new { @readonly = "readonly", @class = "form-control" })
+                                    @Html.TextBoxFor(m => m.ToStore, new { @disabled = "disabled" , @class = "form-control" })
                                     @Html.HiddenFor(m => m.StoreId)
                                 </div>
                                 @*<div class="form-group">
@@ -81,7 +81,7 @@
                                             @Html.Label("Issue type")
                                         </div>
                                         <div class="col-sm-2">
-                                            @Html.TextBoxFor(m => m.IndentType, new { @readonly = "readonly", @class = "form-control" })
+                                            @Html.TextBoxFor(m => m.IndentType, new { @disabled = "disabled" , @class = "form-control" })
                                         </div>
                                     </div>*@
                                 <div class="col-sm-2">

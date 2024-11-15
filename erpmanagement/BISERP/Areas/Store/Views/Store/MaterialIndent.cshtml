@@ -53,12 +53,12 @@
                             <div class="row">
                                 <div class="col-sm-2" hidden>
                                     @Html.LabelFor(m => m.Indent_Date)
-                                    @Html.TextBoxFor(model => model.Indent_Date, new { @class = "form-control datepicker", @readonly = "true" })
+                                    @Html.TextBoxFor(model => model.Indent_Date, new { @class = "form-control datepicker",@disabled = "disabled"  })
                                     @Html.HiddenFor(model => model.Indent_Id)
                                 </div>
                                 <div class="col-sm-2">
                                     @Html.LabelFor(m => m.IndentNo)
-                                    @Html.TextBoxFor(model => model.IndentNo, new { @class = "form-control", @readonly = "true" })
+                                    @Html.TextBoxFor(model => model.IndentNo, new { @class = "form-control",@disabled = "disabled"  })
                                     @Html.ValidationMessageFor(model => model.IndentNo)
                                 </div>
                                 <div class="col-sm-2">

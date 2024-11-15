@@ -99,7 +99,7 @@
                                 <div class="form-group form-horizontal">
                                     <div class="col-sm-3">
                                         @Html.Label("Grn No")
-                                        @Html.TextBoxFor(model => model.Grnno, new { @readonly = "readonly", @class = "form-control" })
+                                        @Html.TextBoxFor(model => model.Grnno, new { @disabled = "disabled" , @class = "form-control" })
                                     </div>
                                 </div>
                                 <div class="form-group form-horizontal">
@@ -120,7 +120,7 @@
                                 <div class="form-group form-horizontal">
                                     <div class="col-sm-3">
                                         @Html.Label("Supplier")
-                                        @Html.TextBoxFor(model => model.Supplier, new { @readonly = "readonly", @class = "form-control" })
+                                        @Html.TextBoxFor(model => model.Supplier, new { @disabled = "disabled" , @class = "form-control" })
                                     </div>
                                 </div>
                             </div>

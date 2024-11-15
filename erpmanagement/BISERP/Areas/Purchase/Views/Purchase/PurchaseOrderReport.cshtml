@@ -55,7 +55,7 @@
                     <div class="form-group form-horizontal">
                         <div class="col-sm-3">
                             @Html.LabelFor(model => model.PODate)
-                            @Html.TextBoxFor(model => model.PODate, new {@class = "form-control datepicker", @readonly = "true"})
+                            @Html.TextBoxFor(model => model.PODate, new {@class = "form-control datepicker", @disabled = "disabled" })
                         </div>
                     </div>
                     <div class="form-group form-horizontal">
@@ -69,7 +69,7 @@
                     <div class="form-group form-horizontal">
                         <div class="col-sm-3">
                             @Html.LabelFor(model => model.RefNo)
-                            @Html.TextBoxFor(model => model.RefNo, new {@class = "form-control", @readonly = "readonly"})
+                            @Html.TextBoxFor(model => model.RefNo, new {@class = "form-control", @disabled = "disabled" })
                         </div>
                     </div>
                     <div class="form-group form-horizontal">
@@ -85,19 +85,19 @@
                     <div class="form-group form-horizontal">
                         <div class="col-sm-3">
                             @Html.LabelFor(model => model.StoreId, "Project Name")
-                            @Html.TextBoxFor(model => model.StoreId, new {@class = "form-control", @readonly = "readonly"})
+                            @Html.TextBoxFor(model => model.StoreId, new {@class = "form-control", @disabled = "disabled" })
                         </div>
                     </div>
                     <div class="form-group form-horizontal">
                         <div class="col-sm-3">
                             @Html.LabelFor(model => model.Against)
-                            @Html.TextBoxFor(model => model.Against, new {id = "txtAgainst", Value = "Indent", @class = "form-control", @readonly = "readonly"})
+                            @Html.TextBoxFor(model => model.Against, new {id = "txtAgainst", Value = "Indent", @class = "form-control", @disabled = "disabled" })
                         </div>
                     </div>
                     <div class="form-group form-horizontal">
                         <div class="col-sm-3">
                             @Html.LabelFor(model => model.RFQNo)
-                            @Html.TextBoxFor(model => model.RFQNo, "", new {@class = "form-control", @readonly = "readonly"})
+                            @Html.TextBoxFor(model => model.RFQNo, "", new {@class = "form-control", @disabled = "disabled" })
                             @Html.HiddenFor(model => model.RFQId)
                         </div>
                     </div>
@@ -111,7 +111,7 @@
                     <div class="form-group form-horizontal">
                         <div class="col-sm-6">
                             @Html.LabelFor(model => model.DeliveryAddress)
-                            @Html.TextAreaFor(model => model.DeliveryAddress, new {@class = "form-control", @readonly = "readonly"})
+                            @Html.TextAreaFor(model => model.DeliveryAddress, new {@class = "form-control", @disabled = "disabled" })
                         </div>
                         <div class="form-group form-horizontal">
 
@@ -165,31 +165,31 @@
                                 <tr>
                                     <td>@Html.LabelFor(model => model.Amount)</td>
                                     <td>
-                                        @Html.TextBoxFor(model => model.Amount, new {@class = "form-control", @readonly = "readonly"})
+                                        @Html.TextBoxFor(model => model.Amount, new {@class = "form-control", @disabled = "disabled" })
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>@Html.LabelFor(model => model.Tax)</td>
                                     <td>
-                                        @Html.TextBoxFor(model => model.Tax, new {@class = "form-control", @readonly = "readonly"})
+                                        @Html.TextBoxFor(model => model.Tax, new {@class = "form-control", @disabled = "disabled" })
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>@Html.LabelFor(model => model.OtherCharges)</td>
                                     <td>
-                                        @Html.TextBoxFor(model => model.OtherCharges, new {@class = "form-control", @readonly = "readonly"})
+                                        @Html.TextBoxFor(model => model.OtherCharges, new {@class = "form-control", @disabled = "disabled" })
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>@Html.LabelFor(model => model.Discount)</td>
                                     <td>
-                                        @Html.TextBoxFor(model => model.Discount, new {@class = "form-control", @readonly = "readonly"})
+                                        @Html.TextBoxFor(model => model.Discount, new {@class = "form-control", @disabled = "disabled" })
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>@Html.LabelFor(model => model.GrandTotal)</td>
                                     <td>
-                                        @Html.TextBoxFor(model => model.GrandTotal, new {@class = "form-control", @readonly = "readonly"})
+                                        @Html.TextBoxFor(model => model.GrandTotal, new {@class = "form-control", @disabled = "disabled" })
                                     </td>
                                 </tr>
                             </table>
@@ -238,7 +238,7 @@
                                         @Html.LabelFor(model => model.Details)
                                     </div>
                                     <div class="col-sm-4">
-                                        @Html.TextAreaFor(model => model.Details, new {@class = "form-control", @readonly = "readonly"})
+                                        @Html.TextAreaFor(model => model.Details, new {@class = "form-control", @disabled = "disabled" })
                                     </div>
                                 </div>
                             </div>

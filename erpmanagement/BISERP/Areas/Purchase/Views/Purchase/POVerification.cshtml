@@ -152,17 +152,17 @@
                                 @*<tr>
                                         <td>@Html.Label("P & F %")</td>
                                         <td>@Html.TextBoxFor(model => model.BED, new { @class = "form-control", style = "width: 70px" })</td>
-                                        <td><input readonly="readonly" class="form-control readonly" id="BedAmt" name="BedAmt" style="margin-left: -80px; width: 70px;" /></td>
+                                        <td><input disabled class="form-control readonly" id="BedAmt" name="BedAmt" style="margin-left: -80px; width: 70px;" /></td>
                                     </tr>
                                     <tr>
                                         <td>@Html.Label("Frieght %")</td>
                                         <td> @Html.TextBoxFor(model => model.Edu, new { @class = "form-control", style = "width: 70px" })</td>
-                                        <td><input readonly="readonly" class="form-control readonly" id="educessamt" name="educessamt" style="margin-left: -80px; width: 70px;" /></td>
+                                        <td><input disabled class="form-control readonly" id="educessamt" name="educessamt" style="margin-left: -80px; width: 70px;" /></td>
                                     </tr>
                                     <tr style="display:none">
                                         <td>@Html.Label("SHE Cess %")</td>
                                         <td> @Html.TextBoxFor(model => model.SHECess, new { @class = "form-control", style = "width: 75px" }) </td>
-                                        <td><input readonly="readonly" class="form-control readonly" id="Shecessamt" name="Shecessamt" style="margin-left:-68px" /></td>
+                                        <td><input disabled class="form-control readonly" id="Shecessamt" name="Shecessamt" style="margin-left:-68px" /></td>
                                     </tr>*@
                                 <tr>
                                     <td>@Html.LabelFor(model => model.GrandTotal)</td>
