@@ -18,6 +18,7 @@ using BISERPCommon.Extensions;
 using BISERP.Areas.Purchase.Models;
 using BISERP.Area.Purchase.Models;
 using BISERP.Areas.Masters.Models;
+using BISERP.Areas.SM_Reports.Models;
 
 namespace BISERP.Views.Shared
 {
@@ -1030,6 +1031,21 @@ namespace BISERP.Views.Shared
                         else
                             PLId = 0;
                         PackingListById(PLId);
+                    }  
+                    
+                    if (Request.QueryString["reportid"].ToString() == "241")
+                    {                                        
+                        int orderBookId = 0;      
+                        if (Request.QueryString["orderBookId"] != null)
+                        {
+                            if (Request.QueryString["orderBookId"].ToString() != "")
+                                orderBookId = Convert.ToInt32(Request.QueryString["orderBookId"].ToString());
+                            else
+                                orderBookId = 0;
+                        }
+                        else                           
+                            orderBookId = 0;
+                        WorkOrderRptById(orderBookId);
                     }
                 }
             }
@@ -2490,6 +2506,38 @@ namespace BISERP.Views.Shared
         {
             e.DataSources.Add(new ReportDataSource("dsPackingListDetails", _PKList[0].PackingListDetails));
         }
-       
+        
+        private List<WorkOrderRptModel> _workOrderRpt;
+        public async void WorkOrderRptById(int orderBookId)
+        {
+            string ReportPath = Server.MapPath("../Reports/WorkOrder/workOrderRpt.rdlc");
+            ReportViewer1.LocalReport.ReportPath = ReportPath;
+            string _url = url + "/sm_Reports/getWorkOrderRpt/" + orderBookId.ToString() +
+                          Common.Constants.JsonTypeResult;
+            var response =
+                await Common.AsyncWebCalls.GetAsync<WorkOrderRptModel>(_client, _url, CancellationToken.None);
+            if (response != null)
+            {
+                _workOrderRpt = new List<WorkOrderRptModel>();
+                _workOrderRpt.Add(response);
+            }
+            _rds = new ReportDataSource();
+            _rds.Name = "dsWorkOrderRpt";
+            _rds.Value = _workOrderRpt;
+           
+            ReportViewer1.LocalReport.DataSources.Add(_rds);          
+            ReportViewer1.LocalReport.SubreportProcessing += new SubreportProcessingEventHandler(WORptPaymentTerm);
+            ReportViewer1.LocalReport.SubreportProcessing += new SubreportProcessingEventHandler(WORptDeliveryTerm);
+            ReportViewer1.LocalReport.Refresh();
+        }
+               
+        void WORptPaymentTerm(object sender, SubreportProcessingEventArgs e)
+        {
+            e.DataSources.Add(new ReportDataSource("dsPaymentTerm", _workOrderRpt[0].PaymentTermList));
+        }
+        void WORptDeliveryTerm(object sender, SubreportProcessingEventArgs e)
+        {
+            e.DataSources.Add(new ReportDataSource("dsDeliveryTerm", _workOrderRpt[0].DeliveryTermList));
+        }
     }
 }
