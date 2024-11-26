@@ -1,0 +1,208 @@
+﻿<style>
+    .tbl-required {
+        color: red;
+    }
+</style>
+
+
+<h5 class="page-header orangeDottedBottomBorder"> WORK ORDER REPORT</h5>
+
+<div id="SearchGridModal" class="modal fade" role="dialog" data-backdrop="false">
+    <div class="modal-dialog find-search-grid-modal">
+        <div class="modal-content gridmodal-content">
+            <div class="modal-header gridmodal-header">
+                <button type="button" class="close" onclick="closeModal()">&times;</button>
+                <h4 class="modal-title">WORK ORDER REPORT</h4>
+            </div>
+            <div class="modal-body">
+                <div class="fill">
+                    <div id="OrderBookGrid"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel-group">
+    <div class="panel panel-default">
+        <div class="panel-groupingBoder">
+            <div class="panel-heading">
+                <div class="panel-title">
+                    <a class="collapsediv" data-toggle="collapse" href="#SearchDetails">
+                        WORK ORDER REPORT
+                    </a>
+                </div>
+            </div>
+            <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                <div class="panel-body">
+                    <div class="fill">
+                        <div class="submit-row">
+                            <button type="button" class="btn btn-warning" id="btnResetT" onclick="clearFormData()">Clear</button>
+                            <button type="button" id="btnFind" class="btn btn-primary" onclick="showReport()">Find</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <fieldset class="fieldsetCustom">
+                <legend class="legendCustom">Purchase Request Report</legend>
+                <div class="row">
+                    <div class="col-sm-5 col-lg-3">
+                        @Html.Label("Order Book No")
+                        <input type="text" name="OrderBookNo" id="OrderBookNo" disabled="disabled" class="form-control" />
+                        @Html.Hidden("OrderBookId")
+                    </div>                  
+                </div>
+            </fieldset>
+            <div style="margin-top: 28px;">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <iframe id="iframeReportViewer" style="width: 100%; height: 800px"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+
+    //-----------------------------------OrderBookGrid (Starts here)-----------------------------------//
+    var OrderBookGrid_GDM = { location: "local" };
+
+    var OrderBookGrid_GCM = [
+        {
+            title: "Order Book No", dataIndx: "OrderBookNo", width: '30%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Enquiry Date", dataIndx: "strEnquiryDate", width: '20%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Client Name", dataIndx: "ClientName", width: '30%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Project Code", dataIndx: "ProjectCode", width: '20%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        }
+    ];
+
+    var setOrderBookGrid = {
+        height: 300,
+        width: 'auto',
+        maxWidth: '100%',
+        minWidth: 800,
+        sortable: true,
+        autofill: true,
+        numberCell: { show: true },
+        hoverMode: 'row',
+        showTop: true,
+        showTitle: true,
+        showBottom: true,
+        resizable: true,
+        //scrollModel: { autoFit: true },
+        filterModel: { on: true, mode: "AND", header: true },
+        draggable: false,
+        hwrap: false,
+        wrap: false,
+        editable: false,
+        columnBorders: true,
+        menuIcon: true,
+        selectionModel: { type: 'row', mode: 'single', cbHeader: false },
+        colModel: OrderBookGrid_GCM,
+        dataModel: OrderBookGrid_GDM,
+        pageModel: { type: "local" },
+        rowClick: function (evt, ui) {
+            if (ui.rowData) {
+                const data = ui.rowData;
+                debugger;
+              
+                tempOrderBookID = data.OrderBookID;
+                tempProjectID = data.ProjectID;
+                tempOfferID = data.OfferID;
+                $("#OrderBookNo").val(data.OrderBookNo);
+                $("#OrderBookId").val(tempOrderBookID);
+                ReportValidationCheck(tempOrderBookID);
+                closeModal();
+            }
+        }
+    }
+
+    var $OrderBookGrid = $("#OrderBookGrid").pqGrid(setOrderBookGrid);
+
+    function loadOrderBookGrid() {
+        var antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            url: "/OrderBook/GetOrderBook",
+            dataType: "json",
+
+            beforeSend: function () {
+                $("#OrderBookGrid").pqGrid("showLoading");
+            },
+
+            complete: function () {
+                $("#OrderBookGrid").pqGrid("hideLoading");
+            },
+
+            success: function (response) {
+                const grid = $("#OrderBookGrid").pqGrid();
+
+                if (response.success) {
+                    grid.pqGrid("option", "dataModel.data", response.records);
+                } else {
+                    console.warn("No data found or an issue occurred: ", response.message);
+                    grid.pqGrid("option", "dataModel.data", []);
+                }
+
+                grid.pqGrid("refreshDataAndView");
+                PqGridRefreshClick(grid);
+            },
+
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Error loading OrderBook grid:", textStatus, errorThrown);
+                console.error("Response text:", jqXHR.responseText);
+                $("#OrderBookGrid").pqGrid("hideLoading");
+            }
+        });
+
+    }
+
+    function ReportValidationCheck(Id) {
+        var url = "";
+
+        url = "../../Reports/ReportViewer.aspx?reportid=" + 241 + "&orderBookId=" + Id;
+
+        var myframe = document.getElementById("iframeReportViewer");
+        if (myframe != null) {
+            if (myframe.src) {
+                myframe.src = url;
+            }
+            else if (myframe.contentWindow != null && myframe.contentWindow.location != null) {
+                myframe.contentWindow.location = url;
+            }
+            else {
+                myframe.setAttribute('src', url);
+            }
+            return false;
+        }
+    }
+
+    function showReport() {
+        $("#SearchGridModal").modal('show');
+        loadOrderBookGrid();
+    }
+
+    function closeModal() {
+        $("#SearchGridModal").modal('hide');
+    }
+
+
+
+</script>

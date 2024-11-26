@@ -1,5 +1,9 @@
-﻿using BISERPBusinessLayer.Repositories.SM.Interfaces;
+﻿using BISERPBusinessLayer.Entities.Masters;
+using BISERPBusinessLayer.Entities.SM;
+using BISERPBusinessLayer.Repositories.Master.Interfaces;
+using BISERPBusinessLayer.Repositories.SM.Interfaces;
 using BISERPCommon;
+using BISERPCommon.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,11 +17,12 @@ namespace BISERPService.Controllers.SM
     public class SM_ReportsController : ApiController
     {
         ISM_ReportsRepository _SM_Reports;
+        IMechconMasterRepository _iGetMechconData;
         private static readonly ILogger _loggger = Logger.Register(typeof(SM_ReportsController));
-
-        public SM_ReportsController(ISM_ReportsRepository sm_Reports)
+        public SM_ReportsController(ISM_ReportsRepository sm_Reports, IMechconMasterRepository iGetMechconData)
         {
             _SM_Reports = sm_Reports;
+            _iGetMechconData = iGetMechconData;
         }
 
 
@@ -160,5 +165,35 @@ namespace BISERPService.Controllers.SM
                 return InternalServerError(ex);
             }
         }
+
+        [Route("getWorkOrderRpt/{id}")]
+        [AcceptVerbs("GET", "POST")]
+        public IHttpActionResult GetWorkOrderRpt(int id)
+        {
+            WorkOrderRptEntities workOrder = new WorkOrderRptEntities();
+            MechconMasterEntity mechconMaster = new MechconMasterEntity();
+            TryCatch.Run(() =>
+            {
+                workOrder = _SM_Reports.GetWorkOrderReport(id);
+                workOrder.PaymentTermList = _SM_Reports.GetOrderBookPaymentTerms(id);
+                workOrder.DeliveryTermList = _SM_Reports.GetOrderBookDeliveryTerms(id);
+                mechconMaster = _iGetMechconData.GeMechconData();
+
+                workOrder.companyName = mechconMaster.Name;
+                workOrder.companyAddress = mechconMaster.Address;
+                workOrder.companyGST = mechconMaster.GSTNumber;
+                workOrder.companyCIN = mechconMaster.CINNumber;
+                workOrder.companyEmail = mechconMaster.emailID;
+            }).IfNotNull(ex =>
+            {
+                _loggger.LogError("Error in GetWorkOrderRpt method of SM_ReportsController : parameter :" + id.ToString() + Environment.NewLine + ex.StackTrace);
+                return InternalServerError();
+            });
+            if (workOrder.IsNotNull())
+                return Ok(workOrder);
+            else
+                return NotFound();
+        }
+
     }
 }

@@ -59,7 +59,6 @@ namespace BISERPBusinessLayer.QueryCollection.SM
         public const string GetWorkOrderDetails = "sp_SM_GetWorkOrderDetails";
         public const string GetWOOtherDetails = "sp_SM_GetWOOtherDetails";
 
-
         //Reports
         public const string GetEnquiryRegisterRpt = "sp_SM_GetEnquiryRegisterRpt";
         public const string GetOrderBookRpt = "sp_SM_GetOrderBookRpt";
@@ -67,6 +66,7 @@ namespace BISERPBusinessLayer.QueryCollection.SM
         public const string GetSectorWiseSalesRpt = "sp_SM_GetSectorWiseSalesRpt";
         public const string GetLocationWiseSalesRpt = "sp_SM_GetLocationWiseSalesRpt";
         public const string GetProductWiseSalesRpt = "sp_SM_GetProductWiseSalesRpt";
+        public const string GetWorkOrderReport = "sp_SM_GetWrokOrderReport";
 
     }
 }

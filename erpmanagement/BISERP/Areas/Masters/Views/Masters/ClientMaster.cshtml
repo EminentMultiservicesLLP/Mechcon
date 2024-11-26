@@ -483,7 +483,8 @@
         var $Consigneegrid = $("#Consigneegrid").pqGrid(setConsigneeGrid);
 
 
-        $('#btnAddConsignee').on('click', function () {
+    $('#btnAddConsignee').on('click', function () {
+        debugger;
             var getData = $("#Consigneegrid").pqGrid("option", "dataModel.data");
             var dataMGrid = [];
             $.each(getData, function (key, value) {
@@ -527,15 +528,14 @@
 
 
         function getClientConsignee() {
-
             $.ajax({
                 type: "GET",
                 url: "/ClientMaster/GetClientConsignee",
                 datatype: "Json",
                 data: { clientId: $("#ClientId").val() },
                 success: function (data) {
-
-                    $("#Consigneegrid").pqGrid("option", "dataModel.data", data.records);
+                    var data = data.records == null || undefined ? [] : data.records
+                    $("#Consigneegrid").pqGrid("option", "dataModel.data", data);
                     $("#Consigneegrid").pqGrid("refreshDataAndView");
                 }
             });

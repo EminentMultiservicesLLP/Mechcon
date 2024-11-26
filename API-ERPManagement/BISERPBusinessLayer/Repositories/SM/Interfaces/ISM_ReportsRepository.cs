@@ -15,5 +15,8 @@ namespace BISERPBusinessLayer.Repositories.SM.Interfaces
         IEnumerable<SectorWiseSalesReportEntities> GetSectorWiseSalesRpt(int? financialYearID);
         IEnumerable<LocationWiseSalesReportEntities> GetLocationWiseSalesRpt(int? financialYearID);
         IEnumerable<ProductWiseSalesReportEntities> GetProductWiseSalesRpt(int? financialYearID);
+        WorkOrderRptEntities GetWorkOrderReport(int? orderBookID);
+        List<WORptPaymentTermDetails> GetOrderBookPaymentTerms(int? orderBookID);
+        List<WORptDeliveryTerm> GetOrderBookDeliveryTerms(int? orderBookID);
     }
 }

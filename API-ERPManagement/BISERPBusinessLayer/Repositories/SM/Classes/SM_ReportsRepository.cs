@@ -160,5 +160,93 @@ namespace BISERPBusinessLayer.Repositories.SM.Classes
             }
             return data;
         }
+        public WorkOrderRptEntities GetWorkOrderReport(int? orderBookID)
+        {
+            WorkOrderRptEntities data = null;
+            using (DBHelper dbHelper = new DBHelper())
+            {
+                DBParameter param = new DBParameter("OrderBookID", orderBookID, DbType.Int32);
+                DataTable dt = dbHelper.ExecuteDataTable(MarketingQueries.GetWorkOrderReport, param, CommandType.StoredProcedure);
+
+                data = dt.AsEnumerable()
+                            .Select(row => new WorkOrderRptEntities
+                            {
+                                EnquiryID = row.Field<int?>("EnquiryID"),
+                                EnquiryNo = row.Field<string>("EnquiryNo"),
+                                strEnquiryDate = Convert.ToDateTime(row.Field<DateTime>("EnquiryDate")).ToString("dd-MMMM-yyyy"),
+                                ClientName = row.Field<string>("ClientName"),
+                                ConsigneeName = row.Field<string>("ConsigneeName"),
+                                ConsigneeAddress = row.Field<string>("ConsigneeAddress"),
+                                OrderBookID = row.Field<int>("OrderBookID"),
+                                OrderBookNo = row.Field<string>("OrderBookNo"),
+                                OfferID = row.Field<int?>("OfferID"),
+                                PONo = row.Field<string>("PONo"),
+                                strPODate = row.Field<string>("strPODate"),
+                                POBaseValue = row.Field<double?>("POBaseValue"),                             
+                                ProjectID = row.Field<int>("ProjectID"),
+                                ProjectCode = row.Field<string>("ProjectCode"),
+                                ProjectDescription = row.Field<string>("ProjectDescription"),
+                                MaterialOfConstruction = row.Field<string>("MaterialOfConstruction"),
+                                AreaOfInstallation = row.Field<string>("AreaOfInstallation"),
+                                TechnicalSpecification = row.Field<string>("TechnicalSpecification"),
+                                ScopeOfSupply = row.Field<string>("ScopeOfSupply"),
+                                Packaging = row.Field<string>("Packaging"),
+                                Insurance = row.Field<string>("Insurance"),
+                                Supervision = row.Field<string>("Supervision"),
+                                LDCharges = row.Field<double?>("LDCharges"),
+                                ContactAtSite = row.Field<string>("ContactAtSite"),
+                                ContactAtPurchase = row.Field<string>("ContactAtPurchase"),
+                                strDeliveryDate = row.Field<string>("strDeliveryDate"),
+                                InsertedBy = row.Field<string>("InsertedBy"),
+                                InsertedOn = row.Field<string>("InsertedOn"),
+                                Transport = row.Field<string>("Transport"),
+
+                            }).FirstOrDefault();
+            }
+            return data;
+        }
+
+        public List<WORptPaymentTermDetails> GetOrderBookPaymentTerms(int? orderBookID)
+        {
+            List<WORptPaymentTermDetails> record = null;
+
+            using (DBHelper dbHelper = new DBHelper())
+            {
+                DBParameter param = new DBParameter("OrderBookID", orderBookID, DbType.Int32);
+                DataTable dt = dbHelper.ExecuteDataTable(MarketingQueries.GetOrderBookPaymentTerms, param, CommandType.StoredProcedure);
+
+                record = dt.AsEnumerable()
+                            .Select(row => new WORptPaymentTermDetails
+                            {
+                                PayTermID = row.Field<int>("PayTermID"),
+                                PaymentTermCode = row.Field<string>("PaymentTermCode"),
+                                PaymentTermDesc = row.Field<string>("PaymentTermDesc"),
+                                State = row.Field<bool>("State")
+                            }).ToList();
+            }
+
+            return record;
+        }
+
+        public List<WORptDeliveryTerm> GetOrderBookDeliveryTerms(int? orderBookID)
+        {
+            List<WORptDeliveryTerm> record = null;
+
+            using (DBHelper dbHelper = new DBHelper())
+            {
+                DBParameter param = new DBParameter("OrderBookID", orderBookID, DbType.Int32);
+                DataTable dt = dbHelper.ExecuteDataTable(MarketingQueries.GetOrderBookDeliveryTerms, param, CommandType.StoredProcedure);
+
+                record = dt.AsEnumerable()
+                            .Select(row => new WORptDeliveryTerm
+                            {
+                                DelTermID = row.Field<int>("DelTermID"),
+                                DeliveryTermCode = row.Field<string>("DeliveryTermCode"),
+                                DeliveryTermDesc = row.Field<string>("DeliveryTermDesc"),
+                                State = row.Field<bool>("State")
+                            }).ToList();
+            }
+            return record;
+        }
     }
 }

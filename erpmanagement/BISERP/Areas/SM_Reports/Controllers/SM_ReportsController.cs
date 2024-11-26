@@ -64,6 +64,10 @@ namespace BISERP.Areas.SM_Reports.Controllers
         public ActionResult ProductWiseSalesRpt()
         {
             return PartialView();
+        } 
+        public ActionResult WorkOrderReport()
+        {
+            return PartialView();
         }
 
         #endregion Views
