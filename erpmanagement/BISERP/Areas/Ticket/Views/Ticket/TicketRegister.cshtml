@@ -1,0 +1,545 @@
+﻿@model BISERP.Areas.Ticket.Models.TicketRegisterModel
+@Scripts.Render("~/bundles/jquerymodels")
+<style>
+    .tbl-required {
+        color: red;
+    }
+    .table {
+        margin: 0;
+    }
+</style>
+<script>
+    $(function () {
+        $(".datepicker").datepicker({
+            showOn: "button",
+            buttonImage: "/Content/images/calendar.gif",
+            buttonImageOnly: true,
+            buttonText: "Selectdate",
+            'changeMonth': true,
+            'changeYear': true,
+            'yearRange': '2021:2030',
+            "format": "dd-M-yyyy",
+            todayBtn: "linked",
+            pickerPosition: "bottom-left",
+            "todayHighlight": true,
+            autoclose: true,
+        }).datepicker("setDate", new Date());
+        $("#anim").change(function () {
+            $(".datepicker").datepicker("option", "showAnim", "fadeIn");
+        });
+    });
+</script>
+
+<h5 class="page-header orangeDottedBottomBorder">Ticket Register</h5>
+
+<div id="SearchGridModal" class="modal fade" role="dialog" data-backdrop="false">
+    <div class="modal-dialog find-search-grid-modal">
+        <div class="modal-content gridmodal-content">
+            <div class="modal-header gridmodal-header">
+                <button type="button" class="close" onclick="closeModal()">&times;</button>
+                <h4 class="modal-title">Ticket Details.</h4>
+            </div>
+            <div class="modal-body">
+                <div class="fill">
+                    <div id="TicketGrid"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel-group">
+    <div class="panel panel-default">
+        <div class="panel-groupingBoder">
+            <div class="panel-heading">
+                <div class="panel-title">
+                    <a class="collapsediv" data-toggle="collapse" href="#SearchDetails">
+                        Ticket Register
+                    </a>
+                </div>
+            </div>
+            <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                <div class="panel-body">
+                    <div class="fill">
+                        <div class="submit-row">
+                            <button type="button" id="btnSave" class="btn btn-success" onclick="SaveTicket()">Save</button>
+                            <button type="button" class="btn btn-warning" id="btnResetT" onclick="clearFormData()">Clear</button>
+                            <button type="button" id="btnFind" class="btn btn-primary" onclick="showModal()">Find</button>
+                        </div>
+                        <fieldset class="fieldsetCustom">
+                            <legend class="legendCustom">Create Ticket</legend>
+                            <table class="table table-hover">
+                                <tbody>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">Ticket No</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" id="TicketNo" class="form-control" placeholder="Auto-generates" disabled />
+                                                    <input type="hidden" id="TicketID" />
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">Ticket Date</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" id="TicketDate" class="form-control datepicker" disabled />
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4 tbl-required">Client</div>
+                                                <div class="col-sm-8">
+                                                    <select id="ClientID" class="form-control">
+                                                        <option value="">--Select Client--</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4 tbl-required">Project</div>
+                                                <div class="col-sm-8">
+                                                    <select id="ProjectID" class="form-control">
+                                                        <option value="">--Select Project--</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4 tbl-required">Subject</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" id="Subject" class="form-control" placeholder="Enter Subject" />
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4 tbl-required">Description</div>
+                                                <div class="col-sm-8">
+                                                    <textarea id="Description" class="form-control" placeholder="Enter Description" style="height: 90px;"></textarea>
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4 tbl-required">Priority</div>
+                                                <div class="col-sm-8">
+                                                    <select id="PriorityID" class="form-control">
+                                                        <option value="">--Select Priority--</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">Allocated To</div>
+                                                <div class="col-sm-8">
+                                                    <select id="AllocatedTo" class="form-control">
+                                                        <option value="">--Select User--</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4 tbl-required">Status</div>
+                                                <div class="col-sm-8">
+                                                    <select id="StatusID" class="form-control">
+                                                        <option value="">--Select Status--</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var tempTicketID = 0;
+
+    function getAllClient() {
+        $.ajax({
+            type: 'GET',
+            url: "/ClientMaster/AllClient",
+            dataType: "json",
+            data: {
+                SearchName: "",
+                SearchCode: ""
+            },
+            success: function (data) {
+                const $clientDropdown = $('#ClientID');
+                $clientDropdown.empty();
+
+                if (data.error || (data && !data.success)) {
+                    $clientDropdown.append('<option value="">--Error loading clients--</option>');
+                    let errorMessage = data.Message || data.error || "An error occurred while fetching client data.";
+                    ShowAlert("error", errorMessage);
+                    console.error("Error loading clients:", errorMessage);
+                    return;
+                }
+
+                $clientDropdown.append('<option value="">--Select Client--</option>');
+
+                data.records.forEach(function (client) {
+                    $clientDropdown.append(`<option value="${client.ClientId}">${client.Name}</option>`);
+                });
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                $('#ClientID').empty();
+                $('#ClientID').append('<option value="">--Error loading clients--</option>');
+                let errorMsg = xhr.responseText || "No Record Found";
+                ShowAlert("error", errorMsg);
+                console.error("Error loading clients:", errorThrown);
+            }
+        });
+    }
+    getAllClient();
+
+    function loadProject(clientID) {
+        $.ajax({
+            type: "GET",
+            url: "/TicketRegister/GetProject",
+            data: { ClientID: clientID },
+            dataType: "json",
+            success: function (data) {
+                const $projectDropdown = $('#ProjectID');
+                $projectDropdown.empty();
+
+                if (data.error) {
+                    $projectDropdown.append('<option value="">--Error loading project--</option>');
+                    console.error("Error loading project:", data.error);
+                    return;
+                }
+
+                if (data.records.length > 0) {
+                    $projectDropdown.append('<option value="">--Select Project--</option>');
+                    data.records.forEach(function (project) {
+                        $projectDropdown.append(`<option value="${project.ProjectID}">${project.ProjectCode}</option>`);
+                    });
+                } else {
+                    $projectDropdown.append('<option value="">--No projects found--</option>');
+                }
+            },
+            error: function (xhr, textProject, errorThrown) {
+                $('#ProjectID').empty();
+                $('#ProjectID').append('<option value="">--Error loading project--</option>');
+                console.error("Error loading project:", errorThrown);
+            }
+        });
+    }
+
+    function loadUsers() {
+        var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+        $.ajax({
+            type: "GET",
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            url: "/RoleAccess/GetUsers",
+            success: function (data) {
+                data.data.forEach(function (status) {
+                    $('#AllocatedTo').append(`<option value="${status.UserId}">${status.UserName}</option>`);
+                });
+            }
+        });
+    }
+    loadUsers();
+
+    function loadPriority() {
+        $.ajax({
+            type: "GET",
+            url: "/TicketRegister/GetPriority",
+            dataType: "json",
+            success: function (data) {
+                const $priorityDropdown = $('#PriorityID');
+                $priorityDropdown.empty();
+
+                if (data.error) {
+                    $priorityDropdown.append('<option value="">--Error loading priorities--</option>');
+                    console.error("Error loading priorities:", data.error);
+                    return;
+                }
+
+                $priorityDropdown.append('<option value="">--Select Priority--</option>');
+
+                data.forEach(function (priority) {
+                    $priorityDropdown.append(`<option value="${priority.PriorityID}">${priority.Priority}</option>`);
+                });
+            },
+            error: function (xhr, textPriority, errorThrown) {
+                $('#PriorityID').empty();
+                $('#PriorityID').append('<option value="">--Error loading priorities--</option>');
+                console.error("Error loading priorities:", errorThrown);
+            }
+        });
+    }
+    loadPriority();
+
+    function loadStatus() {
+        $.ajax({
+            type: "GET",
+            url: "/TicketRegister/GetStatus",
+            dataType: "json",
+            success: function (data) {
+                const $statusDropdown = $('#StatusID');
+                $statusDropdown.empty();
+
+                if (data.error) {
+                    $statusDropdown.append('<option value="">--Error loading statuses--</option>');
+                    console.error("Error loading statuses:", data.error);
+                    return;
+                }
+
+                $statusDropdown.append('<option value="">--Select Status--</option>');
+
+                let towStaus = data.filter(status => status.StatusID <= 2)
+
+                towStaus.forEach(function (status) {
+                    $statusDropdown.append(`<option value="${status.StatusID}">${status.Status}</option>`);
+                });
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                $('#StatusID').empty();
+                $('#StatusID').append('<option value="">--Error loading statuses--</option>');
+                console.error("Error loading statuses:", errorThrown);
+            }
+        });
+    }
+    loadStatus();
+
+    $("#ClientID").change(() => {
+        const clientID = $("#ClientID").val();
+
+        if (clientID && clientID !== "0") {
+            loadProject(clientID);
+        }
+    });
+
+    //-----------------------------------TicketGrid (Starts here)-----------------------------------//
+    var TicketGrid_GDM = { location: "local" };
+    var TicketGrid_GCM = [
+        {
+            title: "Ticket No", dataIndx: "TicketNo", width: '20%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "TicketDate", dataIndx: "strTicketDate", width: '20%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Client Name", dataIndx: "ClientName", width: '40%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Project Code", dataIndx: "ProjectCode", width: '20%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+    ];
+    var setTicketGrid = {
+        height: 300,
+        width: 'auto',
+        maxWidth: '100%',
+        minWidth: 800,
+        sortable: true,
+        autofill: true,
+        numberCell: { show: true },
+        hoverMode: 'row',
+        showTop: true,
+        showTitle: true,
+        showBottom: true,
+        resizable: true,
+        scrollModel: { autoFit: true },
+        filterModel: { on: true, mode: "AND", header: true },
+        draggable: false,
+        hwrap: false,
+        wrap: false,
+        editable: false,
+        columnBorders: true,
+        menuIcon: true,
+        selectionModel: { type: 'row', mode: 'single', cbHeader: false },
+        colModel: TicketGrid_GCM,
+        dataModel: TicketGrid_GDM,
+        pageModel: { type: "local" },
+        rowClick: function (evt, ui) {
+            if (ui.rowData) {
+                var data = ui.rowData;
+                closeModal();
+                clearFormData();
+                tempTicketID = data.TicketID;
+
+                $("#TicketNo").val(data.TicketNo);
+                $("#TicketDate").datepicker("setDate", data.strTicketDate);
+                $("#ClientID").val(data.ClientID).change();
+                setTimeout(() => $("#ProjectID").val(data.ProjectID), 1000);
+                $("#Subject").val(data.Subject);
+                $("#Description").val(data.Description);
+                $("#PriorityID").val(data.PriorityID);
+                $("#AllocatedTo").val(data.AllocatedTo);
+                $("#StatusID").val(data.StatusID);
+            }
+        }
+
+    }
+    var $TicketGrid = $("#TicketGrid").pqGrid(setTicketGrid);
+    function loadTicketGrid() {
+        var antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            url: "/TicketRegister/GetTicket",
+            data: { statusID: null },
+            dataType: "json",
+
+            beforeSend: function () {
+                $("#TicketGrid").pqGrid("showLoading");
+            },
+
+            complete: function () {
+                $("#TicketGrid").pqGrid("hideLoading");
+            },
+
+            success: function (response) {
+                const grid = $("#TicketGrid").pqGrid();
+
+                if (response.success) {
+                    grid.pqGrid("option", "dataModel.data", response.records);
+                } else {
+                    console.warn("No data found or an issue occurred: ", response.message);
+                    grid.pqGrid("option", "dataModel.data", []);
+                }
+
+                grid.pqGrid("refreshDataAndView");
+                PqGridRefreshClick(grid);
+            },
+
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Error loading Ticket Register grid:", textStatus, errorThrown);
+                console.error("Response text:", jqXHR.responseText);
+                $("#TicketGrid").pqGrid("hideLoading");
+            }
+        });
+
+    }
+    //-----------------------------------TicketGrid (Ends here)-----------------------------------//
+
+    function validateFormData() {
+        const fields = [
+            { selector: "#ClientID", placeholder: "Client" },
+            { selector: "#ProjectID", placeholder: "Project" },
+            { selector: "#Subject", placeholder: "Subject" },
+            { selector: "#Description", placeholder: "Description" },
+            { selector: "#PriorityID", placeholder: "Priority" },
+            { selector: "#StatusID", placeholder: "Status" }
+        ];
+
+        for (let { selector, placeholder } of fields) {
+            const $field = $(selector);
+            const fieldValue = $field.val();
+            const fieldPlaceholder = $field.attr("placeholder") || placeholder;
+
+            if (!fieldValue) {
+                ShowAlert("error", `${fieldPlaceholder} is required!`);
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    function SaveTicket() {
+        if (!validateFormData()) {
+            return false;
+        }
+
+        const Details = {
+            TicketID: tempTicketID,
+            TicketDate: $("#TicketDate").val(),
+            ClientID: $("#ClientID").val(),
+            ProjectID: $("#ProjectID").val(),
+            Subject: $("#Subject").val(),
+            Description: $("#Description").val(),
+            PriorityID: $("#PriorityID").val(),
+            AllocatedTo: $("#AllocatedTo").val(),
+            StatusID: $("#StatusID").val(),
+        };
+
+        const antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: "POST",
+            contentType: 'application/json; charset=utf-8',
+            url: "/TicketRegister/SaveTicket",
+            data: JSON.stringify(Details),
+            success: function (response) {
+                if (response.success) {
+                    const message = Details.TicketID === 0 ? "Ticket No : " + response.Data.TicketNo + " saved successfully!" : "Ticket updated successfully!";
+                    ShowAlert("success", message);
+                    clearFormData();
+                } else {
+                    ShowAlert("error", response.message || "An error occurred while saving the enquiry.");
+                }
+            },
+            error: function (xhr, status, error) {
+                ShowAlert("error", "An unexpected error occurred: " + (xhr.responseText || error));
+            }
+        });
+
+    }
+
+    function clearFormData() {
+        tempTicketID = 0;
+
+        $("#TicketNo").val('');
+        $("#TicketDate").datepicker("setDate", new Date());
+        $("#ClientID").val('').trigger('change');
+        $("#ProjectID").val('');
+        $("#Subject").val('')
+        $("#Description").val('');
+        $("#PriorityID").val('');
+        $("#AllocatedTo").val('');
+        $("#StatusID").val('');
+    }
+
+    function showModal() {
+        $("#SearchGridModal").modal('show');
+        loadTicketGrid();
+    }
+
+    function closeModal() {
+        $("#SearchGridModal").modal('hide');
+        $("#EnqRegFollowUpGridModal").modal('hide');
+    }
+</script>

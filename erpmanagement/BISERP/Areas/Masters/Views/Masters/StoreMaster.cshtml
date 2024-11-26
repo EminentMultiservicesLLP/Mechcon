@@ -66,7 +66,6 @@
                             <div class="col-sm-4" id="Enquiry" hidden>
                                 <label for="EnquiryID">Enquiry</label>
                                 <input id="EnquiryLabel" class="form-control" type="text" placeholder="Search by - (EnquiryNo) | (ClientName) | (EnquiryDate) | (ProjectCode)">
-                                <input type="hidden" id="EnquiryID">
                                 <input type="hidden" id="WorkOrderID">
                             </div>
                         </div>
@@ -884,7 +883,6 @@
         ClearForm();
         $("#Nature").val(0);
         $("#EnquiryLabel").val("");
-        $("#EnquiryID").val("");
         $("#WorkOrderID").val("");
         $("#Nature").prop("disabled", false);
     });
@@ -995,7 +993,7 @@
 
 //***********Close SlideShow Modal*********************////
 
-
+    var Enquiries = [];
     function getEnquiry() {
         $("#EnquiryLabel").autocomplete({
             source: [],
@@ -1010,9 +1008,9 @@
             dataType: "json",
             success: function (response) {
                 if (response.success && response.records.length > 0) {
-                    const suggestions = response.records.map(({ EnquiryID, EnquiryNo, ClientName, strEnquiryDate, WorkOrderID, ProjectCode }) => ({
+                    Enquiries = response.records;
+                    const suggestions = response.records.map(({EnquiryNo, ClientName, strEnquiryDate, WorkOrderID, ProjectCode }) => ({
                         label: `(${EnquiryNo}) | (${ClientName}) | (${strEnquiryDate} | (${ProjectCode})`,
-                        value: EnquiryID,
                         workOrderID: WorkOrderID
                     }));
 
@@ -1029,21 +1027,17 @@
     function handleEnquirySelection(event, ui) {
         event.preventDefault();
         const $enquiryLabel = $(event.target);
-        const $enquiryID = $("#EnquiryID");
         const $workOrderID = $("#WorkOrderID");
         if (ui.item && ui.item.value) {
             if (ui.item.label === "--No Enquiry Found--" || ui.item.label === "--Error loading enquiries--") {
                 $enquiryLabel.val('');
-                $enquiryID.val('').trigger('change');
                 $workOrderID.val('').trigger('change');
             } else {
                 $enquiryLabel.val(ui.item.label);
-                $enquiryID.val(ui.item.value).trigger('change');
                 $workOrderID.val(ui.item.workOrderID).trigger('change');
             }
         } else {
             $enquiryLabel.val('');
-            $enquiryID.val('').trigger('change');
             $workOrderID.val('').trigger('change');
         }
     }
@@ -1053,42 +1047,24 @@
 
     $("#WorkOrderID").change(() => {
         const workOrderID = $("#WorkOrderID").val();
+
         if (workOrderID && workOrderID != 0) {
-            GetWorkOrderDetails(workOrderID);
-            $("#Nature").prop("disabled", true);
+            const details = Enquiries.find(enq => enq.WorkOrderID == workOrderID);
+
+            if (details) {
+                $("#ID").val(details.ProjectID || '');
+                $("#Code").val(details.ProjectCode || '');
+                $("#Name").val(details.ProjectCode || '');
+                $("#ddlClient").val(details.ClientID || '');
+                $("#ClientPoNo").val(details.PONo || '');
+                $("#Nature").prop("disabled", true);
+            } else {
+                ShowAlert("error", "No matching enquiry found for the selected Work Order.");
+            }
         } else {
             $('#btnreset').trigger('click');
         }
     });
-    function GetWorkOrderDetails(workOrderID) {
-        if (workOrderID && workOrderID != 0 ) {
-            var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
-            $.ajax({
-                headers: {
-                    "__RequestVerificationToken": antiForgeryToken
-                },
-                type: 'GET',
-                url: "/SM_WorkOrder/GetWorkOrderDetails",
-                data: { WorkOrderID: workOrderID },
-                dataType: "json",
-                success: function (response) {
-                    if (response.success) {
-                        const details = response.record;
-                        $("#ID").val(details.ProjectID);
-                        $("#Code").val(details.ProjectCode);
-                        $("#Name").val(details.ProjectCode);
-                        $("#ddlClient").val(details.BilledTo);
-                        $("#ClientPoNo").val(details.PONo);
-                    } else {
-                        console.warn("No details found or an issue occurred: ", response.message);
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.error("Error loading enquiry details: ", status, error);
-                }
-            });
-        }
-    }
 
     $("#Nature").change(() => {
         ClearForm();

@@ -773,11 +773,13 @@ namespace BISERPBusinessLayer.Repositories.Master.Classes
                                .Select(row => new WorkOrderEntities
                                {
                                    WorkOrderID = row.Field<int>("WorkOrderID"),
-                                   EnquiryID = row.Field<int>("EnquiryID"),
                                    EnquiryNo = row.Field<string>("EnquiryNo"),
                                    strEnquiryDate = Convert.ToDateTime(row.Field<DateTime>("EnquiryDate")).ToString("dd-MMMM-yyyy"),
+                                   ClientID = row.Field<int?>("ClientID"),
                                    ClientName = row.Field<string>("ClientName"),
+                                   ProjectID = row.Field<int?>("ProjectID"),
                                    ProjectCode = row.Field<string>("ProjectCode"),
+                                   PONo = row.Field<string>("PONo"),
                                }).ToList();
             }
             return workOrders;

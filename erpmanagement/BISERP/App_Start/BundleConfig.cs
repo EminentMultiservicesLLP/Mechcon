@@ -34,7 +34,8 @@ namespace BISERP
                     "~/Scripts/MessageBox/lobibox.min.js",
                     "~/Scripts/jquery.PrintArea.js",
                     "~/Scripts/jLinq-2.2.1.js",
-                    "~/Scripts/itemModelScript.js"
+                    "~/Scripts/itemModelScript.js",
+                    "~/Scripts/jspdf.umd.min.js"
                     ));
 
             bundles.Add(new ScriptBundle("~/bundles/jquerymodels").Include(

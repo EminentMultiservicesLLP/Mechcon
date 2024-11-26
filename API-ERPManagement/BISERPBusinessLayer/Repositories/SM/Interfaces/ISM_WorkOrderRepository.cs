@@ -9,10 +9,6 @@ namespace BISERPBusinessLayer.Repositories.SM.Interfaces
 {
     public interface ISM_WorkOrderRepository
     {
-        IEnumerable<EnquiryRegisterEntities> GetEnqForWorkOrder(int UserID);
-        WorkOrderEntities SaveWorkOrder(WorkOrderEntities model);
-        IEnumerable<WorkOrderEntities> GetWorkOrder(int UserID);
-        WorkOrderEntities GetWorkOrderDetails(int WorkOrderID);
-        IEnumerable<WorkOrderOtherDetail> GetWOOtherDetails(int OfferRegisterID);
+        IEnumerable<WorkOrderEntities> GetEnqForWorkOrder(int UserID);
     }
 }

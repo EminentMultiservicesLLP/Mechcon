@@ -10,6 +10,7 @@ namespace BISERPBusinessLayer.Repositories.SM.Interfaces
     public interface IOrderBookRepository
     {
         IEnumerable<EnquiryRegisterEntities> GetEnqForOrderBook(int UserID);
+        IEnumerable<ConsigneeEntities> GetConsignee(int? enquiryId);
         OfferDetailEntities GetFinalOffer(int EnquiryID);
         OrderBookEntities SaveOrderBook(OrderBookEntities model);
         IEnumerable<OrderBookEntities> GetOrderBook(int UserID);

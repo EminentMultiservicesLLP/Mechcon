@@ -153,7 +153,6 @@ namespace BISERP.Areas.Marketing.Controllers
             }
         }
 
-
         [HttpGet]
         public async Task<JsonResult> GetOfferDetails(int OfferRegisterID)
         {

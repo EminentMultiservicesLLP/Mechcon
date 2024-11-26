@@ -42,6 +42,7 @@ namespace BISERPBusinessLayer.QueryCollection.SM
 
         //OrderBook
         public const string GetEnqForOrderBook = "sp_SM_GetEnqForOrderBook";
+        public const string GetConsignee = "sp_SM_GetConsignee";
         public const string GetFinalOffer = "sp_SM_GetFinalOffer";
         public const string SaveOrderBook = "sp_SM_SaveOrderBook";
         public const string GetOrderBook = "sp_SM_GetOrderBook";

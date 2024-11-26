@@ -28,14 +28,14 @@
     });
 </script>
 
-<h5 class="page-header orangeDottedBottomBorder">Order Book</h5>
+<h5 class="page-header orangeDottedBottomBorder">Work Order</h5>
 
 <div id="SearchGridModal" class="modal fade" role="dialog" data-backdrop="false">
     <div class="modal-dialog find-search-grid-modal">
         <div class="modal-content gridmodal-content">
             <div class="modal-header gridmodal-header">
                 <button type="button" class="close" onclick="closeModal()">&times;</button>
-                <h4 class="modal-title">Order Book Details.</h4>
+                <h4 class="modal-title">Work Order Details.</h4>
             </div>
             <div class="modal-body">
                 <div class="fill">
@@ -52,7 +52,7 @@
             <div class="panel-heading">
                 <div class="panel-title">
                     <a class="collapsediv" data-toggle="collapse" href="#SearchDetails">
-                        Order Book
+                        Work Order
                     </a>
                 </div>
             </div>
@@ -242,6 +242,18 @@
                                     <tr>
                                         <th scope="row">
                                             <div class="row">
+                                                <div class="col-sm-4">Consignee</div>
+                                                <div class="col-sm-8">
+                                                    <select id="ConsigneeID" name="ConsigneeID" class="form-control">
+                                                        <option value="">--Select Consignee--</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
                                                 <div class="col-sm-4">Technical Specification</div>
                                                 <div class="col-sm-8">
                                                     <input type="text" class="form-control" id="TechnicalSpecification" placeholder="Enter technical specifications">
@@ -325,6 +337,16 @@
                                                 <div class="col-sm-4">Delivery Date</div>
                                                 <div class="col-sm-8">
                                                     <input type="text" class="form-control datepicker" id="DeliveryDate" placeholder="Select the delivery date">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">Transport</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" id="Transport" placeholder="Transport">
                                                 </div>
                                             </div>
                                         </th>
@@ -560,10 +582,42 @@
         if (enquiryID && enquiryID != 0) {
             GetEnquiryDetails(enquiryID);
             GetFinalOffer(enquiryID);
+            loadConsignee(enquiryID);
         } else {
             clearEnquiryDetails();
         }
     });
+
+
+    function loadConsignee(enquiryID) {
+        $.ajax({
+            type: "GET",
+            url: "/OrderBook/GetConsignee",
+            data: { EnquiryID: enquiryID },
+            dataType: "json",
+            success: function (data) {
+                const $consigneeDropdown = $('#ConsigneeID');
+                $consigneeDropdown.empty();
+
+                if (data.error) {
+                    $consigneeDropdown.append('<option value="">--Error loading consignee--</option>');
+                    console.error("Error loading consignee:", data.error);
+                    return;
+                }
+
+                $consigneeDropdown.append('<option value="">--Select Consignee--</option>');
+
+                data.records.forEach(function (consignee) {
+                    $consigneeDropdown.append(`<option value="${consignee.ConsigneeID}">${consignee.Consignee}</option>`);
+                });
+            },
+            error: function (xhr, textConsignee, errorThrown) {
+                $('#ConsigneeID').empty();
+                $('#ConsigneeID').append('<option value="">--Error loading consignee--</option>');
+                console.error("Error loading consignee:", errorThrown);
+            }
+        });
+    }
 
     function GetEnquiryDetails(enquiryID) {
         var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
@@ -680,7 +734,6 @@
         pageModel: { type: "local" },
         rowClick: function (evt, ui) {
             if (ui.rowData) {
-                debugger
                 const data = ui.rowData;
                 clearFormData(true);
                 closeModal();
@@ -703,6 +756,7 @@
                 $("#ProjectDescription").val(data.ProjectDescription);
                 $("#MaterialOfConstruction").val(data.MaterialOfConstruction);
                 $("#AreaOfInstallation").val(data.AreaOfInstallation);
+                $("#ConsigneeID").val(data.ConsigneeID);
                 $("#TechnicalSpecification").val(data.TechnicalSpecification);
                 $("#ScopeOfSupply").val(data.ScopeOfSupply);
                 $("#Packaging").val(data.Packaging);
@@ -712,6 +766,7 @@
                 $("#ContactAtSite").val(data.ContactAtSite);
                 $("#ContactAtPurchase").val(data.ContactAtPurchase);
                 $("#DeliveryDate").datepicker("setDate", data.strDeliveryDate);
+                $("#Transport").val(data.Transport);
                 $("#DispatchDate1").datepicker("setDate", data.strDispatchDate1);
                 $("#DispatchDate2").datepicker("setDate", data.strDispatchDate2);
                 $("#DispatchDate3").datepicker("setDate", data.strDispatchDate3);
@@ -997,6 +1052,7 @@
             ProjectDescription: $("#ProjectDescription").val(),
             MaterialOfConstruction: $("#MaterialOfConstruction").val(),
             AreaOfInstallation: $("#AreaOfInstallation").val(),
+            ConsigneeID: $("#ConsigneeID").val(),
             TechnicalSpecification: $("#TechnicalSpecification").val(),
             ScopeOfSupply: $("#ScopeOfSupply").val(),
             Packaging: $("#Packaging").val(),
@@ -1006,6 +1062,7 @@
             ContactAtSite: $("#ContactAtSite").val(),
             ContactAtPurchase: $("#ContactAtPurchase").val(),
             DeliveryDate: $("#DeliveryDate").val(),
+            Transport: $("#Transport").val(),
             DispatchDate1: $("#DispatchDate1").val(),
             DispatchDate2: $("#DispatchDate2").val(),
             DispatchDate3: $("#DispatchDate3").val(),
@@ -1036,7 +1093,7 @@
                     } catch (err) {
                         fileSaveMsg = "But failed to save attached files.";
                     } finally {
-                        const message = tempOrderBookID === 0 ? `OrderBook registered successfully!<br> Project Code : <b>${response.Data.ProjectCode}</b>` : `OrderBook updated successfully!<br> Project Code : <b>${response.Data.ProjectCode}</b>`;
+                        const message = tempOrderBookID === 0 ? `Work Order registered successfully!<br> Project Code : <b>${response.Data.ProjectCode}</b>` : `Work Order updated successfully!<br> Project Code : <b>${response.Data.ProjectCode}</b>`;
                         ShowAlert("success", `${message} <br> ${fileSaveMsg}`);
                         clearFormData();
                     }
@@ -1062,6 +1119,7 @@
         $("#ProjectDescription").val('');
         $("#MaterialOfConstruction").val('');
         $("#AreaOfInstallation").val('');
+        $("#ConsigneeID").val('');
         $("#TechnicalSpecification").val('');
         $("#ScopeOfSupply").val('');
         $("#Packaging").val('');
@@ -1070,6 +1128,7 @@
         $("#LDCharges").val('');
         $("#ContactAtSite").val('');
         $("#ContactAtPurchase").val('');
+        $("#Transport").val('');
         $("#BriefTechnicalSpecification").val('');
         $("#OtherFields").empty();
         $(".datepicker").datepicker("setDate", null);

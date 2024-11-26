@@ -54,6 +54,30 @@ namespace BISERP.Areas.Marketing.Controllers
         }
 
         [HttpGet]
+        public async Task<JsonResult> GetConsignee(int? enquiryId)
+        {
+            string _url = $"{url}/orderBook/getConsignee/{enquiryId}{Common.Constants.JsonTypeResult}";
+
+            try
+            {
+                var records = await Common.AsyncWebCalls.GetAsync<List<ConsigneeModel>>(client, _url, CancellationToken.None);
+
+                if (records == null)
+                {
+                    return Json(new { success = false, message = "No records found" }, JsonRequestBehavior.AllowGet);
+                }
+
+                return Json(new { success = true, records }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error in GetConsignee: {ex.Message} {Environment.NewLine} {ex.StackTrace}");
+                return Json(new { success = false, message = "An error occurred while retrieving Consignee" }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+
+        [HttpGet]
         public async Task<JsonResult> GetFinalOffer(int EnquiryID)
         {
             string _url = $"{url}/orderBook/getFinalOffer/{EnquiryID}{Common.Constants.JsonTypeResult}";
@@ -160,7 +184,7 @@ namespace BISERP.Areas.Marketing.Controllers
 
             try
             {
-                var records = await Common.AsyncWebCalls.GetAsync<List<WorkOrderOtherDetail>>(client, _url, CancellationToken.None);
+                var records = await Common.AsyncWebCalls.GetAsync<List<OrderBookOtherDetail>>(client, _url, CancellationToken.None);
 
                 if (records == null)
                 {

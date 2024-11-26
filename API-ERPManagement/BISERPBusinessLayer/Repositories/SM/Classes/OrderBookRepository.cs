@@ -38,6 +38,25 @@ namespace BISERPBusinessLayer.Repositories.SM.Classes
             return record;
         }
 
+        public IEnumerable<ConsigneeEntities> GetConsignee(int? enquiryId)
+        {
+            List<ConsigneeEntities> data = null;
+            using (DBHelper dbHelper = new DBHelper())
+            {
+                DBParameter param = new DBParameter("EnquiryID", enquiryId, DbType.Int32);
+                DataTable dt = dbHelper.ExecuteDataTable(MarketingQueries.GetConsignee, param, CommandType.StoredProcedure);
+
+                data = dt.AsEnumerable()
+                            .Select(row => new ConsigneeEntities
+                            {
+                                ConsigneeID = row.Field<int?>("ConsigneeID"),
+                                Consignee = row.Field<string>("Consignee"),
+                                Address = row.Field<string>("Address")
+                            }).ToList();
+            }
+            return data;
+        }
+
         public OfferDetailEntities GetFinalOffer(int EnquiryID)
         {
             OfferDetailEntities record = null;
@@ -88,6 +107,7 @@ namespace BISERPBusinessLayer.Repositories.SM.Classes
                     paramCollection.Add(new DBParameter("ProjectDescription", entity.ProjectDescription, DbType.String));
                     paramCollection.Add(new DBParameter("MaterialOfConstruction", entity.MaterialOfConstruction, DbType.String));
                     paramCollection.Add(new DBParameter("AreaOfInstallation", entity.AreaOfInstallation, DbType.String));
+                    paramCollection.Add(new DBParameter("ConsigneeID", entity.ConsigneeID, DbType.String));
                     paramCollection.Add(new DBParameter("TechnicalSpecification", entity.TechnicalSpecification, DbType.String));
                     paramCollection.Add(new DBParameter("ScopeOfSupply", entity.ScopeOfSupply, DbType.String));
                     paramCollection.Add(new DBParameter("Packaging", entity.Packaging, DbType.String));
@@ -97,6 +117,7 @@ namespace BISERPBusinessLayer.Repositories.SM.Classes
                     paramCollection.Add(new DBParameter("ContactAtSite", entity.ContactAtSite, DbType.String));
                     paramCollection.Add(new DBParameter("ContactAtPurchase", entity.ContactAtPurchase, DbType.String));
                     paramCollection.Add(new DBParameter("DeliveryDate", entity.DeliveryDate, DbType.DateTime));
+                    paramCollection.Add(new DBParameter("Transport", entity.Transport, DbType.String));
                     paramCollection.Add(new DBParameter("DispatchDate1", entity.DispatchDate1, DbType.DateTime));
                     paramCollection.Add(new DBParameter("DispatchDate2", entity.DispatchDate2, DbType.DateTime));
                     paramCollection.Add(new DBParameter("DispatchDate3", entity.DispatchDate3, DbType.DateTime));
@@ -155,6 +176,7 @@ namespace BISERPBusinessLayer.Repositories.SM.Classes
                                    strEnquiryDate = Convert.ToDateTime(row.Field<DateTime>("EnquiryDate")).ToString("dd-MMMM-yyyy"),
                                    ClientName = row.Field<string>("ClientName"),
                                    OrderBookID = row.Field<int>("OrderBookID"),
+                                   OrderBookNo = row.Field<string>("OrderBookNo"),
                                    OfferID = row.Field<int?>("OfferID"),
                                    PONo = row.Field<string>("PONo"),
                                    strPODate = row.Field<string>("strPODate"),
@@ -167,6 +189,7 @@ namespace BISERPBusinessLayer.Repositories.SM.Classes
                                    ProjectDescription = row.Field<string>("ProjectDescription"),
                                    MaterialOfConstruction = row.Field<string>("MaterialOfConstruction"),
                                    AreaOfInstallation = row.Field<string>("AreaOfInstallation"),
+                                   ConsigneeID = row.Field<int?>("ConsigneeID"),
                                    TechnicalSpecification = row.Field<string>("TechnicalSpecification"),
                                    ScopeOfSupply = row.Field<string>("ScopeOfSupply"),
                                    Packaging = row.Field<string>("Packaging"),
@@ -176,6 +199,7 @@ namespace BISERPBusinessLayer.Repositories.SM.Classes
                                    ContactAtSite = row.Field<string>("ContactAtSite"),
                                    ContactAtPurchase = row.Field<string>("ContactAtPurchase"),
                                    strDeliveryDate = row.Field<string>("strDeliveryDate"),
+                                   Transport = row.Field<string>("Transport"),
                                    strDispatchDate1 = row.Field<string>("strDispatchDate1"),
                                    strDispatchDate2 = row.Field<string>("strDispatchDate2"),
                                    strDispatchDate3 = row.Field<string>("strDispatchDate3"),

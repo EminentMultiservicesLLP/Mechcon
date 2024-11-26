@@ -40,6 +40,8 @@ using BISERPBusinessLayer.Repositories.Configuration.Interfaces;
 using BISERPBusinessLayer.Repositories.Configuration.Classes;
 using BISERPBusinessLayer.Repositories.SM.Interfaces;
 using BISERPBusinessLayer.Repositories.SM.Classes;
+using BISERPBusinessLayer.Repositories.Ticket.Interfaces;
+using BISERPBusinessLayer.Repositories.Ticket.Classes;
 
 namespace BISERPService
 {
@@ -271,6 +273,10 @@ namespace BISERPService
             container.RegisterType<ISM_WorkOrderRepository, SM_WorkOrderRepository>();
             //SM_Reports
             container.RegisterType<ISM_ReportsRepository, SM_ReportsRepository>();
+
+            //----------------------------Ticket----------------------------//
+            container.RegisterType<ITicketRegisterRepository, TicketRegisterRepository>();
+            container.RegisterType<ITicketActivityRepository, TicketActivityRepository>();
 
 
             //This line wil apply below attribute to all controllers at global level

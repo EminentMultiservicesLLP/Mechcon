@@ -45,6 +45,29 @@ namespace BISERPService.Controllers.SM
             }
         }
 
+        [Route("getConsignee")]
+        [Route("getConsignee/{enquiryId}")]
+        [HttpGet]
+        public IHttpActionResult GetConsignee(int? enquiryId = null)
+        {
+            try
+            {
+                var data = _orderBook.GetConsignee(enquiryId);
+
+                if (data == null)
+                {
+                    return NotFound(); // or return BadRequest("No data found for the specified enquiry ID.");
+                }
+
+                return Ok(data.ToList());
+            }
+            catch (Exception ex)
+            {
+                _loggger.LogError("Error in GetConsignee of OrderBookController : parameter :" + Environment.NewLine + ex.StackTrace);
+                return InternalServerError(ex);
+            }
+        }
+
         [Route("getFinalOffer/{EnquiryID}")]
         [HttpGet]
         public IHttpActionResult GetFinalOffer(int EnquiryID)

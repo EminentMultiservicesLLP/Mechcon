@@ -29,6 +29,7 @@ namespace BISERP.Areas.Marketing.Models
         public string ProjectDescription { get; set; }
         public string MaterialOfConstruction { get; set; }
         public string AreaOfInstallation { get; set; }
+        public int? ConsigneeID { get; set; }
         public string TechnicalSpecification { get; set; }
         public string ScopeOfSupply { get; set; }
         public string Packaging { get; set; }
@@ -39,6 +40,7 @@ namespace BISERP.Areas.Marketing.Models
         public string ContactAtPurchase { get; set; }
         public DateTime? DeliveryDate { get; set; }
         public string strDeliveryDate { get; set; }
+        public string Transport { get; set; }
         public DateTime? DispatchDate1 { get; set; }
         public string strDispatchDate1 { get; set; }
         public DateTime? DispatchDate2 { get; set; }
@@ -65,6 +67,12 @@ namespace BISERP.Areas.Marketing.Models
         public List<ProjectTCDetails> ProjectTCList { get; set; }
         public List<PaymentTermDetails> PaymentTermList { get; set; }
         public List<DeliveryTermDetails> DeliveryTermList { get; set; }
+    }
+    public class ConsigneeModel
+    {
+        public int? ConsigneeID { get; set; }
+        public string Consignee { get; set; }
+        public string Address { get; set; }
     }
     public class ProjectTCDetails
     {
