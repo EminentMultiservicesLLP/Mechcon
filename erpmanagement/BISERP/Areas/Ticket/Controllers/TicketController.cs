@@ -16,5 +16,9 @@ namespace BISERP.Areas.Ticket.Controllers
         {
             return PartialView();
         }
+        public ActionResult Dashboard()
+        {
+            return PartialView();
+        }
     }
 }

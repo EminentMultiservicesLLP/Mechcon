@@ -277,6 +277,7 @@ namespace BISERPService
             //----------------------------Ticket----------------------------//
             container.RegisterType<ITicketRegisterRepository, TicketRegisterRepository>();
             container.RegisterType<ITicketActivityRepository, TicketActivityRepository>();
+            container.RegisterType<IDashboardRepository, DashboardRepository>();
 
 
             //This line wil apply below attribute to all controllers at global level

@@ -115,11 +115,10 @@
                         <div class="divider"></div>
                         <fieldset class="fieldsetCustom">
                             <legend class="legendCustom">Activities</legend>
+                            <div id="activityContainer"></div>
                             <div class="submit-row">
                                 <button type="button" id="btnAddNew" class="btn btn-primary">Add Activity</button>
                             </div>
-
-                            <div id="activityContainer"></div>
                         </fieldset>
                     </div>
                 </div>
@@ -144,7 +143,7 @@
     var tempTicketID = 0;
     var activityCount = 0;
     var MstStatus = [];
-    
+
     function loadStatus() {
         $.ajax({
             type: "GET",
@@ -351,53 +350,53 @@
         activityCount += 1;
 
         let btnViewAttachment = rowclick ? `
-        <div class="col-12 col-md-2 text-center">
-            </br>
-            <button type="button" id="btnViewAttachment${ActivityID}" class="btn btn-primary mt-3" onclick="viewAttachment(${ActivityID})">
-                View <i class="pe-va pe-7s-paperclip pe-2x"></i>
-            </button>
-        </div>` : '';
+    <div class="col-12 col-md-2 text-center">
+        </br>
+        <button type="button" id="btnViewAttachment${ActivityID}" class="btn btn-primary mt-3" onclick="viewAttachment(${ActivityID})">
+            View <i class="pe-va pe-7s-paperclip pe-2x"></i>
+        </button>
+    </div>` : '';
 
         const divContent = `
-        <fieldset class="fieldsetCustom activity-div mb-4" id="Div_${ActivityID}">
-            <legend class="legendCustom">Activity - ${activityCount}</legend>
-            <div class="row g-3">
-                <div class="col-12 col-md-3">
-                    <label for="ActivityDate${ActivityID}">Activity Date</label>
-                    <input type="text" id="ActivityDate${ActivityID}" class="form-control datepicker" />
-                </div>
-                <div class="col-12 col-md-9">
-                    <label for="Activity${ActivityID}" class="required">Activity</label>
-                    <textarea class="form-control Activity" id="Activity${ActivityID}" placeholder="Enter Activity" rows="3"></textarea>
-                </div>
-                <div class="col-12 col-md-3">
-                    <label for="ResponseDate${ActivityID}">Cust Resp Date</label>
-                    <input type="text" id="ResponseDate${ActivityID}" class="form-control datepicker" />
-                </div>
-                <div class="col-12 col-md-9">
-                    <label for="Response${ActivityID}">Cust Resp</label>
-                    <textarea class="form-control" id="Response${ActivityID}" placeholder="Enter Cust Response" rows="3"></textarea>
-                </div>
-                <div class="col-12 col-md-4">
-                    <label for="Attachment${ActivityID}">Attachment</label>
-                    <input class="form-control btn-primary attachment" type="file" multiple accept=".jpg,.jpeg,.png,.pdf" id="Attachment${ActivityID}" />
-                </div>
-                <div class="col-12 col-md-4">
-                    <label for="StatusID${ActivityID}" class="required">Status</label>
-                    <select id="StatusID${ActivityID}" class="form-control">
-                        <option value="">--Select Status--</option>
-                    </select>
-                </div>
-                <div class="col-12 col-md-2 text-center align-self-center">
-                    <div class="form-check mt-3">
-                        </br>
-                        <label class="form-check-label" for="Deactive${ActivityID}">Deactive</label>
-                        <input class="form-check-input" type="checkbox" id="Deactive${ActivityID}" name="Deactive${ActivityID}">
-                    </div>
-                </div>
-                ${btnViewAttachment}
+    <fieldset class="fieldsetCustom activity-div mb-4" id="Div_${ActivityID}">
+        <legend class="legendCustom">Activity - ${activityCount}</legend>
+        <div class="row g-3">
+            <div class="col-12 col-md-3">
+                <label for="ActivityDate${ActivityID}">Activity Date</label>
+                <input type="text" id="ActivityDate${ActivityID}" class="form-control datepicker" />
             </div>
-        </fieldset>`;
+            <div class="col-12 col-md-9">
+                <label for="Activity${ActivityID}" class="required">Activity</label>
+                <textarea class="form-control Activity" id="Activity${ActivityID}" placeholder="Enter Activity" rows="3"></textarea>
+            </div>
+            <div class="col-12 col-md-3">
+                <label for="ResponseDate${ActivityID}">Cust Resp Date</label>
+                <input type="text" id="ResponseDate${ActivityID}" class="form-control datepicker" />
+            </div>
+            <div class="col-12 col-md-9">
+                <label for="Response${ActivityID}">Cust Resp</label>
+                <textarea class="form-control" id="Response${ActivityID}" placeholder="Enter Cust Response" rows="3"></textarea>
+            </div>
+            <div class="col-12 col-md-4">
+                <label for="Attachment${ActivityID}">Attachment</label>
+                <input class="form-control btn-primary attachment" type="file" multiple accept=".jpg,.jpeg,.png,.pdf" id="Attachment${ActivityID}" />
+            </div>
+            <div class="col-12 col-md-4">
+                <label for="StatusID${ActivityID}" class="required">Status</label>
+                <select id="StatusID${ActivityID}" class="form-control">
+                    <option value="">--Select Status--</option>
+                </select>
+            </div>
+            <div class="col-12 col-md-2 text-center align-self-center">
+                <div class="form-check mt-3">
+                    </br>
+                    <label class="form-check-label" for="Deactive${ActivityID}">Deactive</label>
+                    <input class="form-check-input" type="checkbox" id="Deactive${ActivityID}" name="Deactive${ActivityID}">
+                </div>
+            </div>
+            ${btnViewAttachment}
+        </div>
+    </fieldset>`;
 
         $("#activityContainer").append(divContent);
 
@@ -419,7 +418,6 @@
                 autoclose: true
             });
 
-            // Set current date only for ActivityDate input
             if (isActivityDate) {
                 $(this).datepicker("setDate", new Date());
             }
@@ -430,45 +428,13 @@
         MstStatus.forEach(function (status) {
             $statusDropdown.append(`<option value="${status.StatusID}">${status.Status}</option>`);
         });
+
+        // Disable all fieldsets except the last one
+        $(".activity-div").find("input, select, textarea").prop("disabled", true);  // Disable all
+        $(".activity-div:last").find("input, select, textarea").prop("disabled", false); // Enable the last one
     }
 
     //-----------------------------------Add Offer Click Ends-----------------------------------//
-
-    function GetActivityDetails(TicketActivityID) {
-        var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
-        $.ajax({
-            headers: {
-                "__RequestVerificationToken": antiForgeryToken
-            },
-            type: 'GET',
-            url: "/TicketActivity/GetActivityDetails",
-            data: { TicketActivityID: TicketActivityID },
-            dataType: "json",
-            success: function (response) {
-                if (response.success) {
-                    let details = response.records
-                    for (var i = 0; i < details.length; i++) {
-                        AddDiv(details[i].ActivityID, details[i].ActivityNo, true);
-                        $(`#ActivityDate${details[i].ActivityID}`).val(details[i].strActivityDate);
-                        $(`#Activity${details[i].ActivityID}`).val(details[i].Activity);
-                        $(`#GSTAmount${details[i].ActivityID}`).val(details[i].GSTAmount);
-                        $(`#ActivityRemark${details[i].ActivityID}`).val(details[i].ActivityRemark);
-                        $(`#ResponseDate${details[i].ActivityID}`).val(details[i].strResponseDate);
-                        $(`#Response${details[i].ActivityID}`).val(details[i].Response);
-                        if (details[i].Deactive) {
-                            $(`#Deactive${details[i].ActivityID}`).prop('checked', true);
-                        }
-                    }
-
-                } else {
-                    console.warn("No details found or an issue occurred: ", response.message);
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error("Error loading ticket details: ", status, error);
-            }
-        });
-    }
 
     $(document).on('change', '.attachment', function () {
         const fileInput = this;

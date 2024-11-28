@@ -1,0 +1,371 @@
+﻿@Scripts.Render("~/bundles/jquerymodels")
+
+<h5 class="page-header orangeDottedBottomBorder">Ticket Dashboard</h5>
+
+<style>
+    .dashboard-container {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+        padding: 10px;
+        background-color: #dae6f0;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 8px;
+        border: #a8c4dc 1px solid;
+    }
+
+    .dashboard-card {
+        background-color: #fff;
+        padding: 5px 10px;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        flex: 1; /* Makes all cards evenly distribute across the container */
+        text-align: center;
+        transition: transform 0.2s, box-shadow 0.2s;
+        min-width: 10%;
+        margin: 5px;
+        cursor: pointer;
+    }
+
+        .dashboard-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .dashboard-card h3 {
+            margin: 3px 0;
+            font-size: 12px;
+            font-weight: bold;
+            color: #444;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .dashboard-card h2 {
+            font-size: 16px;
+            margin: 2px 0;
+            color: #007bff;
+            font-family: "Arial", sans-serif;
+            font-weight: bold;
+        }
+</style>
+
+<div class="submit-row">
+    <div class="col-lg-2 col-md-4 col-sm-12 mb-3">
+        <label class="required" for="financialYear">Financial Year</label>
+        <select id="financialYear" name="financialYear" class="form-control">
+            <option value="">--Select Financial Year--</option>
+        </select>
+    </div>
+    <div class="col-lg-2 col-md-4 col-sm-12 mb-3">
+        <br />
+        <button type="button" id="btnGo" class="btn btn-primary" onclick="go()">GO</button>
+        <button type="button" class="btn btn-warning" id="btnResetT" onclick="clearFormData()">Clear</button>
+    </div>
+
+</div>
+
+<fieldset class="fieldsetCustom">
+    <legend class="legendCustom"> Summury </legend>
+    <div class="dashboard-container">
+        <!-- New -->
+        <div class="dashboard-card" onclick="filterTickets(1)">
+            <h3>New</h3>
+            <h2 id="StatusID_1">0</h2>
+        </div>
+
+        <!-- Queued / Assigned -->
+        <div class="dashboard-card" onclick="filterTickets(2)">
+            <h3>Queued / Assigned</h3>
+            <h2 id="StatusID_2">0</h2>
+        </div>
+
+        <!-- In Progress -->
+        <div class="dashboard-card" onclick="filterTickets(3)">
+            <h3>In Progress</h3>
+            <h2 id="StatusID_3">0</h2>
+        </div>
+
+        <!-- Resolved -->
+        <div class="dashboard-card" onclick="filterTickets(4)">
+            <h3>Resolved</h3>
+            <h2 id="StatusID_4">0</h2>
+        </div>
+
+        <!-- Closed -->
+        <div class="dashboard-card" onclick="filterTickets(5)">
+            <h3>Closed</h3>
+            <h2 id="StatusID_5">0</h2>
+        </div>
+    </div>
+
+    <div class="dashboard-container">
+        <!-- Waiting for Customer Response -->
+        <div class="dashboard-card" onclick="filterTickets(6)">
+            <h3>Waiting for Customer Response</h3>
+            <h2 id="StatusID_6">0</h2>
+        </div>
+
+        <!-- Waiting for Support -->
+        <div class="dashboard-card" onclick="filterTickets(7)">
+            <h3>Waiting for Support</h3>
+            <h2 id="StatusID_7">0</h2>
+        </div>
+
+        <!-- On Hold -->
+        <div class="dashboard-card" onclick="filterTickets(8)">
+            <h3>On Hold</h3>
+            <h2 id="StatusID_8">0</h2>
+        </div>
+
+        <!-- Canceled -->
+        <div class="dashboard-card" onclick="filterTickets(9)">
+            <h3>Canceled</h3>
+            <h2 id="StatusID_9">0</h2>
+        </div>
+
+        <!-- Re-Open -->
+        <div class="dashboard-card" onclick="filterTickets(10)">
+            <h3>Re-Open</h3>
+            <h2 id="StatusID_10">0</h2>
+        </div>
+    </div>
+
+
+
+    <div id="TicketStatusRptGrid"></div>
+</fieldset>
+
+<script>
+    var ticketStatusRpt = [];
+
+    function loadFinancialYear() {
+        $.ajax({
+            type: "GET",
+            url: "/ResourceTarget/GetFinancialYear",
+            dataType: "json",
+            success: function (data) {
+                const $financialYear = $('#financialYear');
+                $financialYear.empty();
+
+                if (data.error) {
+                    $financialYear.append('<option value="">--Error loading financial years--</option>');
+                    console.error("Error loading financial years:", data.error);
+                    return;
+                }
+
+                $financialYear.append('<option value="">All</option>');
+                data.forEach(function (financialYear) {
+                    $financialYear.append(`<option value="${financialYear.FinancialYear}">${financialYear.FinancialYear}</option>`);
+                });
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                $('#financialYear').empty();
+                $('#financialYear').append('<option value="">--Error loading sources--</option>');
+                console.error("Error loading sources:", errorThrown);
+            }
+        });
+    }
+    loadFinancialYear();
+
+    function go() {
+        const financialYear = $("#financialYear").val();
+
+        loadTicketStatusSummary(financialYear);
+        loadTicketStatusRptGrid(financialYear);
+    }
+
+    function loadTicketStatusSummary(financialYear) {
+        const antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+
+        $.ajax({
+            headers: { "__RequestVerificationToken": antiForgeryToken },
+            type: 'GET',
+            url: "/Ticket/TKT_Dashboard/GetTicketStatusSummary",
+            data: { financialYear },
+            dataType: "json",
+            success(response) {
+                debugger
+                if (response.success && Array.isArray(response.records)) {
+                    response.records.forEach(({ StatusID, TicketCount }) => {
+                        const statusElement = $(`#StatusID_${StatusID}`);
+                        if (statusElement.length) {
+                            statusElement.text(TicketCount);
+                        }
+                    });
+                } else {
+                    alert(response.message || "Unable to load ticket status summary.");
+                }
+            },
+            error() {
+                alert("An error occurred while loading ticket status summary. Please try again later.");
+            }
+        });
+    }
+
+    //-----------------------------------TicketStatusRptGrid (Starts here)-----------------------------------//
+    var TicketStatusRptGrid_GDM = { location: "local" };
+    var TicketStatusRptGrid_GCM = [
+        {
+            title: "Current Status",
+            dataIndx: "Status",
+            width: 100,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Ticket No",
+            dataIndx: "TicketNo",
+            width: 150,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Client Name",
+            dataIndx: "ClientName",
+            width: 200,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Subject",
+            dataIndx: "Subject",
+            width: 200,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Ticket Date",
+            dataIndx: "strTicketDate",  // Use the string representation for the date
+            width: 100,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Ticket Age",
+            dataIndx: "TicketAge",
+            width: 75,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Allocated To",
+            dataIndx: "AllocatedToName",  // AllocatedToName instead of AllocatedTo
+            width: 200,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        }
+    ];
+    var setTicketStatusRptGrid = {
+        height: 530,
+        width: 'auto',
+        maxWidth: '100%',
+        minWidth: 800,
+        sortable: true,
+        autofill: true,
+        numberCell: { show: false },
+        hoverMode: 'row',
+        showTop: true,
+        showTitle: true,
+        showBottom: true,
+        resizable: true,
+        scrollModel: { autoFit: true },
+        filterModel: { on: true, mode: "AND", header: true },
+        draggable: false,
+        hwrap: false,
+        wrap: false,
+        editable: false,
+        columnBorders: true,
+        menuIcon: true,
+        selectionModel: { type: 'row', mode: 'single', cbHeader: false },
+        colModel: TicketStatusRptGrid_GCM,
+        dataModel: TicketStatusRptGrid_GDM,
+        pageModel: { type: "local", rPP: 50 },
+        rowInit: function (ui) {
+            if (ui.rowData.Color && ui.rowData.Color !== "") {
+                return {
+                    style: `background:${ui.rowData.Color};color:black;`
+                };
+            }
+        },
+        toolbar: {
+            items: [
+                {
+                    type: "<label><b>Export data to Excel : </b> | </label>"
+                },
+                {
+                    type: 'button',
+                    label: "Export",
+                    icon: 'ui-icon-arrowthickstop-1-s',
+                    listener: function () {
+                        var format = 'xlsx',
+                            blob = workbook = this.exportData({
+                                format: format,
+                                workbook: true,
+                                render: true
+                            });
+
+                        blob = pq.excel.exportWb({ workbook: workbook })
+                        if (typeof blob === "string") {
+                            blob = new Blob([blob]);
+                        }
+
+                        var fileName = "TicketStatusRpt_" + formatDateTime(new Date()) + "." + format;
+
+                        saveAs(blob, fileName);
+                    }
+                }
+            ]
+        }
+    }
+    var $TicketStatusRptGrid = $("#TicketStatusRptGrid").pqGrid(setTicketStatusRptGrid);
+    function loadTicketStatusRptGrid(financialYear) {
+        const antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            url: "/Ticket/TKT_Dashboard/GetTicketStatusRpt",
+            data: { financialYear: financialYear },
+            dataType: "json",
+
+            beforeSend: function () {
+                $("#TicketStatusRptGrid").pqGrid("showLoading");
+            },
+
+            complete: function () {
+                $("#TicketStatusRptGrid").pqGrid("hideLoading");
+            },
+
+            success: function (response) {
+                if (response.success) {
+                    ticketStatusRpt = response.records;
+                } else {
+                    console.warn("No data found or an issue occurred: ", response.message);
+                    ticketStatusRpt = []; 
+                }
+                filterTickets();
+            },
+
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Error loading Ticket Status Report grid:", textStatus, errorThrown);
+                console.error("Response text:", jqXHR.responseText);
+                $("#TicketStatusRptGrid").pqGrid("hideLoading");
+            }
+        });
+    }
+    //-----------------------------------TicketStatusRptGrid (Ends here)-----------------------------------//
+
+    function filterTickets(statusID) {
+
+        const filteredData = statusID ? ticketStatusRpt.filter(ticket => ticket.StatusID === statusID) : ticketStatusRpt;
+
+        const grid = $("#TicketStatusRptGrid").pqGrid();
+        grid.pqGrid("option", "dataModel.data", filteredData);
+        grid.pqGrid("refreshDataAndView");
+        PqGridRefreshClick(grid);
+    }
+
+    function clearFormData() {
+        $("#financialYear").val('');
+        $('.dashboard-card h2').text('0');
+        ClearParamGrid('TicketStatusRptGrid');
+    }
+</script>

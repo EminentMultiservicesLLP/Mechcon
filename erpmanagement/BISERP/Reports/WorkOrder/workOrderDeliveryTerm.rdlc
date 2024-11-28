@@ -22,12 +22,6 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value xml:space="preserve"> </Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                              </Style>
-                            </TextRun>
-                            <TextRun>
                               <Value>=RowNumber(nothing) &amp; ". "</Value>
                               <Style>
                                 <FontFamily>Calibri</FontFamily>
