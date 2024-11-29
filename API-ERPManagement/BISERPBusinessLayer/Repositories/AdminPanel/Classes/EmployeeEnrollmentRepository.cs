@@ -51,6 +51,7 @@ namespace BISERPBusinessLayer.Repositories.AdminPanel.Classes
                                 Department = row.Field<string>("Department"),
                                 DesignationID = row.Field<int>("DesignationID"),
                                 Designation = row.Field<string>("Designation"),
+                                EmailId = row.Field<string>("EmailId"),
 
                             }).ToList();
 
@@ -70,6 +71,7 @@ namespace BISERPBusinessLayer.Repositories.AdminPanel.Classes
                 paramCollection.Add(new DBParameter("Password", Items.Password, DbType.String));
                 paramCollection.Add(new DBParameter("DepartmentID", Items.DepartmentID, DbType.String));
                 paramCollection.Add(new DBParameter("DesignationID", Items.DesignationID, DbType.String));
+                paramCollection.Add(new DBParameter("EmailId", Items.EmailId, DbType.String));
                 paramCollection.Add(new DBParameter("InsertedBy", Items.InsertedBy, DbType.Int32));
                 paramCollection.Add(new DBParameter("InsertedON", Items.InsertedON, DbType.DateTime));
                 paramCollection.Add(new DBParameter("InsertedIPAddress", Items.InsertedIPAddress, DbType.String));

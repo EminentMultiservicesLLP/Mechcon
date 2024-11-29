@@ -1,9 +1,12 @@
 ﻿using BISERP.Areas.Marketing.Models;
+using BISERP.Controllers;
 using BISERP.Filters;
 using BISERPCommon;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Formatting;
@@ -269,7 +272,6 @@ namespace BISERP.Areas.Marketing.Controllers
             }
         }
 
-
         [HttpGet]
         public async Task<JsonResult> GetIncoTerm()
         {
@@ -291,6 +293,67 @@ namespace BISERP.Areas.Marketing.Controllers
                 return Json(new { error = "An error occurred while retrieving the incoTermes." }, JsonRequestBehavior.AllowGet);
             }
         }
+
+        #region Send Mail
+        [HttpPost]
+        public ActionResult SendMail(SendMail model)
+        {
+            int mailSentCount = 0;
+
+            foreach (var user in model.SelectedUser)
+            {
+                try
+                {
+                    if (SendEmail(model.ProjectCode, user.EmailId) == 1)
+                    {
+                        mailSentCount++;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error while sending email to {user.EmailId}: {ex}");
+                }
+            }
+
+            if (mailSentCount > 0)
+            {
+                return Json(new { success = true, message = "Mail Sent Successfully!" });
+            }
+            else
+            {
+                return Json(new { success = false, message = "Failed To Send Mail!" });
+            }
+        }
+
+        public int SendEmail(string projectCode, string emailId)
+        {
+            try
+            {
+                string subject = "New Project";
+
+                string notificationPath = ConfigurationManager.AppSettings["Notification"];
+                string fullPath = Path.Combine(HttpRuntime.AppDomainAppPath, notificationPath);
+
+                string emailBody;
+                using (var reader = new StreamReader(fullPath))
+                {
+                    emailBody = reader.ReadToEnd();
+                }
+
+                emailBody = emailBody.Replace("[ProjectCode]", projectCode);
+
+                int emailSendStatus = new EmailController().NewSmtpSettings(emailId, emailBody, subject, "");
+
+                return emailSendStatus == 1 ? 1 : 0;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error while preparing or sending email: {ex}");
+                return 0;
+            }
+        }
+
+        #endregion Send Mail
 
     }
 }

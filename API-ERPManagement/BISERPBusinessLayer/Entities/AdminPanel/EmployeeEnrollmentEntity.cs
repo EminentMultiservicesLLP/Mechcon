@@ -17,6 +17,7 @@ namespace BISERPBusinessLayer.Entities.AdminPanel
         public string Department { get; set; }
         public int DesignationID { get; set; }
         public string Designation { get; set; }
+        public string EmailId { get; set; }
         public Nullable<int> InsertedBy { get; set; }
         public Nullable<System.DateTime> InsertedON { get; set; }
         public string InsertedMacName { get; set; }

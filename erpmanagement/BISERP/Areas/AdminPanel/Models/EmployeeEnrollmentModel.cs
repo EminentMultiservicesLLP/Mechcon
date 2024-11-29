@@ -17,6 +17,7 @@ namespace BISERP.Areas.AdminPanel.Models
         public string Department { get; set; }
         public int DesignationID { get; set; }
         public string Designation { get; set; }
+        public string EmailId { get; set; }
         public string UpdatedMacName { get; set; }
         public string UpdatedMacID { get; set; }
         public string UpdatedIPAddress { get; set; }

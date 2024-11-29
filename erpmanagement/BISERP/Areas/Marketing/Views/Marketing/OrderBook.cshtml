@@ -457,54 +457,84 @@
     </div>
 </div>
 
-<div class="panel-group">
-    <div class="panel panel-default">
-        <div class="panel-groupingBoder">
-            <div class="panel-heading">
-                <div class="panel-title">
-                    <a class="collapsediv" data-toggle="collapse" href="#content" style="color:white">
-                        Add Terms
-                    </a>
-                </div>
-            </div>
-            <div id="content">
-                <div id="content-tab">
-                    <ul id="tabs" class="nav nav-tabs" data-tabs="tabs" style="padding: 1px;">
-                        <li class="active tab"><a href="#tab1" data-toggle="tab" style="margin: 0;">Project T & C</a></li>
-                        <li><a href="#tab2" data-toggle="tab" style="margin: 0;">Payment Terms</a></li>
-                        <li><a href="#tab3" data-toggle="tab" style="margin: 0;">Delivery Terms</a></li>
-                    </ul>
-                    <fieldset class="fieldsetCustom">
-                        <div id="my-tab-content" class="tab-content" style="border:none">
-                            <div class="tab-pane active" id="tab1">
-                                <br>
-                                <div class="form-group" align="left">
-                                    <button type="button" class="btn btn-primary" id="btnViewProjectTC">Add Term</button>
-                                    <button type="button" class="btn btn-danger" id="btnRemoveProjectTC">Remove Term</button>
-                                </div>
-                                <div id="ProjectTCgrid"></div>
-                            </div>
-                            <div class="tab-pane" id="tab2">
-                                <br>
-                                <div class="form-group" align="left">
-                                    <button type="button" class="btn btn-primary" id="btnViewPayTerms">Add Term</button>
-                                    <button type="button" class="btn btn-danger" id="btnRemovePayTerms">Remove Term</button>
-                                </div>
-                                <div id="PaymentTermgrid"></div>
-                            </div>
-                            <div class="tab-pane" id="tab3">
-                                <br>
-                                <div class="form-group" align="left">
-                                    <button type="button" class="btn btn-primary" id="btnViewDelTerms">Add Term</button>
-                                    <button type="button" class="btn btn-danger" id="btnRemoveDelTerms">Remove Term</button>
-                                </div>
-                                <div id="DeliveryTermgrid"></div>
-                            </div>
+
+<div class="row">
+    <div class="col-sm-4">
+
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-groupingBoder">
+                    <div class="panel-heading">
+                        <div class="panel-title">
+                            <a class="collapsediv" data-toggle="collapse" href="#contentUser" style="color:white">
+                                Send Email to
+                            </a>
                         </div>
-                    </fieldset>
+                    </div>
+                    <div id="contentUser">
+                        <div id="contentUser-tab">
+                            <div id="UserGrid"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+
+    </div>
+
+    <div class="col-sm-8">
+
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-groupingBoder">
+                    <div class="panel-heading">
+                        <div class="panel-title">
+                            <a class="collapsediv" data-toggle="collapse" href="#content" style="color:white">
+                                Add Terms
+                            </a>
+                        </div>
+                    </div>
+                    <div id="content">
+                        <div id="content-tab">
+                            <ul id="tabs" class="nav nav-tabs" data-tabs="tabs" style="padding: 1px;">
+                                <li class="active tab"><a href="#tab1" data-toggle="tab" style="margin: 0;">Project T & C</a></li>
+                                <li><a href="#tab2" data-toggle="tab" style="margin: 0;">Payment Terms</a></li>
+                                <li><a href="#tab3" data-toggle="tab" style="margin: 0;">Delivery Terms</a></li>
+                            </ul>
+                            <fieldset class="fieldsetCustom">
+                                <div id="my-tab-content" class="tab-content" style="border:none;padding:2px;">
+                                    <div class="tab-pane active" id="tab1" style="padding:0;">
+                                        <br>
+                                        <div class="form-group" align="left">
+                                            <button type="button" class="btn btn-primary" id="btnViewProjectTC">Add Term</button>
+                                            <button type="button" class="btn btn-danger" id="btnRemoveProjectTC">Remove Term</button>
+                                        </div>
+                                        <div id="ProjectTCgrid"></div>
+                                    </div>
+                                    <div class="tab-pane" id="tab2">
+                                        <br>
+                                        <div class="form-group" align="left">
+                                            <button type="button" class="btn btn-primary" id="btnViewPayTerms">Add Term</button>
+                                            <button type="button" class="btn btn-danger" id="btnRemovePayTerms">Remove Term</button>
+                                        </div>
+                                        <div id="PaymentTermgrid"></div>
+                                    </div>
+                                    <div class="tab-pane" id="tab3">
+                                        <br>
+                                        <div class="form-group" align="left">
+                                            <button type="button" class="btn btn-primary" id="btnViewDelTerms">Add Term</button>
+                                            <button type="button" class="btn btn-danger" id="btnRemoveDelTerms">Remove Term</button>
+                                        </div>
+                                        <div id="DeliveryTermgrid"></div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 
@@ -1112,8 +1142,12 @@
                         fileSaveMsg = "But failed to save attached files.";
                     } finally {
                         const message = tempOrderBookID === 0 ? `Work Order registered successfully!<br> Project Code : <b>${response.Data.ProjectCode}</b>` : `Work Order updated successfully!<br> Project Code : <b>${response.Data.ProjectCode}</b>`;
-                        ShowAlert("success", `${message} <br> ${fileSaveMsg}`);
-                        clearFormData();
+                        if (tempOrderBookID === 0) {
+                            SendMail(response.Data.ProjectCode, message, fileSaveMsg);
+                        } else {
+                            ShowAlert("success", `${message} <br> ${fileSaveMsg}`);
+                            clearFormData();
+                        }
                     }
                 } else {
                     ShowAlert("error", response.message || "An error occurred while saving the offer.");
@@ -1154,6 +1188,7 @@
         ClearParamGrid("ProjectTCgrid");
         ClearParamGrid("PaymentTermgrid");
         ClearParamGrid("DeliveryTermgrid");
+        loadUserGrid();
         clearEnquiryDetails();
     }
 
@@ -1777,7 +1812,7 @@
             return;
         }
         $("#ReportModal").modal('show');
-              
+
         ReportValidationCheck(tempOrderBookID);
     });
 
@@ -1800,4 +1835,139 @@
             return false;
         }
     }
+
+
+    //-----------------------------------UserGrid (Starts here)-----------------------------------//
+    var UserGrid_GDM = { location: "local" };
+    var UserGrid_GCM = [
+        {
+            dataIndx: "State", maxWidth: 25, minWidth: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', resizable: false, sortable: false,
+            editor: false, dataType: 'bool', title: "<input type='checkbox' />",
+            cb: {
+                select: true,
+                all: false,
+                header: true
+            }
+        },
+        {
+            title: "Employee Name", dataIndx: "UserName", width: 700,
+            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+        }
+    ];
+    var setUserGrid = {
+        height: 403,
+        width: 'auto',
+        maxWidth: '100%',
+        minWidth: 800,
+        sortable: true,
+        autofill: true,
+        numberCell: { show: false },
+        hoverMode: 'row',
+        showTop: true,
+        showTitle: true,
+        showBottom: true,
+        resizable: true,
+        scrollModel: { autoFit: true },
+        filterModel: { on: true, mode: "AND", header: true },
+        draggable: false,
+        hwrap: false,
+        wrap: false,
+        editable: true,
+        columnBorders: true,
+        menuIcon: true,
+        selectionModel: { type: 'cell', mode: 'multiple', cbHeader: true },
+        colModel: UserGrid_GCM,
+        dataModel: UserGrid_GDM,
+        pageModel: { type: "local", rPP: 10 }
+    };
+    var $UserGrid = $("#UserGrid").pqGrid(setUserGrid);
+    function loadUserGrid() {
+        var antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            url: "/EmployeeEnrollment/GetUserDetails",
+            dataType: "json",
+
+            beforeSend: function () {
+                $("#UserGrid").pqGrid("showLoading");
+            },
+
+            complete: function () {
+                $("#UserGrid").pqGrid("hideLoading");
+            },
+
+            success: function (response) {
+                const grid = $("#UserGrid").pqGrid();
+
+                if (response.length > 0) {
+                    grid.pqGrid("option", "dataModel.data", response);
+                } else {
+                    console.warn("No data found or an issue occurred: ", response);
+                    grid.pqGrid("option", "dataModel.data", []);
+                }
+
+                grid.pqGrid("refreshDataAndView");
+                PqGridRefreshClick(grid);
+            },
+
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Error loading Sector Wise Sales Report grid:", textStatus, errorThrown);
+                console.error("Response text:", jqXHR.responseText);
+                $("#UserGrid").pqGrid("hideLoading");
+            }
+        });
+
+    }
+    loadUserGrid();
+    //-----------------------------------UserGrid (Ends here)-----------------------------------//
+
+    function SendMail(projectCode, message, fileSaveMsg) {
+        debugger;
+        $('#ContentViewSection').append('<div style="position:fixed;" id="loadingDiv1"><div class="loader1">Loading...</div></div>');
+
+        const gridData = $("#UserGrid").pqGrid("option", "dataModel.data");
+        const selectedUser = gridData.filter(user => user.State === true);
+
+        if (selectedUser.length > 0) {
+            const antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+
+            $.ajax({
+                headers: {
+                    "__RequestVerificationToken": antiForgeryToken
+                },
+                type: "POST",
+                traditional: true,
+                contentType: 'application/json; charset=utf-8',
+                url: "/OrderBook/SendMail",
+                data: JSON.stringify({
+                    ProjectCode: projectCode,
+                    SelectedUser: selectedUser,
+                }),
+                success: function (response) {
+                    let mailSaveMsg;
+                    if (response.success) {
+                        mailSaveMsg = `${response.message}`;
+                        ShowAlert("success", `${message} <br> ${fileSaveMsg} ${mailSaveMsg} `);
+                    } else {
+                        mailSaveMsg = ` but ${response.message}`;
+                        ShowAlert("info", `${message} <br> ${fileSaveMsg} ${mailSaveMsg} `);
+                    }
+                    clearFormData();
+                    $("#loadingDiv1").remove();
+                },
+                error: function () {
+                    ShowAlert("error", "An error occurred while sending the email.");
+                    $("#loadingDiv1").remove();
+                }
+            });
+        } else {
+            ShowAlert("info", `${message} <br> ${fileSaveMsg}`);
+            clearFormData();
+            $("#loadingDiv1").remove();
+        }
+    }
+
 </script>

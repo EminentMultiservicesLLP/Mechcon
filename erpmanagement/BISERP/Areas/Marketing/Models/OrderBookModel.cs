@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BISERP.Areas.AdminPanel.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -107,4 +108,12 @@ namespace BISERP.Areas.Marketing.Models
         public string Name { get; set; }
         public string Value { get; set; }
     }
+
+    public class SendMail
+    {
+        public string ProjectCode { get; set; }
+        public List<EmployeeEnrollmentModel> SelectedUser { get; set; }
+
+    }
+
 }
