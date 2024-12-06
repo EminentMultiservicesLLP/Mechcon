@@ -53,6 +53,10 @@ namespace BISERP.Areas.Marketing.Models
         public DateTime? DispatchDate5 { get; set; }
         public string strDispatchDate5 { get; set; }
         public string BriefTechnicalSpecification { get; set; }
+        public int? Quantity { get; set; }
+        public string InstAndComm { get; set; }
+        public string GuaranteeType { get; set; }
+        public string AdditionalContact { get; set; }
         public int? InsertedBy { get; set; }
         public DateTime? InsertedON { get; set; }
         public string InsertedMacID { get; set; }
@@ -68,6 +72,8 @@ namespace BISERP.Areas.Marketing.Models
         public List<ProjectTCDetails> ProjectTCList { get; set; }
         public List<PaymentTermDetails> PaymentTermList { get; set; }
         public List<DeliveryTermDetails> DeliveryTermList { get; set; }
+        public List<OtherTermDetails> OtherTermList { get; set; }
+        public List<BasisTermDetails> BasisTermList { get; set; }
     }
     public class ConsigneeModel
     {
@@ -95,6 +101,20 @@ namespace BISERP.Areas.Marketing.Models
         public int DelTermID { get; set; }
         public string DeliveryTermCode { get; set; }
         public string DeliveryTermDesc { get; set; }
+    }
+    public class OtherTermDetails
+    {
+        public bool State { get; set; }
+        public int OtherTermID { get; set; }
+        public string OthersTermCode { get; set; }
+        public string OthersTermDesc { get; set; }
+    }
+    public class BasisTermDetails
+    {
+        public bool State { get; set; }
+        public int BasisId { get; set; }
+        public string BasisCode { get; set; }
+        public string BasisDesc { get; set; }
     }
     public class IncoTermModel
     {

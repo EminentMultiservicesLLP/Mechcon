@@ -221,6 +221,53 @@ namespace BISERPService.Controllers.SM
             }
         }
 
+
+        [Route("getOrderBookOtherTerms/{OrderBookID}")]
+        [HttpGet]
+        public IHttpActionResult GetOrderBookOtherTerms(int OrderBookID)
+        {
+            try
+            {
+                var details = _orderBook.GetOrderBookOtherTerms(OrderBookID);
+
+                if (details == null || !details.Any())
+                {
+                    return NotFound(); // or return BadRequest("No delivery terms found for the specified order book ID.");
+                }
+
+                return Ok(details);
+            }
+            catch (Exception ex)
+            {
+                _loggger.LogError("Error in GetOrderBookOtherTerms of OrderBookController: parameter :" + Environment.NewLine + ex.StackTrace);
+                return InternalServerError(ex);
+            }
+        }
+
+
+        [Route("getOrderBookBasisTerms/{OrderBookID}")]
+        [HttpGet]
+        public IHttpActionResult GetOrderBookBasisTerms(int OrderBookID)
+        {
+            try
+            {
+                var details = _orderBook.GetOrderBookBasisTerms(OrderBookID);
+
+                if (details == null || !details.Any())
+                {
+                    return NotFound(); // or return BadRequest("No delivery terms found for the specified order book ID.");
+                }
+
+                return Ok(details);
+            }
+            catch (Exception ex)
+            {
+                _loggger.LogError("Error in GetOrderBookBasisTerms of OrderBookController: parameter :" + Environment.NewLine + ex.StackTrace);
+                return InternalServerError(ex);
+            }
+        }
+
+
         [Route("getIncoTerm")]
         [AcceptVerbs("GET", "POST")]
         public IHttpActionResult GetIncoTerm()

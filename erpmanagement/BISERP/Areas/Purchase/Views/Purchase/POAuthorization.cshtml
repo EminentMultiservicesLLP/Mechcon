@@ -139,11 +139,11 @@
                                     </td>
                                 </tr>
                                 @*<tr>
-                                    <td>@Html.LabelFor(model => model.OtherCharges)</td>
-                                    <td>
-                                        @Html.TextBoxFor(model => model.OtherCharges, new Dictionary<string, object> { { "readonly", "true" }, { "class", "form-control" } })
-                                    </td>
-                                </tr>*@
+                                        <td>@Html.LabelFor(model => model.OtherCharges)</td>
+                                        <td>
+                                            @Html.TextBoxFor(model => model.OtherCharges, new Dictionary<string, object> { { "readonly", "true" }, { "class", "form-control" } })
+                                        </td>
+                                    </tr>*@
                                 <tr>
                                     <td>@Html.LabelFor(model => model.Discount)</td>
                                     <td>
@@ -151,20 +151,20 @@
                                     </td>
                                 </tr>
                                 @*<tr>
-                                    <td>@Html.Label("P & F %")</td>
-                                    <td>@Html.TextBoxFor(model => model.BED, new { @class = "form-control", style = "width: 70px" })</td>
-                                    <td><input disabled class="form-control readonly" id="BedAmt" name="BedAmt" style="margin-left: -80px; width: 70px;" /></td>
-                                </tr>
-                                <tr>
-                                    <td>@Html.Label("Frieght %")</td>
-                                    <td> @Html.TextBoxFor(model => model.Edu, new { @class = "form-control", style = "width: 70px" })</td>
-                                    <td><input disabled class="form-control readonly" id="educessamt" name="educessamt" style="margin-left: -80px; width: 70px;" /></td>
-                                </tr>
-                                <tr style="display:none">
-                                    <td>@Html.Label("SHE Cess %")</td>
-                                    <td> @Html.TextBoxFor(model => model.SHECess, new { @class = "form-control", style = "width: 75px" }) </td>
-                                    <td><input disabled class="form-control readonly" id="Shecessamt" name="Shecessamt" style="margin-left:-68px" /></td>
-                                </tr>*@
+                                        <td>@Html.Label("P & F %")</td>
+                                        <td>@Html.TextBoxFor(model => model.BED, new { @class = "form-control", style = "width: 70px" })</td>
+                                        <td><input disabled class="form-control readonly" id="BedAmt" name="BedAmt" style="margin-left: -80px; width: 70px;" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.Label("Frieght %")</td>
+                                        <td> @Html.TextBoxFor(model => model.Edu, new { @class = "form-control", style = "width: 70px" })</td>
+                                        <td><input disabled class="form-control readonly" id="educessamt" name="educessamt" style="margin-left: -80px; width: 70px;" /></td>
+                                    </tr>
+                                    <tr style="display:none">
+                                        <td>@Html.Label("SHE Cess %")</td>
+                                        <td> @Html.TextBoxFor(model => model.SHECess, new { @class = "form-control", style = "width: 75px" }) </td>
+                                        <td><input disabled class="form-control readonly" id="Shecessamt" name="Shecessamt" style="margin-left:-68px" /></td>
+                                    </tr>*@
                                 <tr>
                                     <td>@Html.LabelFor(model => model.GrandTotal)</td>
                                     <td>
@@ -448,6 +448,7 @@ var dataDetail = { location: 'local', sorting: 'local', paging: 'local', dataTyp
         { title: "HSNCode", dataIndx: "HSNCode", width: 150, resizable: false, dataType: "string", editable: false, hidden: true },
         { title: "Tax Rate", dataIndx: "TaxRate", width: 100, dataType: "string", editable: false, hidden: true },
         { title: "Unit", dataIndx: "OrderingUnit", width: 100, dataType: "string", editable: false },
+        { title: "Indent Remark", dataIndx: "IndentRemark", width: 400, dataType: "string", editable: false},
         { title: "Size/Wt.", dataIndx: "SizeOrWeight", width: 100, dataType: "string", editable: false },
         { title: "PR PendingQty", dataIndx: "PendingQty", width: 70, dataType: "float", align: "left", editable: false, hidden: true },
         { title: "Qty", dataIndx: "Qty", width: 70, dataType: "float", align: "left", editable: true },
@@ -836,7 +837,7 @@ var setM = {
                     $.each(data.PODetails, function (index, value) {
                         var grdData = {
                             'ID': value.ID, 'POIndDtlId': value.POIndDtlId, 'ItemID': value.ItemID, 'ItemName': value.ItemName, 'TaxRate': value.TaxRate, 'Qty': value.Qty, 'PackSize': value.PackSize, 'Rate': value.Rate, 'MRP': value.MRP,
-                            'OrderingUnit': value.OrderingUnit, 'SizeOrWeight': value.SizeOrWeight,'FreeQty': value.FreeQty, 'Amount': value.Amount, 'TaxIds': value.TaxIds, 'Tax': value.Tax, 'TaxAmount': value.TaxAmount, 'TransC': value.TransC, 'OctroiC': value.OctroiC,
+                            'OrderingUnit': value.OrderingUnit, 'IndentRemark': value.IndentRemark, 'SizeOrWeight': value.SizeOrWeight, 'FreeQty': value.FreeQty, 'Amount': value.Amount, 'TaxIds': value.TaxIds, 'Tax': value.Tax, 'TaxAmount': value.TaxAmount, 'TransC': value.TransC, 'OctroiC': value.OctroiC,
                             'OtherC': value.OtherC, 'LoadUnloadC': value.LoadUnloadC, 'DiscountPer': value.discountper, 'Discount': value.Discount, 'NetAmount': value.NetAmount,
                             'SupplierName': value.SupplierName, 'DescriptiveName': value.DescriptiveName, 'SGST': value.SGST, 'CGST': value.CGST, 'IGST': value.IGST, 'UGST': value.UGST, 'HSNCode': value.HSNCode, 'SavedQty': value.Qty
                         }

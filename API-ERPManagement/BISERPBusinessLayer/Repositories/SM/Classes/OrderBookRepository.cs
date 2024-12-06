@@ -89,6 +89,8 @@ namespace BISERPBusinessLayer.Repositories.SM.Classes
             var ProjectTCList = entity.ProjectTCList != null ? Commons.ToXML(entity.ProjectTCList) : null;
             var PaymentTermList = entity.PaymentTermList != null ? Commons.ToXML(entity.PaymentTermList) : null;
             var DeliveryTermList = entity.DeliveryTermList != null ? Commons.ToXML(entity.DeliveryTermList) : null;
+            var OtherTermList = entity.OtherTermList != null ? Commons.ToXML(entity.OtherTermList) : null;
+            var BasisTermList = entity.BasisTermList != null ? Commons.ToXML(entity.BasisTermList) : null;
             using (DBHelper dbHelper = new DBHelper())
             {
                 IDbTransaction transaction = dbHelper.BeginTransaction();
@@ -124,10 +126,16 @@ namespace BISERPBusinessLayer.Repositories.SM.Classes
                     paramCollection.Add(new DBParameter("DispatchDate4", entity.DispatchDate4, DbType.DateTime));
                     paramCollection.Add(new DBParameter("DispatchDate5", entity.DispatchDate5, DbType.DateTime));
                     paramCollection.Add(new DBParameter("BriefTechnicalSpecification", entity.BriefTechnicalSpecification, DbType.String));
+                    paramCollection.Add(new DBParameter("Quantity", entity.Quantity, DbType.Int16));
+                    paramCollection.Add(new DBParameter("InstAndComm", entity.InstAndComm, DbType.String));
+                    paramCollection.Add(new DBParameter("GuaranteeType", entity.GuaranteeType, DbType.String));
+                    paramCollection.Add(new DBParameter("AdditionalContact", entity.AdditionalContact, DbType.String));
                     paramCollection.Add(new DBParameter("OBOtherDetails", OBOtherDetails, DbType.Xml));
                     paramCollection.Add(new DBParameter("ProjectTCList", ProjectTCList, DbType.Xml));
                     paramCollection.Add(new DBParameter("PaymentTermList", PaymentTermList, DbType.Xml));
                     paramCollection.Add(new DBParameter("DeliveryTermList", DeliveryTermList, DbType.Xml));
+                    paramCollection.Add(new DBParameter("OtherTermList", OtherTermList, DbType.Xml));
+                    paramCollection.Add(new DBParameter("BasisTermList", BasisTermList, DbType.Xml));
                     paramCollection.Add(new DBParameter("InsertedBy", entity.InsertedBy, DbType.Int32));
                     paramCollection.Add(new DBParameter("InsertedON", entity.InsertedON, DbType.DateTime));
                     paramCollection.Add(new DBParameter("InsertedMacID", entity.InsertedMacID, DbType.String));
@@ -206,6 +214,10 @@ namespace BISERPBusinessLayer.Repositories.SM.Classes
                                    strDispatchDate4 = row.Field<string>("strDispatchDate4"),
                                    strDispatchDate5 = row.Field<string>("strDispatchDate5"),
                                    BriefTechnicalSpecification = row.Field<string>("BriefTechnicalSpecification"),
+                                   Quantity = row.Field<int?>("Quantity"),
+                                   InstAndComm = row.Field<string>("InstAndComm"),
+                                   GuaranteeType = row.Field<string>("GuaranteeType"),
+                                   AdditionalContact = row.Field<string>("AdditionalContact"),
                                    Deactive = row.Field<bool>("Deactive"),
                                }).ToList();
             }
@@ -289,6 +301,52 @@ namespace BISERPBusinessLayer.Repositories.SM.Classes
                                 DelTermID = row.Field<int>("DelTermID"),
                                 DeliveryTermCode = row.Field<string>("DeliveryTermCode"),
                                 DeliveryTermDesc = row.Field<string>("DeliveryTermDesc"),
+                                State = row.Field<bool>("State")
+                            }).ToList();
+            }
+
+            return record;
+        }
+
+
+        public IEnumerable<OtherTermDetails> GetOrderBookOtherTerms(int orderBookID)
+        {
+            List<OtherTermDetails> record = null;
+
+            using (DBHelper dbHelper = new DBHelper())
+            {
+                DBParameter param = new DBParameter("OrderBookID", orderBookID, DbType.Int32);
+                DataTable dt = dbHelper.ExecuteDataTable(MarketingQueries.GetOrderBookOtherTerms, param, CommandType.StoredProcedure);
+
+                record = dt.AsEnumerable()
+                            .Select(row => new OtherTermDetails
+                            {
+                                OtherTermID = row.Field<int>("OtherTermID"),
+                                OthersTermCode = row.Field<string>("OthersTermCode"),
+                                OthersTermDesc = row.Field<string>("OthersTermDesc"),
+                                State = row.Field<bool>("State")
+                            }).ToList();
+            }
+
+            return record;
+        }
+
+
+        public IEnumerable<BasisTermDetails> GetOrderBookBasisTerms(int orderBookID)
+        {
+            List<BasisTermDetails> record = null;
+
+            using (DBHelper dbHelper = new DBHelper())
+            {
+                DBParameter param = new DBParameter("OrderBookID", orderBookID, DbType.Int32);
+                DataTable dt = dbHelper.ExecuteDataTable(MarketingQueries.GetOrderBookBasisTerms, param, CommandType.StoredProcedure);
+
+                record = dt.AsEnumerable()
+                            .Select(row => new BasisTermDetails
+                            {
+                                BasisId = row.Field<int>("BasisId"),
+                                BasisCode = row.Field<string>("BasisCode"),
+                                BasisDesc = row.Field<string>("BasisDesc"),
                                 State = row.Field<bool>("State")
                             }).ToList();
             }

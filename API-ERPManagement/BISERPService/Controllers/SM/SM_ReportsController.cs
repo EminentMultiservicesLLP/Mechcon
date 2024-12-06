@@ -177,6 +177,8 @@ namespace BISERPService.Controllers.SM
                 workOrder = _SM_Reports.GetWorkOrderReport(id);
                 workOrder.PaymentTermList = _SM_Reports.GetOrderBookPaymentTerms(id);
                 workOrder.DeliveryTermList = _SM_Reports.GetOrderBookDeliveryTerms(id);
+                workOrder.OtherTermList = _SM_Reports.GetOrderBookOtherTerms(id);
+                workOrder.BasisTermList = _SM_Reports.GetOrderBookBasisTerms(id);
                 mechconMaster = _iGetMechconData.GeMechconData();
 
                 workOrder.companyName = mechconMaster.Name;

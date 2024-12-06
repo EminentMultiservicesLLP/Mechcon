@@ -1,21 +1,21 @@
 ﻿@model  BISERP.Areas.Masters.Models.OtherTermMasterModel
 
 @{
-    ViewBag.Title = "Other Term Master";
+    ViewBag.Title = "Freight Master";
 }
 
 
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    <h5 class="page-header orangeDottedBottomBorder">OTHER TERM MASTER</h5>
+    <h5 class="page-header orangeDottedBottomBorder">FREIGHT MASTER</h5>
     <fieldset>
         <div class="panel-group">
             <div class="panel panel-default">
                 <div class="panel-groupingBoder">
                     <div class="panel-heading">
                         <div class="panel-title">
-                            <label id="EntryHeader">Other Term Entry Form</label>
+                            <label id="EntryHeader">Freight Entry Form</label>
                         </div>
                     </div>
                     <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
@@ -27,17 +27,17 @@
                                 @*<button type="button" class="btn btn-success">Report</button>*@
                             </div>
                             <fieldset class="fieldsetCustom">
-                                <legend class="legendCustom">Create Other Term</legend>
+                                <legend class="legendCustom">Create Freight</legend>
                                 <div class="row">
                                     <div class="col-sm-2">
                                         @Html.LabelFor(model => model.OthersTermCode, new { @class = "required" })
-                                        @Html.TextBoxFor(model => model.OthersTermCode, new { @class = "form-control", placeholder = "Enter Term Code" })
+                                        @Html.TextBoxFor(model => model.OthersTermCode, new { @class = "form-control", placeholder = "Enter Freight Code" })
                                         @Html.ValidationMessageFor(model => model.OthersTermCode)
                                         @*@Html.HiddenFor(model => model.TermID)*@
                                     </div>
                                     <div class="col-sm-4">
                                         @Html.LabelFor(model => model.OthersTermDesc, new { @class = "required" })
-                                        @Html.TextAreaFor(model => model.OthersTermDesc, new { @class = "form-control", placeholder = "Enter Term Description" })
+                                        @Html.TextAreaFor(model => model.OthersTermDesc, new { @class = "form-control", placeholder = "Enter Freight Description" })
                                         @Html.ValidationMessageFor(model => model.OthersTermDesc)
                                     </div>
                                     <div class="col-sm-2">
@@ -62,7 +62,7 @@
             <div class="modal-content gridmodal-content">
                 <div class="modal-header gridmodal-header">
                     <button type="button" class="close" onclick="closeModal()">&times;</button>
-                    <h4 class="modal-title">Item Details</h4>
+                    <h4 class="modal-title">Freight Details</h4>
                 </div>
                 <div class="modal-body">
                     <div class="fill">
@@ -165,7 +165,7 @@
             data: item,
             success: function (msg) {
                 if (msg.success) {
-                    TermId == 0 || TermId == "" ? ShowAlert("success", "OthersTerm added successfully."):ShowAlert("success", "OthersTerm updated successfully.");
+                    TermId == 0 || TermId == "" ? ShowAlert("success", "Freight added successfully.") : ShowAlert("success", "Freight updated successfully.");
                     $("#grid").jsGrid("loadData");
                     Clearform();
                 } else {

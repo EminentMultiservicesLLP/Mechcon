@@ -20,6 +20,7 @@ namespace BISERP.Area.Purchase.Models
         public string PackSize { get; set; }
         public int OrderingUnitId { get; set; }
         public string OrderingUnit { get; set; }
+        public string IndentRemark { get; set; }
         public string SizeOrWeight { get; set; }
         public double? Rate { get; set; }
         public double? Amount { get; set; }

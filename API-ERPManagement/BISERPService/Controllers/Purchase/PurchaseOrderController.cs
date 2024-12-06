@@ -241,7 +241,6 @@ namespace BISERPService.Controllers
                 return BadRequest();
         }
 
-
         [Route("poreport/{PoId}")]
         [AcceptVerbs("GET", "POST")]
         public IHttpActionResult GetrptPurchaseOrder(int PoId)

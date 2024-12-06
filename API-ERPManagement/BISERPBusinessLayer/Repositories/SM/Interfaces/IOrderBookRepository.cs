@@ -18,6 +18,8 @@ namespace BISERPBusinessLayer.Repositories.SM.Interfaces
         IEnumerable<ProjectTCDetails> GetOrderBookProjectTC(int orderBookID);
         IEnumerable<PaymentTermDetails> GetOrderBookPaymentTerms(int orderBookID);
         IEnumerable<DeliveryTermDetails> GetOrderBookDeliveryTerms(int orderBookID);
+        IEnumerable<OtherTermDetails> GetOrderBookOtherTerms(int orderBookID);
+        IEnumerable<BasisTermDetails> GetOrderBookBasisTerms(int orderBookID);
         IEnumerable<IncoTermEntities> GetIncoTerm();
     }
 }

@@ -79,7 +79,6 @@ namespace BISERP.Areas.Marketing.Controllers
             }
         }
 
-
         [HttpGet]
         public async Task<JsonResult> GetFinalOffer(int EnquiryID)
         {
@@ -269,6 +268,52 @@ namespace BISERP.Areas.Marketing.Controllers
             {
                 _logger.LogError($"Error in GetOrderBookDeliveryTerms: {ex.Message} {Environment.NewLine} {ex.StackTrace}");
                 return Json(new { success = false, message = "An error occurred while retrieving delivery terms" }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> GetOrderBookOtherTerms(int OrderBookID)
+        {
+            string _url = $"{url}/orderBook/getOrderBookOtherTerms/{OrderBookID}";
+
+            try
+            {
+                var records = await Common.AsyncWebCalls.GetAsync<List<OtherTermDetails>>(client, _url, CancellationToken.None);
+
+                if (records == null)
+                {
+                    return Json(new { success = false, message = "No Other terms found" }, JsonRequestBehavior.AllowGet);
+                }
+
+                return Json(new { success = true, records }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error in GetOrderBookOtherTerms: {ex.Message} {Environment.NewLine} {ex.StackTrace}");
+                return Json(new { success = false, message = "An error occurred while retrieving Other terms" }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> GetOrderBookBasisTerms(int OrderBookID)
+        {
+            string _url = $"{url}/orderBook/getOrderBookBasisTerms/{OrderBookID}";
+
+            try
+            {
+                var records = await Common.AsyncWebCalls.GetAsync<List<BasisTermDetails>>(client, _url, CancellationToken.None);
+
+                if (records == null)
+                {
+                    return Json(new { success = false, message = "No Basis terms found" }, JsonRequestBehavior.AllowGet);
+                }
+
+                return Json(new { success = true, records }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error in GetOrderBookBasisTerms: {ex.Message} {Environment.NewLine} {ex.StackTrace}");
+                return Json(new { success = false, message = "An error occurred while retrieving Basis terms" }, JsonRequestBehavior.AllowGet);
             }
         }
 

@@ -1,19 +1,19 @@
 ﻿@model BISERP.Areas.Masters.Models.BasisMasterModel
     @{
-        ViewBag.Title = "Basis Term Master";
+        ViewBag.Title = "P&F Term Master";
     }
 
     @using (Html.BeginForm())
     {
         @Html.AntiForgeryToken()
-        <h5 class="page-header orangeDottedBottomBorder"> Basis Master </h5>
+        <h5 class="page-header orangeDottedBottomBorder"> P&F Master </h5>
         @* new addition 2024 *@
         <div id="SearchGridModal" class="modal fade" role="dialog" data-backdrop="false">
             <div class="modal-dialog find-search-grid-modal">
                 <div class="modal-content gridmodal-content">
                     <div class="modal-header gridmodal-header">
                         <button type="button" class="close" onclick="closeModal()">&times;</button>
-                        <h4 class="modal-title"> Basis Details</h4>
+                        <h4 class="modal-title"> P&F Details</h4>
                     </div>
                     <div class="modal-body">
                         <div class="fill">
@@ -29,7 +29,7 @@
                     <div class="panel-heading">
                         <div class="panel-title">
                             <a class="collapsediv" data-toggle="collapse" href="#BasisCreate">
-                                Basis Master
+                                P&F Master
                             </a>
                         </div>
                     </div>
@@ -42,15 +42,15 @@
                                     <button type="button" class="btn btn-info" id="btnSearch">Find</button>
                                 </div>
                                 <fieldset class="fieldsetCustom">
-                                    <legend class="legendCustom">Create Basis</legend>
+                                    <legend class="legendCustom">Create P&F</legend>
                                     <div class="row">
                                         <div class="col-sm-2">
-                                            <label for="BasisCode" class="required">Basis Code</label>
-                                            <input class="form-control" placeholder="Basis Code" id="BasisCode" type="text" />
+                                            <label for="BasisCode" class="required">Code</label>
+                                            <input class="form-control" placeholder="P&F Code" id="BasisCode" type="text" />
                                         </div>
                                         <div class="col-sm-4">
-                                            <label for="BasisDesc" class="required">Basis Desc</label>
-                                            <textarea class="form-control" placeholder="Basis Desc" id="BasisDesc"></textarea>
+                                            <label for="BasisDesc" class="required">Desc</label>
+                                            <textarea class="form-control" placeholder="P&F Desc" id="BasisDesc"></textarea>
                                         </div>
                                         <div class="col-sm-2">
                                             <br />
@@ -149,7 +149,7 @@
                     data: items,
                     success: function (msg) {
                         if (msg.success) {
-                            tempID == 0 ? ShowAlert("success", "Basis added successfully to system.") : ShowAlert("success", "Basis updated successfully to system.");
+                            tempID == 0 ? ShowAlert("success", "P&F added successfully to system.") : ShowAlert("success", "P&F updated successfully to system.");
                             Clearform();
                         }
                         else {

@@ -49,6 +49,8 @@ namespace BISERPBusinessLayer.QueryCollection.SM
         public const string GetOrderBookProjectTC = "sp_SM_GetOrderBookProjectTC";
         public const string GetOrderBookPaymentTerms = "sp_SM_GetOrderBookPaymentTerms";
         public const string GetOrderBookDeliveryTerms = "sp_SM_GetOrderBookDeliveryTerms";
+        public const string GetOrderBookOtherTerms = "sp_SM_GetOrderBookOtherTerms";
+        public const string GetOrderBookBasisTerms = "sp_SM_GetOrderBookBasisTerms";
         public const string GetIncoTerm = "sp_SM_GetIncoTerms";
         public const string GetOBOtherDetails = "sp_SM_GetOBOtherDetails";
 

@@ -2528,6 +2528,8 @@ namespace BISERP.Views.Shared
             ReportViewer1.LocalReport.DataSources.Add(_rds);          
             ReportViewer1.LocalReport.SubreportProcessing += new SubreportProcessingEventHandler(WORptPaymentTerm);
             ReportViewer1.LocalReport.SubreportProcessing += new SubreportProcessingEventHandler(WORptDeliveryTerm);
+            ReportViewer1.LocalReport.SubreportProcessing += new SubreportProcessingEventHandler(WORptOtherTerm);
+            ReportViewer1.LocalReport.SubreportProcessing += new SubreportProcessingEventHandler(WORptBasisTerm);
             ReportViewer1.LocalReport.Refresh();
         }
                
@@ -2538,6 +2540,14 @@ namespace BISERP.Views.Shared
         void WORptDeliveryTerm(object sender, SubreportProcessingEventArgs e)
         {
             e.DataSources.Add(new ReportDataSource("dsDeliveryTerm", _workOrderRpt[0].DeliveryTermList));
+        }
+        void WORptOtherTerm(object sender, SubreportProcessingEventArgs e)
+        {
+            e.DataSources.Add(new ReportDataSource("dsOtherTerm", _workOrderRpt[0].OtherTermList));
+        }
+        void WORptBasisTerm(object sender, SubreportProcessingEventArgs e)
+        {
+            e.DataSources.Add(new ReportDataSource("dsBasisTerm", _workOrderRpt[0].BasisTermList));
         }
     }
 }

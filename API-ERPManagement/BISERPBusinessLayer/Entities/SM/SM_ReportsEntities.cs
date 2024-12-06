@@ -116,9 +116,17 @@ namespace BISERPBusinessLayer.Entities.SM
         public DateTime? DeliveryDate { get; set; }
         public string strDeliveryDate { get; set; }      
         public string InsertedBy { get; set; }
-        public string InsertedOn { get; set; }                 
+        public string InsertedOn { get; set; }
+        public int? Quantity { get; set; }
+        public string InstAndComm { get; set; }
+        public string GuaranteeType { get; set; }
+        public string AdditionalContact { get; set; }
+        public string BillAddress { get; set; }
+        public string GSTIN { get; set; }
         public List<WORptPaymentTermDetails> PaymentTermList { get; set; }
         public List<WORptDeliveryTerm> DeliveryTermList { get; set; }
+        public List<WORptOtherTerm> OtherTermList { get; set; }
+        public List<WORptBasisTerm> BasisTermList { get; set; }
         public string companyName { get; set; }
         public string companyAddress { get; set; }
         public string companyGST { get; set; }
@@ -138,5 +146,19 @@ namespace BISERPBusinessLayer.Entities.SM
         public int DelTermID { get; set; }
         public string DeliveryTermDesc { get; set; }
         public string DeliveryTermCode { get; set; }
+    }
+    public class WORptOtherTerm
+    {
+        public bool State { get; set; }
+        public int OtherTermID { get; set; }
+        public string OthersTermCode { get; set; }
+        public string OthersTermDesc { get; set; }
+    }
+    public class WORptBasisTerm
+    {
+        public bool State { get; set; }
+        public int BasisId { get; set; }
+        public string BasisCode { get; set; }
+        public string BasisDesc { get; set; }
     }
 }

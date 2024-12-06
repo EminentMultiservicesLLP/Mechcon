@@ -230,6 +230,16 @@
                                     <tr>
                                         <th scope="row">
                                             <div class="row">
+                                                <div class="col-sm-4">Quantity</div>
+                                                <div class="col-sm-8">
+                                                    <input type="number" class="form-control" id="Quantity" placeholder="Enter the quantity">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
                                                 <div class="col-sm-4">Project Description</div>
                                                 <div class="col-sm-8">
                                                     <input type="text" class="form-control" id="ProjectDescription" placeholder="Provide a brief project description">
@@ -355,6 +365,41 @@
                                                 <div class="col-sm-4">Delivery Date</div>
                                                 <div class="col-sm-8">
                                                     <input type="text" class="form-control datepicker" id="DeliveryDate" placeholder="Select the delivery date">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">Installation and Commissioning</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" id="InstAndComm" placeholder="Enter installation and commissioning details">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">Guarantee Type</div>
+                                                <div class="col-sm-8">
+                                                    <select class="form-control" id="GuaranteeType">
+                                                        <option value="">Select Guarantee Type</option>
+                                                        <option value="SBG">SBG</option>
+                                                        <option value="ABG">ABG</option>
+                                                        <option value="PBG">PBG</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">Additional Contact</div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" id="AdditionalContact" placeholder="Enter the additional contact details">
                                                 </div>
                                             </div>
                                         </th>
@@ -500,6 +545,8 @@
                                 <li class="active tab"><a href="#tab1" data-toggle="tab" style="margin: 0;">Project T & C</a></li>
                                 <li><a href="#tab2" data-toggle="tab" style="margin: 0;">Payment Terms</a></li>
                                 <li><a href="#tab3" data-toggle="tab" style="margin: 0;">Delivery Terms</a></li>
+                                <li><a href="#tab4" data-toggle="tab" style="margin: 0;">Freight</a></li>
+                                <li><a href="#tab5" data-toggle="tab" style="margin: 0;">P&F</a></li>
                             </ul>
                             <fieldset class="fieldsetCustom">
                                 <div id="my-tab-content" class="tab-content" style="border:none;padding:2px;">
@@ -527,6 +574,22 @@
                                         </div>
                                         <div id="DeliveryTermgrid"></div>
                                     </div>
+                                    <div class="tab-pane" id="tab4">
+                                        <br>
+                                        <div class="form-group" align="left">
+                                            <button type="button" class="btn btn-primary" id="btnViewOtherTerms">Add Term</button>
+                                            <button type="button" class="btn btn-danger" id="btnRemoveOtherTerms">Remove Term</button>
+                                        </div>
+                                        <div id="OtherTermgrid"></div>
+                                    </div>
+                                    <div class="tab-pane" id="tab5">
+                                        <br>
+                                        <div class="form-group" align="left">
+                                            <button type="button" class="btn btn-primary" id="btnBasisTerms">Add Term</button>
+                                            <button type="button" class="btn btn-danger" id="btnRemoveBasisTerms">Remove Term</button>
+                                        </div>
+                                        <div id="BasisTermgrid"></div>
+                                    </div>
                                 </div>
                             </fieldset>
                         </div>
@@ -553,6 +616,18 @@
 <div id="DeliveryItemModal" title="Select Delivery Terms" style="display: none;">
     <div id="SearchDeliveryTermgrid"></div>
     <button type="button" class="btn btn-primary" data-dismiss="modal" id="btnAddDeliveryTerm">Add</button>
+    <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="closeTermModal()">Close</button>
+</div>
+
+<div id="OtherItemModal" title="Select Freight" style="display: none;">
+    <div id="SearchOtherTermgrid"></div>
+    <button type="button" class="btn btn-primary" data-dismiss="modal" id="btnAddOtherTerm">Add</button>
+    <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="closeTermModal()">Close</button>
+</div>
+
+<div id="BasisItemModal" title="Select P&F" style="display: none;">
+    <div id="SearchBasisTermgrid"></div>
+    <button type="button" class="btn btn-primary" data-dismiss="modal" id="btnAddBasisTerm">Add</button>
     <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="closeTermModal()">Close</button>
 </div>
 
@@ -637,13 +712,15 @@
     });
 
 
-    function loadConsignee(enquiryID) {
+    function loadConsignee(enquiryID, consigneeID) {
+        debugger
         $.ajax({
             type: "GET",
             url: "/OrderBook/GetConsignee",
             data: { EnquiryID: enquiryID },
             dataType: "json",
             success: function (data) {
+                debugger
                 const $consigneeDropdown = $('#ConsigneeID');
                 $consigneeDropdown.empty();
 
@@ -658,6 +735,9 @@
                 data.records.forEach(function (consignee) {
                     $consigneeDropdown.append(`<option value="${consignee.ConsigneeID}">${consignee.Consignee}</option>`);
                 });
+                if (consigneeID) {
+                    $("#ConsigneeID").val(consigneeID)
+                }
             },
             error: function (xhr, textConsignee, errorThrown) {
                 $('#ConsigneeID').empty();
@@ -795,6 +875,16 @@
                 $enquiryID.val(data.EnquiryID);
                 $enquiryLabel.prop('disabled', true);
 
+                loadConsignee(data.EnquiryID);
+                loadConsignee(data.EnquiryID, data.ConsigneeID);
+                GetEnquiryDetails(data.EnquiryID);
+                GetOBOtherDetails(tempOrderBookID);
+                loadOrderBookProjectTCGrid(tempOrderBookID);
+                loadOrderBookPaymentTermsGrid(tempOrderBookID);
+                loadOrderBookDeliveryTermsGrid(tempOrderBookID);
+                loadOrderBookOtherTermsGrid(tempOrderBookID);
+                loadOrderBookBasisTermsGrid(tempOrderBookID);
+
                 $("#PONo").val(data.PONo);
                 $("#PODate").datepicker("setDate", data.strPODate);
                 $("#POBaseValue").val(data.POBaseValue);
@@ -804,7 +894,6 @@
                 $("#ProjectDescription").val(data.ProjectDescription);
                 $("#MaterialOfConstruction").val(data.MaterialOfConstruction);
                 $("#AreaOfInstallation").val(data.AreaOfInstallation);
-                $("#ConsigneeID").val(data.ConsigneeID);
                 $("#TechnicalSpecification").val(data.TechnicalSpecification);
                 $("#ScopeOfSupply").val(data.ScopeOfSupply);
                 $("#Packaging").val(data.Packaging);
@@ -821,11 +910,11 @@
                 $("#DispatchDate4").datepicker("setDate", data.strDispatchDate4);
                 $("#DispatchDate5").datepicker("setDate", data.strDispatchDate5);
                 $("#BriefTechnicalSpecification").val(data.BriefTechnicalSpecification);
-                GetEnquiryDetails(data.EnquiryID);
-                GetOBOtherDetails(tempOrderBookID);
-                loadOrderBookProjectTCGrid(tempOrderBookID);
-                loadOrderBookPaymentTermsGrid(tempOrderBookID);
-                loadOrderBookDeliveryTermsGrid(tempOrderBookID);
+                $("#Quantity").val(data.Quantity);
+                $("#InstAndComm").val(data.InstAndComm);
+                $("#GuaranteeType").val(data.GuaranteeType);
+                $("#AdditionalContact").val(data.AdditionalContact);
+
             }
         }
     }
@@ -873,7 +962,6 @@
 
     }
     //-----------------------------------OrderBookGrid (Ends here)-----------------------------------//
-
 
     function GetOBOtherDetails(orderBookID) {
         var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
@@ -1028,6 +1116,88 @@
         });
     }
 
+    function loadOrderBookOtherTermsGrid(orderBookID) {
+        var antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            url: "/OrderBook/GetOrderBookOtherTerms",
+            data: { OrderBookID: orderBookID },
+            dataType: "json",
+
+            beforeSend: function () {
+                $("#OtherTermgrid").pqGrid("showLoading");
+            },
+
+            complete: function () {
+                $("#OtherTermgrid").pqGrid("hideLoading");
+            },
+
+            success: function (response) {
+                const grid = $("#OtherTermgrid").pqGrid();
+
+                if (response.success) {
+                    grid.pqGrid("option", "dataModel.data", response.records);
+                } else {
+                    console.warn("No data found or an issue occurred: ", response.message);
+                    grid.pqGrid("option", "dataModel.data", []);
+                }
+
+                grid.pqGrid("refreshDataAndView");
+                PqGridRefreshClick(grid);
+            },
+
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Error loading OrderBookOtherTerms grid:", textStatus, errorThrown);
+                console.error("Response text:", jqXHR.responseText);
+                $("#OtherTermgrid").pqGrid("hideLoading");
+            }
+        });
+    }
+
+    function loadOrderBookBasisTermsGrid(orderBookID) {
+        var antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            url: "/OrderBook/GetOrderBookBasisTerms",
+            data: { OrderBookID: orderBookID },
+            dataType: "json",
+
+            beforeSend: function () {
+                $("#BasisTermgrid").pqGrid("showLoading");
+            },
+
+            complete: function () {
+                $("#BasisTermgrid").pqGrid("hideLoading");
+            },
+
+            success: function (response) {
+                const grid = $("#BasisTermgrid").pqGrid();
+
+                if (response.success) {
+                    grid.pqGrid("option", "dataModel.data", response.records);
+                } else {
+                    console.warn("No data found or an issue occurred: ", response.message);
+                    grid.pqGrid("option", "dataModel.data", []);
+                }
+
+                grid.pqGrid("refreshDataAndView");
+                PqGridRefreshClick(grid);
+            },
+
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Error loading OrderBookBasisTerms grid:", textStatus, errorThrown);
+                console.error("Response text:", jqXHR.responseText);
+                $("#BasisTermgrid").pqGrid("hideLoading");
+            }
+        });
+    }
+
     function validateFormData() {
         const fields = [
             { selector: "#EnquiryID", placeholder: "Enquiry" },
@@ -1082,10 +1252,12 @@
         if (!validateFormData()) {
             return false;
         }
-
+        debugger
         let projectTCData = $ProjectTCgrid.pqGrid("option", "dataModel.data").filter(item => item.State);
         let paygridData = $PaymentTermgrid.pqGrid("option", "dataModel.data").filter(item => item.State);
         let delgridData = $DeliveryTermgrid.pqGrid("option", "dataModel.data").filter(item => item.State);
+        let othgridData = $OtherTermgrid.pqGrid("option", "dataModel.data").filter(item => item.State);
+        let basgridData = $Basis.pqGrid("option", "dataModel.data").filter(item => item.State);
 
         const Details = {
             OrderBookID: tempOrderBookID,
@@ -1117,10 +1289,16 @@
             DispatchDate4: $("#DispatchDate4").val(),
             DispatchDate5: $("#DispatchDate5").val(),
             BriefTechnicalSpecification: $("#BriefTechnicalSpecification").val(),
+            Quantity: $("#Quantity").val(),
+            InstAndComm: $("#InstAndComm").val(),
+            GuaranteeType: $("#GuaranteeType").val(),
+            AdditionalContact: $("#AdditionalContact").val(),
             OBOtherDetails: getOtherFeildDetails(),
             ProjectTCList: projectTCData,
             PaymentTermList: paygridData,
             DeliveryTermList: delgridData,
+            OtherTermList: othgridData,
+            BasisTermList: basgridData,
         };
 
         const antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
@@ -1171,7 +1349,7 @@
         $("#ProjectDescription").val('');
         $("#MaterialOfConstruction").val('');
         $("#AreaOfInstallation").val('');
-        $("#ConsigneeID").val('');
+        $("#ConsigneeID").empty();
         $("#TechnicalSpecification").val('');
         $("#ScopeOfSupply").val('');
         $("#Packaging").val('');
@@ -1182,12 +1360,19 @@
         $("#ContactAtPurchase").val('');
         $("#Transport").val('');
         $("#BriefTechnicalSpecification").val('');
+        $("#Quantity").val('');
+        $("#InstAndComm").val('');
+        $("#GuaranteeType").val('');
+        $("#AdditionalContact").val('');
+
         $("#OtherFields").empty();
         $(".datepicker").datepicker("setDate", null);
         $("#Attachment").val(null);
         ClearParamGrid("ProjectTCgrid");
         ClearParamGrid("PaymentTermgrid");
         ClearParamGrid("DeliveryTermgrid");
+        ClearParamGrid("OtherTermgrid");
+        ClearParamGrid("BasisTermgrid");
         loadUserGrid();
         clearEnquiryDetails();
     }
@@ -1605,6 +1790,223 @@
         });
     }
 
+    /********* Other Term (Freight) Search Grid *********/
+    $(document).ready(function () {
+        var dataDelM = { location: "local", sorting: 'local' }
+        var colDelM = [
+            {
+                dataIndx: "state", Width: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                editor: false, dataType: 'bool',
+                cb: { select: true, all: false, header: true }
+            },
+            { title: "", dataIndx: "TermID", dataType: "integer", hidden: true },
+            {
+                title: "Code", dataIndx: "OthersTermCode", width: 150, editable: false,
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            },
+            {
+                title: "Name", dataIndx: "OthersTermDesc", width: 450, editable: false,
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            }
+        ];
+        var DelM = {
+            width: '100%',
+            height: 400,
+            sortable: false,
+            numberCell: { show: false },
+            hoverMode: 'cell',
+            showTop: false,
+            resizable: true,
+            scrollModel: { autoFit: true },
+            draggable: false,
+            wrap: false,
+            columnBorders: true,
+            filterModel: { on: true, mode: "AND", header: true },
+            selectionModel: { type: 'row' },
+            colModel: colDelM,
+            dataModel: dataDelM,
+            pageModel: { type: "local", rPP: 20 },
+            virtualX: true,
+            virtualY: true,
+        };
+        $SearchOtherTermgrid = $("#SearchOtherTermgrid").pqGrid(DelM);
+    });
+    /********* Other Term (Freight) Grid *********/
+    $(document).ready(function () {
+        $('#btnViewOtherTerms').on('click', function () {
+            //$("#OtherItem").modal('toggle');
+            LoadSearchOtherTermgrid();
+        });
+        $('#btnRemoveOtherTerms').on('click', function () {
+            var getData = $OtherTermgrid.pqGrid("option", "dataModel.data");
+            var selectedItems = jLinq.from(getData).equals("state", true).select();
+            $.each(selectedItems, function (key, value) {
+                var obj = $OtherTermgrid.pqGrid("getRowIndx", { rowData: value });
+                var rowIndx = obj.rowIndx;
+                $OtherTermgrid.pqGrid("deleteRow", { rowIndx: rowIndx });
+            });
+        });
+
+        var dataOtherM = { location: "local" }
+        var colOtherM = [
+            {
+                dataIndx: "State", Width: 15, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                editor: false, dataType: 'bool',
+                title: "<input type='checkbox' />",
+                cb: { select: true, all: false, header: true }
+            },
+            { title: "", dataIndx: "OtherTermID", dataType: "integer", hidden: true },
+            { title: "Code", dataIndx: "OthersTermCode", width: 200, editable: false },
+            { title: "Name", dataIndx: "OthersTermDesc", width: 400, editable: false }
+        ];
+        var DelM = {
+            width: '100%',
+            height: 260,
+            sortable: false,
+            numberCell: { show: false },
+            hoverMode: 'cell',
+            showTop: false,
+            resizable: true,
+            scrollModel: { autoFit: true },
+            draggable: false,
+            wrap: false,
+            columnBorders: true,
+            selectionModel: { type: 'row' },
+            colModel: colOtherM,
+            dataModel: dataOtherM,
+            pageModel: { type: "local", rPP: 20 },
+            virtualX: true,
+            virtualY: true,
+        };
+        $OtherTermgrid = $("#OtherTermgrid").pqGrid(DelM);
+    });
+    function LoadSearchOtherTermgrid() {
+        $("#OtherItemModal").dialog({
+            height: 500,
+            width: 700,
+            modal: true,
+            open: function (evt, ui) {
+                $.ajax({
+                    type: "GET",
+                    url: "/OtherTermMaster/GetActiveOtherTerm",
+                    datatype: "Json",
+                    success: function (data) {
+                        $SearchOtherTermgrid.pqGrid("option", "dataModel.data", data.records);
+                        $SearchOtherTermgrid.pqGrid("refreshDataAndView");
+                    }
+                });
+            }
+        });
+    }
+
+    /***************** Basis Term (P&F) Search Grid********************/
+    $(document).ready(function () {
+        var dataDelM = { location: "local", sorting: 'local' }
+        var colDelM = [
+            {
+                dataIndx: "state", Width: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                editor: false, dataType: 'bool',
+                cb: { select: true, all: false, header: true }
+            },
+            { title: "", dataIndx: "BasisID", dataType: "integer", hidden: true },
+            {
+                title: "Code", dataIndx: "BasisCode", width: 150, editable: false,
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            },
+            {
+                title: "Description", dataIndx: "BasisDesc", width: 450, editable: false,
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            }
+        ];
+        var DelM = {
+            width: '100%',
+            height: 400,
+            sortable: false,
+            numberCell: { show: false },
+            hoverMode: 'cell',
+            showTop: false,
+            resizable: true,
+            scrollModel: { autoFit: true },
+            draggable: false,
+            wrap: false,
+            columnBorders: true,
+            filterModel: { on: true, mode: "AND", header: true },
+            selectionModel: { type: 'row' },
+            colModel: colDelM,
+            dataModel: dataDelM,
+            pageModel: { type: "local", rPP: 20 },
+            virtualX: true,
+            virtualY: true,
+        };
+        $SearchBasisTermgrid = $("#SearchBasisTermgrid").pqGrid(DelM);
+    });
+    /**********************Basis Term (P&F) Grid******************/
+    $(document).ready(function () {
+        $('#btnBasisTerms').on('click', function () {
+            LoadSearchBasisTermgrid();
+        });
+        $('#btnRemoveBasisTerms').on('click', function () {
+            var getData = $Basis.pqGrid("option", "dataModel.data");
+            var selectedItems = jLinq.from(getData).equals("state", true).select();
+            $.each(selectedItems, function (key, value) {
+                var obj = $Basis.pqGrid("getRowIndx", { rowData: value });
+                var rowIndx = obj.rowIndx;
+                $Basis.pqGrid("deleteRow", { rowIndx: rowIndx });
+            });
+        });
+
+        var basism = { location: "local" }
+        var colM = [
+            {
+                dataIndx: "State", Width: 15, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                editor: false, dataType: 'bool',
+                title: "<input type='checkbox' />",
+                cb: { select: true, all: false, header: true }
+            },
+            { title: "", dataIndx: "BasisId", dataType: "integer", hidden: true },
+            { title: "Code", dataIndx: "BasisCode", width: 200, editable: false },
+            { title: "Name", dataIndx: "BasisDesc", width: 400, editable: false }
+        ];
+        var basisgrid = {
+            width: '100%',
+            height: 260,
+            sortable: false,
+            numberCell: { show: false },
+            hoverMode: 'cell',
+            showTop: false,
+            resizable: true,
+            scrollModel: { autoFit: true },
+            draggable: false,
+            wrap: false,
+            columnBorders: true,
+            selectionModel: { type: 'row' },
+            colModel: colM,
+            dataModel: basism,
+            pageModel: { type: "local", rPP: 20 },
+            virtualX: true,
+            virtualY: true
+        };
+        $Basis = $("#BasisTermgrid").pqGrid(basisgrid);
+    });
+    function LoadSearchBasisTermgrid() {
+        $("#BasisItemModal").dialog({
+            height: 500,
+            width: 700,
+            modal: true,
+            open: function (evt, ui) {
+                $.ajax({
+                    type: "GET",
+                    url: "/OtherTermMaster/AllBasisTerm",
+                    datatype: "Json",
+                    success: function (data) {
+                        $SearchBasisTermgrid.pqGrid("option", "dataModel.data", data.records);
+                        $SearchBasisTermgrid.pqGrid("refreshDataAndView");
+                    }
+                });
+            }
+        });
+    }
+
     /********* Add Button Click Events *********/
     $(document).ready(function () {
         $('#btnAddProjectTC').on('click', function () {
@@ -1655,20 +2057,64 @@
             colM[3].editable = false;
             $DeliveryTermgrid.pqGrid("option", "colModel", colM);
         });
+
+        $('#btnAddOtherTerm').on('click', function () {
+            ClosePopupWindow("OtherItemModal");
+            var getData = $SearchOtherTermgrid.pqGrid("option", "dataModel.data");
+            var selectedItems = jLinq.from(getData).equals("state", true).select();
+            var colM = $OtherTermgrid.pqGrid("option", "colModel");
+            colM[2].editable = true;
+            colM[3].editable = true;
+            $OtherTermgrid.pqGrid("option", "colModel", colM);
+            $.each(selectedItems, function (key, value) {
+                $OtherTermgrid.pqGrid("addRow", { newRow: { 'OtherTermID': value.TermID, 'OthersTermCode': value.OthersTermCode, 'OthersTermDesc': value.OthersTermDesc, 'State': true } })
+            });
+            colM[2].editable = false;
+            colM[3].editable = false;
+            $OtherTermgrid.pqGrid("option", "colModel", colM);
+        });
+
+        $('#btnAddBasisTerm').on('click', function () {
+            ClosePopupWindow("BasisItemModal");
+            var getData = $SearchBasisTermgrid.pqGrid("option", "dataModel.data");
+            var selectedItems = jLinq.from(getData).equals("state", true).select();
+            var colM = $Basis.pqGrid("option", "colModel");
+            colM[2].editable = true;
+            colM[3].editable = true;
+            $OtherTermgrid.pqGrid("option", "colModel", colM);
+            $.each(selectedItems, function (key, value) {
+                $Basis.pqGrid("addRow", { newRow: { 'BasisId': value.BasisId, 'BasisCode': value.BasisCode, 'BasisDesc': value.BasisDesc, 'State': true } })
+            });
+            colM[2].editable = false;
+            colM[3].editable = false;
+            $Basis.pqGrid("option", "colModel", colM);
+        });
     });
 
     function closeTermModal() {
         ClosePopupWindow("DeliveryItemModal");
         ClosePopupWindow("PaymentItemModal");
         ClosePopupWindow("ProjectTCModal");
+        ClosePopupWindow("OtherItemModal");
+        ClosePopupWindow("BasisItemModal");
     }
 
     $("#content-tab").tabs({
         activate: function (event, ui) {
             let tabIndx = ui.newTab.index();
-            tabIndx === 0 ? $ProjectTCgrid.pqGrid("refreshDataAndView") : tabIndx === 1 ? $PaymentTermgrid.pqGrid("refreshDataAndView") : $DeliveryTermgrid.pqGrid("refreshDataAndView");
+            const grids = [
+                $ProjectTCgrid,
+                $PaymentTermgrid,
+                $DeliveryTermgrid,
+                $OtherTermgrid,
+                $Basis
+            ];
+            if (grids[tabIndx]) {
+                grids[tabIndx].pqGrid("refreshDataAndView");
+            }
         }
     });
+
 
     //---------------------------------------------------------------------Show Attachments-----------------------------------------------------------------//
 

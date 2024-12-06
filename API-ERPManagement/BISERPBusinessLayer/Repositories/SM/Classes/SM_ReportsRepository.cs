@@ -200,12 +200,16 @@ namespace BISERPBusinessLayer.Repositories.SM.Classes
                                 InsertedBy = row.Field<string>("InsertedBy"),
                                 InsertedOn = row.Field<string>("InsertedOn"),
                                 Transport = row.Field<string>("Transport"),
-
+                                Quantity = row.Field<int?>("Quantity"),
+                                InstAndComm = row.Field<string>("InstAndComm"),
+                                GuaranteeType = row.Field<string>("GuaranteeType"),
+                                AdditionalContact = row.Field<string>("AdditionalContact"),
+                                BillAddress = row.Field<string>("BillAddress"),
+                                GSTIN = row.Field<string>("GSTIN"),
                             }).FirstOrDefault();
             }
             return data;
         }
-
         public List<WORptPaymentTermDetails> GetOrderBookPaymentTerms(int? orderBookID)
         {
             List<WORptPaymentTermDetails> record = null;
@@ -227,7 +231,6 @@ namespace BISERPBusinessLayer.Repositories.SM.Classes
 
             return record;
         }
-
         public List<WORptDeliveryTerm> GetOrderBookDeliveryTerms(int? orderBookID)
         {
             List<WORptDeliveryTerm> record = null;
@@ -243,6 +246,46 @@ namespace BISERPBusinessLayer.Repositories.SM.Classes
                                 DelTermID = row.Field<int>("DelTermID"),
                                 DeliveryTermCode = row.Field<string>("DeliveryTermCode"),
                                 DeliveryTermDesc = row.Field<string>("DeliveryTermDesc"),
+                                State = row.Field<bool>("State")
+                            }).ToList();
+            }
+            return record;
+        }
+        public List<WORptOtherTerm> GetOrderBookOtherTerms(int? orderBookID)
+        {
+            List<WORptOtherTerm> record = null;
+
+            using (DBHelper dbHelper = new DBHelper())
+            {
+                DBParameter param = new DBParameter("OrderBookID", orderBookID, DbType.Int32);
+                DataTable dt = dbHelper.ExecuteDataTable(MarketingQueries.GetOrderBookOtherTerms, param, CommandType.StoredProcedure);
+
+                record = dt.AsEnumerable()
+                            .Select(row => new WORptOtherTerm
+                            {
+                                OtherTermID = row.Field<int>("OtherTermID"),
+                                OthersTermCode = row.Field<string>("OthersTermCode"),
+                                OthersTermDesc = row.Field<string>("OthersTermDesc"),
+                                State = row.Field<bool>("State")
+                            }).ToList();
+            }
+            return record;
+        }
+        public List<WORptBasisTerm> GetOrderBookBasisTerms(int? orderBookID)
+        {
+            List<WORptBasisTerm> record = null;
+
+            using (DBHelper dbHelper = new DBHelper())
+            {
+                DBParameter param = new DBParameter("OrderBookID", orderBookID, DbType.Int32);
+                DataTable dt = dbHelper.ExecuteDataTable(MarketingQueries.GetOrderBookBasisTerms, param, CommandType.StoredProcedure);
+
+                record = dt.AsEnumerable()
+                            .Select(row => new WORptBasisTerm
+                            {
+                                BasisId = row.Field<int>("BasisId"),
+                                BasisCode = row.Field<string>("BasisCode"),
+                                BasisDesc = row.Field<string>("BasisDesc"),
                                 State = row.Field<bool>("State")
                             }).ToList();
             }

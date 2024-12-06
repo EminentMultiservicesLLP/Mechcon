@@ -198,9 +198,9 @@
                             <li class="active tab"><a href="#tab1" data-toggle="tab" style="margin: 0;">Total</a></li>
                             <li><a href="#tab2" data-toggle="tab" style="margin: 0;">Delivery Terms</a></li>
                             <li><a href="#tab3" data-toggle="tab" style="margin: 0;">Payment Terms</a></li>
-                            <li><a href="#tab4" data-toggle="tab" style="margin: 0;">Other Terms</a></li>
+                            <li><a href="#tab4" data-toggle="tab" style="margin: 0;">Freight</a></li>
                             <li><a href="#tab5" data-toggle="tab" style="margin: 0;">Details</a></li>
-                            <li><a href="#tab6" data-toggle="tab" style="margin: 0;">Price Basis</a></li>
+                            <li><a href="#tab6" data-toggle="tab" style="margin: 0;">P&F</a></li>
                             <li><a href="#tab7" data-toggle="tab" style="margin: 0;">Inspection</a></li>
                         </ul>
                         <fieldset class="fieldsetCustom">
@@ -349,11 +349,11 @@
         <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
     </div>
 
-    <div id="OtherItemModal" title="Select Other Terms" style="display: none;">
+    <div id="OtherItemModal" title="Select Freight" style="display: none;">
         <div id="SearchOtherTermgrid"></div>
         <button type="button" class="btn btn-primary" data-dismiss="modal" id="btnAddOtherTerm">Add</button>
     </div>
-    <div id="BasisItemModal" title="Select Other Terms" style="display: none;">
+    <div id="BasisItemModal" title="Select P&F" style="display: none;">
         <div id="SearchBasisTermgrid"></div>
         <button type="button" class="btn btn-primary" data-dismiss="modal" id="btnAddBasisTerm">Add</button>
     </div>
@@ -1332,6 +1332,7 @@
                         }
                     ]
                 },
+                { title: "Indent Remark", dataIndx: "IndentRemark", width: 400, dataType: "string", align: "left", editable: true },
                 { title: "Size/Wt.", dataIndx: "SizeOrWeight", width: 70, dataType: "string", align: "left", editable: true },
                 { title: "PR PendingQty", dataIndx: "PendingQty", width: 70, dataType: "float", align: "left", editable: false },
                 { title: "Qty", dataIndx: "Qty", width: 70, dataType: "float", align: "left" },
@@ -1639,7 +1640,7 @@
                             $.each(data.PODetails, function (index, value) {
                                 var grdData = {
                                     'ID': value.ID, 'POIndDtlId': value.POIndDtlId, 'ItemID': value.ItemID, 'ItemName': value.ItemName, 'TaxRate': value.TaxRate, 'Qty': value.Qty, 'PackSize': value.PackSize, 'Rate': value.Rate, 'MRP': value.MRP,
-                                    'OrderingUnit': value.OrderingUnit, 'SizeOrWeight': value.SizeOrWeight, 'FreeQty': value.FreeQty, 'Amount': value.Amount, 'TaxIds': value.TaxIds, 'Tax': value.Tax, 'TaxAmount': value.TaxAmount, 'TransC': value.TransC, 'OctroiC': value.OctroiC,
+                                    'OrderingUnit': value.OrderingUnit, 'IndentRemark': value.IndentRemark, 'SizeOrWeight': value.SizeOrWeight, 'FreeQty': value.FreeQty, 'Amount': value.Amount, 'TaxIds': value.TaxIds, 'Tax': value.Tax, 'TaxAmount': value.TaxAmount, 'TransC': value.TransC, 'OctroiC': value.OctroiC,
                                     'OtherC': value.OtherC, 'LoadUnloadC': value.LoadUnloadC, 'DiscountPer': value.discountper, 'Discount': value.Discount, 'NetAmount': value.NetAmount,
                                     'SupplierName': value.SupplierName, 'DescriptiveName': value.DescriptiveName, 'SGST': value.SGST, 'CGST': value.CGST, 'IGST': value.IGST, 'UGST': value.UGST, 'HSNCode': value.HSNCode, 'SavedQty': value.Qty
                                 }
@@ -2641,7 +2642,7 @@
                                 var grdData = {
                                     'POIndDtlId': value.IndentDetailId, 'ItemID': value.ItemId, 'SupplierId': $("#SupplierId").val(), 'SupplierName': $("#SupplierName").val(),
                                     'ItemName': value.ItemName, 'TaxRate': value.TaxRate, 'PendingQty': value.PendingQty, 'Qty': value.PendingQty, 'Amount': 0, 'TaxAmount': value.TaxAmount, 'PackSize': value.PackSize,
-                                    'PackSizeId': value.PackSizeId, 'Rate': value.ItemRate, 'MRP': value.MRP, 'OrderingUnit': value.UnitName,
+                                    'PackSizeId': value.PackSizeId, 'Rate': value.ItemRate, 'MRP': value.MRP, 'OrderingUnit': value.UnitName, 'IndentRemark': value.IndentRemark,
                                     'FreeQty': 0, 'OctroiC': 0, 'OtherC': 0, 'LoadUnloadC': 0, 'TransC': 0, 'DiscountPer': value.DiscountPer,
                                     'Discount': value.Discount, 'NetAmount': 0, 'DescriptiveName': value.DescriptiveName,
                                     'SGST': 0, 'CGST': 0, 'IGST': 0, 'UGST': 0, 'HSNCode': value.HSNCode

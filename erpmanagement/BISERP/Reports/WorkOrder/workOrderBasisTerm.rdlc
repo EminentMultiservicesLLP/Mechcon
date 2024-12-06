@@ -15,7 +15,7 @@
               <TablixCells>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="DeliveryTermDesc">
+                    <Textbox Name="Textbox1">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
@@ -30,7 +30,7 @@
                               </Style>
                             </TextRun>
                             <TextRun>
-                              <Value>=Fields!DeliveryTermDesc.Value</Value>
+                              <Value>=Fields!BasisDesc.Value</Value>
                               <Style>
                                 <FontFamily>Calibri</FontFamily>
                                 <FontSize>9pt</FontSize>
@@ -40,7 +40,7 @@
                           <Style />
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>DeliveryTermDesc</rd:DefaultName>
+                      <rd:DefaultName>Textbox1</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>None</Style>
@@ -64,24 +64,10 @@
         </TablixColumnHierarchy>
         <TablixRowHierarchy>
           <TablixMembers>
-            <TablixMember>
-              <Group Name="DelTermID">
-                <GroupExpressions>
-                  <GroupExpression>=Fields!DelTermID.Value</GroupExpression>
-                </GroupExpressions>
-              </Group>
-              <SortExpressions>
-                <SortExpression>
-                  <Value>=Fields!DelTermID.Value</Value>
-                </SortExpression>
-              </SortExpressions>
-              <TablixMembers>
-                <TablixMember />
-              </TablixMembers>
-            </TablixMember>
+            <TablixMember />
           </TablixMembers>
         </TablixRowHierarchy>
-        <DataSetName>dsDeliveryTerm</DataSetName>
+        <DataSetName>dsBasisTerm</DataSetName>
         <Height>0.25in</Height>
         <Width>3.31278in</Width>
         <Style>
@@ -113,29 +99,29 @@
     </DataSource>
   </DataSources>
   <DataSets>
-    <DataSet Name="dsDeliveryTerm">
+    <DataSet Name="dsBasisTerm">
       <Query>
         <DataSourceName>dsPurchase</DataSourceName>
         <CommandText>/* Local Query */</CommandText>
       </Query>
       <Fields>
-        <Field Name="DelTermID">
-          <DataField>DelTermID</DataField>
+        <Field Name="BasisId">
+          <DataField>BasisId</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="DeliveryTermDesc">
-          <DataField>DeliveryTermDesc</DataField>
+        <Field Name="BasisCode">
+          <DataField>BasisCode</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="DeliveryTermCode">
-          <DataField>DeliveryTermCode</DataField>
+        <Field Name="BasisDesc">
+          <DataField>BasisDesc</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>WorkOrder</rd:DataSetName>
-        <rd:SchemaPath>D:\Admin\MechconGIT\Mechcon\erpmanagement\BISERP\Content\DataSet\WorkOrder.xsd</rd:SchemaPath>
-        <rd:TableName>dsDeliveryTerm</rd:TableName>
+        <rd:SchemaPath>D:\GitMechcon\erpmanagement\BISERP\Content\DataSet\WorkOrder.xsd</rd:SchemaPath>
+        <rd:TableName>dsBasisTerm</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
         <rd:TableAdapterName />

@@ -60,6 +60,12 @@
               <xs:element name="Transport" msprop:Generator_ColumnVarNameInTable="columnTransport" msprop:Generator_ColumnPropNameInRow="Transport" msprop:Generator_ColumnPropNameInTable="TransportColumn" msprop:Generator_UserColumnName="Transport" type="xs:string" minOccurs="0" />
               <xs:element name="ConsigneeName" msprop:Generator_ColumnVarNameInTable="columnConsigneeName" msprop:Generator_ColumnPropNameInRow="ConsigneeName" msprop:Generator_ColumnPropNameInTable="ConsigneeNameColumn" msprop:Generator_UserColumnName="ConsigneeName" type="xs:string" minOccurs="0" />
               <xs:element name="ConsigneeAddress" msprop:Generator_ColumnVarNameInTable="columnConsigneeAddress" msprop:Generator_ColumnPropNameInRow="ConsigneeAddress" msprop:Generator_ColumnPropNameInTable="ConsigneeAddressColumn" msprop:Generator_UserColumnName="ConsigneeAddress" type="xs:string" minOccurs="0" />
+              <xs:element name="Quantity" msprop:Generator_ColumnVarNameInTable="columnQuantity" msprop:Generator_ColumnPropNameInRow="Quantity" msprop:Generator_ColumnPropNameInTable="QuantityColumn" msprop:Generator_UserColumnName="Quantity" type="xs:string" minOccurs="0" />
+              <xs:element name="InstAndComm" msprop:Generator_ColumnVarNameInTable="columnInstAndComm" msprop:Generator_ColumnPropNameInRow="InstAndComm" msprop:Generator_ColumnPropNameInTable="InstAndCommColumn" msprop:Generator_UserColumnName="InstAndComm" type="xs:string" minOccurs="0" />
+              <xs:element name="GuaranteeType" msprop:Generator_ColumnVarNameInTable="columnGuaranteeType" msprop:Generator_ColumnPropNameInRow="GuaranteeType" msprop:Generator_ColumnPropNameInTable="GuaranteeTypeColumn" msprop:Generator_UserColumnName="GuaranteeType" type="xs:string" minOccurs="0" />
+              <xs:element name="AdditionalContact" msprop:Generator_ColumnVarNameInTable="columnAdditionalContact" msprop:Generator_ColumnPropNameInRow="AdditionalContact" msprop:Generator_ColumnPropNameInTable="AdditionalContactColumn" msprop:Generator_UserColumnName="AdditionalContact" type="xs:string" minOccurs="0" />
+              <xs:element name="BillAddress" msprop:Generator_ColumnVarNameInTable="columnBillAddress" msprop:Generator_ColumnPropNameInRow="BillAddress" msprop:Generator_ColumnPropNameInTable="BillAddressColumn" msprop:Generator_UserColumnName="BillAddress" type="xs:string" minOccurs="0" />
+              <xs:element name="GSTIN" msprop:Generator_ColumnVarNameInTable="columnGSTIN" msprop:Generator_ColumnPropNameInRow="GSTIN" msprop:Generator_ColumnPropNameInTable="GSTINColumn" msprop:Generator_UserColumnName="GSTIN" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
@@ -69,6 +75,24 @@
               <xs:element name="DelTermID" msprop:Generator_ColumnVarNameInTable="columnDelTermID" msprop:Generator_ColumnPropNameInRow="DelTermID" msprop:Generator_ColumnPropNameInTable="DelTermIDColumn" msprop:Generator_UserColumnName="DelTermID" type="xs:string" minOccurs="0" />
               <xs:element name="DeliveryTermDesc" msprop:Generator_ColumnVarNameInTable="columnDeliveryTermDesc" msprop:Generator_ColumnPropNameInRow="DeliveryTermDesc" msprop:Generator_ColumnPropNameInTable="DeliveryTermDescColumn" msprop:Generator_UserColumnName="DeliveryTermDesc" type="xs:string" minOccurs="0" />
               <xs:element name="DeliveryTermCode" msprop:Generator_ColumnVarNameInTable="columnDeliveryTermCode" msprop:Generator_ColumnPropNameInRow="DeliveryTermCode" msprop:Generator_ColumnPropNameInTable="DeliveryTermCodeColumn" msprop:Generator_UserColumnName="DeliveryTermCode" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="dsOtherTerm" msprop:Generator_TableClassName="dsOtherTermDataTable" msprop:Generator_TableVarName="tabledsOtherTerm" msprop:Generator_RowChangedName="dsOtherTermRowChanged" msprop:Generator_TablePropName="dsOtherTerm" msprop:Generator_RowDeletingName="dsOtherTermRowDeleting" msprop:Generator_RowChangingName="dsOtherTermRowChanging" msprop:Generator_RowEvHandlerName="dsOtherTermRowChangeEventHandler" msprop:Generator_RowDeletedName="dsOtherTermRowDeleted" msprop:Generator_RowClassName="dsOtherTermRow" msprop:Generator_UserTableName="dsOtherTerm" msprop:Generator_RowEvArgName="dsOtherTermRowChangeEvent">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="OtherTermID" msdata:Caption="PayTermID" msprop:Generator_ColumnVarNameInTable="columnOtherTermID" msprop:Generator_ColumnPropNameInRow="OtherTermID" msprop:Generator_ColumnPropNameInTable="OtherTermIDColumn" msprop:Generator_UserColumnName="OtherTermID" type="xs:string" minOccurs="0" />
+              <xs:element name="OthersTermCode" msdata:Caption="PaymentTermCode" msprop:Generator_ColumnVarNameInTable="columnOthersTermCode" msprop:Generator_ColumnPropNameInRow="OthersTermCode" msprop:Generator_ColumnPropNameInTable="OthersTermCodeColumn" msprop:Generator_UserColumnName="OthersTermCode" type="xs:string" minOccurs="0" />
+              <xs:element name="OthersTermDesc" msdata:Caption="PaymentTermDesc" msprop:Generator_ColumnVarNameInTable="columnOthersTermDesc" msprop:Generator_ColumnPropNameInRow="OthersTermDesc" msprop:Generator_ColumnPropNameInTable="OthersTermDescColumn" msprop:Generator_UserColumnName="OthersTermDesc" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="dsBasisTerm" msprop:Generator_TableClassName="dsBasisTermDataTable" msprop:Generator_TableVarName="tabledsBasisTerm" msprop:Generator_RowChangedName="dsBasisTermRowChanged" msprop:Generator_TablePropName="dsBasisTerm" msprop:Generator_RowDeletingName="dsBasisTermRowDeleting" msprop:Generator_RowChangingName="dsBasisTermRowChanging" msprop:Generator_RowEvHandlerName="dsBasisTermRowChangeEventHandler" msprop:Generator_RowDeletedName="dsBasisTermRowDeleted" msprop:Generator_RowClassName="dsBasisTermRow" msprop:Generator_UserTableName="dsBasisTerm" msprop:Generator_RowEvArgName="dsBasisTermRowChangeEvent">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="BasisId" msdata:Caption="PayTermID" msprop:Generator_ColumnVarNameInTable="columnBasisId" msprop:Generator_ColumnPropNameInRow="BasisId" msprop:Generator_ColumnPropNameInTable="BasisIdColumn" msprop:Generator_UserColumnName="BasisId" type="xs:string" minOccurs="0" />
+              <xs:element name="BasisCode" msdata:Caption="PaymentTermCode" msprop:Generator_ColumnVarNameInTable="columnBasisCode" msprop:Generator_ColumnPropNameInRow="BasisCode" msprop:Generator_ColumnPropNameInTable="BasisCodeColumn" msprop:Generator_UserColumnName="BasisCode" type="xs:string" minOccurs="0" />
+              <xs:element name="BasisDesc" msdata:Caption="PaymentTermDesc" msprop:Generator_ColumnVarNameInTable="columnBasisDesc" msprop:Generator_ColumnPropNameInRow="BasisDesc" msprop:Generator_ColumnPropNameInTable="BasisDescColumn" msprop:Generator_UserColumnName="BasisDesc" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>

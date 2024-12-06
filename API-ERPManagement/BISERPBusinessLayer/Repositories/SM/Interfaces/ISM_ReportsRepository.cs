@@ -18,5 +18,7 @@ namespace BISERPBusinessLayer.Repositories.SM.Interfaces
         WorkOrderRptEntities GetWorkOrderReport(int? orderBookID);
         List<WORptPaymentTermDetails> GetOrderBookPaymentTerms(int? orderBookID);
         List<WORptDeliveryTerm> GetOrderBookDeliveryTerms(int? orderBookID);
+        List<WORptOtherTerm> GetOrderBookOtherTerms(int? orderBookID);
+        List<WORptBasisTerm> GetOrderBookBasisTerms(int? orderBookID);
     }
 }
