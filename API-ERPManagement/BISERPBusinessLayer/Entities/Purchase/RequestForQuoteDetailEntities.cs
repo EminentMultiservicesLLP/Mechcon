@@ -55,5 +55,7 @@ namespace BISERPBusinessLayer.Entities.Purchase
         public int IndentIdTemplateId { get; set; }
         public string ItemsRequiredDate { get; set; }
         public double? PendingQty { get; set; }
+        public string Make { get; set; }
+        public string MaterialOfConstruct { get; set; }
     }
 }

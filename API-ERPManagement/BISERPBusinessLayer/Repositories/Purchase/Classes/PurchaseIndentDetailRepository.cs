@@ -96,7 +96,9 @@ namespace BISERPBusinessLayer.Repositories.Purchase.Classes
                                 HSNCode = row.Field<string>("HSNCode"),
                                 ItemsRequiredDate = row.Field<string>("RequiredDate"),
                                 ItemMake = row.Field<string>("Make"),
-                                ItemMaterialOfConstruct = row.Field<string>("MaterialOfConstruct")
+                                ItemMaterialOfConstruct = row.Field<string>("MaterialOfConstruct"),
+                                Make = row.Field<string>("Make"),
+                                MaterialOfConstruct = row.Field<string>("MaterialOfConstruct")
                             }).ToList();
             }
             return pindentDetail;
@@ -188,6 +190,8 @@ namespace BISERPBusinessLayer.Repositories.Purchase.Classes
             paramCollection.Add(new DBParameter("DescriptiveName", entity.DescriptiveName, DbType.String));
             paramCollection.Add(new DBParameter("IndentRemark", entity.IndentRemark, DbType.String));
             paramCollection.Add(new DBParameter("RequiredDate", entity.ItemsRequiredDate, DbType.String));
+            paramCollection.Add(new DBParameter("Make", entity.Make, DbType.String));
+            paramCollection.Add(new DBParameter("MaterialOfConstruct", entity.MaterialOfConstruct, DbType.String));
 
             iResult = dbhelper.ExecuteNonQueryForOutParameter<int>(PurchaseQueries.InsertPurchaseIndentDtl, paramCollection, CommandType.StoredProcedure, "IndentDetailId");
             return iResult;
@@ -232,6 +236,8 @@ namespace BISERPBusinessLayer.Repositories.Purchase.Classes
             paramCollection.Add(new DBParameter("DescriptiveName", entity.DescriptiveName, DbType.String));
             paramCollection.Add(new DBParameter("IndentRemark", entity.IndentRemark, DbType.String));
             paramCollection.Add(new DBParameter("RequiredDate", entity.ItemsRequiredDate, DbType.String));
+            paramCollection.Add(new DBParameter("Make", entity.Make, DbType.String));
+            paramCollection.Add(new DBParameter("MaterialOfConstruct", entity.MaterialOfConstruct, DbType.String));
             paramCollection.Add(new DBParameter("AuthorizationStatusId", mainentity.AuthorizationStatusId, DbType.Int32));
             //if (mainentity.Authorised)
             //{

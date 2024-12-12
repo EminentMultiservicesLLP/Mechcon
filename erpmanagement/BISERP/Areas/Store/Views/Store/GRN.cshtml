@@ -465,6 +465,7 @@
                 $SearchGrid.pqGrid("hideLoading");
             },
             success: function (response) {
+                debugger
                 var filterData = response.records.filter(obj => obj.Authorized == false)
                 $SearchGrid.pqGrid("hideLoading");
                 $SearchGrid.pqGrid("option", "dataModel.data", filterData);
@@ -678,7 +679,7 @@
             }*/
             DisableClick("btnSave");
             var items = $grid.pqGrid("getData", {
-                dataIndx: ['ItemID', 'PackSizeId', 'PackSize', 'UnitId', 'UnitName', 'SizeOrWeight','CBatch', 'CQty', 'CFreeQty', 'CRate', 'CMrp', 'Taxes', 'TaxRates', 'TaxAmount', 'Discount', 'DiscountPer', 'BatchName', 'CExpiryDate', 'ExpiryDate', 'Qty', 'FreeQty', 'Rate',
+                dataIndx: ['ItemID', 'PackSizeId', 'PackSize', 'UnitId', 'UnitName', 'Make', 'MaterialOfConstruct', 'IndentRemark','SizeOrWeight','CBatch', 'CQty', 'CFreeQty', 'CRate', 'CMrp', 'Taxes', 'TaxRates', 'TaxAmount', 'Discount', 'DiscountPer', 'BatchName', 'CExpiryDate', 'ExpiryDate', 'Qty', 'FreeQty', 'Rate',
                     'MRP', 'TransC', 'InstallC', 'ServiceAmt', 'OtherC', 'CustomDuty', 'Amount', 'ItemName', 'IGST', 'CGST', 'SGST', 'UGST', 'DescriptiveName', 'RejectedQty', 'RejectionReason', 'RecieveQty']
             });
             var checkQty = 0, checkBatch = 0, checkExpiry = 0, rejection = 0;
@@ -836,7 +837,8 @@
                 NetAmt = NetAmt - discount;
 
                 $("#grid").grid().updateRow(rowId, {
-                    'ID': rowdata.ID, 'ItemID': rowdata.ItemID, 'PackSizeId': rowdata.PacksizeId, 'UnitId': rowdata.UnitId, 'ItemName': rowdata.ItemName, 'UnitName': rowdata.UnitName, 'SizeOrWeight': rowdata.SizeOrWeight,'PackSize': rowdata.PackSize,
+                    'ID': rowdata.ID, 'ItemID': rowdata.ItemID, 'PackSizeId': rowdata.PacksizeId, 'UnitId': rowdata.UnitId, 'ItemName': rowdata.ItemName, 'UnitName': rowdata.UnitName, 'Make': rowdata.Make, 'MaterialOfConstruct': rowdata.MaterialOfConstruct,
+                    'IndentRemark': rowdata.IndentRemark, 'SizeOrWeight': rowdata.SizeOrWeight, 'PackSize': rowdata.PackSize,
                     'CQty': rowdata.CQty, 'CRate': rowdata.CRate, 'CMrp': rowdata.CMrp, 'CFreeQty': rowdata.CFreeQty,
                     'TaxPer': TaxPer, 'TaxAmount': TaxAmount, 'DiscountPer': discper, 'Discount': discount, 'Qty': Qty, 'FreeQty': rowdata.FreeQty, 'Rate': Rate, 'MRP': rowdata.MRP,
                     'TransC': rowdata.TransC, 'InstallC': rowdata.InstallC, 'ServiceAmt': rowdata.ServiceAmt, 'OtherC': rowdata.OtherC, 'CustomDuty': rowdata.CustomDuty, 'Amount': NetAmt
@@ -1037,6 +1039,9 @@
                     },
                     { title: "UnitId", dataIndx: "UnitId", dataType: "integer", editable: false, hidden: true },
                     { title: "Unit", dataIndx: "UnitName", width: 90, dataType: "string", resizable: true, editable: false },
+                    { title: "Make", dataIndx: "Make", width: 200, dataType: "string", resizable: true, editable: false },
+                    { title: "MOC", dataIndx: "MaterialOfConstruct", width: 200, dataType: "string", resizable: true, editable: false },
+                    { title: "Indent Remark", dataIndx: "IndentRemark", width: 300, dataType: "string", resizable: true, editable: false },
                     { title: "Size/Wt.", dataIndx: "SizeOrWeight", width: 90, dataType: "string", resizable: true, editable: false },
                     { title: "PackSizeId", dataIndx: "PackSizeId", dataType: "integer", editable: false, hidden: true },
                     {
@@ -1522,11 +1527,10 @@
                             var dataMGrid = [];
                             $.each(data, function (index, value) {
                                 var grdData = {
-                                    'ItemID': value.ItemID, 'PackSizeId': value.PackSizeId, 'UnitId': value.OrderingUnitId, 'ItemName': value.ItemName, 'CBatch': value.ItemCode, 'BatchName': value.ItemCode, 'UnitName': value.OrderingUnit, 'SizeOrWeight': value.SizeOrWeight,
-                                    'PackSize': value.PackSize, 'CQty': value.Qty, 'Qty': 0, 'CRate': value.Rate, 'CMrp': value.MRP, 'TaxRates': value.Tax, 'TaxAmount': value.TaxAmount,
-                                    'CFreeQty': value.FreeQty, 'FreeQty': '0', 'CExpiryDate': '01/01/2099', 'ExpiryDate': '01/01/2099',
-                                    'IGST': value.IGST, 'CGST': value.CGST, 'UGST': value.UGST, 'SGST': value.SGST, 'HSNCode': value.HSNCode, 'DescriptiveName': value.DescriptiveName,
-                                    'PoPendingQty': value.PoPendingQty, 'RecieveQty': 0, 'Discount': value.Discount, 'DiscountPer': value.discountper, OtherC: value.OtherC, 'TransC': value.TransC
+                                    'ItemID': value.ItemID, 'PackSizeId': value.PackSizeId, 'UnitId': value.OrderingUnitId, 'ItemName': value.ItemName, 'CBatch': value.ItemCode, 'BatchName': value.ItemCode, 'UnitName': value.OrderingUnit, 'Make': value.Make,
+                                    'MaterialOfConstruct': value.MaterialOfConstruct, 'IndentRemark': value.IndentRemark, 'SizeOrWeight': value.SizeOrWeight, 'PackSize': value.PackSize, 'CQty': value.Qty, 'Qty': 0, 'CRate': value.Rate, 'CMrp': value.MRP,
+                                    'TaxRates': value.Tax, 'TaxAmount': value.TaxAmount, 'CFreeQty': value.FreeQty, 'FreeQty': '0', 'CExpiryDate': '01/01/2099', 'ExpiryDate': '01/01/2099', 'IGST': value.IGST, 'CGST': value.CGST, 'UGST': value.UGST, 'SGST': value.SGST,
+                                    'HSNCode': value.HSNCode, 'DescriptiveName': value.DescriptiveName,'PoPendingQty': value.PoPendingQty, 'RecieveQty': 0, 'Discount': value.Discount, 'DiscountPer': value.discountper, OtherC: value.OtherC, 'TransC': value.TransC
                                 }
                                 dataMGrid.push(grdData);
                             });
@@ -1687,9 +1691,9 @@
                             var dataMGrid = [];
                             $.each(data, function (key, value) {
                                 var grdData = {
-                                    'ID': value.ID, 'ItemID': value.ItemID, 'PackSizeId': value.PackSizeId, 'UnitId': value.UnitId, 'ItemName': value.ItemName, 'UnitName': value.UnitName, 'SizeOrWeight': value.SizeOrWeight,'PackSize': value.PackSize,
-                                    'CQty': value.CQty, 'CFreeQty': value.CFreeQty, 'CRate': value.CRate, 'CMrp': value.CMrp, 'CBatch': value.CBatch, 'CExpiryDate': value.strCExpiryDate,
-                                    'Qty': value.Qty, 'FreeQty': value.FreeQty, 'Rate': value.Rate, 'MRP': value.MRP, 'BatchName': value.BatchName, 'ExpiryDate': value.strExpiryDate,
+                                    'ID': value.ID, 'ItemID': value.ItemID, 'PackSizeId': value.PackSizeId, 'UnitId': value.UnitId, 'ItemName': value.ItemName, 'UnitName': value.UnitName, 'Make': value.Make, 'MaterialOfConstruct': value.MaterialOfConstruct,
+                                    'IndentRemark': value.IndentRemark, 'SizeOrWeight': value.SizeOrWeight, 'PackSize': value.PackSize, 'CQty': value.CQty, 'CFreeQty': value.CFreeQty, 'CRate': value.CRate, 'CMrp': value.CMrp, 'CBatch': value.CBatch,
+                                    'CExpiryDate': value.strCExpiryDate,'Qty': value.Qty, 'FreeQty': value.FreeQty, 'Rate': value.Rate, 'MRP': value.MRP, 'BatchName': value.BatchName, 'ExpiryDate': value.strExpiryDate,
                                     'TaxAmount': value.TaxAmount, 'DiscountPer': value.discountper, 'Discount': value.Discount, 'Taxes': value.Taxes, 'TaxRates': value.TaxRates,
                                     'TransC': value.TransC, 'InstallC': value.InstallC, 'ServiceAmt': value.ServiceAmt, OtherC: value.OtherC, 'CustomDuty': value.CustomDuty, 'Amount': value.Amount,
                                     'IGST': value.IGST, 'CGST': value.CGST, 'UGST': value.UGST, 'SGST': value.SGST, 'HSNCode': value.HSNCode, 'DescriptiveName': value.DescriptiveName,

@@ -51,37 +51,37 @@
                             <div class="row">
                                 <div class="col-sm-2">
                                     @Html.LabelFor(m => m.IndentNo)
-                                    @Html.TextBox("IndentNo", "", new { @disabled = "disabled" , @class = "form-control" })
+                                    @Html.TextBox("IndentNo", "", new { @disabled = "disabled", @class = "form-control" })
                                     @Html.Hidden("Indent_Id")
                                 </div>
 
                                 <div class="col-sm-2" hidden>
                                     @Html.LabelFor(m => m.Indent_Date)
-                                    @Html.TextBox("Indent_Date", "", new { @disabled = "disabled" , @class = "form-control" })
+                                    @Html.TextBox("Indent_Date", "", new { @disabled = "disabled", @class = "form-control" })
                                 </div>
                                 <div class="col-sm-2">
                                     @Html.LabelFor(m => m.Indent_FromStore, "Project")
-                                    @Html.TextBox("ddlFromStore", "", new { @disabled = "disabled" , @class = "form-control" })
+                                    @Html.TextBox("ddlFromStore", "", new { @disabled = "disabled", @class = "form-control" })
                                 </div>
                                 <div class="col-sm-2" hidden>
                                     @Html.LabelFor(m => m.Indent_ToStore, "To Project")
-                                    @Html.TextBox("ddlToStore", "Central Store", new { @disabled = "disabled" , @class = "form-control" })
+                                    @Html.TextBox("ddlToStore", "Central Store", new { @disabled = "disabled", @class = "form-control" })
                                 </div>
                                 @*<div class="form-group form-horizontal">
-            <div class="col-sm-3">
-                @Html.LabelFor(m => m.Priority)
-                @Html.TextBox("Priority", "", new { @disabled = "disabled" , @class = "form-control" })
-                @Html.Hidden("Indent_Id")
-            </div>
-        </div>*@
+                                        <div class="col-sm-3">
+                                            @Html.LabelFor(m => m.Priority)
+                                            @Html.TextBox("Priority", "", new { @disabled = "disabled" , @class = "form-control" })
+                                            @Html.Hidden("Indent_Id")
+                                        </div>
+                                    </div>*@
                                 @*<div class="col-sm-4 col-lg-2">
-                                    <br />
-                                    @Html.Label("Status", new { @class = "required" })
-                                    <input type="radio" id="Verified" name="AuthStatus" value="1" checked="checked">
-                                    <label for="Verified">Verified</label>&nbsp;&nbsp;
-                                    <input type="radio" id="Cancel" name="AuthStatus" value="3">
-                                    <label for="Cancel">Cancel</label>
-                                </div>*@
+                                        <br />
+                                        @Html.Label("Status", new { @class = "required" })
+                                        <input type="radio" id="Verified" name="AuthStatus" value="1" checked="checked">
+                                        <label for="Verified">Verified</label>&nbsp;&nbsp;
+                                        <input type="radio" id="Cancel" name="AuthStatus" value="3">
+                                        <label for="Cancel">Cancel</label>
+                                    </div>*@
                                 <div class="col-sm-3">
                                     <fieldset class="fieldsetCustom">
                                         <p>Status :</p>
@@ -188,7 +188,7 @@ $(document).ready(function () {
 
     $('#btnSave').on('click', function () {
         //var items = $MainGrid.pqGrid("getData", { dataIndx: ['IndentDetails_Id', 'Item_Id', 'User_Quantity', 'Authorised_Quantity', 'state'] });
-        var items = $MainGrid.pqGrid("getData", { dataIndx: ['ItemName', 'Item_Id', 'IndentDetails_Id', 'DescriptiveName', 'User_Quantity', 'Authorised_Quantity', 'PackSizeName', 'state'] });
+        var items = $MainGrid.pqGrid("getData", { dataIndx: ['ItemName', 'Item_Id', 'IndentDetails_Id', 'DescriptiveName', 'Make', 'MaterialOfConstruct', 'User_Quantity', 'Authorised_Quantity', 'PackSizeName', 'state'] });
 
         var Ctr2 = 0;
         var isSelected = false;
@@ -253,34 +253,40 @@ $(document).ready(function () {
     colMainGrid = [
         {
             id: "state",
-            dataIndx: "state", Width: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+            dataIndx: "state", minWidth: 25, maxWidth: 25,align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
             editor: false, dataType: 'bool',
             title: "<input type='checkbox' />",
             cb: { select: true, all: false, header: true }
         },
-        { title: "", dataIndx: "IndentDetails_Id", width: 10, dataType: "integer", editable: false, hidden: true },
+        { title: "", dataIndx: "IndentDetails_Id", minWidth: 10, dataType: "integer", editable: false, hidden: true },
         { title: "", dataIndx: "Item_Id", width: 10, dataType: "integer", editable: false, hidden: true },
         {
-            title: "Item Name & Description", dataIndx: "ItemName", width: "44%", dataType: "string", editable: false
+            title: "Item Name & Description", dataIndx: "ItemName", width: "38%", dataType: "string", editable: false
         },
         {
             title: "Descriptive Name", dataIndx: "DescriptiveName", width: "24%", dataType: "string", editable: true,
             editor: { type: "textarea", attr: "rows=5" }, hidden: true
         },
         {
-            title:   "Unit", dataIndx: "DispensingUnit", width: "13%", dataType: "string", editable: false
+            title:   "Unit", dataIndx: "DispensingUnit", width: "10%", dataType: "string", editable: false
         },
         {
-            title: "Own Stock", dataIndx: "Item_Stock", width: "13%", dataType: "string", editable: false
+            title: "Make", dataIndx: "Make", width: "10%", dataType: "string", editable: false
+        },
+        {
+            title: "MOC", dataIndx: "MaterialOfConstruct", width: "10%", dataType: "string", editable: false
+        },
+        {
+            title: "Own Stock", dataIndx: "Item_Stock", width: "10%", dataType: "string", editable: false, align: "right"
         },
         {
             title: "Pend. Indent Qty", dataIndx: "PendingQty", width: 140, dataType: "string", editable: false, hidden: true
         },
         {
-            title: "Indent Qty", dataIndx: "User_Quantity", width: "13%", dataType: "float", editable: false, align: "left"
+            title: "Indent Qty", dataIndx: "User_Quantity", width: "10%", dataType: "float", editable: false, align: "right"
         },
         {
-            title: "Verify Qty", dataIndx: "Authorised_Quantity", width: "13%", dataType: "float", align: "left"
+            title: "Verify Qty", dataIndx: "Authorised_Quantity", width: "10%", dataType: "float", align: "right"
         },
         { title: "Pack Size", dataIndx: "PackSizeName", hidden: true }
     ];

@@ -214,7 +214,7 @@
         const gridData = $("#grid").pqGrid("getData", {
             dataIndx: [
                 'ItemId', 'IndentDetailId', 'PackSize', 'packsizeid', 'CurrentQty', 'OrderingUnit',
-                'AuthorisedQty', 'state', 'ItemQty', 'DescriptiveName', 'ItemsRequiredDate', 'IndentRemark'
+                'AuthorisedQty', 'state', 'ItemQty', 'DescriptiveName', 'ItemsRequiredDate', 'IndentRemark', 'Make', 'MaterialOfConstruct'
             ]
         });
 
@@ -309,7 +309,7 @@
         { title: "", dataIndx: "ItemId", width: 10, dataType: "integer", editable: false, resizable: false, hidden: true },
         { title: "ItemCode", dataIndx: "ItemCode", width: 100, dataType: "string", hidden: true },
         {
-            title: "Item Name & Description", dataIndx: "ItemName", width: '39%', dataType: "string", resizable: false, editable: false
+            title: "Item Name & Description", dataIndx: "ItemName", width: '30%', dataType: "string", resizable: false, editable: false
         },
         { title: "", dataIndx: "ItemRate", width: 10, dataType: "double", hidden: true },
         {
@@ -320,6 +320,12 @@
         },
         {
             title: "Unit", dataIndx: "UnitName", width: '5%', dataType: "string", resizable: false, editable: false
+        },
+        {
+            title: "Make", dataIndx: "Make", width: '10%', dataType: "string", resizable: false, editable: false
+        },
+        {
+            title: "MOC", dataIndx: "MaterialOfConstruct", width: '10%', dataType: "string", resizable: false, editable: false
         },
         {
             title: "Qty", dataIndx: "ItemQty", width: '5%', dataType: "float", resizable: false, editable: false, align: "left"
@@ -335,7 +341,7 @@
             },
             validations: [{ type: 'regexp', value: '[0-9]{2}/[0-9]{2}/[0-9]{4}', msg: 'Not in dd-MM-yy format' }]
         },
-        { title: "Indent Remark", dataIndx: "IndentRemark", width: '38%', dataType: "string", resizable: false, editable: true },
+        { title: "Indent Remark", dataIndx: "IndentRemark", width: '27%', dataType: "string", resizable: false, editable: true },
         { title: "OrderingUnit", dataIndx: "OrderingUnit", width: 150, dataType: "float", hidden: true },
         { title: "", dataIndx: "packsizeid", width: 10, dataType: "integer", hidden: true },
         { title: "PackSize", dataIndx: "PackSize", width: 90, dataType: "string", editable: false, hidden: true },

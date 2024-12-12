@@ -17,6 +17,9 @@ namespace BISERP.Areas.Store.Models.Store
         public string PackSize { get; set; }
         public int UnitId { get; set; }
         public string UnitName { get; set; }
+        public string Make { get; set; }
+        public string MaterialOfConstruct { get; set; }
+        public string IndentRemark { get; set; }
         public string SizeOrWeight { get; set; }
         public Nullable<double> FreeQty { get; set; }
         public Nullable<double> Rate { get; set; }

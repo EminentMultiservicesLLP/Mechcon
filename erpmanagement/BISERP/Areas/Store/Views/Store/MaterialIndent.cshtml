@@ -53,12 +53,12 @@
                             <div class="row">
                                 <div class="col-sm-2" hidden>
                                     @Html.LabelFor(m => m.Indent_Date)
-                                    @Html.TextBoxFor(model => model.Indent_Date, new { @class = "form-control datepicker",@disabled = "disabled"  })
+                                    @Html.TextBoxFor(model => model.Indent_Date, new { @class = "form-control datepicker", @disabled = "disabled" })
                                     @Html.HiddenFor(model => model.Indent_Id)
                                 </div>
                                 <div class="col-sm-2">
                                     @Html.LabelFor(m => m.IndentNo)
-                                    @Html.TextBoxFor(model => model.IndentNo, new { @class = "form-control",@disabled = "disabled"  })
+                                    @Html.TextBoxFor(model => model.IndentNo, new { @class = "form-control", @disabled = "disabled" })
                                     @Html.ValidationMessageFor(model => model.IndentNo)
                                 </div>
                                 <div class="col-sm-2">
@@ -341,7 +341,7 @@ $('#ddlFromStore').change(function () {
         { title: "", dataIndx: "IndentDetails_Id", width: 10, dataType: "integer", editable: false, resizable: false, hidden: true },
         { title: "", dataIndx: "Item_Id", width: 10, dataType: "integer", editable: false, resizable: false, hidden: true },
         {
-            title: "Item Name & Description", dataIndx: "ItemName", width: "60%", dataType: "string", resizable: true, editable: false, align: "left"
+            title: "Item Name & Description", dataIndx: "ItemName", width: "40%", dataType: "string", resizable: true, editable: false, align: "left"
         },
         //{ title: "HSN/SAC Code", dataIndx: "HSNCode", width: 150, editable: false },
         {
@@ -349,13 +349,19 @@ $('#ddlFromStore').change(function () {
             editor: { type: "textarea", attr: "rows=5" }, hidden: true
         },
         {
-            title: "Unit", dataIndx: "DispensingUnit", width: "18%", dataType: "string", resizable: true, editable: false, align: "left"
+            title: "Unit", dataIndx: "DispensingUnit", width: "15%", dataType: "string", resizable: true, editable: false, align: "left"
         },
         {
-            title: "Pack Size", dataIndx: "PackSizeName", width: "18%", resizable: true, dataType: "string", editable: false, align: "left", hidden: true
+            title: "Make", dataIndx: "Make", width: "15%", dataType: "string", resizable: true, editable: false, align: "left"
         },
         {
-            title: "Indent Qty", dataIndx: "User_Quantity", width: "18%", dataType: "float", resizable: true, align: "left"
+            title: "MOC", dataIndx: "MaterialOfConstruct", width: "15%", dataType: "string", resizable: true, editable: false, align: "left"
+        },
+        {
+            title: "Pack Size", dataIndx: "PackSizeName", width: "15%", resizable: true, dataType: "string", editable: false, align: "left", hidden: true
+        },
+        {
+            title: "Indent Qty", dataIndx: "User_Quantity", width: "11%", dataType: "float", resizable: true, align: "right"
         }
     ];
     dataIID = {
@@ -391,18 +397,23 @@ $('#ddlFromStore').change(function () {
 
     /*************** Item Grid which willbe available for ALl item list **********/
     setItemList = {
-        width: "auto", //auto width
-        height: "100%-30", //height in %age
-        selectionModel: { type: 'cell' },
-        autoSizeInterval: 0,
-        scrollModel: { autoFit: true },
-        dragColumns: { enabled: false },
+        width: '100%',
+        height: 400,
+        sortable: false,
+        numberCell: { show: false },
+        filterModel: { on: true, mode: "AND", header: true },
+        selectionModel: { type: 'row' },
         hoverMode: 'cell',
         editor: { type: 'textbox' },
-        filterModel: { on: true, mode: "AND", header: true },
         showTop: false,
         resizable: true,
+        editModel: {
+            saveKey: $.ui.keyCode.ENTER
+        },
+        draggable: false,
+        wrap: false,
         virtualX: true,
+        virtualY: true,
         colModel: colMIItemList,
         dataModel: dataItemList,
         toggle: function (evt, ui) {
@@ -448,7 +459,7 @@ $('#ddlFromStore').change(function () {
         var getMainGridData = $IndentItemDetailsGrid.pqGrid("option", "dataModel.data");
         $.each(getMainGridData, function (key, value) {
             var grdData = {
-                'IndentDetails_Id': value.IndentDetails_Id, 'Item_Id': value.Item_Id, 'ItemName': value.ItemName, 'DispensingUnit': value.DispensingUnit,
+                'IndentDetails_Id': value.IndentDetails_Id, 'Item_Id': value.Item_Id, 'ItemName': value.ItemName, 'DispensingUnit': value.DispensingUnit, 'Make': value.Make, 'MaterialOfConstruct': value.MaterialOfConstruct,
                 'PackSizeName': value.PackSizeName, 'User_Quantity': value.User_Quantity, 'state': true, 'DescriptiveName': value.DescriptiveName, 'HSNCode': value.HSNCode
             };
             dataMGrid.push(grdData);
@@ -456,7 +467,7 @@ $('#ddlFromStore').change(function () {
 
         $.each(itemDetails, function (key, value) {
             var grdData = {
-                'IndentDetails_Id': 0, 'Item_Id': value.ID, 'ItemName': value.Name, 'DispensingUnit': value.UnitName,
+                'IndentDetails_Id': 0, 'Item_Id': value.ID, 'ItemName': value.Name, 'DispensingUnit': value.UnitName, 'Make': value.Make, 'MaterialOfConstruct': value.MaterialOfConstruct,
                 'PackSizeName': value.PackSize, 'User_Quantity': 0, 'state': true, 'DescriptiveName': value.DescriptiveName, 'HSNCode': value.HSNCode
             };
             dataMGrid.push(grdData);
@@ -483,7 +494,7 @@ $('#ddlFromStore').change(function () {
             return;
         }
         DisableClick("btnSave");
-        var items = $IndentItemDetailsGrid.pqGrid("getData", { dataIndx: ['ItemName', 'Item_Id', 'IndentDetails_Id', 'DescriptiveName', 'PackSizeName', 'User_Quantity', 'state'] });
+        var items = $IndentItemDetailsGrid.pqGrid("getData", { dataIndx: ['ItemName', 'Item_Id', 'IndentDetails_Id', 'DescriptiveName', 'Make','MaterialOfConstruct', 'PackSizeName', 'User_Quantity', 'state'] });
 
         if (items != undefined) {
             var selectedItemsMainGrid = jLinq.from(items).equals("state", true).select();

@@ -66,12 +66,13 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                                 ItemCode = row.Field<string>("ItemCode"),
                                 DispensingUnit = row.Field<string>("DispensingUnit"),
                                 PackSizeName = row.Field<string>("PackSizeName"),
-                                DescriptiveName = row.Field<string>("DescriptiveName")
+                                DescriptiveName = row.Field<string>("DescriptiveName"),
+                                Make = row.Field<string>("Make"),
+                                MaterialOfConstruct = row.Field<string>("MaterialOfConstruct"),
                             }).ToList();
             }
             return MaterialIndentDetail;
         }
-
         public List<MaterialIndentDetailsEntities> GetAuthMIDetailsByIndentId(int Indent_Id)
         {
             List<MaterialIndentDetailsEntities> MaterialIndentDetail = null;
@@ -101,13 +102,14 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                                 PackSizeName = row.Field<string>("PackSizeName"),
                                 MRP = row.Field<double>("MRP"),
                                 DescriptiveName = row.Field<string>("DescriptiveName"),
+                                Make = row.Field<string>("Make"),
+                                MaterialOfConstruct = row.Field<string>("MaterialOfConstruct"),
                                 PackSizeID = row.Field<int>("PackSizeID"),
                                 HSNCode = row.Field<string>("HSNCode"),
                             }).ToList();
             }
             return MaterialIndentDetail;
         }
-
         public List<MaterialIndentDetailsEntities> GetVerifiedMIDetailsByIndentId(int Indent_Id)
         {
             List<MaterialIndentDetailsEntities> MaterialIndentDetail = null;
@@ -133,12 +135,13 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                                 ItemCode = row.Field<string>("ItemCode"),
                                 DispensingUnit = row.Field<string>("DispensingUnit"),
                                 PackSizeName = row.Field<string>("PackSizeName"),
-                                DescriptiveName = row.Field<string>("DescriptiveName")
+                                DescriptiveName = row.Field<string>("DescriptiveName"),
+                                Make = row.Field<string>("Make"),
+                                MaterialOfConstruct = row.Field<string>("MaterialOfConstruct"),
                             }).ToList();
             }
             return MaterialIndentDetail;
         }
-
         public List<MaterialIndentDetailsEntities> GetAuthMIItemDetails(int IndentDetailId)
         {
             List<MaterialIndentDetailsEntities> MaterialIndentDetail = null;
@@ -212,6 +215,8 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
             paramCollection.Add(new DBParameter("InsertedMacName", mainentity.InsertedMacName, DbType.String));
             paramCollection.Add(new DBParameter("InsertedMacID", mainentity.InsertedMacID, DbType.String));
             paramCollection.Add(new DBParameter("DescriptiveName", entity.DescriptiveName, DbType.String));
+            paramCollection.Add(new DBParameter("Make", entity.Make, DbType.String));
+            paramCollection.Add(new DBParameter("MaterialOfConstruct", entity.MaterialOfConstruct, DbType.String));
             paramCollection.Add(new DBParameter("IsUnitStore", mainentity.IsUnitStore, DbType.Boolean));
             iResult = dbHelper.ExecuteNonQueryForOutParameter<int>(StoreQuery.InsertMaterialIndentDtl, paramCollection, CommandType.StoredProcedure, "IndentDetails_Id");
             return iResult;
@@ -238,7 +243,6 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
             else
                 return false;
         }
-
         public bool UpdateMaterialIndentAuthQty(MaterialIndentEntities mainentity, MaterialIndentDetailsEntities entity, DBHelper dbHelper)
         {
             int iResult = 0;
@@ -259,6 +263,8 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
             paramCollection.Add(new DBParameter("InsertedMacName", mainentity.InsertedMacName, DbType.String));
             paramCollection.Add(new DBParameter("InsertedMacID", mainentity.InsertedMacID, DbType.String));
             paramCollection.Add(new DBParameter("DescriptiveName", entity.DescriptiveName, DbType.String));
+            paramCollection.Add(new DBParameter("Make", entity.Make, DbType.String));
+            paramCollection.Add(new DBParameter("MaterialOfConstruct", entity.MaterialOfConstruct, DbType.String));
             paramCollection.Add(new DBParameter("IsUnitStore", mainentity.IsUnitStore, DbType.Boolean));
             paramCollection.Add(new DBParameter("AuthorizedBy", mainentity.InsertedBy, DbType.Int32));
             paramCollection.Add(new DBParameter("AuthorizedOn", mainentity.InsertedON, DbType.DateTime));
@@ -277,7 +283,6 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
             else
                 return false;
         }
-
         public bool UpdateMaterialIndentVerifyQty(MaterialIndentEntities mainentity, MaterialIndentDetailsEntities entity, DBHelper dbHelper)
         {
             int iResult = 0;
@@ -298,6 +303,8 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
             paramCollection.Add(new DBParameter("InsertedMacName", mainentity.InsertedMacName, DbType.String));
             paramCollection.Add(new DBParameter("InsertedMacID", mainentity.InsertedMacID, DbType.String));
             paramCollection.Add(new DBParameter("DescriptiveName", entity.DescriptiveName, DbType.String));
+            paramCollection.Add(new DBParameter("Make", entity.Make, DbType.String));
+            paramCollection.Add(new DBParameter("MaterialOfConstruct", entity.MaterialOfConstruct, DbType.String));
             paramCollection.Add(new DBParameter("IsUnitStore", mainentity.IsUnitStore, DbType.Boolean));
             paramCollection.Add(new DBParameter("Verifiedby", mainentity.InsertedBy, DbType.Int32));
             paramCollection.Add(new DBParameter("VerifiedOn", mainentity.InsertedON, DbType.DateTime));
@@ -309,7 +316,6 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
             else
                 return false;
         }
-
         public bool UpdatePendingMaterialIndent(List<MaterialIndentDetailsEntities> entity)
         {
             int iResult = 0;
@@ -349,8 +355,6 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
             else
                 return false;
         }
-
-
     }
 
 }

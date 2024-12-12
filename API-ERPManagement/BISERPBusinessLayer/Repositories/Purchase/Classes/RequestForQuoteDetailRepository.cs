@@ -100,7 +100,9 @@ namespace BISERPBusinessLayer.Repositories.Purchase.Classes
                                 IndentRemark = row.Field<string>("IndentRemark"),
                                 HSNCode = row.Field<string>("HSNCode"),
                                 ItemsRequiredDate = row.Field<string>("RequiredDate"),
-                                PendingQty = row.Field<double?>("PendingQty")
+                                PendingQty = row.Field<double?>("PendingQty"),
+                                Make = row.Field<string>("Make"),
+                                MaterialOfConstruct = row.Field<string>("MaterialOfConstruct"),
                             }).ToList();
             }
             return RFQDetails;

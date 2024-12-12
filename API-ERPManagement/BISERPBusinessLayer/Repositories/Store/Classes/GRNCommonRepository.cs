@@ -25,7 +25,6 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
             _igrndetails = igrndetails;
             _requestStatus = requestStatus;
         }
-
         public GRNEntity SaveGRNDetails(GRNEntity entity)
         {
             using (DBHelper dbhelper = new DBHelper())
@@ -58,7 +57,6 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
             }
             return entity;
         }
-
         public bool UpdateGRN(GRNEntity entity)
         {
             bool isSucecss = false;
@@ -116,7 +114,6 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
             }
             return true;
         }
-
         public IEnumerable<GRNEntity> GRNSummaryReport(DateTime fromdate, DateTime todate, int StoreId, int SupplierId)
         {
             List<GRNEntity> grn = null;
@@ -172,7 +169,6 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
             }
             return grn;
         }
-
         public IEnumerable<GRNEntity> GRNDetailReport(DateTime fromdate, DateTime todate, int StoreId, int SupplierId, int GRNId)
         {
             List<GRNEntity> grn = new List<GRNEntity>();
@@ -209,6 +205,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                                 InwardDate = row.Field<DateTime?>("InwardDate"),
                                 strInwardDate = row.Field<DateTime?>("InwardDate").DateTimeFormat1(),
                                 PONo = row.Field<string>("PONo"),
+                                PODate = row.Field<DateTime?>("PODate"),
                                 strPODate = row.Field<DateTime?>("PODate").DateTimeFormat1(),
                                 TotalAmount = row.Field<double?>("TotalAmount"),
                                 AuthorisedAmt = row.Field<double?>("AuthorisedAmt"),
@@ -243,6 +240,9 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                         PackSize = dtrow.Field<string>("PackSize"),
                         UnitId = dtrow.Field<int>("UnitId"),
                         UnitName = dtrow.Field<string>("UnitName"),
+                        Make = dtrow.Field<string>("Make"),
+                        MaterialOfConstruct = dtrow.Field<string>("MaterialOfConstruct"),
+                        IndentRemark = dtrow.Field<string>("IndentRemark"),
                         SizeOrWeight = dtrow.Field<string>("SizeOrWeight"),
                         Qty = dtrow.Field<double?>("Qty"),
                         FreeQty = dtrow.Field<double?>("FreeQty"),
@@ -474,7 +474,6 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
             }
             return grn;
         }
-
         public IEnumerable<GRNEntity> PendingGrnItemWise(int storeid)
         {
             List<GRNEntity> grn = new List<GRNEntity>();

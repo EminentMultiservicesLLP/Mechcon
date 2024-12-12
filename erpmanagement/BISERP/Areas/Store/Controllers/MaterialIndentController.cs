@@ -666,7 +666,6 @@ namespace BISERP.Areas.Store.Controllers
             else
                 return Json(new { success = true, responseText = strErrorMsg });
         }
-     
         
         [HttpPost]
         public JsonResult DeleteIndentItem(MaterialIndentDtModel indent)
@@ -692,6 +691,7 @@ namespace BISERP.Areas.Store.Controllers
 
             return jResult = Json(_itemtype, JsonRequestBehavior.AllowGet);
         }
+
         [HttpGet]
         public async Task<JsonResult> PendingmaterialIndent(int StoreId)
         {

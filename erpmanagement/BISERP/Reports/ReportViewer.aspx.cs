@@ -2090,7 +2090,10 @@ namespace BISERP.Views.Shared
                         mdt.PopendingQty,
                         mdt.UnitName,
                         mdt.CQty,
-                        mdt.ItemCode
+                        mdt.ItemCode,
+                        mdt.Make,
+                        mdt.MaterialOfConstruct,
+                        mdt.IndentRemark,
                     };
                 //var result = model.ListToModel(grn);
 

@@ -64,6 +64,7 @@ namespace BISERPBusinessLayer.Entities.Purchase
         public double? TaxRate { get; set; }
         public string ItemMake { get; set; }
         public string ItemMaterialOfConstruct { get; set; }
-
+        public string Make { get; set; }
+        public string MaterialOfConstruct { get; set; }
     }
 }

@@ -51,10 +51,8 @@ namespace BISERP.Areas.Store.Models.Store
         [JsonProperty("indCancelled")]
         public  Nullable<bool> indCancelled { get; set; }
 
-        
         public string UpdatedMacName { get; set; }
 
-        
         public string UpdatedMacID { get; set; }
 
         public string UpdatedIPAddress { get; set; }
@@ -80,7 +78,6 @@ namespace BISERP.Areas.Store.Models.Store
         [Display(Name = "Itemname")]
         public string ItemName { get; set; }
         public string ItemCode { get; set; }
-
         public int? BatchId { get; set; }
         public string BatchName { get; set; }
         public string ExpiryDate { get; set; }
@@ -93,7 +90,6 @@ namespace BISERP.Areas.Store.Models.Store
         public Nullable<float> IssuedQuantity { get; set; }
         public Nullable<bool> state { get; set; }
 
-
         [JsonProperty("MICancelled")]
         public Nullable<bool> MICancelled { get; set; }
 
@@ -103,12 +99,12 @@ namespace BISERP.Areas.Store.Models.Store
 
         [JsonProperty("MICancelledOn")]
         public Nullable<System.DateTime> MICancelledOn { get; set; }
-
         public string MICancelReason { get; set; }
-
         public string strauthorised { get; set; }
         public double? MRP { get; set; }
         public string DescriptiveName { get; set; }
+        public string Make { get; set; }
+        public string MaterialOfConstruct { get; set; }
         public int PackSizeID { get; set; }
         public string HSNCode { get; set; }
         public int StatusId { get; set; }

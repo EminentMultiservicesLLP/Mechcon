@@ -19,7 +19,7 @@ namespace BISERP.Areas.Store.Models.Store
         public string  PONo { get; set; }
 
         [Display(Name = "PO Date")]
-        public DateTime PODate { get; set; }
+        public Nullable<DateTime> PODate { get; set; }
         public string strPODate { get; set; }
         public int PrID { get; set; }
 

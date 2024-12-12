@@ -194,7 +194,8 @@ namespace BISERP.Areas.Purchase.Models
         public int IndentIdTemplateId { get; set; }
         public string ItemsRequiredDate { get; set; }
         public double? PendingQty { get; set; }
-
+        public string Make { get; set; }
+        public string MaterialOfConstruct { get; set; }
     }
     public class RFQDeliveryTermModel
     {

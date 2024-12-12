@@ -52,22 +52,22 @@
                             <div class="row">
                                 <div class="col-sm-2">
                                     @Html.LabelFor(m => m.IndentNo)
-                                    @Html.TextBox("IndentNo", "", new { @disabled = "disabled" , @class = "form-control" })
+                                    @Html.TextBox("IndentNo", "", new { @disabled = "disabled", @class = "form-control" })
                                     @Html.Hidden("Indent_Id")
                                 </div>
 
                                 <div class="col-sm-2" hidden>
                                     @Html.LabelFor(m => m.Indent_Date)
-                                    @Html.TextBox("Indent_Date", "", new { @disabled = "disabled" , @class = "form-control" })
+                                    @Html.TextBox("Indent_Date", "", new { @disabled = "disabled", @class = "form-control" })
                                 </div>
                                 <div class="col-sm-2">
                                     @Html.LabelFor(m => m.Indent_FromStore, "Project")
-                                    @Html.TextBox("ddlFromStore", "", new { @disabled = "disabled" , @class = "form-control" })
+                                    @Html.TextBox("ddlFromStore", "", new { @disabled = "disabled", @class = "form-control" })
                                     @Html.HiddenFor(m => m.Indent_FromStoreID)
                                 </div>
                                 <div class="col-sm-2" hidden>
                                     @Html.LabelFor(m => m.Indent_ToStore, "To Project")
-                                    @Html.TextBox("ddlToStore", "Central Store", new { @disabled = "disabled" , @class = "form-control" })
+                                    @Html.TextBox("ddlToStore", "Central Store", new { @disabled = "disabled", @class = "form-control" })
                                 </div>
                                 <div class="col-sm-3">
                                     <fieldset class="fieldsetCustom">
@@ -173,7 +173,7 @@ $(document).ready(function () {
 
 $('#btnSave').on('click', function () {
 
-    var items = $MainGrid.pqGrid("getData", { dataIndx: ['ItemName', 'Item_Id', 'IndentDetails_Id', 'DescriptiveName', 'User_Quantity', 'Authorised_Quantity', 'state', 'Item_Stock', 'PendingQty', 'PackSizeName'] });
+    var items = $MainGrid.pqGrid("getData", { dataIndx: ['ItemName', 'Item_Id', 'IndentDetails_Id', 'DescriptiveName', 'Make', 'MaterialOfConstruct', 'User_Quantity', 'Authorised_Quantity', 'state', 'Item_Stock', 'PendingQty', 'PackSizeName'] });
 
 
     var Ctr = 0;
@@ -251,7 +251,7 @@ $(document).ready(function () {
     };
     colMainGrid = [
         {
-            dataIndx: "state", Width: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+            dataIndx: "state", minWidth: 25, maxWidth: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
             editor: false, dataType: 'bool',
             title: "<input type='checkbox' />",
             cb: { select: true, all: false, header: true }
@@ -259,7 +259,7 @@ $(document).ready(function () {
         { title: "", dataIndx: "IndentDetails_Id", width: 10, dataType: "integer", editable: false, hidden: true },
         { title: "", dataIndx: "Item_Id", width: 10, dataType: "integer", editable: false, hidden: true },
         {
-            title: "Item Name & Description", dataIndx: "ItemName", width: "51%", dataType: "string", editable: false
+            title: "Item Name & Description", dataIndx: "ItemName", width: "30%", dataType: "string", editable: false
         },
         {
             title: "Description", dataIndx: "DescriptiveName", width: "21%", dataType: "string", editable: true,
@@ -267,19 +267,25 @@ $(document).ready(function () {
         },
         { title: "Unit", dataIndx: "DispensingUnit", width: "9%", dataType: "string", editable: false },
         {
+            title: "Make", dataIndx: "Make", width: "10%", dataType: "string", editable: false
+        },
+        {
+            title: "MOC", dataIndx: "MaterialOfConstruct", width: "10%", dataType: "string", editable: false
+        },
+        {
             title: "PackSize", dataIndx: "PackSizeName", width: "10%", dataType: "string", editable: false, hidden: true
         },
         {
-            title: "Own Stock", dataIndx: "Item_Stock", width: "9%", dataType: "string", editable: false
+            title: "Own Stock", dataIndx: "Item_Stock", width: "9%", dataType: "string", editable: false, align: "right"
         },
         {
-            title: "Pend. Indent Qty", dataIndx: "PendingQty", width: "9%", dataType: "string", editable: false
+            title: "Pend. Indent Qty", dataIndx: "PendingQty", width: "10%", dataType: "string", editable: false, align: "right"
         },
         {
-            title: "Indent Qty", dataIndx: "User_Quantity", width: "9%", dataType: "string", editable: false
+            title: "Indent Qty", dataIndx: "User_Quantity", width: "10%", dataType: "string", editable: false, align: "right"
         },
         {
-            title: "Auth. Qty", dataIndx: "Authorised_Quantity", width: "9%", dataType: "float", align: "left"
+            title: "Auth. Qty", dataIndx: "Authorised_Quantity", width: "10%", dataType: "float", align: "right"
         }
     ];
     setMainGrid = {

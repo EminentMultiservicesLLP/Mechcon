@@ -1179,11 +1179,12 @@
 
         totalNetAmt += extraAmt;
 
-        $("#Amount").val(Math.round(totalAmount));
-        $("#Tax").val(Math.round(totalTaxAmount));
-        $("#OtherCharges").val(Math.round(totalOtherCharges));
-        $("#Discount").val(Math.round(totalDiscount));
-        $("#GrandTotal").val(Math.round(totalNetAmt));
+        $("#Amount").val(totalAmount.toFixed(2));
+        $("#Tax").val(totalTaxAmount.toFixed(2));
+        $("#OtherCharges").val(totalOtherCharges.toFixed(2));
+        $("#Discount").val(totalDiscount.toFixed(2));
+        $("#GrandTotal").val(totalNetAmt.toFixed(2));
+
     }
 
     /********* PO Grid *********/
@@ -1332,7 +1333,9 @@
                         }
                     ]
                 },
-                { title: "Indent Remark", dataIndx: "IndentRemark", width: 400, dataType: "string", align: "left", editable: true },
+                { title: "Make", dataIndx: "Make", width: 200, dataType: "string", align: "left", editable: false },
+                { title: "MOC", dataIndx: "MaterialOfConstruct", width: 200, dataType: "string", align: "left", editable: false },
+                { title: "Indent Remark", dataIndx: "IndentRemark", width: 300, dataType: "string", align: "left", editable: false },
                 { title: "Size/Wt.", dataIndx: "SizeOrWeight", width: 70, dataType: "string", align: "left", editable: true },
                 { title: "PR PendingQty", dataIndx: "PendingQty", width: 70, dataType: "float", align: "left", editable: false },
                 { title: "Qty", dataIndx: "Qty", width: 70, dataType: "float", align: "left" },
@@ -1640,7 +1643,8 @@
                             $.each(data.PODetails, function (index, value) {
                                 var grdData = {
                                     'ID': value.ID, 'POIndDtlId': value.POIndDtlId, 'ItemID': value.ItemID, 'ItemName': value.ItemName, 'TaxRate': value.TaxRate, 'Qty': value.Qty, 'PackSize': value.PackSize, 'Rate': value.Rate, 'MRP': value.MRP,
-                                    'OrderingUnit': value.OrderingUnit, 'IndentRemark': value.IndentRemark, 'SizeOrWeight': value.SizeOrWeight, 'FreeQty': value.FreeQty, 'Amount': value.Amount, 'TaxIds': value.TaxIds, 'Tax': value.Tax, 'TaxAmount': value.TaxAmount, 'TransC': value.TransC, 'OctroiC': value.OctroiC,
+                                    'OrderingUnit': value.OrderingUnit, 'Make': value.Make, 'MaterialOfConstruct': value.MaterialOfConstruct, 'IndentRemark': value.IndentRemark, 'SizeOrWeight': value.SizeOrWeight, 'FreeQty': value.FreeQty, 'Amount': value.Amount,
+                                    'TaxIds': value.TaxIds, 'Tax': value.Tax, 'TaxAmount': value.TaxAmount, 'TransC': value.TransC, 'OctroiC': value.OctroiC,
                                     'OtherC': value.OtherC, 'LoadUnloadC': value.LoadUnloadC, 'DiscountPer': value.discountper, 'Discount': value.Discount, 'NetAmount': value.NetAmount,
                                     'SupplierName': value.SupplierName, 'DescriptiveName': value.DescriptiveName, 'SGST': value.SGST, 'CGST': value.CGST, 'IGST': value.IGST, 'UGST': value.UGST, 'HSNCode': value.HSNCode, 'SavedQty': value.Qty
                                 }
@@ -2642,7 +2646,7 @@
                                 var grdData = {
                                     'POIndDtlId': value.IndentDetailId, 'ItemID': value.ItemId, 'SupplierId': $("#SupplierId").val(), 'SupplierName': $("#SupplierName").val(),
                                     'ItemName': value.ItemName, 'TaxRate': value.TaxRate, 'PendingQty': value.PendingQty, 'Qty': value.PendingQty, 'Amount': 0, 'TaxAmount': value.TaxAmount, 'PackSize': value.PackSize,
-                                    'PackSizeId': value.PackSizeId, 'Rate': value.ItemRate, 'MRP': value.MRP, 'OrderingUnit': value.UnitName, 'IndentRemark': value.IndentRemark,
+                                    'PackSizeId': value.PackSizeId, 'Rate': value.ItemRate, 'MRP': value.MRP, 'OrderingUnit': value.UnitName, 'Make': value.Make, 'MaterialOfConstruct': value.MaterialOfConstruct, 'IndentRemark': value.IndentRemark,
                                     'FreeQty': 0, 'OctroiC': 0, 'OtherC': 0, 'LoadUnloadC': 0, 'TransC': 0, 'DiscountPer': value.DiscountPer,
                                     'Discount': value.Discount, 'NetAmount': 0, 'DescriptiveName': value.DescriptiveName,
                                     'SGST': 0, 'CGST': 0, 'IGST': 0, 'UGST': 0, 'HSNCode': value.HSNCode

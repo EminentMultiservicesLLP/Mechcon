@@ -179,7 +179,7 @@ namespace BISERP.Areas.Masters.Models
         [Display(Name = "Purchase Item")]
         public bool PurchaseItem { get; set; }
         public string Make { get; set; }
-        [Display(Name = "Mat Constr")]
+        [Display(Name = "MOC")]
         public string MaterialOfConstruct { get; set; }
     }
 

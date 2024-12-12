@@ -35,6 +35,8 @@ namespace BISERPBusinessLayer.Repositories.Purchase.Classes
                                 PackSize = row.Field<string>("PackSize"),
                                 OrderingUnitId = row.Field<int>("OrderingUnitId"),
                                 OrderingUnit = row.Field<string>("OrderingUnit"),
+                                Make = row.Field<string>("Make"),
+                                MaterialOfConstruct = row.Field<string>("MaterialOfConstruct"),
                                 IndentRemark = row.Field<string>("IndentRemark"),
                                 SizeOrWeight = row.Field<string>("SizeOrWeight"),
                                 SupplierId = row.Field<int?>("SupplierId"),
@@ -78,6 +80,8 @@ namespace BISERPBusinessLayer.Repositories.Purchase.Classes
             paramCollection.Add(new DBParameter("PackSize", entity.PackSize, DbType.String));
             paramCollection.Add(new DBParameter("OrderingUnitId", entity.OrderingUnitId, DbType.Int32));
             paramCollection.Add(new DBParameter("OrderingUnit", entity.OrderingUnit, DbType.String));
+            paramCollection.Add(new DBParameter("Make", entity.Make, DbType.String));
+            paramCollection.Add(new DBParameter("MaterialOfConstruct", entity.MaterialOfConstruct, DbType.String));
             paramCollection.Add(new DBParameter("IndentRemark", entity.IndentRemark, DbType.String));
             paramCollection.Add(new DBParameter("SizeOrWeight", entity.SizeOrWeight, DbType.String));
             paramCollection.Add(new DBParameter("SupplierName", entity.SupplierName, DbType.String));

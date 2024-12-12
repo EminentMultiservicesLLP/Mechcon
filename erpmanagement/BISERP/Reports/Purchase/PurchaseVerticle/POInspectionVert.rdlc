@@ -22,6 +22,22 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
+                              <Value>=RowNumber(nothing) &amp; ". "</Value>
+                              <Style>
+                                <FontFamily>Calibri</FontFamily>
+                                <FontSize>9pt</FontSize>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                            <TextRun>
+                              <Value xml:space="preserve"> </Value>
+                              <Style>
+                                <FontFamily>Calibri</FontFamily>
+                                <FontSize>9pt</FontSize>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                            <TextRun>
                               <Value>=Fields!InspectionDesc.Value</Value>
                               <Style>
                                 <FontFamily>Calibri</FontFamily>

@@ -829,7 +829,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!ConsigneeName.Value</Value>
+                              <Value>=Fields!ConsigneeAddress.Value</Value>
                               <Style>
                                 <FontFamily>Calibri</FontFamily>
                                 <FontSize>9pt</FontSize>
@@ -1228,7 +1228,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>PO details and Delivery Date</Value>
+                              <Value>PO details</Value>
                               <Style>
                                 <FontFamily>Calibri</FontFamily>
                                 <FontSize>9pt</FontSize>

@@ -111,7 +111,7 @@ namespace BISERPBusinessLayer.Entities.Masters
         public int ID { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
-        public string DescriptiveName { get; set; }
+        public string Make { get; set; }
         public int? ItemTypeID { get; set; }
         public string itemtypename { get; set; }
         public Nullable<bool> Asset { get; set; }

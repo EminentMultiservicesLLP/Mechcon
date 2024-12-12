@@ -14,17 +14,14 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
 {
     public class GRNDetailRepository : IGRNDetailRepository
     {
-
         public GRNDetailEntity GetByID(int Id)
         {
             throw new NotImplementedException();
         }
-
         public IEnumerable<GRNDetailEntity> GetAllList()
         {
             throw new NotImplementedException();
         }
-
         public IEnumerable<GRNDetailEntity> GetDetailByGRNId(int GRNId)
         {
             List<GRNDetailEntity> podetails = null;
@@ -44,6 +41,9 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                                 PackSize = row.Field<string>("PackSize"),
                                 UnitId = row.Field<int>("UnitId"),
                                 UnitName = row.Field<string>("UnitName"),
+                                Make = row.Field<string>("Make"),
+                                MaterialOfConstruct = row.Field<string>("MaterialOfConstruct"),
+                                IndentRemark = row.Field<string>("IndentRemark"),
                                 SizeOrWeight = row.Field<string>("SizeOrWeight"),
                                 Qty = row.Field<double?>("Qty"),
                                 FreeQty = row.Field<double?>("FreeQty"),
@@ -98,6 +98,9 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
             paramCollection.Add(new DBParameter("PackSizeId", entity.PackSizeId, DbType.Int32));
             paramCollection.Add(new DBParameter("UnitName", entity.UnitName, DbType.String));
             paramCollection.Add(new DBParameter("UnitId", entity.UnitId, DbType.Int32));
+            paramCollection.Add(new DBParameter("Make", entity.Make, DbType.String));
+            paramCollection.Add(new DBParameter("MaterialOfConstruct", entity.MaterialOfConstruct, DbType.String));
+            paramCollection.Add(new DBParameter("IndentRemark", entity.IndentRemark, DbType.String));
             paramCollection.Add(new DBParameter("SizeOrWeight", entity.SizeOrWeight, DbType.String));
             paramCollection.Add(new DBParameter("FreeQty", entity.FreeQty, DbType.Double));
             paramCollection.Add(new DBParameter("Rate", entity.Rate, DbType.Double));
@@ -150,7 +153,6 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
             }
             return iResult;
         }
-
         public bool UpdateGRNDetailEntry(GRNEntity grnentity, GRNDetailEntity entity, DBHelper dbHelper)
         {
             int iResult = 0;
@@ -163,6 +165,9 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
             paramCollection.Add(new DBParameter("PackSizeId", entity.PackSizeId, DbType.Int32));
             paramCollection.Add(new DBParameter("UnitName", entity.UnitName, DbType.String));
             paramCollection.Add(new DBParameter("UnitId", entity.UnitId, DbType.Int32));
+            paramCollection.Add(new DBParameter("Make", entity.Make, DbType.String));
+            paramCollection.Add(new DBParameter("MaterialOfConstruct", entity.MaterialOfConstruct, DbType.String));
+            paramCollection.Add(new DBParameter("IndentRemark", entity.IndentRemark, DbType.String));
             paramCollection.Add(new DBParameter("SizeOrWeight", entity.SizeOrWeight, DbType.String));
             paramCollection.Add(new DBParameter("FreeQty", entity.FreeQty, DbType.Double));
             paramCollection.Add(new DBParameter("Rate", entity.Rate, DbType.Double));
@@ -218,12 +223,10 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
             else
                 return false;
         }
-
         public bool UpdateEntry(GRNDetailEntity entity, DBHelper dbHelper)
         {
             throw new NotImplementedException();
         }
-
         public bool AuthCancelGRNDetail(GRNEntity grnentity, GRNDetailEntity dtentity, DBHelper dbHelper)
         {
             int iResult = 0;

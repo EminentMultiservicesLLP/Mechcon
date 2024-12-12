@@ -455,7 +455,9 @@ var colDetail = [
     { title: "HSNCode", dataIndx: "HSNCode", width: 150, resizable: false, dataType: "string", editable: false, hidden: true },
     { title: "Tax Rate", dataIndx: "TaxRate", width: 100, dataType: "string", editable: false, hidden: true },
     { title: "Unit", dataIndx: "OrderingUnit", width: 100, dataType: "string", editable: false },
-    { title: "Indent Remark", dataIndx: "IndentRemark", width: 400, dataType: "string", editable: false},
+    { title: "Make", dataIndx: "Make", width: 100, dataType: "string", editable: false },
+    { title: "MOC", dataIndx: "MaterialOfConstruct", width: 100, dataType: "string", editable: false },
+    { title: "Indent Remark", dataIndx: "IndentRemark", width: 200, dataType: "string", editable: false},
     { title: "Size/Wt.", dataIndx: "SizeOrWeight", width: 100, dataType: "string", editable: false },
     { title: "PR PendingQty", dataIndx: "PendingQty", width: 70, dataType: "float", align: "left", editable: false, hidden: true },
     { title: "Qty", dataIndx: "Qty", width: 70, dataType: "float", align: "left", editable: true },
@@ -736,11 +738,12 @@ function showperAmount() {
         var extraAmt = parseFloat(bedAmount) + parseFloat(eduAmount) + parseFloat(sheAmount);
         totalNetAmt += parseFloat(extraAmt);
 
-        $("#Amount").val(Math.round(totalAmount));
-        $("#Tax").val(Math.round(totalTaxAmount));
-        $("#OtherCharges").val(Math.round(totalOtherCharges));
-        $("#Discount").val(Math.round(totalDiscount));
-        $("#GrandTotal").val(Math.round(totalNetAmt));
+        $("#Amount").val(totalAmount.toFixed(2));
+        $("#Tax").val(totalTaxAmount.toFixed(2));
+        $("#OtherCharges").val(totalOtherCharges.toFixed(2));
+        $("#Discount").val(totalDiscount.toFixed(2));
+        $("#GrandTotal").val(totalNetAmt.toFixed(2));
+
     }
 
 
@@ -851,7 +854,8 @@ var setM = {
                     $.each(data.PODetails, function (index, value) {
                         var grdData = {
                             'ID': value.ID, 'POIndDtlId': value.POIndDtlId, 'ItemID': value.ItemID, 'ItemName': value.ItemName, 'TaxRate': value.TaxRate, 'Qty': value.Qty, 'PackSize': value.PackSize, 'Rate': value.Rate, 'MRP': value.MRP,
-                            'OrderingUnit': value.OrderingUnit, 'IndentRemark': value.IndentRemark, 'SizeOrWeight': value.SizeOrWeight,'FreeQty': value.FreeQty, 'Amount': value.Amount, 'TaxIds': value.TaxIds, 'Tax': value.Tax, 'TaxAmount': value.TaxAmount, 'TransC': value.TransC, 'OctroiC': value.OctroiC,
+                            'OrderingUnit': value.OrderingUnit, 'Make': value.Make, 'MaterialOfConstruct': value.MaterialOfConstruct, 'IndentRemark': value.IndentRemark, 'SizeOrWeight': value.SizeOrWeight, 'FreeQty': value.FreeQty, 'Amount': value.Amount,
+                            'TaxIds': value.TaxIds, 'Tax': value.Tax, 'TaxAmount': value.TaxAmount, 'TransC': value.TransC, 'OctroiC': value.OctroiC,
                             'OtherC': value.OtherC, 'LoadUnloadC': value.LoadUnloadC, 'DiscountPer': value.discountper, 'Discount': value.Discount, 'NetAmount': value.NetAmount,
                             'SupplierName': value.SupplierName, 'DescriptiveName': value.DescriptiveName, 'SGST': value.SGST, 'CGST': value.CGST, 'IGST': value.IGST, 'UGST': value.UGST, 'HSNCode': value.HSNCode, 'SavedQty': value.Qty
                         }

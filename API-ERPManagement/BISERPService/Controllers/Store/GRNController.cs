@@ -102,7 +102,6 @@ namespace BISERPService.Controllers
 
         [Route("getgrndetail/{id}")]
         [AcceptVerbs("GET", "POST")]
-        // GET api/values/5
         public IHttpActionResult GetDetailByGRNId(int id)
         {
             List<GRNDetailEntity> grndetail = null;
@@ -200,7 +199,6 @@ namespace BISERPService.Controllers
                 return Ok(grn);
         }
 
-
         [Route("getallgrnno/{StoreId}/{SuppId}/{fromdate}/{todate}")]
         [AcceptVerbs("GET", "POST")]
         public IHttpActionResult AllGRNNo(int StoreId, int SuppId, DateTime fromdate, DateTime todate)
@@ -246,6 +244,7 @@ namespace BISERPService.Controllers
             else
                 return Ok(grn);
         }
+
         [Route("grnitemwise/{fromdate}/{todate}/{ItemId}")]
         [AcceptVerbs("GET", "POST")]
         public IHttpActionResult GRNitemwise(DateTime fromdate, DateTime todate, int ItemId)

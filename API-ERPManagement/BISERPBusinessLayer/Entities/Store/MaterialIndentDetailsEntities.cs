@@ -49,6 +49,8 @@ namespace BISERPBusinessLayer.Entities.Store
 
         public double? MRP { get; set; }
         public string DescriptiveName { get; set; }
+        public string Make { get; set; }
+        public string MaterialOfConstruct { get; set; }
         public int PackSizeID { get; set; }
         public string HSNCode { get; set; }
         public int StatusId { get; set; }

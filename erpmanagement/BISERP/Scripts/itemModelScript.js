@@ -36,11 +36,12 @@ colGRNItemList = [
 
 colMIItemList = [
     { dataIndx: "state", maxWidth: 25, minWidth: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false, editor: false, dataType: 'bool', title: "<input type='checkbox' />", cb: { select: true, all: false, header: true } },
-    { title: "Itemmm Name & Description", dataIndx: "Name", width: '95%', dataType: "string", editable: false, filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } },
-    { title: "Description", dataIndx: "DescriptiveName", width: '50%', dataType: "string", filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }, hidden: true },
+    { title: "Code", dataIndx: "Code", width: '15%', dataType: "string", filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }},
+    { title: "Item Name & Description", dataIndx: "Name", width: '38%', dataType: "string", editable: false, filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } },
+    { title: "Make", dataIndx: "Make", width: '20%', dataType: "string", filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } },
+    { title: "MOC", dataIndx: "MaterialOfConstruct", width: '25%', dataType: "string", filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } },
     { dataIndx: "ID", hidden: true },
     { dataIndx: "ExpiryDate", hidden: true },
-    { title: "Code", dataIndx: "Code", width: 100, dataType: "string", filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }, hidden: true },
     { title: "HSN/SAC Code", dataIndx: "HSNCode", minWidth: 125, editable: false, hidden: true },
     { title: "Unit Name", dataIndx: "UnitName", minWidth: 90, hidden: true },
     { title: "PackSize", dataIndx: "PackSize", minWidth: 80, hidden: true },
@@ -121,7 +122,7 @@ function ShowItemListPoupByItemtype(gridName, modelName, setObject, getUrl, sear
 
         ModelWindow.dialog({
             height: 500,
-            width: 700,
+            width: 800,
             modal: true,
             open: function (evt, ui) {
 
