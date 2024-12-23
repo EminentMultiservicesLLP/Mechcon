@@ -162,4 +162,12 @@ namespace BISERP.Area.Purchase.Models
         public string ItemName { get; set; }
         public double ItemQty { get; set; }
     }
+    public class PRStateDetailsModel
+    {
+        public string ItemName { get; set; }
+        public int PRQty { get; set; }
+        public int PRAuthorisedQty { get; set; }
+        public int POQty { get; set; }
+        public string PRStatus { get; set; }
+    }
 }

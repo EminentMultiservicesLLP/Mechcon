@@ -25,6 +25,7 @@ namespace BISERPBusinessLayer.Entities.Purchase
         public string MaterialOfConstruct { get; set; }
         public string IndentRemark { get; set; }
         public string SizeOrWeight { get; set; }
+        public string POIndentRemark { get; set; }
         public double? FreeQty { get; set; }
         public double? Discount { get; set; }
         public double? Tax { get; set; }

@@ -386,5 +386,28 @@ namespace BISERPService.Controllers
                 return BadRequest();
         }
 
+
+        [Route("getPOStateDetails")]
+        [Route("getPOStateDetails/{IndentId}")]
+        [AcceptVerbs("GET", "POST")]
+        public IHttpActionResult GetPOStateDetails(int? IndentId = null)
+        {
+            try
+            {
+                var sources = _ipurchaseorder.GetPOStateDetails(IndentId).ToList();
+
+                if (sources == null || !sources.Any())
+                {
+                    return NotFound();
+                }
+
+                return Ok(sources);
+            }
+            catch (Exception ex)
+            {
+                _loggger.LogError("Error in GetPOStateDetails method of PurchaseIndentController:" + Environment.NewLine + ex.ToString());
+                return InternalServerError(ex);
+            }
+        }
     }
 }

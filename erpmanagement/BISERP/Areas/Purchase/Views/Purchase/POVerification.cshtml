@@ -121,65 +121,151 @@
                 <div id="grid" class="panel-collapse collapse in" aria-expanded="true">
                     <div class="panel-body">
                         <div id="detailgrid"></div>
-
-                        <fieldset class="fieldsetCustom">
-
-                            <table align="right">
-                                <tr>
-                                    <td>@Html.LabelFor(model => model.Amount)</td>
-                                    <td>
-                                        @Html.TextBoxFor(model => model.Amount, new Dictionary<string, object> { { "readonly", "true" }, { "class", "form-control" } })
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>@Html.LabelFor(model => model.Tax)</td>
-                                    <td>
-                                        @Html.TextBoxFor(model => model.Tax, new Dictionary<string, object> { { "readonly", "true" }, { "class", "form-control" } })
-                                    </td>
-                                </tr>
-                                @*<tr>
-                                        <td>@Html.LabelFor(model => model.OtherCharges)</td>
-                                        <td>
-                                            @Html.TextBoxFor(model => model.OtherCharges, new Dictionary<string, object> { { "readonly", "true" }, { "class", "form-control" } })
-                                        </td>
-                                    </tr>*@
-                                <tr>
-                                    <td>@Html.LabelFor(model => model.Discount)</td>
-                                    <td>
-                                        @Html.TextBoxFor(model => model.Discount, new Dictionary<string, object> { { "readonly", "true" }, { "class", "form-control" } })
-                                    </td>
-                                </tr>
-                                @*<tr>
-                                        <td>@Html.Label("P & F %")</td>
-                                        <td>@Html.TextBoxFor(model => model.BED, new { @class = "form-control", style = "width: 70px" })</td>
-                                        <td><input disabled class="form-control readonly" id="BedAmt" name="BedAmt" style="margin-left: -80px; width: 70px;" /></td>
-                                    </tr>
-                                    <tr>
-                                        <td>@Html.Label("Frieght %")</td>
-                                        <td> @Html.TextBoxFor(model => model.Edu, new { @class = "form-control", style = "width: 70px" })</td>
-                                        <td><input disabled class="form-control readonly" id="educessamt" name="educessamt" style="margin-left: -80px; width: 70px;" /></td>
-                                    </tr>
-                                    <tr style="display:none">
-                                        <td>@Html.Label("SHE Cess %")</td>
-                                        <td> @Html.TextBoxFor(model => model.SHECess, new { @class = "form-control", style = "width: 75px" }) </td>
-                                        <td><input disabled class="form-control readonly" id="Shecessamt" name="Shecessamt" style="margin-left:-68px" /></td>
-                                    </tr>*@
-                                <tr>
-                                    <td>@Html.LabelFor(model => model.GrandTotal)</td>
-                                    <td>
-                                        @Html.TextBoxFor(model => model.GrandTotal, new Dictionary<string, object> { { "readonly", "true" }, { "class", "form-control" } })
-                                    </td>
-                                </tr>
-                            </table>
-
-
-                        </fieldset>
                     </div>
                 </div>
 
             </div>
         </div>
     </div>
+
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-groupingBoder">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <a class="collapsediv" data-toggle="collapse" href="#content" style="color:white">
+                           Terms
+                        </a>
+                    </div>
+                </div>
+                <div id="content">
+                    <div id="content-tab">
+                        <ul id="tabs" class="nav nav-tabs" data-tabs="tabs" style="padding: 1px;">
+                            <li class="active tab"><a href="#tab1" data-toggle="tab" style="margin: 0;">Total</a></li>
+                            <li><a href="#tab2" data-toggle="tab" style="margin: 0;">Delivery Terms</a></li>
+                            <li><a href="#tab3" data-toggle="tab" style="margin: 0;">Payment Terms</a></li>
+                            <li><a href="#tab4" data-toggle="tab" style="margin: 0;">Freight</a></li>
+                            <li><a href="#tab5" data-toggle="tab" style="margin: 0;">Special Notes</a></li>
+                            <li><a href="#tab6" data-toggle="tab" style="margin: 0;">P&F</a></li>
+                            <li><a href="#tab7" data-toggle="tab" style="margin: 0;">Inspection</a></li>
+                        </ul>
+                        <fieldset class="fieldsetCustom">
+                            <div id="my-tab-content" class="tab-content" style="border:none">
+                                <div class="tab-pane active" id="tab1">
+                                    <table align="right">
+                                        <tr>
+                                            <td>@Html.LabelFor(model => model.Amount)</td>
+                                            <td>
+                                                @Html.TextBoxFor(model => model.Amount, new Dictionary<string, object> { { "readonly", "true" }, { "class", "form-control" } })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>@Html.LabelFor(model => model.Tax)</td>
+                                            <td>
+                                                @Html.TextBoxFor(model => model.Tax, new Dictionary<string, object> { { "readonly", "true" }, { "class", "form-control" } })
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>@Html.LabelFor(model => model.Discount)</td>
+                                            <td>
+                                                @Html.TextBoxFor(model => model.Discount, new Dictionary<string, object> { { "readonly", "true" }, { "class", "form-control" } })
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>@Html.LabelFor(model => model.GrandTotal)</td>
+                                            <td>
+                                                @Html.TextBoxFor(model => model.GrandTotal, new Dictionary<string, object> { { "readonly", "true" }, { "class", "form-control" } })
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="tab-pane" id="tab2">
+                                    <br>
+                                    <div class="form-group" align="left">
+                                        <button type="button" class="btn btn-primary" id="btnViewDelTerms">Add Term</button>
+                                        <button type="button" class="btn btn-danger" id="btnRemoveDelTerms">Remove Term</button>
+                                    </div>
+                                    <div id="DeliveryTermgrid"></div>
+                                </div>
+                                <div class="tab-pane" id="tab3">
+                                    <br>
+                                    <div class="form-group" align="left">
+                                        <button type="button" class="btn btn-primary" id="btnViewPayTerms">Add Term</button>
+                                        <button type="button" class="btn btn-danger" id="btnRemovePayTerms">Remove Term</button>
+                                    </div>
+                                    <div id="PaymentTermgrid"></div>
+                                </div>
+                                <div class="tab-pane" id="tab4">
+                                    <br>
+                                    <div class="form-group" align="left">
+                                        <button type="button" class="btn btn-primary" id="btnViewOtherTerms">Add Term</button>
+                                        <button type="button" class="btn btn-danger" id="btnRemoveOtherTerms">Remove Term</button>
+                                    </div>
+                                    <div id="OtherTermgrid"></div>
+                                </div>
+                                <div class="tab-pane" id="tab5">
+                                    <br>
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <div class="col-sm-1">
+                                                <label for="Details">Special Notes</label>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                @Html.TextAreaFor(model => model.Details, new { @class = "form-control", style = "width: 1170px; height: 164px;" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="tab6">
+                                    <br>
+                                    <div class="form-group" align="left">
+                                        <button type="button" class="btn btn-primary" id="btnBasisTerms">Add Term</button>
+                                        <button type="button" class="btn btn-danger" id="btnRemoveBasisTerms">Remove Term</button>
+                                    </div>
+                                    <div id="Basistermgrid"></div>
+                                </div>
+                                <div class="tab-pane" id="tab7">
+                                    <br>
+                                    <div class="form-group" align="left">
+                                        <button type="button" class="btn btn-primary" id="btninspectionTerms">Add Term</button>
+                                        <button type="button" class="btn btn-danger" id="btnRemoveinspectionTerms">Remove Term</button>
+                                    </div>
+                                    <div id="Inspection"></div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="DeliveryItemModal" title="Select Delivery Terms" style="display: none;">
+        <div id="SearchDeliveryTermgrid"></div>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" id="btnAddDeliveryTerm">Add</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+    </div>
+    <div id="PaymentItemModal" title="Select Payment Terms" style="display: none;">
+        <div id="SearchPaymentTermgrid"></div>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" id="btnAddPaymentTerm">Add</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+    </div>
+
+    <div id="OtherItemModal" title="Select Freight" style="display: none;">
+        <div id="SearchOtherTermgrid"></div>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" id="btnAddOtherTerm">Add</button>
+    </div>
+    <div id="BasisItemModal" title="Select P&F" style="display: none;">
+        <div id="SearchBasisTermgrid"></div>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" id="btnAddBasisTerm">Add</button>
+    </div>
+    <div id="InspectionItemModal" title="Select Inspection Term" style="display: none;">
+        <div id="SearchInspectionTermgrid"></div>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" id="btnAddInspectionTerm">Add</button>
+    </div>
+
 
     <div id="PODetails" class="modal fade" role="dialog">
         <div class="modal-dialog" style="width: 55%">
@@ -228,6 +314,12 @@ var $searchgrid;
 var POId = 0;
 var RFQId = 0;
 var rptStatus;
+var $SearchDeliveryTermgrid; var $DeliveryTermgrid;
+var $SearchPaymentTermgrid; var $PaymentTermgrid;
+var $SearchOtherTermgrid; var $OtherTermgrid;
+var $Inspection; var $SearchInspectionTermgrid;
+var $Basis; var $SearchBasisTermgrid;
+
 $("#BED").prop('disabled', true);
 $("#SHECess").prop('disabled', true);
 $("#Edu").prop('disabled', true);
@@ -284,13 +376,35 @@ $("#btnShowRequest").on('click', function () {
 validateFiles('files', 'preApproveImg');
 $("#btnSave").on('click', function () {
     var podetails = $detailgrid.pqGrid("option", "dataModel.data");
+
+    var getDelData = $DeliveryTermgrid.pqGrid("option", "dataModel.data");
+    var delgridData = jLinq.from(getDelData).equals("state", true).select();
+
+    var getPayData = $PaymentTermgrid.pqGrid("option", "dataModel.data");
+    var paygridData = jLinq.from(getPayData).equals("state", true).select();
+
+    var getOtherData = $OtherTermgrid.pqGrid("option", "dataModel.data");
+    var othgridData = jLinq.from(getOtherData).equals("state", true).select();
+
+    var getbasisdata = $Basis.pqGrid("option", "dataModel.data");
+    var poBasis = jLinq.from(getbasisdata).equals("state", true).select();
+
+    var getinspectiondata = $Inspection.pqGrid("option", "dataModel.data");
+    var poInspectio = jLinq.from(getinspectiondata).equals("state", true).select();
+
     var purchaseOrder = JSON.stringify({ //Passing data
         ID: POId,
         RFQId: RFQId,
         AuthorizationStatusId: $("[name='AuthStatus']:checked").val(),
         Amount: $("#Amount").val(),
         GrandTotal: $("#GrandTotal").val(),
-        PODetails: podetails
+        Details: $("#Details").val(),
+        PODetails: podetails,
+        PODeliveryTerms: delgridData,
+        POPaymenterms: paygridData,
+        POOtherTerms: othgridData,
+        POBasis: poBasis,
+        POInspectio: poInspectio,
     });
     $.ajax({
         type: "POST", //HTTP POST Method
@@ -450,24 +564,25 @@ var colDetail = [
     { title: "", dataIndx: "ID", width: 10, dataType: "integer", hidden: true, editable: false },
     { title: "", dataIndx: "POIndDtlId", width: 10, dataType: "integer", hidden: true, editable: false },
     { title: "", dataIndx: "ItemID", width: 10, dataType: "integer", hidden: true, editable: false },
-    { title: "Item Name & Description", dataIndx: "ItemName", width: 500, dataType: "string", editable: false },
+    { title: "Item Name & Description", dataIndx: "ItemName", width: 400, dataType: "string", editable: false },
     { title: "Description", dataIndx: "DescriptiveName", width: 200, dataType: "string", editable: false, editor: { type: "textarea", attr: "rows=5" }, hidden: true },
     { title: "HSNCode", dataIndx: "HSNCode", width: 150, resizable: false, dataType: "string", editable: false, hidden: true },
     { title: "Tax Rate", dataIndx: "TaxRate", width: 100, dataType: "string", editable: false, hidden: true },
     { title: "Unit", dataIndx: "OrderingUnit", width: 100, dataType: "string", editable: false },
     { title: "Make", dataIndx: "Make", width: 100, dataType: "string", editable: false },
     { title: "MOC", dataIndx: "MaterialOfConstruct", width: 100, dataType: "string", editable: false },
-    { title: "Indent Remark", dataIndx: "IndentRemark", width: 200, dataType: "string", editable: false},
+    { title: "PR Remark", dataIndx: "IndentRemark", width: 200, dataType: "string", editable: false},
     { title: "Size/Wt.", dataIndx: "SizeOrWeight", width: 100, dataType: "string", editable: false },
+    { title: "PO Remark", dataIndx: "POIndentRemark", width: 200, dataType: "string", editable: false },
     { title: "PR PendingQty", dataIndx: "PendingQty", width: 70, dataType: "float", align: "left", editable: false, hidden: true },
-    { title: "Qty", dataIndx: "Qty", width: 70, dataType: "float", align: "left", editable: true },
+    { title: "Qty", dataIndx: "Qty", width: 70, dataType: "float", align: "left", editable: true, align: "right"},
     { title: "Free Qty", dataIndx: "FreeQty", width: 90, dataType: "float", align: "left", hidden: true, editable: false },
     { title: "Pack Size", dataIndx: "PackSize", width: 120, dataType: "string", editable: false, hidden: true, editor: { type: autoCompleteEditor }, validations: [{ type: 'minLen', value: 1, msg: "Required" }, { type: function (ui) { var value = ui.value; if ($.inArray(ui.value, packsizes) == -1) { ui.msg = value + " not found in list"; return false; } } }] },
     { title: "Unit Rate", dataIndx: "Rate", width: 70, dataType: "float", editable: false },
     { title: "MRP", dataIndx: "MRP", width: 90, dataType: "float", hidden: true, editable: false },
     { title: "Amount", dataIndx: "Amount", width: 90, dataType: "float", editable: false },
     { title: "Discount %", dataIndx: "DiscountPer", width: 100, dataType: "float", resizable: false, align: "left", format: '##,###.00', editable: false, hidden: true },
-    { title: "Discount", dataIndx: "Discount", width: 100, dataType: "float", resizable: false, align: "left", format: '##,###.00', editable: false },
+    { title: "Discount", dataIndx: "Discount", width: 100, dataType: "float", resizable: false, align: "right", format: '##,###.00', editable: false },
     { title: "", dataIndx: "TaxableValue", width: 100, dataType: "float", resizable: false, align: "left", hidden: true, editable: false },
     { title: "TaxIds", dataIndx: "TaxIds", width: 90, dataType: "string", editable: false, hidden: true },
     { title: "", editable: false, minWidth: 30, sortable: false, listeners: [{ click: editRow }], hidden: true, render: function (ui) { return "<button type='button' class='edit_btn'></button>"; }, postRender: function (ui) { var rowIndx = ui.rowIndx, grid = this, $cell = grid.getCell(ui); $cell.find(".edit_btn").button({ icons: { primary: 'ui-icon-pencil' } }).bind("click", function (evt) { editRow(rowIndx, grid, true); }); } },
@@ -485,7 +600,7 @@ var colDetail = [
     { title: "Freight Amount", dataIndx: "OctroiC", width: 100, dataType: "float", resizable: false, hidden: true, align: "left", editable: false },
     { title: "Other Charges", dataIndx: "OtherC", width: 100, dataType: "float", resizable: false, hidden: true, align: "left", editable: false },
     { title: "Handling Chanrges", dataIndx: "LoadUnloadC", width: 100, dataType: "float", resizable: false, hidden: true, align: "left", editable: false },
-    { title: "NetAmount", dataIndx: "NetAmount", width: 120, dataType: "float", resizable: false, align: "left", editable: false, format: '##,###.00' },
+    { title: "NetAmount", dataIndx: "NetAmount", width: 120, dataType: "float", resizable: false, align: "right", editable: false, format: '##,###.00' },
     { title: "Saved Qty", dataIndx: "SavedQty", width: 70, dataType: "float", align: "left", hidden: true }
 ];
 
@@ -705,7 +820,7 @@ function showperAmount() {
     $("#educessamt").val(Math.round(eduamt));
 
 }
-    function CalculateTotalAmount() {
+function CalculateTotalAmount() {
         var getData = $detailgrid.pqGrid("option", "dataModel.data");
 
         var totalAmount = 0, totalTaxAmount = 0, totalOtherCharges = 0, totalDiscount = 0, totalNetAmt = 0;
@@ -746,9 +861,7 @@ function showperAmount() {
 
     }
 
-
 var budgetbalanc = 0;
-
 
 var dataM = { location: "local", sorting: 'local' };
 var colM = [
@@ -842,6 +955,7 @@ var setM = {
                 data: { POId: record.ID },
                 datatype: "Json",
                 success: function (data) {
+                    $("#Details").val(data.Details);
                     $("#BED").val(data.BED);
                     $("#Edu").val(data.Edu);
                     $("#SHECess").val(data.SHECess);
@@ -850,11 +964,12 @@ var setM = {
                     $("#Discount").val(data.Discount);
                     $("#OtherCharges").val(data.OtherCharges);
                     $("#GrandTotal").val(data.GrandTotal);
+
                     var dataMGrid = [];
                     $.each(data.PODetails, function (index, value) {
                         var grdData = {
                             'ID': value.ID, 'POIndDtlId': value.POIndDtlId, 'ItemID': value.ItemID, 'ItemName': value.ItemName, 'TaxRate': value.TaxRate, 'Qty': value.Qty, 'PackSize': value.PackSize, 'Rate': value.Rate, 'MRP': value.MRP,
-                            'OrderingUnit': value.OrderingUnit, 'Make': value.Make, 'MaterialOfConstruct': value.MaterialOfConstruct, 'IndentRemark': value.IndentRemark, 'SizeOrWeight': value.SizeOrWeight, 'FreeQty': value.FreeQty, 'Amount': value.Amount,
+                            'OrderingUnit': value.OrderingUnit, 'Make': value.Make, 'MaterialOfConstruct': value.MaterialOfConstruct, 'IndentRemark': value.IndentRemark, 'SizeOrWeight': value.SizeOrWeight, 'POIndentRemark': value.POIndentRemark, 'FreeQty': value.FreeQty, 'Amount': value.Amount,
                             'TaxIds': value.TaxIds, 'Tax': value.Tax, 'TaxAmount': value.TaxAmount, 'TransC': value.TransC, 'OctroiC': value.OctroiC,
                             'OtherC': value.OtherC, 'LoadUnloadC': value.LoadUnloadC, 'DiscountPer': value.discountper, 'Discount': value.Discount, 'NetAmount': value.NetAmount,
                             'SupplierName': value.SupplierName, 'DescriptiveName': value.DescriptiveName, 'SGST': value.SGST, 'CGST': value.CGST, 'IGST': value.IGST, 'UGST': value.UGST, 'HSNCode': value.HSNCode, 'SavedQty': value.Qty
@@ -863,6 +978,46 @@ var setM = {
                     });
                     $detailgrid.pqGrid("option", "dataModel.data", dataMGrid);
                     $detailgrid.pqGrid("refreshDataAndView");
+
+                    var dataTerms = [];
+                    $.each(data.PODeliveryTerms, function (index, value) {
+                        var grdData = { 'DelTermID': value.DelTermID, 'DeliveryTermCode': value.DeliveryTermCode, 'DeliveryTermDesc': value.DeliveryTermDesc, 'state': true }
+                        dataTerms.push(grdData);
+                    });
+                    $DeliveryTermgrid.pqGrid("option", "dataModel.data", dataTerms);
+                    $DeliveryTermgrid.pqGrid("refreshDataAndView");
+
+                    dataTerms = [];
+                    $.each(data.POPaymenterms, function (index, value) {
+                        var grdData = { 'PayTermID': value.PayTermID, 'PaymentTermCode': value.PaymentTermCode, 'PaymentTermDesc': value.PaymentTermDesc, 'state': true }
+                        dataTerms.push(grdData);
+                    });
+                    $PaymentTermgrid.pqGrid("option", "dataModel.data", dataTerms);
+                    $PaymentTermgrid.pqGrid("refreshDataAndView");
+
+                    dataTerms = [];
+                    $.each(data.POOtherTerms, function (index, value) {
+                        var grdData = { 'OtherTermID': value.OtherTermID, 'OthersTermCode': value.OthersTermCode, 'OthersTermDesc': value.OthersTermDesc, 'state': true }
+                        dataTerms.push(grdData);
+                    });
+                    $OtherTermgrid.pqGrid("option", "dataModel.data", dataTerms);
+                    $OtherTermgrid.pqGrid("refreshDataAndView");
+
+                    dataTerms = [];
+                    $.each(data.POBasis, function (index, value) {
+                        var grdData = { 'BasisId': value.BasisId, 'BasisCode': value.BasisCode, 'BasisDesc': value.BasisDesc, 'state': true }
+                        dataTerms.push(grdData);
+                    });
+                    $Basis.pqGrid("option", "dataModel.data", dataTerms);
+                    $Basis.pqGrid("refreshDataAndView");
+
+                    dataTerms = [];
+                    $.each(data.POInspectio, function (index, value) {
+                        var grdData = { 'InspectionId': value.InspectionId, 'InspectionCode': value.InspectionCode, 'InspectionDesc': value.InspectionDesc, 'state': true }
+                        dataTerms.push(grdData);
+                    });
+                    $Inspection.pqGrid("option", "dataModel.data", dataTerms);
+                    $Inspection.pqGrid("refreshDataAndView");
                     showperAmount();
                 }
 
@@ -949,6 +1104,12 @@ function ClearForm() {
     $("#preApproveImg").empty(); $("#appendImg").empty(); $("#files").val(null);
     POId = 0;
     RFQId = 0;
+    ClearParamGrid("DeliveryTermgrid");
+    ClearParamGrid("PaymentTermgrid");
+    ClearParamGrid("OtherTermgrid");
+    ClearParamGrid('Basistermgrid');
+    ClearParamGrid('Inspection');
+    $("#Details").val('');
 }
 //************View uploaded Images in List ******//
 function viewAttachments(Id) {
@@ -985,7 +1146,6 @@ $(document).on("click", '.imgclick', function (e) {
         }
     }
 });
-
 
 //*******************Image View********************//
 $("#btnShowExistingDoc").click(function () {
@@ -1058,7 +1218,6 @@ function closeImageModal() {
 }
 //***********Close SlideShow Modal*********************////
 
-
 $('#btnExport').on('click', function () {
     var potype;
     if (POId === "" || POId === 0) {
@@ -1108,5 +1267,670 @@ $("#btnSearch").on('click', function () {
 function closeModal() {
     $("#SearchGridModal").modal('hide');
     $("#ReportModal").modal('hide');
-}
+    }
+
+    /********* Delivery Term Search Grid *********/
+    $(document).ready(function () {
+        var dataModel = {
+            location: "local"
+        }
+        var colDelM = [
+            {
+                dataIndx: "state", Width: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                editor: false, dataType: 'bool',
+                title: "<input type='checkbox' />",
+                cb: { select: true, all: false, header: true }
+            },
+            { title: "", dataIndx: "TermID", dataType: "integer", hidden: true },
+            {
+                title: "Code", dataIndx: "DeliveryTermCode", width: 150, editable: false,
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            },
+            {
+                title: "Name", dataIndx: "DeliveryTermDesc", width: 450, editable: false,
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            }
+        ];
+        var DelM = {
+            width: '100%',
+            height: 400,
+            sortable: false,
+            numberCell: { show: false },
+            hoverMode: 'cell',
+            showTop: false,
+            resizable: true,
+            scrollModel: { autoFit: true },
+            draggable: false,
+            wrap: false,
+            columnBorders: true,
+            selectionModel: { type: 'row' },
+            colModel: colDelM,
+            dataModel: dataModel,
+            filterModel: { on: true, mode: "AND", header: true },
+            pageModel: { type: "local", rPP: 20 },
+            virtualX: true,
+            virtualY: true,
+        };
+        $SearchDeliveryTermgrid = $("#SearchDeliveryTermgrid").pqGrid(DelM);
+    });
+    /********* Delivery Term Grid *********/
+    $(document).ready(function () {
+        $('#btnViewDelTerms').on('click', function () {
+            //$("#DeliveryItem").modal('toggle');
+            LoadSearchDeliveryTermgrid();
+        });
+        $('#btnRemoveDelTerms').on('click', function () {
+            var getData = $DeliveryTermgrid.pqGrid("option", "dataModel.data");
+            var selectedItems = jLinq.from(getData).equals("state", true).select();
+
+            $.each(selectedItems, function (key, value) {
+                var obj = $DeliveryTermgrid.pqGrid("getRowIndx", { rowData: value });
+                var rowIndx = obj.rowIndx;
+                $DeliveryTermgrid.pqGrid("deleteRow", { rowIndx: rowIndx });
+            });
+        });
+
+        var dataDelM = { location: "local", sorting: 'local' }
+        var colDelM = [
+            {
+                dataIndx: "state", Width: 15, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                editor: false, dataType: 'bool',
+                title: "<input type='checkbox' />",
+                cb: { select: true, all: false, header: true }
+            },
+            { title: "", dataIndx: "DelTermID", dataType: "integer", hidden: true },
+            { title: "Code", dataIndx: "DeliveryTermCode", width: 200, editable: false },
+            { title: "Name", dataIndx: "DeliveryTermDesc", width: 400, editable: false }
+        ];
+        var DelM = {
+            width: '100%',
+            height: 250,
+            sortable: false,
+            numberCell: { show: false },
+            hoverMode: 'cell',
+            showTop: false,
+            resizable: true,
+            scrollModel: { autoFit: true },
+            draggable: false,
+            wrap: false,
+            columnBorders: true,
+            selectionModel: { type: 'row' },
+            colModel: colDelM,
+            dataModel: dataDelM,
+            pageModel: { type: "local", rPP: 20 }
+        };
+        $DeliveryTermgrid = $("#DeliveryTermgrid").pqGrid(DelM);
+    });
+    /********* Payment Term Search Grid *********/
+    $(document).ready(function () {
+        var dataPayM = { location: "local" }
+        var colPayM = [
+            {
+                dataIndx: "state", Width: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                editor: false, dataType: 'bool',
+                cb: { select: true, all: false, header: true }
+            },
+            { title: "", dataIndx: "TermID", dataType: "integer", hidden: true },
+            {
+                title: "Code", dataIndx: "PaymentTermCode", width: 150, editable: false,
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            },
+            {
+                title: "Name", dataIndx: "PaymentTermDesc", width: 450, editable: false,
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+
+            }
+        ];
+        var DelM = {
+            width: '100%',
+            height: 400,
+            sortable: false,
+            numberCell: { show: false },
+            hoverMode: 'cell',
+            showTop: false,
+            resizable: true,
+            scrollModel: { autoFit: true },
+            draggable: false,
+            wrap: false,
+            columnBorders: true,
+            filterModel: { on: true, mode: "AND", header: true },
+            selectionModel: { type: 'none', subtype: 'incr', cbHeader: true, cbAll: true },
+            colModel: colPayM,
+            dataModel: dataPayM,
+            pageModel: { type: "local", rPP: 20 },
+            virtualX: true,
+            virtualY: true,
+        };
+        $SearchPaymentTermgrid = $("#SearchPaymentTermgrid").pqGrid(DelM);
+    });
+    /********* Payment Term Grid *********/
+    $(document).ready(function () {
+        $('#btnViewPayTerms').on('click', function () {
+            //$("#PaymentItem").modal('toggle');
+            LoadSearchPaymentTermgrid();
+        });
+        $('#btnRemovePayTerms').on('click', function () {
+            var getData = $PaymentTermgrid.pqGrid("option", "dataModel.data");
+            var selectedItems = jLinq.from(getData).equals("state", true).select();
+            $.each(selectedItems, function (key, value) {
+                var obj = $PaymentTermgrid.pqGrid("getRowIndx", { rowData: value });
+                var rowIndx = obj.rowIndx;
+                $PaymentTermgrid.pqGrid("deleteRow", { rowIndx: rowIndx });
+            });
+        });
+        var dataDelM = { location: "local", sorting: 'local' }
+        var colDelM = [
+            {
+                dataIndx: "state", Width: 15, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                editor: false, dataType: 'bool',
+                title: "<input type='checkbox' />",
+                cb: { select: true, all: false, header: true }
+            },
+            { title: "", dataIndx: "PayTermID", dataType: "integer", hidden: true },
+            {
+                title: "Code", dataIndx: "PaymentTermCode", width: 200, editable: false
+
+            },
+            {
+                title: "Name", dataIndx: "PaymentTermDesc", width: 400, editable: false
+
+            }
+        ];
+        var DelM = {
+            width: '100%',
+            height: 260,
+            sortable: false,
+            numberCell: { show: false },
+            hoverMode: 'cell',
+            showTop: false,
+            resizable: true,
+            scrollModel: { autoFit: true },
+            draggable: false,
+            wrap: false,
+            columnBorders: true,
+            selectionModel: { type: 'row' },
+            colModel: colDelM,
+            dataModel: dataDelM,
+            pageModel: { type: "local", rPP: 20 },
+        };
+        $PaymentTermgrid = $("#PaymentTermgrid").pqGrid(DelM);
+    });
+    /********* Other Term Search Grid *********/
+    $(document).ready(function () {
+        var dataDelM = { location: "local", sorting: 'local' }
+        var colDelM = [
+            {
+                dataIndx: "state", Width: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                editor: false, dataType: 'bool',
+                cb: { select: true, all: false, header: true }
+            },
+            { title: "", dataIndx: "TermID", dataType: "integer", hidden: true },
+            {
+                title: "Code", dataIndx: "OthersTermCode", width: 150, editable: false,
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            },
+            {
+                title: "Name", dataIndx: "OthersTermDesc", width: 450, editable: false,
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            }
+        ];
+        var DelM = {
+            width: '100%',
+            height: 400,
+            sortable: false,
+            numberCell: { show: false },
+            hoverMode: 'cell',
+            showTop: false,
+            resizable: true,
+            scrollModel: { autoFit: true },
+            draggable: false,
+            wrap: false,
+            columnBorders: true,
+            filterModel: { on: true, mode: "AND", header: true },
+            selectionModel: { type: 'row' },
+            colModel: colDelM,
+            dataModel: dataDelM,
+            pageModel: { type: "local", rPP: 20 },
+            virtualX: true,
+            virtualY: true,
+        };
+        $SearchOtherTermgrid = $("#SearchOtherTermgrid").pqGrid(DelM);
+    });
+    /*****************search basis term********************/
+    $(document).ready(function () {
+        var dataDelM = { location: "local", sorting: 'local' }
+        var colDelM = [
+            {
+                dataIndx: "state", Width: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                editor: false, dataType: 'bool',
+                cb: { select: true, all: false, header: true }
+            },
+            { title: "", dataIndx: "BasisID", dataType: "integer", hidden: true },
+            {
+                title: "Code", dataIndx: "BasisCode", width: 150, editable: false,
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            },
+            {
+                title: "Description", dataIndx: "BasisDesc", width: 450, editable: false,
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            }
+        ];
+        var DelM = {
+            width: '100%',
+            height: 400,
+            sortable: false,
+            numberCell: { show: false },
+            hoverMode: 'cell',
+            showTop: false,
+            resizable: true,
+            scrollModel: { autoFit: true },
+            draggable: false,
+            wrap: false,
+            columnBorders: true,
+            filterModel: { on: true, mode: "AND", header: true },
+            selectionModel: { type: 'row' },
+            colModel: colDelM,
+            dataModel: dataDelM,
+            pageModel: { type: "local", rPP: 20 },
+            virtualX: true,
+            virtualY: true,
+        };
+        $SearchBasisTermgrid = $("#SearchBasisTermgrid").pqGrid(DelM);
+    });
+    $(document).ready(function () {
+        var dataDelM = { location: "local", sorting: 'local' }
+        var colDelM = [
+            {
+                dataIndx: "state", Width: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                editor: false, dataType: 'bool',
+                cb: { select: true, all: false, header: true }
+            },
+            { title: "", dataIndx: "InspectionId", dataType: "integer", hidden: true },
+            {
+                title: "Code", dataIndx: "InspectionCode", width: 150, editable: false,
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            },
+            {
+                title: "Description", dataIndx: "InspectionDesc", width: 450, editable: false,
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            }
+        ];
+        var DelM = {
+            width: '100%',
+            height: 400,
+            sortable: false,
+            numberCell: { show: false },
+            hoverMode: 'cell',
+            showTop: false,
+            resizable: true,
+            scrollModel: { autoFit: true },
+            draggable: false,
+            wrap: false,
+            columnBorders: true,
+            filterModel: { on: true, mode: "AND", header: true },
+            selectionModel: { type: 'row' },
+            colModel: colDelM,
+            dataModel: dataDelM,
+            pageModel: { type: "local", rPP: 20 },
+            virtualX: true,
+            virtualY: true,
+        };
+        $SearchInspectionTermgrid = $("#SearchInspectionTermgrid").pqGrid(DelM);
+    });
+    /**************Inspection Grid**************************/
+    $(document).ready(function () {
+        $('#btninspectionTerms').on('click', function () {
+            LoadSearchInspectionTermgrid();
+        });
+        $('#btnRemoveinspectionTerms').on('click', function () {
+            var getData = $Inspection.pqGrid("option", "dataModel.data");
+            var selectedItems = jLinq.from(getData).equals("state", true).select();
+            $.each(selectedItems, function (key, value) {
+                var obj = $Inspection.pqGrid("getRowIndx", { rowData: value });
+                var rowIndx = obj.rowIndx;
+                $Inspection.pqGrid("deleteRow", { rowIndx: rowIndx });
+            });
+        });
+
+        var dataOtherM = { location: "local" }
+        var colOtherM = [
+            {
+                dataIndx: "state", Width: 15, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                editor: false, dataType: 'bool',
+                title: "<input type='checkbox' />",
+                cb: { select: true, all: false, header: true }
+            },
+            { title: "", dataIndx: "InspectionId", dataType: "integer", hidden: true },
+            { title: "Code", dataIndx: "InspectionCode", width: 400, editable: false },
+            { title: "Description", dataIndx: "InspectionDesc", width: 400, editable: false }
+        ];
+        var inspection = {
+            width: '100%',
+            height: 260,
+            sortable: false,
+            numberCell: { show: false },
+            hoverMode: 'cell',
+            showTop: false,
+            resizable: true,
+            scrollModel: { autoFit: true },
+            draggable: false,
+            wrap: false,
+            columnBorders: true,
+            selectionModel: { type: 'row' },
+            colModel: colOtherM,
+            dataModel: dataOtherM,
+            pageModel: { type: "local", rPP: 20 },
+            virtualX: true,
+            virtualY: true,
+        };
+        $Inspection = $("#Inspection").pqGrid(inspection);
+    });
+    /**********************Basis Term******************/
+    $(document).ready(function () {
+        $('#btnBasisTerms').on('click', function () {
+            LoadSearchBasisTermgrid();
+        });
+        $('#btnRemoveBasisTerms').on('click', function () {
+            var getData = $Basis.pqGrid("option", "dataModel.data");
+            var selectedItems = jLinq.from(getData).equals("state", true).select();
+            $.each(selectedItems, function (key, value) {
+                var obj = $Basis.pqGrid("getRowIndx", { rowData: value });
+                var rowIndx = obj.rowIndx;
+                $Basis.pqGrid("deleteRow", { rowIndx: rowIndx });
+            });
+        });
+
+        var basism = { location: "local" }
+        var colM = [
+            {
+                dataIndx: "state", Width: 15, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                editor: false, dataType: 'bool',
+                title: "<input type='checkbox' />",
+                cb: { select: true, all: false, header: true }
+            },
+            { title: "", dataIndx: "BasisId", dataType: "integer", hidden: true },
+            { title: "Code", dataIndx: "BasisCode", width: 400, editable: false },
+            { title: "Name", dataIndx: "BasisDesc", width: 400, editable: false }
+        ];
+        var basisgrid = {
+            width: '100%',
+            height: 260,
+            sortable: false,
+            numberCell: { show: false },
+            hoverMode: 'cell',
+            showTop: false,
+            resizable: true,
+            scrollModel: { autoFit: true },
+            draggable: false,
+            wrap: false,
+            columnBorders: true,
+            selectionModel: { type: 'row' },
+            colModel: colM,
+            dataModel: basism,
+            pageModel: { type: "local", rPP: 20 },
+            virtualX: true,
+            virtualY: true
+        };
+        $Basis = $("#Basistermgrid").pqGrid(basisgrid);
+    });
+    /********* Other Term Grid *********/
+    $(document).ready(function () {
+        $('#btnViewOtherTerms').on('click', function () {
+            //$("#OtherItem").modal('toggle');
+            LoadSearchOtherTermgrid();
+        });
+        $('#btnRemoveOtherTerms').on('click', function () {
+            var getData = $OtherTermgrid.pqGrid("option", "dataModel.data");
+            var selectedItems = jLinq.from(getData).equals("state", true).select();
+            $.each(selectedItems, function (key, value) {
+                var obj = $OtherTermgrid.pqGrid("getRowIndx", { rowData: value });
+                var rowIndx = obj.rowIndx;
+                $OtherTermgrid.pqGrid("deleteRow", { rowIndx: rowIndx });
+            });
+        });
+
+        var dataOtherM = { location: "local" }
+        var colOtherM = [
+            {
+                dataIndx: "state", Width: 15, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                editor: false, dataType: 'bool',
+                title: "<input type='checkbox' />",
+                cb: { select: true, all: false, header: true }
+            },
+            { title: "", dataIndx: "OtherTermID", dataType: "integer", hidden: true },
+            { title: "Code", dataIndx: "OthersTermCode", width: 200, editable: false },
+            { title: "Name", dataIndx: "OthersTermDesc", width: 400, editable: false }
+        ];
+        var DelM = {
+            width: '100%',
+            height: 260,
+            sortable: false,
+            numberCell: { show: false },
+            hoverMode: 'cell',
+            showTop: false,
+            resizable: true,
+            scrollModel: { autoFit: true },
+            draggable: false,
+            wrap: false,
+            columnBorders: true,
+            selectionModel: { type: 'row' },
+            colModel: colOtherM,
+            dataModel: dataOtherM,
+            pageModel: { type: "local", rPP: 20 },
+            virtualX: true,
+            virtualY: true,
+        };
+        $OtherTermgrid = $("#OtherTermgrid").pqGrid(DelM);
+    });
+    /********* Add Button Click Events *********/
+    $(document).ready(function () {
+        $('#btnAddDeliveryTerm').on('click', function () {
+            ClosePopupWindow("DeliveryItemModal");
+            var getData = $SearchDeliveryTermgrid.pqGrid("option", "dataModel.data");
+            var selectedItems = jLinq.from(getData).equals("state", true).select();
+
+            var colM = $DeliveryTermgrid.pqGrid("option", "colModel");
+            colM[2].editable = true;
+            colM[3].editable = true;
+            $DeliveryTermgrid.pqGrid("option", "colModel", colM);
+            $.each(selectedItems, function (key, value) {
+                $DeliveryTermgrid.pqGrid("addRow", { newRow: { 'DelTermID': value.TermID, 'DeliveryTermCode': value.DeliveryTermCode, 'DeliveryTermDesc': value.DeliveryTermDesc, 'state': true } })
+            });
+            colM[2].editable = false;
+            colM[3].editable = false;
+            $DeliveryTermgrid.pqGrid("option", "colModel", colM);
+            //$DeliveryTermgrid.pqGrid("selection", { type: 'row', method: 'selectAll' });
+        });
+        $('#btnAddPaymentTerm').on('click', function () {
+            ClosePopupWindow("PaymentItemModal");
+            var getData = $SearchPaymentTermgrid.pqGrid("option", "dataModel.data");
+            var selectedItems = jLinq.from(getData).equals("state", true).select();
+            var colM = $PaymentTermgrid.pqGrid("option", "colModel");
+            colM[2].editable = true;
+            colM[3].editable = true;
+            $PaymentTermgrid.pqGrid("option", "colModel", colM);
+            $.each(selectedItems, function (key, value) {
+                $PaymentTermgrid.pqGrid("addRow", { newRow: { 'PayTermID': value.TermID, 'PaymentTermCode': value.PaymentTermCode, 'PaymentTermDesc': value.PaymentTermDesc, 'state': true } })
+            });
+            colM[2].editable = false;
+            colM[3].editable = false;
+            $PaymentTermgrid.pqGrid("option", "colModel", colM);
+            //$PaymentTermgrid.pqGrid("selection", {type: 'row', method: 'selectAll' });
+        });
+        $('#btnAddOtherTerm').on('click', function () {
+            ClosePopupWindow("OtherItemModal");
+            var getData = $SearchOtherTermgrid.pqGrid("option", "dataModel.data");
+            var selectedItems = jLinq.from(getData).equals("state", true).select();
+            var colM = $OtherTermgrid.pqGrid("option", "colModel");
+            colM[2].editable = true;
+            colM[3].editable = true;
+            $OtherTermgrid.pqGrid("option", "colModel", colM);
+            $.each(selectedItems, function (key, value) {
+                $OtherTermgrid.pqGrid("addRow", { newRow: { 'OtherTermID': value.TermID, 'OthersTermCode': value.OthersTermCode, 'OthersTermDesc': value.OthersTermDesc, 'state': true } })
+            });
+            colM[2].editable = false;
+            colM[3].editable = false;
+            $OtherTermgrid.pqGrid("option", "colModel", colM);
+            //$OtherTermgrid.pqGrid("selection", {type: 'row', method: 'selectAll' });
+        });
+        /*******************basis search**********************/
+        $('#btnAddBasisTerm').on('click', function () {
+            ClosePopupWindow("BasisItemModal");
+            var getData = $SearchBasisTermgrid.pqGrid("option", "dataModel.data");
+            var selectedItems = jLinq.from(getData).equals("state", true).select();
+            var colM = $Basis.pqGrid("option", "colModel");
+            colM[2].editable = true;
+            colM[3].editable = true;
+            $OtherTermgrid.pqGrid("option", "colModel", colM);
+            $.each(selectedItems, function (key, value) {
+                $Basis.pqGrid("addRow", { newRow: { 'BasisId': value.BasisId, 'BasisCode': value.BasisCode, 'BasisDesc': value.BasisDesc, 'state': true } })
+            });
+            colM[2].editable = false;
+            colM[3].editable = false;
+            $Basis.pqGrid("option", "colModel", colM);
+            //$OtherTermgrid.pqGrid("selection", {type: 'row', method: 'selectAll' });
+        });
+        $('#btnAddInspectionTerm').on('click', function () {
+            ClosePopupWindow("InspectionItemModal");
+            var getData = $SearchInspectionTermgrid.pqGrid("option", "dataModel.data");
+            var selectedItems = jLinq.from(getData).equals("state", true).select();
+            var colM = $Inspection.pqGrid("option", "colModel");
+            colM[2].editable = true;
+            colM[3].editable = true;
+            $Inspection.pqGrid("option", "colModel", colM);
+            $.each(selectedItems, function (key, value) {
+                $Inspection.pqGrid("addRow", { newRow: { 'InspectionId': value.InspectionId, 'InspectionCode': value.InspectionCode, 'InspectionDesc': value.InspectionDesc, 'state': true } })
+            });
+            colM[2].editable = false;
+            colM[3].editable = false;
+            $Inspection.pqGrid("option", "colModel", colM);
+            //$OtherTermgrid.pqGrid("selection", {type: 'row', method: 'selectAll' });
+        });
+        $("#btnShowItems").on('click', function () {
+            if ($("#Against").val() == "1") {
+                if ($("#ddlStores").val() == "") {
+                    ShowAlert("error", "Please Select Project");
+                    return;
+                }
+            }
+
+            LoadItemgrid();
+        });
+        $("#btnAddItems").on('click', function () {
+            $Itemgrid.pqGrid("reset", { filter: true });
+            ClosePopupWindow("ItemModal");
+            var dataMGrid = [];
+            var getData = $Itemgrid.pqGrid("option", "dataModel.data");
+            var selectedItems = jLinq.from(getData).equals("state", true).select();
+            $.each(selectedItems, function (key, value) {
+                var grdData = {
+                    'ItemID': value.ID, 'ItemName': value.Name, 'PackSize': value.PackSize, 'Rate': value.LastPORate, 'MRP': value.MRP, 'OrderingUnit': value.UnitName,
+                    'Qty': '0', 'FreeQty': '0', 'Amount': '0', 'TaxAmount': '0', 'TransC': '0', 'OctroiC': '0', 'OtherC': '0', 'LoadUnloadC': '0', 'DiscountPer': '0', 'Discount': '0', 'NetAmount': '0',
+                    'DescriptiveName': value.DescriptiveName, 'SGST': '0', 'CGST': '0', 'IGST': '0', 'UGST': '0'
+                }
+                dataMGrid.push(grdData);
+            });
+            $pogrid.pqGrid("option", "dataModel.data", dataMGrid);
+            $pogrid.pqGrid("refreshDataAndView");
+        });
+    });
+    function LoadSearchDeliveryTermgrid() {
+        $("#DeliveryItemModal").dialog({
+            height: 500,
+            width: 700,
+            modal: true,
+            open: function (evt, ui) {
+                $.ajax({
+                    type: "GET",
+                    url: "/DeliveryTerm/GetActiveDeliveryTerms",
+                    datatype: "Json",
+                    success: function (data) {
+                        $SearchDeliveryTermgrid.pqGrid("option", "dataModel.data", data.records);
+                        $SearchDeliveryTermgrid.pqGrid("refreshDataAndView");
+                    }
+                });
+            }
+        });
+    }
+    function LoadSearchPaymentTermgrid() {
+        $("#PaymentItemModal").dialog({
+            height: 500,
+            width: 700,
+            modal: true,
+            open: function (evt, ui) {
+                $.ajax({
+                    type: "GET",
+                    url: "/PaymentTermMaster/GetActivePaymentTerm",
+                    datatype: "Json",
+                    success: function (data) {
+                        $SearchPaymentTermgrid.pqGrid("option", "dataModel.data", data.records);
+                        $SearchPaymentTermgrid.pqGrid("refreshDataAndView");
+                    }
+                });
+            }
+
+        });
+    }
+    function LoadSearchOtherTermgrid() {
+        $("#OtherItemModal").dialog({
+            height: 500,
+            width: 700,
+            modal: true,
+            open: function (evt, ui) {
+                $.ajax({
+                    type: "GET",
+                    url: "/OtherTermMaster/GetActiveOtherTerm",
+                    datatype: "Json",
+                    success: function (data) {
+                        $SearchOtherTermgrid.pqGrid("option", "dataModel.data", data.records);
+                        $SearchOtherTermgrid.pqGrid("refreshDataAndView");
+                    }
+                });
+            }
+        });
+    }
+    function LoadSearchBasisTermgrid() {
+        $("#BasisItemModal").dialog({
+            height: 500,
+            width: 700,
+            modal: true,
+            open: function (evt, ui) {
+                $.ajax({
+                    type: "GET",
+                    url: "/OtherTermMaster/AllBasisTerm",
+                    datatype: "Json",
+                    success: function (data) {
+                        $SearchBasisTermgrid.pqGrid("option", "dataModel.data", data.records);
+                        $SearchBasisTermgrid.pqGrid("refreshDataAndView");
+                    }
+                });
+            }
+        });
+    }
+    function LoadSearchInspectionTermgrid() {
+        $("#InspectionItemModal").dialog({
+            height: 500,
+            width: 700,
+            modal: true,
+            open: function (evt, ui) {
+                $.ajax({
+                    type: "GET",
+                    url: "/OtherTermMaster/AllInspectionTerm",
+                    datatype: "Json",
+                    success: function (data) {
+                        $SearchInspectionTermgrid.pqGrid("option", "dataModel.data", data.records);
+                        $SearchInspectionTermgrid.pqGrid("refreshDataAndView");
+                    }
+                });
+            }
+        });
+    }
+
+    $("#content-tab").tabs({  //Refreshing grids on tab change
+        activate: function (event, ui) {
+            let tabIndx = ui.newTab.index();
+            tabIndx == "1" ? $DeliveryTermgrid.pqGrid("refreshDataAndView") : tabIndx == "2" ? $PaymentTermgrid.pqGrid("refreshDataAndView") : tabIndx == "3" ? $OtherTermgrid.pqGrid("refreshDataAndView") : tabIndx == "5" ? $Basis.pqGrid("refreshDataAndView") : $Inspection.pqGrid("refreshDataAndView")
+        }
+    });
+
 </script>

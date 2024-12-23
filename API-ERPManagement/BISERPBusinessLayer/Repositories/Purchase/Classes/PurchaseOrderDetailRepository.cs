@@ -39,6 +39,7 @@ namespace BISERPBusinessLayer.Repositories.Purchase.Classes
                                 MaterialOfConstruct = row.Field<string>("MaterialOfConstruct"),
                                 IndentRemark = row.Field<string>("IndentRemark"),
                                 SizeOrWeight = row.Field<string>("SizeOrWeight"),
+                                POIndentRemark = row.Field<string>("POIndentRemark"),
                                 SupplierId = row.Field<int?>("SupplierId"),
                                 SupplierName = row.Field<string>("SupplierName"),
                                 Rate = row.Field<double?>("Rate"),
@@ -84,6 +85,7 @@ namespace BISERPBusinessLayer.Repositories.Purchase.Classes
             paramCollection.Add(new DBParameter("MaterialOfConstruct", entity.MaterialOfConstruct, DbType.String));
             paramCollection.Add(new DBParameter("IndentRemark", entity.IndentRemark, DbType.String));
             paramCollection.Add(new DBParameter("SizeOrWeight", entity.SizeOrWeight, DbType.String));
+            paramCollection.Add(new DBParameter("POIndentRemark", entity.POIndentRemark, DbType.String));
             paramCollection.Add(new DBParameter("SupplierName", entity.SupplierName, DbType.String));
             paramCollection.Add(new DBParameter("SupplierId", entity.SupplierId, DbType.Int32));
             paramCollection.Add(new DBParameter("Rate", entity.Rate, DbType.Double));

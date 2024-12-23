@@ -1,0 +1,275 @@
+﻿@model BISERP.Area.Purchase.Models.PurchaseIndentModel
+
+<h5 class="page-header orangeDottedBottomBorder">PO Status</h5>
+
+<div id="SearchGridModal" class="modal fade" role="dialog" data-backdrop="false">
+    <div class="modal-dialog find-search-grid-modal">
+        <div class="modal-content gridmodal-content">
+            <div class="modal-header gridmodal-header">
+                <button type="button" class="close" onclick="closeModal()">&times;</button>
+                <h4 class="modal-title">Search Details</h4>
+            </div>
+            <div class="modal-body">
+                <div class="fill">
+                    <div id="searchgrid"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel-group">
+    <div class="panel panel-default">
+        <div class="panel-groupingBoder">
+            <div class="panel-heading">
+                <div class="panel-title">PO Status</div>
+            </div>
+            <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                <div class="panel-body">
+                    <div class="submit-row">
+                        <div class="col-sm-12">
+                            <button type="button" class="btn btn-info" id="btnSearch">FIND</button>
+                            <button type="button" class="btn btn-primary" id="btnReset">RESET</button>
+                        </div>
+                    </div>
+                    <fieldset class="fieldsetCustom">
+                        <legend class="legendCustom">Item Details</legend>
+                        <div id="StatusGrid"></div>
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var $searchgrid;
+
+    $("#btnSearch").on('click', function () {
+        $("#SearchGridModal").modal('show');
+        LoadSearchgrid('authorised');
+    });
+
+    function LoadSearchgrid() {
+        $.ajax({
+            url: "/PurchaseOrder/PurchaseOrderForRpt",
+            cache: false,
+            async: true,
+            method: "GET",
+            dataType: "JSON",
+            beforeSend: function () {
+                $searchgrid.pqGrid("showLoading");
+            },
+            complete: function () {
+                $searchgrid.pqGrid("hideLoading");
+            },
+            success: function (response) {
+                if (response.records) {
+                    var dataMGrid = [];
+                    for (let i = 0; i < response.records.length; i++) {
+                        if (response.records[i].Status === "Authorised") {
+                            dataMGrid.push(response.records[i]);
+                        }
+                    }
+                    $searchgrid.pqGrid("hideLoading");
+                    $searchgrid.pqGrid("option", "dataModel.data", dataMGrid);
+                }
+                $searchgrid.pqGrid("refreshDataAndView");
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        var dataM = { location: "local", sorting: 'local' }
+        var colM = [
+            {
+                title: "PO No", dataIndx: "PONo", width: '40%',
+                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            },
+            {
+                title: "PO Date", dataIndx: "strPODate", width: '30%', dataType: "string",
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            },
+            {
+                title: "Project", dataIndx: "StoreName", width: '30%', dataType: "string",
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            }
+        ];
+        var SetM = {
+            width: '100%',
+            height: 400,
+            sortable: false,
+            numberCell: { show: false },
+            hoverMode: 'cell',
+            showTop: false,
+            resizable: true,
+            scrollModel: { autoFit: true },
+            draggable: false,
+            wrap: false,
+            editable: false,
+            filterModel: { on: true, mode: "AND", header: true },
+            selectionModel: { type: 'row', mode: 'single' },
+            colModel: colM,
+            dataModel: dataM,
+            pageModel: { type: "local", rPP: 100 },
+            rowClick: function (evt, ui) {
+                var data = ui.rowData;
+                closeModal();
+                loadStatusGrid(data.ID);
+            }
+        }
+        $searchgrid = $("#searchgrid").pqGrid(SetM);
+
+    });
+
+    $("#btnReset").on('click', function () {
+        closeModal();
+        clearFormData();
+    })
+
+    //-----------------------------------StatusGrid (Starts here)-----------------------------------//
+    var StatusGrid_GDM = { location: "local" };
+    var StatusGrid_GCM = [
+        {
+            title: "Item Name",
+            dataIndx: "ItemName",
+            width: '55%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "PO Qty",
+            dataIndx: "POQty",
+            width: '10%',
+            dataType: 'int',
+        },
+        {
+            title: "GRN Qty",
+            dataIndx: "GRNQty",
+            width: '10%',
+            dataType: 'int',
+        },
+        {
+            title: "Balance-Qty",
+            dataIndx: "BalQty",
+            width: '10%',
+            dataType: 'int',
+        },
+        {
+            title: "Status",
+            dataIndx: "POStatus",
+            width: '15%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+    ];
+
+    var setStatusGrid = {
+        height: 500,
+        width: 'auto',
+        maxWidth: '100%',
+        minWidth: 800,
+        sortable: true,
+        autofill: true,
+        numberCell: { show: true },
+        hoverMode: 'row',
+        showTop: true,
+        showTitle: true,
+        showBottom: true,
+        resizable: true,
+        scrollModel: { autoFit: false },
+        filterModel: { on: true, mode: "AND", header: true },
+        draggable: false,
+        hwrap: false,
+        wrap: false,
+        editable: false,
+        columnBorders: true,
+        menuIcon: true,
+        selectionModel: { type: 'row', mode: 'single', cbHeader: false },
+        colModel: StatusGrid_GCM,
+        dataModel: StatusGrid_GDM,
+        pageModel: { type: "local", rPP: 50 },
+        formulas: [
+            ["BalQty", function (rd) {
+                return Math.max(0, rd.POQty - rd.GRNQty);
+            }]
+        ],
+        //toolbar: {
+        //    items: [
+        //        {
+        //            type: "<label><b>Export data to Excel : </b> | </label>"
+        //        },
+        //        {
+        //            type: 'button',
+        //            label: "Export",
+        //            icon: 'ui-icon-arrowthickstop-1-s',
+        //            listener: function () {
+        //                var format = 'xlsx',
+        //                    blob = workbook = this.exportData({
+        //                        format: format,
+        //                        workbook: true,
+        //                        render: true
+        //                    });
+
+        //                blob = pq.excel.exportWb({ workbook: workbook })
+        //                if (typeof blob === "string") {
+        //                    blob = new Blob([blob]);
+        //                }
+
+        //                var fileName = "POStatusReport_" + formatDateTime(new Date()) + "." + format;
+
+        //                saveAs(blob, fileName);
+        //            }
+        //        }
+        //    ]
+        //}
+    }
+    var $StatusGrid = $("#StatusGrid").pqGrid(setStatusGrid);
+    function loadStatusGrid(POID) {
+        var antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            url: "/PurchaseOrder/GetPOStateDetails",
+            data: { POID: POID },
+            dataType: "json",
+
+            beforeSend: function () {
+                $("#StatusGrid").pqGrid("showLoading");
+            },
+
+            complete: function () {
+                $("#StatusGrid").pqGrid("hideLoading");
+            },
+
+            success: function (response) {
+                const grid = $("#StatusGrid").pqGrid();
+
+                if (response.length > 0) {
+                    grid.pqGrid("option", "dataModel.data", response);
+                } else {
+                    console.warn("No data found or an issue occurred: ", response.message);
+                    grid.pqGrid("option", "dataModel.data", []);
+                }
+
+                grid.pqGrid("refreshDataAndView");
+                PqGridRefreshClick(grid);
+            },
+
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Error loading Location Wise Sales Report grid:", textStatus, errorThrown);
+                console.error("Response text:", jqXHR.responseText);
+                $("#StatusGrid").pqGrid("hideLoading");
+            }
+        });
+
+    }
+    //-----------------------------------StatusGrid (Ends here)-----------------------------------//
+
+    function clearFormData() {
+        ClearParamGrid('StatusGrid');
+    }
+    function closeModal() {
+        $("#SearchGridModal").modal('hide');
+    }
+</script>

@@ -26,5 +26,6 @@ namespace BISERPBusinessLayer.Repositories.Purchase.Interfaces
         IEnumerable<PurchaseOrderEntities> GetPoForAmmendmet(int PoId);
         bool PurchaseOrderClose(PurchaseOrderEntities entity);
         IEnumerable<PurchaseOrderEntities> GetPurchaseOrderForReport();
+        IEnumerable<POStateDetailsEntities> GetPOStateDetails(int? IndentId);
     }
 }

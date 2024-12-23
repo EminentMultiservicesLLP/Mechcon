@@ -22,6 +22,7 @@ namespace BISERPBusinessLayer.Entities.Store
         public string MaterialOfConstruct { get; set; }
         public string IndentRemark { get; set; }
         public string SizeOrWeight { get; set; }
+        public string POIndentRemark { get; set; }
         public Nullable<double> FreeQty { get; set; }
         public Nullable<double> Rate { get; set; }
         public int BatchID { get; set; }

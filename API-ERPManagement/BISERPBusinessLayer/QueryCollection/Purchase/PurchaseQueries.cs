@@ -50,6 +50,7 @@ namespace BISERPBusinessLayer.QueryCollection.Purchase
         public const string AuthCancelPurchaseOrder = "sp_AuthCancelPurchaseOrder";
         public const string PurchaseOrderAmendment = "sp_PurchaseOrderAmendment";
         public const string PurchaseOrderForReport = "sp_PurchaseOrderForRpt";
+        public const string GetPOStateDetails = "sp_GetPOStateDetails";
 
 
         public const string DeleteIndentItem = "sp_DelIndentDetail";
@@ -77,6 +78,7 @@ namespace BISERPBusinessLayer.QueryCollection.Purchase
         public const string GetProduct = "dbsp_GetProduct";
         public const string GetProject = "dbsp_GetProject";
         public const string GetProductItem = "dbsp_GetProductItem";
+        public const string GetPRStateDetails = "sp_GetPRStateDetails";
 
         /////////////////////////////////RFQ////////////////////////////////////
 

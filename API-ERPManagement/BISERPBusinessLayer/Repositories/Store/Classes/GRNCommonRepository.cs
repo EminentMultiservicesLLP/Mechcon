@@ -244,6 +244,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                         MaterialOfConstruct = dtrow.Field<string>("MaterialOfConstruct"),
                         IndentRemark = dtrow.Field<string>("IndentRemark"),
                         SizeOrWeight = dtrow.Field<string>("SizeOrWeight"),
+                        POIndentRemark = dtrow.Field<string>("POIndentRemark"),
                         Qty = dtrow.Field<double?>("Qty"),
                         FreeQty = dtrow.Field<double?>("FreeQty"),
                         Rate = dtrow.Field<double?>("Rate"),

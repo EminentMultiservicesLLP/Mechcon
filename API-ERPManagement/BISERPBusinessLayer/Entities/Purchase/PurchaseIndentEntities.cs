@@ -102,4 +102,12 @@ namespace BISERPBusinessLayer.Entities.Purchase
         public string ItemName { get; set; }
         public double ItemQty { get; set; }
     }
+    public class PRStateDetailsEntities
+    {
+        public string ItemName { get; set; }
+        public int PRQty { get; set; }
+        public int PRAuthorisedQty { get; set; }
+        public int POQty { get; set; }
+        public string PRStatus { get; set; }
+    }
 }

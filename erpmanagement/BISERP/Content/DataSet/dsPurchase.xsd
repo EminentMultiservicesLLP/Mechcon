@@ -75,6 +75,7 @@
               <xs:element name="IndentRemark" msprop:Generator_ColumnVarNameInTable="columnIndentRemark" msprop:Generator_ColumnPropNameInRow="IndentRemark" msprop:Generator_ColumnPropNameInTable="IndentRemarkColumn" msprop:Generator_UserColumnName="IndentRemark" type="xs:string" minOccurs="0" />
               <xs:element name="Make" msprop:Generator_ColumnVarNameInTable="columnMake" msprop:Generator_ColumnPropNameInRow="Make" msprop:Generator_ColumnPropNameInTable="MakeColumn" msprop:Generator_UserColumnName="Make" type="xs:string" minOccurs="0" />
               <xs:element name="MaterialOfConstruct" msprop:Generator_ColumnVarNameInTable="columnMaterialOfConstruct" msprop:Generator_ColumnPropNameInRow="MaterialOfConstruct" msprop:Generator_ColumnPropNameInTable="MaterialOfConstructColumn" msprop:Generator_UserColumnName="MaterialOfConstruct" type="xs:string" minOccurs="0" />
+              <xs:element name="POIndentRemark" msprop:Generator_ColumnVarNameInTable="columnPOIndentRemark" msprop:Generator_ColumnPropNameInRow="POIndentRemark" msprop:Generator_ColumnPropNameInTable="POIndentRemarkColumn" msprop:Generator_UserColumnName="POIndentRemark" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
@@ -118,6 +119,7 @@
               <xs:element name="strPreparedOn" msprop:Generator_ColumnVarNameInTable="columnstrPreparedOn" msprop:Generator_ColumnPropNameInRow="strPreparedOn" msprop:Generator_ColumnPropNameInTable="strPreparedOnColumn" msprop:Generator_UserColumnName="strPreparedOn" type="xs:string" minOccurs="0" />
               <xs:element name="strVerifiedOn" msprop:Generator_ColumnVarNameInTable="columnstrVerifiedOn" msprop:Generator_ColumnPropNameInRow="strVerifiedOn" msprop:Generator_ColumnPropNameInTable="strVerifiedOnColumn" msprop:Generator_UserColumnName="strVerifiedOn" type="xs:string" minOccurs="0" />
               <xs:element name="strAuthorisedOn" msprop:Generator_ColumnVarNameInTable="columnstrAuthorisedOn" msprop:Generator_ColumnPropNameInRow="strAuthorisedOn" msprop:Generator_ColumnPropNameInTable="strAuthorisedOnColumn" msprop:Generator_UserColumnName="strAuthorisedOn" type="xs:string" minOccurs="0" />
+              <xs:element name="Details" msprop:Generator_ColumnVarNameInTable="columnDetails" msprop:Generator_ColumnPropNameInRow="Details" msprop:Generator_ColumnPropNameInTable="DetailsColumn" msprop:Generator_UserColumnName="Details" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>

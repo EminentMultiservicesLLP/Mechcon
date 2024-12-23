@@ -519,5 +519,27 @@ namespace BISERP.Area.Purchase.Controllers
             }
             return jResult;
         }
+
+        [HttpGet]
+        public async Task<JsonResult> GetPOStateDetails(int? POID)
+        {
+            try
+            {
+                string _url = $"{url}/purchaseorder/getPOStateDetails/{POID}{Common.Constants.JsonTypeResult}";
+                List<POStateDetailsModel> data = await Common.AsyncWebCalls.GetAsync<List<POStateDetailsModel>>(client, _url, CancellationToken.None);
+
+                if (data == null || !data.Any())
+                {
+                    return Json(new { error = "No data found." }, JsonRequestBehavior.AllowGet);
+                }
+
+                return Json(data, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error in GetPOStateDetails method:" + Environment.NewLine + ex.ToString());
+                return Json(new { error = "An error occurred while retrieving the data." }, JsonRequestBehavior.AllowGet);
+            }
+        }
     }
 }

@@ -2094,6 +2094,7 @@ namespace BISERP.Views.Shared
                         mdt.Make,
                         mdt.MaterialOfConstruct,
                         mdt.IndentRemark,
+                        mdt.POIndentRemark,
                     };
                 //var result = model.ListToModel(grn);
 

@@ -102,11 +102,13 @@ namespace BISERPBusinessLayer.QueryCollection.Masters
         public const string InsertPaymentMaster = "sp_InsUpd_INV_MST_PaymentTerms";
         public const string UpdatePaymentMasterById = "sp_InsUpd_INV_MST_PaymentTerms";
 
-        //new
         public const string GetAllProjectTC = "sp_INV_MST_GetAllProjectTC"; 
         public const string InsertProjectTCMaster = "sp_InsUpd_INV_MST_ProjectTC";
         public const string UpdateProjectTCMaster = "sp_InsUpd_INV_MST_ProjectTC";
-        //
+
+        public const string GetAllProduct = "sp_INV_MST_GetAllProduct";
+        public const string InsertProductMaster = "sp_InsUpd_INV_MST_Product";
+        public const string UpdateProductMaster = "sp_InsUpd_INV_MST_Product";
 
         public const string GetAllOthers = "sp_INV_MST_GetAllOthers";
         public const string GetOthersById = "sp_INV_MST_GetOthersById";

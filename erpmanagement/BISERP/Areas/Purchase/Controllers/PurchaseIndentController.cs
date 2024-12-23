@@ -197,7 +197,7 @@ namespace BISERP.Area.Purchase.Controllers
             }
 
         }
-        //new
+
         [HttpGet]
         public async Task<JsonResult> PurchaseIndentForVerification(int storeId)
         {
@@ -220,7 +220,6 @@ namespace BISERP.Area.Purchase.Controllers
             }
             return jResult;
         }
-        //EndNew
 
         [HttpGet]
         public async Task<JsonResult> PurchaseIndentForAuthorization(int storeId)
@@ -296,12 +295,9 @@ namespace BISERP.Area.Purchase.Controllers
             }
             Pindent.IndentId = indent.IndentId;
             Pindent.AuthorizationStatusId = indent.AuthorizationStatusId;
-            //Pindent.Authorised = indent.Authorised;
-            //Pindent.Cancelled = indent.Cancelled;
             Pindent.AuthorisedRemarks = indent.AuthorisedRemarks;
 
             Pindent.IndentDetails = _indentDetails;
-            //indent.IndentDetails = indentDetails;            
             Pindent.InsertedBy = Convert.ToInt32(Session["AppUserId"].ToString());
             Pindent.InsertedON = System.DateTime.Now;
             Pindent.InsertedIPAddress = BISERP.Common.Constants.IpAddress;
@@ -560,5 +556,28 @@ namespace BISERP.Area.Purchase.Controllers
                 return Json(new { success = false, message = "An error occurred while retrieving enquiry" }, JsonRequestBehavior.AllowGet);
             }
         }
+
+        [HttpGet]
+        public async Task<JsonResult> GetPRStateDetails(int? IndentId)
+        {
+            try
+            {
+                string _url = $"{url}/pindent/getPRStateDetails/{IndentId}{Common.Constants.JsonTypeResult}";
+                List<PRStateDetailsModel> data = await Common.AsyncWebCalls.GetAsync<List<PRStateDetailsModel>>(client, _url, CancellationToken.None);
+
+                if (data == null || !data.Any())
+                {
+                    return Json(new { error = "No data found." }, JsonRequestBehavior.AllowGet);
+                }
+
+                return Json(data, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error in GetPRStateDetails method:" + Environment.NewLine + ex.ToString());
+                return Json(new { error = "An error occurred while retrieving the data." }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
     }
 }

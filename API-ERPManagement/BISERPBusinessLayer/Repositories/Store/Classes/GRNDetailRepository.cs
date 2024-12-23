@@ -45,6 +45,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                                 MaterialOfConstruct = row.Field<string>("MaterialOfConstruct"),
                                 IndentRemark = row.Field<string>("IndentRemark"),
                                 SizeOrWeight = row.Field<string>("SizeOrWeight"),
+                                POIndentRemark = row.Field<string>("POIndentRemark"),
                                 Qty = row.Field<double?>("Qty"),
                                 FreeQty = row.Field<double?>("FreeQty"),
                                 Rate = row.Field<double?>("Rate"),
@@ -102,6 +103,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
             paramCollection.Add(new DBParameter("MaterialOfConstruct", entity.MaterialOfConstruct, DbType.String));
             paramCollection.Add(new DBParameter("IndentRemark", entity.IndentRemark, DbType.String));
             paramCollection.Add(new DBParameter("SizeOrWeight", entity.SizeOrWeight, DbType.String));
+            paramCollection.Add(new DBParameter("POIndentRemark", entity.POIndentRemark, DbType.String));
             paramCollection.Add(new DBParameter("FreeQty", entity.FreeQty, DbType.Double));
             paramCollection.Add(new DBParameter("Rate", entity.Rate, DbType.Double));
             paramCollection.Add(new DBParameter("TaxRate", entity.TaxRate, DbType.Double));
@@ -169,6 +171,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
             paramCollection.Add(new DBParameter("MaterialOfConstruct", entity.MaterialOfConstruct, DbType.String));
             paramCollection.Add(new DBParameter("IndentRemark", entity.IndentRemark, DbType.String));
             paramCollection.Add(new DBParameter("SizeOrWeight", entity.SizeOrWeight, DbType.String));
+            paramCollection.Add(new DBParameter("POIndentRemark", entity.POIndentRemark, DbType.String));
             paramCollection.Add(new DBParameter("FreeQty", entity.FreeQty, DbType.Double));
             paramCollection.Add(new DBParameter("Rate", entity.Rate, DbType.Double));
             paramCollection.Add(new DBParameter("TaxRate", entity.TaxRate, DbType.Double));

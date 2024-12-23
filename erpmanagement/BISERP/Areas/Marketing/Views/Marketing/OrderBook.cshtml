@@ -713,14 +713,12 @@
 
 
     function loadConsignee(enquiryID, consigneeID) {
-        debugger
         $.ajax({
             type: "GET",
             url: "/OrderBook/GetConsignee",
             data: { EnquiryID: enquiryID },
             dataType: "json",
             success: function (data) {
-                debugger
                 const $consigneeDropdown = $('#ConsigneeID');
                 $consigneeDropdown.empty();
 
@@ -1252,7 +1250,6 @@
         if (!validateFormData()) {
             return false;
         }
-        debugger
         let projectTCData = $ProjectTCgrid.pqGrid("option", "dataModel.data").filter(item => item.State);
         let paygridData = $PaymentTermgrid.pqGrid("option", "dataModel.data").filter(item => item.State);
         let delgridData = $DeliveryTermgrid.pqGrid("option", "dataModel.data").filter(item => item.State);
@@ -2252,7 +2249,6 @@
 
 
     $('#btnExport').on('click', function () {
-        debugger;
         if (tempOrderBookID === "" || tempOrderBookID === 0) {
             ShowAlert("error", "Please Select Order Book No");
             return;
@@ -2371,7 +2367,6 @@
     //-----------------------------------UserGrid (Ends here)-----------------------------------//
 
     function SendMail(projectCode, message, fileSaveMsg) {
-        debugger;
         $('#ContentViewSection').append('<div style="position:fixed;" id="loadingDiv1"><div class="loader1">Loading...</div></div>');
 
         const gridData = $("#UserGrid").pqGrid("option", "dataModel.data");

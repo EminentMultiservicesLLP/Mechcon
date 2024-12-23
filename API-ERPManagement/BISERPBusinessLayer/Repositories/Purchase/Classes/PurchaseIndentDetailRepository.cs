@@ -160,6 +160,7 @@ namespace BISERPBusinessLayer.Repositories.Purchase.Classes
             paramCollection.Add(new DBParameter("StoreId", StoreId, DbType.Int32));
             paramCollection.Add(new DBParameter("IndentId", IndentId, DbType.Int32));
             paramCollection.Add(new DBParameter("ItemId", entity.ItemId, DbType.Int32));
+            paramCollection.Add(new DBParameter("UnitName", entity.UnitName, DbType.String));
             paramCollection.Add(new DBParameter("ItemQty", entity.ItemQty, DbType.Double));
             paramCollection.Add(new DBParameter("ItemRate", entity.ItemRate, DbType.Double));
             paramCollection.Add(new DBParameter("EstimatedCost", entity.EstimatedCost, DbType.Double));

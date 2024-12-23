@@ -92,6 +92,7 @@ namespace BISERPBusinessLayer.Entities.Purchase
         public string AuthorizisePerson { get; set; }
         public string Preparedbyname { get; set; }
         public string Transport { get; set; }
+        public string PurchaseTerm { get; set; }
         public string GSTIN { get; set; }
         public string SupEmail { get; set; }
         public string SupContactPerson { get; set; }
@@ -133,4 +134,12 @@ namespace BISERPBusinessLayer.Entities.Purchase
         public string strVerifiedOn { get; set; }
         public string strAuthorisedOn { get; set; }
     }
+    public class POStateDetailsEntities
+    {
+        public string ItemName { get; set; }
+        public int POQty { get; set; }
+        public int GRNQty { get; set; }
+        public string POStatus { get; set; }
+    }
+
 }

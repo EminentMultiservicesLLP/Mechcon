@@ -483,7 +483,7 @@
     $(document).ready(function () {
         colIID = [
             {
-                dataIndx: "state", Width: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                dataIndx: "state", minWidth: 25, maxWidth: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
                 editor: false, dataType: 'bool',
                 title: "<input type='checkbox' />",
                 cb: { select: true, all: false, header: true }
@@ -502,11 +502,12 @@
                 title: "Description", dataIndx: "DescriptiveName", minWidth: 300, dataType: "string", editable: true,
                 editor: { type: "textarea", attr: "rows=5" }, hidden: true
             },
-            { title: "Unit", dataIndx: "UnitName", width: 150, dataType: "string", resizable: false, editable: false },
+            { title: "Unit", dataIndx: "UnitName", width: 100, dataType: "string", resizable: false, editable: false },
             { title: "Make", dataIndx: "Make", width: 150, dataType: "string", resizable: true, editable: false },
             { title: "MOC", dataIndx: "MaterialOfConstruct", width: 150, dataType: "string", resizable: true, editable: false },
-            { title: "Indent Remark", dataIndx: "IndentRemark", width: 300, dataType: "string", resizable: true, editable: false },
+            { title: "PR Remark", dataIndx: "IndentRemark", width: 250, dataType: "string", resizable: true, editable: false },
             { title: "Size/Wt.", dataIndx: "SizeOrWeight", width: 90, dataType: "string", resizable: true, editable: false },
+            { title: "PO Remark", dataIndx: "POIndentRemark", width: 250, dataType: "string", resizable: true, editable: false },
             { title: "Pack Size", dataIndx: "PackSize", width: 150, dataType: "double", resizable: false, editable: false, hidden: true },
 
             { title: "BatchNo", dataIndx: "BatchName", width: 150, dataType: "float", resizable: false, editable: false, hidden: true },

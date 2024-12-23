@@ -27,5 +27,6 @@ namespace BISERPBusinessLayer.Repositories.Purchase.Interfaces
         IEnumerable<ProductEntities> GetProduct();
         IEnumerable<ProjectEntities> GetProject(int ProductID);
         IEnumerable<ProductItemEntities> GetProductItem(int ProductID, int? ProjectID);
+        IEnumerable<PRStateDetailsEntities> GetPRStateDetails(int? IndentId);
     }
 }

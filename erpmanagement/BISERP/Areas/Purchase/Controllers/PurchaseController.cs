@@ -135,6 +135,14 @@ namespace BISERP.Areas.Purchase.Controllers
         {
             return PartialView();
         }
+        public ActionResult PRStatus()
+        {
+            return PartialView();
+        }
+        public ActionResult POStatus()
+        {
+            return PartialView();
+        }
         public async Task<ActionResult> RptPurchase()
         {
             int MenuId = 170;

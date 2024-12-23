@@ -1300,7 +1300,6 @@
                     );
                 }
                 function v() {
-                    //debugger;
                     var t = n.event.target;
                     n.select(t).on(l, d).on(c, m), f.push(t);
                     for (var r = n.event.changedTouches, o = 0, s = r.length; o < s; ++o) i[r[o].identifier] = null;
@@ -1432,7 +1431,6 @@
                     return arguments.length ? ((v = +n), _) : v;
                 }),
                 (_.x = function (n) {
-                    //debugger;
                     return arguments.length ? ((c = n), (l = n.copy()), (h = { x: 0, y: 0, k: 1 }), _) : c;
                 }),
                 (_.y = function (n) {
@@ -2568,7 +2566,6 @@
         return i ? ((n.y = (r = +i[0]) + (r > 68 ? 1900 : 2e3)), e + i[0].length) : -1;
     }
     function Kt(n, t, e) {
-        //debugger;
         return /^[+-]\d{4}$/.test((t = t.slice(e, e + 5))) ? ((n.Z = -t), e + 5) : -1;
     }
     function Qt(n, t, e) {
@@ -3061,7 +3058,6 @@
                                     f = c.length;
                                 if (f)
                                     for (var s = c[0], h = s[0], p = s[1] / 2 + kn / 4, g = Math.sin(p), v = Math.cos(p), d = 1; ;) {
-                                        //debugger;
                                         d === f && (d = 0);
                                         var y = (n = c[d])[0],
                                             m = n[1] / 2 + kn / 4,
@@ -5903,7 +5899,6 @@
                 var i = t.call(this, n, r);
                 return (
                     (function n(t, e, r, i) {
-                        //debugger;
                         var u = t.children;
                         if (((t.x = e), (t.y = t.depth * i), (t.dx = r), (t.dy = i), u && (o = u.length))) {
                             var o,
@@ -6411,14 +6406,12 @@
                         p = f,
                         g = f;
                     Cu(f, function (n) {
-                        //debugger;
                         n.x < h.x && (h = n), n.x > p.x && (p = n), n.depth > g.depth && (g = n);
                     });
                     var v = e(h, p) / 2 - h.x,
                         d = r[0] / (p.x + e(p, h) / 2 + v),
                         y = r[1] / (g.depth || 1);
                     Cu(f, function (n) {
-                        //debugger;
                         (n.x = (n.x + v) * d), (n.y = n.depth * y);
                     });
                 }
@@ -6454,7 +6447,6 @@
             }
         function l(n) {
             let xpos = n.x * r[0], ypos = n.depth * r[1];
-            //debugger;
             //if (n.depth >= 3) {
             //    if (n.parent.children.length === 1) { xpos = n.x * 60; ypos = n.depth * r[1] * (Math.floor(Math.random() * 3) + 1.5); }
             //    else { xpos = n.x * r[0]; ypos = n.depth * r[1]; }

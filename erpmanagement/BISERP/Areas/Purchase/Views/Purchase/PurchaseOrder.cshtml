@@ -159,6 +159,15 @@
                                 <div class="col-sm-0" style="display: none">
                                     @Html.TextBox("UtilizedBudget")
                                 </div>
+                                <div class="col-sm-2">
+                                    <label for="PurchaseTerm">Purchase Term</label>
+                                    <select class="form-control" id="PurchaseTerm">
+                                        <option value="">Select Purchase Term</option>
+                                        <option value="t1">t1</option>
+                                        <option value="t2">t2</option>
+                                        <option value="t3">t3</option>
+                                    </select>
+                                </div>
                             </div>
                             <div class="submit-row">
                                 <button type="button" class="btn btn-primary" data-toggle="modal" id="btnShowItems">Add Item</button>
@@ -199,7 +208,7 @@
                             <li><a href="#tab2" data-toggle="tab" style="margin: 0;">Delivery Terms</a></li>
                             <li><a href="#tab3" data-toggle="tab" style="margin: 0;">Payment Terms</a></li>
                             <li><a href="#tab4" data-toggle="tab" style="margin: 0;">Freight</a></li>
-                            <li><a href="#tab5" data-toggle="tab" style="margin: 0;">Details</a></li>
+                            <li><a href="#tab5" data-toggle="tab" style="margin: 0;">Special Notes</a></li>
                             <li><a href="#tab6" data-toggle="tab" style="margin: 0;">P&F</a></li>
                             <li><a href="#tab7" data-toggle="tab" style="margin: 0;">Inspection</a></li>
                         </ul>
@@ -264,10 +273,10 @@
                                     <div class="col-sm-12">
                                         <div class="form-group">
                                             <div class="col-sm-1">
-                                                @Html.LabelFor(model => model.Details)
+                                                <label for="Details">Special Notes</label>
                                             </div>
                                             <div class="col-sm-4">
-                                                @Html.TextAreaFor(model => model.Details, new { @class = "form-control" })
+                                                @Html.TextAreaFor(model => model.Details, new { @class = "form-control", style = "width: 1170px; height: 164px;" })
                                             </div>
                                         </div>
                                     </div>
@@ -402,6 +411,23 @@
     var suplierid;
     var $Basis; var $SearchBasisTermgrid;
     var tempcategoryId = 0, budgetbalanc = 0, selectedPORowIndx = null;
+    var deliveryAddress = "";
+    loadMechconData();
+    function loadMechconData() {
+        $.ajax({
+            type: "GET", //HTTP POST Method
+            url: '/MechconMaster/GetMechconData', // Controller/View
+            success: function (data) {
+                if (data != null) {
+                    deliveryAddress = data.Address;
+                    $("#DeliveryAddress").val(deliveryAddress);
+                }
+                else {
+                    ShowAlert("error", "Failed to load Data");
+                }
+            }
+        });
+    }
 
     $("#ddlStores").prop('disabled', true);
     $("#RFQNo").prop('disabled', true);//RFQNo
@@ -618,7 +644,7 @@
     }
     function ClearFormOnReset() {
         $("#ID").val(""); $("#PONo").val(""); $("#PODate").datepicker().datepicker("setDate", new Date()); $("#RefNo").val(""); $("#RFQNo").val(""); $("#RFQId").val("");
-        $("#SupplierName").val(""); $("#SupplierId").val(""); $("#DeliveryAddress").val(""); $("#ddlStores").val("0");
+        $("#SupplierName").val(""); $("#SupplierId").val(""); $("#DeliveryAddress").val(deliveryAddress); $("#ddlStores").val("0");
         $("#Amount").val(""); $("#Tax").val(""); $("#OtherCharges").val(""); $("#Discount").val(""); $("#GrandTotal").val(""); $('#BalanceDue').val("");
         ClearParamGrid("pogrid");
         ClearParamGrid("DeliveryTermgrid");
@@ -638,8 +664,8 @@
     }
     function ClearForm() {
         $("#ID").val(""); $("#PONo").val(""); $("#PODate").datepicker().datepicker("setDate", new Date()); $("#RefNo").val(""); $("#RFQNo").val(""); $("#RFQId").val("");
-        $("#SupplierName").val(""); $("#SupplierId").val(""); $("#DeliveryAddress").val(""); $("#ddlStores").val("0"); $("#VendorId").val("");
-        $("#Amount").val(""); $("#Tax").val(""); $("#OtherCharges").val(""); $("#Discount").val(""); $("#GrandTotal").val(""); $("#Transport").val(""); $("#BED").val("");
+        $("#SupplierName").val(""); $("#SupplierId").val(""); $("#DeliveryAddress").val(deliveryAddress); $("#ddlStores").val("0"); $("#VendorId").val("");
+        $("#Amount").val(""); $("#Tax").val(""); $("#OtherCharges").val(""); $("#Discount").val(""); $("#GrandTotal").val(""); $("#Transport").val(""); $("#PurchaseTerm").val(""); $("#BED").val("");
         $("#Edu").val(""); $("#PoVendorName").val(""); $("#PoVendorId").val("");
         $("#SHECess").val("");
         $('#BalanceDue').val("");
@@ -817,6 +843,7 @@
                 RFQId: $("#RFQId").val(),
                 SupplierID: $("#SupplierID").val(),
                 Transport: $("#Transport").val(),
+                PurchaseTerm: $("#PurchaseTerm").val(),
                 DeliveryAddress: $("#DeliveryAddress").val(),
                 StoreId: $("#ddlStores").val(),
                 Amount: $("#Amount").val(),
@@ -940,7 +967,7 @@
                     var record = ui.rowData;
                     $("#SupplierID").val(record.ID);
                     $("#SupplierName").val(record.Name);
-                    $("#DeliveryAddress").val(record.FullAddress);
+                    //$("#DeliveryAddress").val(record.FullAddress);
                     ClosePopupWindow("SupplierModal");
                     var colM = $pogrid.pqGrid("option", "colModel");
                     colM[2].editable = false;
@@ -1335,8 +1362,9 @@
                 },
                 { title: "Make", dataIndx: "Make", width: 200, dataType: "string", align: "left", editable: false },
                 { title: "MOC", dataIndx: "MaterialOfConstruct", width: 200, dataType: "string", align: "left", editable: false },
-                { title: "Indent Remark", dataIndx: "IndentRemark", width: 300, dataType: "string", align: "left", editable: false },
+                { title: "PR Remark", dataIndx: "IndentRemark", width: 300, dataType: "string", align: "left", editable: false },
                 { title: "Size/Wt.", dataIndx: "SizeOrWeight", width: 70, dataType: "string", align: "left", editable: true },
+                { title: "PO Remark", dataIndx: "POIndentRemark", width: 300, dataType: "string", align: "left", editable: true },
                 { title: "PR PendingQty", dataIndx: "PendingQty", width: 70, dataType: "float", align: "left", editable: false },
                 { title: "Qty", dataIndx: "Qty", width: 70, dataType: "float", align: "left" },
                 { title: "Free Qty", dataIndx: "FreeQty", width: 90, dataType: "float", align: "left", hidden: true},
@@ -1594,6 +1622,7 @@
                     $("#ddlStores").val(record.StoreId);
                     $("#Against").val(record.Againstid);
                     $("#Transport").val(record.Transport);
+                    $("#PurchaseTerm").val(record.PurchaseTerm);
                     $("#BED").val(record.BED);
                     $("#Edu").val(record.Edu);
                     $("#SHECess").val(record.SHECess);
@@ -1643,7 +1672,7 @@
                             $.each(data.PODetails, function (index, value) {
                                 var grdData = {
                                     'ID': value.ID, 'POIndDtlId': value.POIndDtlId, 'ItemID': value.ItemID, 'ItemName': value.ItemName, 'TaxRate': value.TaxRate, 'Qty': value.Qty, 'PackSize': value.PackSize, 'Rate': value.Rate, 'MRP': value.MRP,
-                                    'OrderingUnit': value.OrderingUnit, 'Make': value.Make, 'MaterialOfConstruct': value.MaterialOfConstruct, 'IndentRemark': value.IndentRemark, 'SizeOrWeight': value.SizeOrWeight, 'FreeQty': value.FreeQty, 'Amount': value.Amount,
+                                    'OrderingUnit': value.OrderingUnit, 'Make': value.Make, 'MaterialOfConstruct': value.MaterialOfConstruct, 'IndentRemark': value.IndentRemark, 'SizeOrWeight': value.SizeOrWeight, 'POIndentRemark': value.POIndentRemark,'FreeQty': value.FreeQty, 'Amount': value.Amount,
                                     'TaxIds': value.TaxIds, 'Tax': value.Tax, 'TaxAmount': value.TaxAmount, 'TransC': value.TransC, 'OctroiC': value.OctroiC,
                                     'OtherC': value.OtherC, 'LoadUnloadC': value.LoadUnloadC, 'DiscountPer': value.discountper, 'Discount': value.Discount, 'NetAmount': value.NetAmount,
                                     'SupplierName': value.SupplierName, 'DescriptiveName': value.DescriptiveName, 'SGST': value.SGST, 'CGST': value.CGST, 'IGST': value.IGST, 'UGST': value.UGST, 'HSNCode': value.HSNCode, 'SavedQty': value.Qty
@@ -2493,7 +2522,7 @@
             if (ui.rowData) {
                 var record = ui.rowData;
 
-                $("#DeliveryAddress").val(record.VenderAdd);
+                //$("#DeliveryAddress").val(record.VenderAdd);
                 $("#VendorId").val(record.VendorId);
                 ClosePopupWindow("VendorModal");
             }
@@ -2661,7 +2690,6 @@
                             }
                             $("#SupplierName").val(data.SupplierName);
                             $("#SupplierID").val(data.SupplierID);
-                            $("#DeliveryAddress").val(data.SupplierAddress);
 
                             var dataTerms = [];
                             $.each(data.RFQDeliveryTerms, function (index, value) {

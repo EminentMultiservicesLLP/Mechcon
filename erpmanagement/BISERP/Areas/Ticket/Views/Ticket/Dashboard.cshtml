@@ -187,7 +187,6 @@
             data: { financialYear },
             dataType: "json",
             success(response) {
-                debugger
                 if (response.success && Array.isArray(response.records)) {
                     response.records.forEach(({ StatusID, TicketCount }) => {
                         const statusElement = $(`#StatusID_${StatusID}`);

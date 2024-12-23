@@ -1188,7 +1188,7 @@
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.25in</Height>
+                  <Height>0.98958in</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -1406,7 +1406,7 @@
             <DataSetName>dsPurchaseIndent</DataSetName>
             <Top>0.27903in</Top>
             <Left>0.09261cm</Left>
-            <Height>2.41667in</Height>
+            <Height>3.15625in</Height>
             <Width>8.01563in</Width>
             <Style>
               <Border>
@@ -1467,7 +1467,7 @@
             </Style>
           </Textbox>
         </ReportItems>
-        <Height>2.72695in</Height>
+        <Height>3.43528in</Height>
         <Style>
           <Border>
             <Style>None</Style>

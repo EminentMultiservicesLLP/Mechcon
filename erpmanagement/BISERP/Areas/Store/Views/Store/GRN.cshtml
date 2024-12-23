@@ -1,5 +1,10 @@
 ﻿@model BISERP.Areas.Store.Models.Store.GRNModel
 @Scripts.Render("~/bundles/jquerymodels")
+<style>
+    td, th {
+        padding: 5px;
+    }
+</style>
 <script>
     $(function () {
         $('#GRNDate').datetimepicker({
@@ -50,8 +55,6 @@
             $(".nonEditdatepicker").datepicker("option", "showAnim", "fadeIn");
         });
     });
-
-
 </script>
 @using (Html.BeginForm())
 {
@@ -286,7 +289,7 @@
                         </div>
                     </div>*@
             </div>
-            <div class="col-sm-4" style="display: none">
+            <div class="col-sm-4">
                 <table align="right">
                     <tr>
                         <td>Gross Amount</td>
@@ -300,7 +303,7 @@
                             @Html.TextBoxFor(m => m.TotalTaxamt, new Dictionary<string, object> { { "Id", "TaxAmount" }, { "readonly", "true" }, { "class", "form-control" } })
                         </td>
                     </tr>
-                    <tr>
+                    <tr hidden>
                         <td>Other Charges</td>
                         <td>
                             @Html.TextBoxFor(m => m.TotalOtherAmt, new Dictionary<string, object> { { "Id", "OtherCharges" }, { "readonly", "true" }, { "class", "form-control" } })
@@ -312,12 +315,12 @@
                             @Html.TextBoxFor(m => m.TotalDisc, new Dictionary<string, object> { { "Id", "Discount" }, { "readonly", "true" }, { "class", "form-control" } })
                         </td>
                     </tr>
-                    <tr>
+                    <tr hidden>
                         <td>@Html.Label("P & F %")</td>
                         <td>@Html.TextBoxFor(model => model.BED, new { @class = "form-control", style = "width: 75px" })</td>
                         <td><input disabled class="form-control readonly" id="BedAmt" name="BedAmt" style="margin-left:-75px " /></td>
                     </tr>
-                    <tr>
+                    <tr hidden>
                         <td>@Html.Label("Frieght %")</td>
                         <td>
                             @Html.TextBoxFor(model => model.Edu, new { @class = "form-control", style = "width: 75px" })
@@ -325,7 +328,7 @@
                         </td>
                         <td><input disabled class="form-control readonly" id="educessamt" name="educessamt" style="margin-left:-75px " /></td>
                     </tr>
-                    <tr style="display:none">
+                    <tr hidden>
                         <td>@Html.Label("SHE Cess %")</td>
                         <td> @Html.TextBoxFor(model => model.SHECess, new { @class = "form-control", style = "width: 75px" }) </td>
                         <td><input disabled class="form-control readonly" id="Shecessamt" name="Shecessamt" style="margin-left:-75px " /></td>
@@ -342,7 +345,7 @@
                             @Html.TextBoxFor(m => m.TotalAmount, new Dictionary<string, object> { { "Id", "GrandTotal" }, { "readonly", "true" }, { "class", "form-control" } })
                         </td>
                     </tr>
-                    <tr>
+                    <tr hidden>
                         <td>Rounding Off</td>
                         <td>
                             @Html.TextBoxFor(m => m.TotalAmount, new Dictionary<string, object> { { "Id", "Rounding_Off" }, { "readonly", "true" }, { "class", "form-control" } })
@@ -465,7 +468,6 @@
                 $SearchGrid.pqGrid("hideLoading");
             },
             success: function (response) {
-                debugger
                 var filterData = response.records.filter(obj => obj.Authorized == false)
                 $SearchGrid.pqGrid("hideLoading");
                 $SearchGrid.pqGrid("option", "dataModel.data", filterData);
@@ -679,7 +681,7 @@
             }*/
             DisableClick("btnSave");
             var items = $grid.pqGrid("getData", {
-                dataIndx: ['ItemID', 'PackSizeId', 'PackSize', 'UnitId', 'UnitName', 'Make', 'MaterialOfConstruct', 'IndentRemark','SizeOrWeight','CBatch', 'CQty', 'CFreeQty', 'CRate', 'CMrp', 'Taxes', 'TaxRates', 'TaxAmount', 'Discount', 'DiscountPer', 'BatchName', 'CExpiryDate', 'ExpiryDate', 'Qty', 'FreeQty', 'Rate',
+                dataIndx: ['ItemID', 'PackSizeId', 'PackSize', 'UnitId', 'UnitName', 'Make', 'MaterialOfConstruct', 'IndentRemark', 'SizeOrWeight', 'POIndentRemark', 'CBatch', 'CQty', 'CFreeQty', 'CRate', 'CMrp', 'Taxes', 'TaxRates', 'TaxAmount', 'Discount', 'DiscountPer', 'BatchName', 'CExpiryDate', 'ExpiryDate', 'Qty', 'FreeQty', 'Rate',
                     'MRP', 'TransC', 'InstallC', 'ServiceAmt', 'OtherC', 'CustomDuty', 'Amount', 'ItemName', 'IGST', 'CGST', 'SGST', 'UGST', 'DescriptiveName', 'RejectedQty', 'RejectionReason', 'RecieveQty']
             });
             var checkQty = 0, checkBatch = 0, checkExpiry = 0, rejection = 0;
@@ -838,7 +840,7 @@
 
                 $("#grid").grid().updateRow(rowId, {
                     'ID': rowdata.ID, 'ItemID': rowdata.ItemID, 'PackSizeId': rowdata.PacksizeId, 'UnitId': rowdata.UnitId, 'ItemName': rowdata.ItemName, 'UnitName': rowdata.UnitName, 'Make': rowdata.Make, 'MaterialOfConstruct': rowdata.MaterialOfConstruct,
-                    'IndentRemark': rowdata.IndentRemark, 'SizeOrWeight': rowdata.SizeOrWeight, 'PackSize': rowdata.PackSize,
+                    'IndentRemark': rowdata.IndentRemark, 'SizeOrWeight': rowdata.SizeOrWeight, 'POIndentRemark': rowdata.POIndentRemark, 'PackSize': rowdata.PackSize,
                     'CQty': rowdata.CQty, 'CRate': rowdata.CRate, 'CMrp': rowdata.CMrp, 'CFreeQty': rowdata.CFreeQty,
                     'TaxPer': TaxPer, 'TaxAmount': TaxAmount, 'DiscountPer': discper, 'Discount': discount, 'Qty': Qty, 'FreeQty': rowdata.FreeQty, 'Rate': Rate, 'MRP': rowdata.MRP,
                     'TransC': rowdata.TransC, 'InstallC': rowdata.InstallC, 'ServiceAmt': rowdata.ServiceAmt, 'OtherC': rowdata.OtherC, 'CustomDuty': rowdata.CustomDuty, 'Amount': NetAmt
@@ -884,45 +886,42 @@
     /********* GRN Grid Function*********/
     function CalculateTotalAmount() {
         var getData = $grid.pqGrid("option", "dataModel.data");
-        var grossAmt = 0, taxAmount = 0, otherAmount = 0, DiscountAmount = 0, grandTotal = 0, rndGrandTotal = 0;
+
+        var totalGrossAmt = 0, totalTaxAmount = 0, totalOtherCharges = 0, totalDiscount = 0, grandTotal = 0;
         var bedAmt = parseFloat($("#BED").val()) || 0;
         var eduAmt = parseFloat($("#Edu").val()) || 0;
         var sheAmt = parseFloat($("#SHECess").val()) || 0;
 
         $.each(getData, function (_, item) {
-            if (!isNaN(item.ItemTotal) && item.ItemTotal != null)
-                grossAmt += parseFloat(item.ItemTotal);
-            if (!isNaN(item.TaxAmount) && item.TaxAmount != null)
-                taxAmount += parseFloat(item.TaxAmount);
-            if (!isNaN(item.OtherC) && item.OtherC != null)
-                otherAmount += parseFloat(item.OtherC);
-            if (!isNaN(item.TransC) && item.TransC != null)
-                otherAmount += parseFloat(item.TransC);
-            if (!isNaN(item.InstallC) && item.InstallC != null)
-                otherAmount += parseFloat(item.InstallC);
-            if (!isNaN(item.CustomDuty) && item.CustomDuty != null)
-                otherAmount += parseFloat(item.CustomDuty);
-            if (!isNaN(item.ServiceAmt) && item.ServiceAmt != null)
-                otherAmount += parseFloat(item.ServiceAmt);
-            if (!isNaN(item.Discount) && item.Discount != null)
-                DiscountAmount += parseFloat(item.Discount);
+            var ItemTotal = parseFloat(item.ItemTotal) || 0;
+            var TaxAmount = parseFloat(item.TaxAmount) || 0;
+            var OtherC = parseFloat(item.OtherC) || 0;
+            var TransC = parseFloat(item.TransC) || 0;
+            var InstallC = parseFloat(item.InstallC) || 0;
+            var CustomDuty = parseFloat(item.CustomDuty) || 0;
+            var ServiceAmt = parseFloat(item.ServiceAmt) || 0;
+            var Discount = parseFloat(item.Discount) || 0;
+
+            var otherCharges = OtherC + TransC + InstallC + CustomDuty + ServiceAmt;
+
+            totalGrossAmt += ItemTotal;
+            totalTaxAmount += TaxAmount;
+            totalOtherCharges += otherCharges;
+            totalDiscount += Discount;
         });
 
-        var bedAmount = grossAmt * (bedAmt / 100);
-        var eduAmount = grossAmt * (eduAmt / 100);
-        var sheAmount = grossAmt * (sheAmt / 100);
-        var extraAmt = bedAmount + eduAmount + sheAmount;
+        var bedAmount = totalGrossAmt * (bedAmt / 100);
+        var eduAmount = totalGrossAmt * (eduAmt / 100);
+        var sheAmount = totalGrossAmt * (sheAmt / 100);
+        var extraAmt = parseFloat(bedAmount) + parseFloat(eduAmount) + parseFloat(sheAmount);
 
-        grandTotal = grossAmt + taxAmount + otherAmount - DiscountAmount + extraAmt;
-        rndGrandTotal = Math.round(grandTotal);
+        grandTotal = totalGrossAmt + totalTaxAmount + totalOtherCharges - totalDiscount + extraAmt;
 
-        // Updating the fields with two decimal precision
-        $("#GrossAmount").val(Math.round(grossAmt));
-        $("#TaxAmount").val(Math.round(taxAmount));
-        $("#OtherCharges").val(Math.round(otherAmount));
-        $("#Discount").val(Math.round(DiscountAmount));
-        $("#GrandTotal").val(Math.round(grandTotal));
-        $("#Rounding_Off").val(Math.round(rndGrandTotal));
+        $("#GrossAmount").val(totalGrossAmt.toFixed(2));
+        $("#TaxAmount").val(totalTaxAmount.toFixed(2));
+        $("#OtherCharges").val(totalOtherCharges.toFixed(2));
+        $("#Discount").val(totalDiscount.toFixed(2));
+        $("#GrandTotal").val(grandTotal.toFixed(2));
     }
 
     function editRow(rowIndx, grid, edit) {
@@ -1032,7 +1031,7 @@
                 title: "Item Details", align: "center", colModel: [
                     { title: "Item Name & Description", dataIndx: "ItemName", width: 350, dataType: "string", resizable: true, editable: false },
 
-                    { title: "HSN Code", dataIndx: "HSNCode", width: 150, dataType: "string", resizable: true, editable: false, hidden: true},
+                    { title: "HSN Code", dataIndx: "HSNCode", width: 150, dataType: "string", resizable: true, editable: false, hidden: true },
                     {
                         title: "Description", dataIndx: "DescriptiveName", width: 200, dataType: "string", editable: true,
                         editor: { type: "textarea", attr: "rows=5" }, hidden: true
@@ -1041,8 +1040,9 @@
                     { title: "Unit", dataIndx: "UnitName", width: 90, dataType: "string", resizable: true, editable: false },
                     { title: "Make", dataIndx: "Make", width: 200, dataType: "string", resizable: true, editable: false },
                     { title: "MOC", dataIndx: "MaterialOfConstruct", width: 200, dataType: "string", resizable: true, editable: false },
-                    { title: "Indent Remark", dataIndx: "IndentRemark", width: 300, dataType: "string", resizable: true, editable: false },
+                    { title: "PR Remark", dataIndx: "IndentRemark", width: 300, dataType: "string", resizable: true, editable: false },
                     { title: "Size/Wt.", dataIndx: "SizeOrWeight", width: 90, dataType: "string", resizable: true, editable: false },
+                    { title: "PO Remark", dataIndx: "POIndentRemark", width: 300, dataType: "string", resizable: true, editable: false },
                     { title: "PackSizeId", dataIndx: "PackSizeId", dataType: "integer", editable: false, hidden: true },
                     {
                         title: "Pack Size", dataIndx: "PackSize", width: 90, resizable: true, hidden: false, editable: false, hidden: true,
@@ -1225,93 +1225,110 @@
             dataModel: dataModel,
             formulas: [
                 ["CMrp", function (rd) {
-                    var MarkupPercentage = rd.MarkupPercentage;
-                    var mrp = 0;
-                    if (MarkupPercentage == "" || MarkupPercentage == undefined) {
-                        mrp = parseFloat(rd.CMrp || 0); // Ensure mrp is a number
-                    }
-                    else {
-                        mrp = parseFloat(rd.CRate) + ((parseFloat(rd.CRate) * parseFloat(MarkupPercentage)) / 100);
-                    }
-                    return parseFloat(mrp).toFixed(2); // Apply toFixed only after confirming mrp is a number
+                    const CRate = parseFloat(rd.CRate || 0);
+                    const MarkupPercentage = parseFloat(rd.MarkupPercentage || 0);
+                    const CMrp = parseFloat(rd.CMrp || 0);
+                    const mrp = MarkupPercentage ? CRate + (CRate * MarkupPercentage / 100) : CMrp;
+                    return mrp.toFixed(2);
                 }],
-                ["CItemTotal", function (rd) {
-                    return (parseFloat(rd.CQty) * parseFloat(rd.CRate)).toFixed(2);
-                }],
-                ["BatchName", function (rd) {
-                    return rd.CBatch;
-                }],
-                ["ExpiryDate", function (rd) {
-                    return rd.CExpiryDate;
-                }],
-                ["FreeQty", function (rd) {
-                    if ($("#GrnTypeID").val() == 0)
-                        return rd.CFreeQty;
-                    else
-                        return rd.FreeQty;
-                }],
-                ["Rate", function (rd) {
-                    return parseFloat(rd.CRate).toFixed(2);
-                }],
-                ["MRP", function (rd) {
-                    return parseFloat(rd.CMrp || 0).toFixed(2);
-                }],
-                ["ItemTotal", function (rd) {
-                    return (parseFloat(rd.Qty) * parseFloat(rd.Rate)).toFixed(2);
-                }],
-                ["TaxableValue", function (rd) {
-                    var amount = parseFloat(rd.Qty) * parseFloat(rd.Rate);
-                    var disc = parseFloat(rd.Discount || 0);
-                    return (amount - disc).toFixed(2);
-                }],
-                ["TaxAmount", function (rd) {
-                    var amount = parseFloat(rd.TaxableValue || 0);
-                    var taxper = parseFloat(rd.TaxRates || 0);
-                    return (amount * taxper / 100).toFixed(2);
-                }],
-                ["SGSTAmt", function (rd) {
-                    var amount = parseFloat(rd.TaxableValue || 0);
-                    var sgstPer = parseFloat(rd.SGST || 0);
-                    return (amount * sgstPer / 100).toFixed(2);
-                }],
-                ["CGSTAmt", function (rd) {
-                    var amount = parseFloat(rd.TaxableValue || 0);
-                    var cgstPer = parseFloat(rd.CGST || 0);
-                    return (amount * cgstPer / 100).toFixed(2);
-                }],
-                ["IGSTAmt", function (rd) {
-                    var amount = parseFloat(rd.TaxableValue || 0);
-                    var igstPer = parseFloat(rd.IGST || 0);
-                    return (amount * igstPer / 100).toFixed(2);
-                }],
-                ["UGSTAmt", function (rd) {
-                    var amount = parseFloat(rd.TaxableValue || 0);
-                    var ugstPer = parseFloat(rd.UGST || 0);
-                    return (amount * ugstPer / 100).toFixed(2);
-                }],
-                ["Amount", function (rd) {
-                    var itemTotal = parseFloat(rd.ItemTotal || 0);
-                    var discount = parseFloat(rd.Discount || 0);
-                    var taxAmount = parseFloat(rd.TaxAmount || 0);
-                    var TransC = parseFloat(rd.TransC || 0);
-                    var InstallC = parseFloat(rd.InstallC || 0);
-                    var ServiceAmt = parseFloat(rd.ServiceAmt || 0);
-                    var OtherC = parseFloat(rd.OtherC || 0);
-                    var CustomDuty = parseFloat(rd.CustomDuty || 0);
 
-                    var otherCharges = InstallC + TransC + ServiceAmt + OtherC + CustomDuty;
-                    var NetAmt = itemTotal + otherCharges + taxAmount - discount;
-                    return NetAmt.toFixed(2);
+                ["CItemTotal", function (rd) {
+                    const CQty = parseFloat(rd.CQty || 0);
+                    const CRate = parseFloat(rd.CRate || 0);
+                    return (CQty * CRate).toFixed(2);
                 }],
+
+                ["BatchName", function (rd) {
+                    return rd.CBatch || "";
+                }],
+
+                ["ExpiryDate", function (rd) {
+                    return rd.CExpiryDate || "";
+                }],
+
+                ["FreeQty", function (rd) {
+                    const grnTypeId = $("#GrnTypeID").val();
+                    return grnTypeId === "0" ? rd.CFreeQty || 0 : rd.FreeQty || 0;
+                }],
+
+                ["Rate", function (rd) {
+                    const CRate = parseFloat(rd.CRate || 0);
+                    return CRate.toFixed(2);
+                }],
+
+                ["MRP", function (rd) {
+                    const CMrp = parseFloat(rd.CMrp || 0);
+                    return CMrp.toFixed(2);
+                }],
+
+                ["ItemTotal", function (rd) {
+                    const Qty = parseFloat(rd.Qty || 0);
+                    const Rate = parseFloat(rd.Rate || 0);
+                    return (Qty * Rate).toFixed(2);
+                }],
+
                 ["Discount", function (rd) {
-                    var amount = parseFloat(rd.Amount || 0);
-                    var discper = parseFloat(rd.DiscountPer || 0);
-                    var discamt = parseFloat(rd.Discount || 0);
-                    if (discper > 0) {
-                        discamt = amount * discper / 100;
-                    }
-                    return discamt.toFixed(2);
+                    const amount = parseFloat(rd.Qty || 0) * parseFloat(rd.Rate || 0);
+                    const discountPercentage = parseFloat(rd.DiscountPer || 0);
+                    const discountAmount = discountPercentage > 0 ? amount * discountPercentage / 100 : parseFloat(rd.Discount || 0);
+                    return discountAmount.toFixed(2);
                 }],
+
+                ["TaxableValue", function (rd) {
+                    const amount = parseFloat(rd.Qty || 0) * parseFloat(rd.Rate || 0);
+                    const discount = parseFloat(rd.Discount || 0);
+                    const taxableValue = amount > 0 ? amount - discount : amount;
+                    return taxableValue.toFixed(2);
+                }],
+
+                ["TaxAmount", function (rd) {
+                    const taxableValue = parseFloat(rd.TaxableValue || 0);
+                    const taxRate = parseFloat(rd.TaxRates || 0);
+                    return (taxableValue * taxRate / 100).toFixed(2);
+                }],
+
+                ["SGSTAmt", function (rd) {
+                    const taxableValue = parseFloat(rd.TaxableValue || 0);
+                    const sgstRate = parseFloat(rd.SGST || 0);
+                    return (taxableValue * sgstRate / 100).toFixed(2);
+                }],
+
+                ["CGSTAmt", function (rd) {
+                    const taxableValue = parseFloat(rd.TaxableValue || 0);
+                    const cgstRate = parseFloat(rd.CGST || 0);
+                    return (taxableValue * cgstRate / 100).toFixed(2);
+                }],
+
+                ["IGSTAmt", function (rd) {
+                    const taxableValue = parseFloat(rd.TaxableValue || 0);
+                    const igstRate = parseFloat(rd.IGST || 0);
+                    return (taxableValue * igstRate / 100).toFixed(2);
+                }],
+
+                ["UGSTAmt", function (rd) {
+                    const taxableValue = parseFloat(rd.TaxableValue || 0);
+                    const ugstRate = parseFloat(rd.UGST || 0);
+                    return (taxableValue * ugstRate / 100).toFixed(2);
+                }],
+
+                ["Amount", function (rd) {
+                    const itemTotal = parseFloat(rd.ItemTotal || 0);
+                    const discount = parseFloat(rd.Discount || 0);
+                    const taxAmount = parseFloat(rd.TaxAmount || 0);
+                    const otherCharges = (
+                        parseFloat(rd.TransC || 0) +
+                        parseFloat(rd.InstallC || 0) +
+                        parseFloat(rd.ServiceAmt || 0) +
+                        parseFloat(rd.OtherC || 0) +
+                        parseFloat(rd.CustomDuty || 0)
+                    );
+
+                    const netAmount = itemTotal > 0
+                        ? itemTotal + otherCharges + taxAmount - discount
+                        : itemTotal + otherCharges + taxAmount;
+
+                    return netAmount.toFixed(2);
+                }]
             ],
             pageModel: { type: "local", rPP: 20 },
             postRenderInterval: -1,
@@ -1528,9 +1545,9 @@
                             $.each(data, function (index, value) {
                                 var grdData = {
                                     'ItemID': value.ItemID, 'PackSizeId': value.PackSizeId, 'UnitId': value.OrderingUnitId, 'ItemName': value.ItemName, 'CBatch': value.ItemCode, 'BatchName': value.ItemCode, 'UnitName': value.OrderingUnit, 'Make': value.Make,
-                                    'MaterialOfConstruct': value.MaterialOfConstruct, 'IndentRemark': value.IndentRemark, 'SizeOrWeight': value.SizeOrWeight, 'PackSize': value.PackSize, 'CQty': value.Qty, 'Qty': 0, 'CRate': value.Rate, 'CMrp': value.MRP,
+                                    'MaterialOfConstruct': value.MaterialOfConstruct, 'IndentRemark': value.IndentRemark, 'SizeOrWeight': value.SizeOrWeight, 'POIndentRemark': value.POIndentRemark, 'PackSize': value.PackSize, 'CQty': value.Qty, 'Qty': 0, 'CRate': value.Rate, 'CMrp': value.MRP,
                                     'TaxRates': value.Tax, 'TaxAmount': value.TaxAmount, 'CFreeQty': value.FreeQty, 'FreeQty': '0', 'CExpiryDate': '01/01/2099', 'ExpiryDate': '01/01/2099', 'IGST': value.IGST, 'CGST': value.CGST, 'UGST': value.UGST, 'SGST': value.SGST,
-                                    'HSNCode': value.HSNCode, 'DescriptiveName': value.DescriptiveName,'PoPendingQty': value.PoPendingQty, 'RecieveQty': 0, 'Discount': value.Discount, 'DiscountPer': value.discountper, OtherC: value.OtherC, 'TransC': value.TransC
+                                    'HSNCode': value.HSNCode, 'DescriptiveName': value.DescriptiveName, 'PoPendingQty': value.PoPendingQty, 'RecieveQty': 0, 'Discount': value.Discount, 'DiscountPer': value.discountper, OtherC: value.OtherC, 'TransC': value.TransC
                                 }
                                 dataMGrid.push(grdData);
                             });
@@ -1692,8 +1709,8 @@
                             $.each(data, function (key, value) {
                                 var grdData = {
                                     'ID': value.ID, 'ItemID': value.ItemID, 'PackSizeId': value.PackSizeId, 'UnitId': value.UnitId, 'ItemName': value.ItemName, 'UnitName': value.UnitName, 'Make': value.Make, 'MaterialOfConstruct': value.MaterialOfConstruct,
-                                    'IndentRemark': value.IndentRemark, 'SizeOrWeight': value.SizeOrWeight, 'PackSize': value.PackSize, 'CQty': value.CQty, 'CFreeQty': value.CFreeQty, 'CRate': value.CRate, 'CMrp': value.CMrp, 'CBatch': value.CBatch,
-                                    'CExpiryDate': value.strCExpiryDate,'Qty': value.Qty, 'FreeQty': value.FreeQty, 'Rate': value.Rate, 'MRP': value.MRP, 'BatchName': value.BatchName, 'ExpiryDate': value.strExpiryDate,
+                                    'IndentRemark': value.IndentRemark, 'SizeOrWeight': value.SizeOrWeight, 'POIndentRemark': value.POIndentRemark, 'PackSize': value.PackSize, 'CQty': value.CQty, 'CFreeQty': value.CFreeQty, 'CRate': value.CRate, 'CMrp': value.CMrp, 'CBatch': value.CBatch,
+                                    'CExpiryDate': value.strCExpiryDate, 'Qty': value.Qty, 'FreeQty': value.FreeQty, 'Rate': value.Rate, 'MRP': value.MRP, 'BatchName': value.BatchName, 'ExpiryDate': value.strExpiryDate,
                                     'TaxAmount': value.TaxAmount, 'DiscountPer': value.discountper, 'Discount': value.Discount, 'Taxes': value.Taxes, 'TaxRates': value.TaxRates,
                                     'TransC': value.TransC, 'InstallC': value.InstallC, 'ServiceAmt': value.ServiceAmt, OtherC: value.OtherC, 'CustomDuty': value.CustomDuty, 'Amount': value.Amount,
                                     'IGST': value.IGST, 'CGST': value.CGST, 'UGST': value.UGST, 'SGST': value.SGST, 'HSNCode': value.HSNCode, 'DescriptiveName': value.DescriptiveName,

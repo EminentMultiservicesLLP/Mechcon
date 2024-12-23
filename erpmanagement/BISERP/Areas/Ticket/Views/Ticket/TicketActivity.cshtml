@@ -538,11 +538,9 @@
             data: JSON.stringify(Details),
             success: function (response) {
                 if (response.success) {
-                    debugger
                     let fileSaveMsg = "";
                     try {
                         activityList.forEach(({ ActivityID }) => {
-                            debugger
                             SaveScandoc(`Attachment${ActivityID}`, ActivityID, "Ticket", "TicketActivity");
                         });
                     } catch (err) {

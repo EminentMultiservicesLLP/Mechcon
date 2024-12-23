@@ -110,7 +110,8 @@ namespace BISERPService.Caching
         AllTrainingCategory = 42,
         AllBudgetHeads = 43,
         AllClient = 44,
-        ProjectTC = 45
+        ProjectTC = 45,
+        Product = 46
 
     }
 }

@@ -48,6 +48,7 @@ namespace BISERPBusinessLayer.Repositories.Purchase.Classes
                                 SupSociety = row.Field<string>("SupSociety"),
                                 SupStreet = row.Field<string>("SupStreet"),
                                 Transport = row.Field<string>("Transport"),
+                                PurchaseTerm = row.Field<string>("PurchaseTerm"),
                                 SupState = row.Field<string>("SupState"),
                                 SupPhone = row.Field<string>("SupPhone"),
                                 BED = row.Field<double?>("BED"),
@@ -67,7 +68,8 @@ namespace BISERPBusinessLayer.Repositories.Purchase.Classes
                                 strPreparedOn = row.Field<DateTime?>("InsertedOn") != null ? Convert.ToDateTime(row.Field<DateTime?>("InsertedOn")).ToString("dd-MMM-yyyy") : string.Empty,
                                 strVerifiedOn = row.Field<DateTime?>("VerifiedOn") != null ? Convert.ToDateTime(row.Field<DateTime?>("VerifiedOn")).ToString("dd-MMM-yyyy") : string.Empty,
                                 strAuthorisedOn = row.Field<DateTime?>("AuthorisedOn") != null ? Convert.ToDateTime(row.Field<DateTime?>("AuthorisedOn")).ToString("dd-MMM-yyyy") : string.Empty,
-                                ProductName = row.Field<string>("ProductName")
+                                ProductName = row.Field<string>("ProductName"),
+                                Details = row.Field<string>("Details"),
                             }).FirstOrDefault();
             }
             return po;
@@ -108,6 +110,7 @@ namespace BISERPBusinessLayer.Repositories.Purchase.Classes
                                 SupSociety = row.Field<string>("SupSociety"),
                                 SupStreet = row.Field<string>("SupStreet"),
                                 Transport = row.Field<string>("Transport"),
+                                PurchaseTerm = row.Field<string>("PurchaseTerm"),
                                 SupState = row.Field<string>("SupState"),
                                 SupPhone = row.Field<string>("SupPhone"),
                                 BED = row.Field<double?>("BED"),
@@ -122,6 +125,7 @@ namespace BISERPBusinessLayer.Repositories.Purchase.Classes
                                 DeliveryDate = row.Field<DateTime>("DeliveryDate"),
                                 strDeliveryDate = Convert.ToDateTime(row.Field<DateTime?>("DeliveryDate")).ToString("dd-MMM-yyyy"),
                                 Preparedby = row.Field<string>("InsertedBy"),
+                                Details = row.Field<string>("Details"),
                                 //AuthorisedByName = row.Field<string>("AuthorisedBy")
                             }).FirstOrDefault();
             }
@@ -201,6 +205,7 @@ namespace BISERPBusinessLayer.Repositories.Purchase.Classes
                                 GrandTotal = row.Field<double?>("GrandTotal"),
                                 Details = row.Field<string>("Details"),
                                 Transport = row.Field<string>("Transport"),
+                                PurchaseTerm = row.Field<string>("PurchaseTerm"),
                                 InsertedByName = row.Field<string>("InsertedByName"),
                                 UpdatedByName = row.Field<string>("UpdatedByName"),
                                 VerifiedByName = row.Field<string>("VerifiedByName"),
@@ -274,6 +279,7 @@ namespace BISERPBusinessLayer.Repositories.Purchase.Classes
             paramCollection.Add(new DBParameter("InsertedMacName", entity.InsertedMacName, DbType.String));
             paramCollection.Add(new DBParameter("InsertedMacID", entity.InsertedMacID, DbType.String));
             paramCollection.Add(new DBParameter("Transport", entity.Transport, DbType.String));
+            paramCollection.Add(new DBParameter("PurchaseTerm", entity.PurchaseTerm, DbType.String));
             paramCollection.Add(new DBParameter("BED", entity.BED, DbType.Double));
             paramCollection.Add(new DBParameter("Edu", entity.Edu, DbType.Double));
             paramCollection.Add(new DBParameter("SHECess", entity.SHECess, DbType.Double));
@@ -294,6 +300,7 @@ namespace BISERPBusinessLayer.Repositories.Purchase.Classes
             paramCollection.Add(new DBParameter("ID", entity.ID, DbType.Int32));
             paramCollection.Add(new DBParameter("Amount", entity.Amount, DbType.Double));
             paramCollection.Add(new DBParameter("GrandTotal", entity.GrandTotal, DbType.Double));
+            paramCollection.Add(new DBParameter("Details", entity.Details, DbType.String));
             iResult = dbhelper.ExecuteNonQuery(PurchaseQueries.BeforePOAuth, paramCollection, CommandType.StoredProcedure);
             if (iResult > 0)
                 return true;
@@ -350,6 +357,7 @@ namespace BISERPBusinessLayer.Repositories.Purchase.Classes
                                 GrandTotal = row.Field<double?>("GrandTotal"),
                                 Details = row.Field<string>("Details"),
                                 Transport = row.Field<string>("Transport"),
+                                PurchaseTerm = row.Field<string>("PurchaseTerm"),
                                 VendorId = row.Field<int>("VendorId"),
                                 PoVendorId = row.Field<int>("PoVendorId"),
                                 PoVendorName = row.Field<string>("PoVendorName"),
@@ -430,6 +438,7 @@ namespace BISERPBusinessLayer.Repositories.Purchase.Classes
                                 GrandTotal = row.Field<double?>("GrandTotal"),
                                 Details = row.Field<string>("Details"),
                                 Transport = row.Field<string>("Transport"),
+                                PurchaseTerm = row.Field<string>("PurchaseTerm"),
                                 VendorId = row.Field<int>("VendorId"),
                                 PoVendorId = row.Field<int>("PoVendorId"),
                                 PoVendorName = row.Field<string>("PoVendorName"),
@@ -589,5 +598,26 @@ namespace BISERPBusinessLayer.Repositories.Purchase.Classes
             }
             return po;
         }
+
+        public IEnumerable<POStateDetailsEntities> GetPOStateDetails(int? POID)
+        {
+            List<POStateDetailsEntities> data = null;
+            using (DBHelper dbHelper = new DBHelper())
+            {
+                DBParameterCollection paramCollection = new DBParameterCollection();
+                paramCollection.Add(new DBParameter("POID", POID, DbType.Int32));
+                DataTable dt = dbHelper.ExecuteDataTable(PurchaseQueries.GetPOStateDetails, paramCollection, CommandType.StoredProcedure);
+                data = dt.AsEnumerable()
+                            .Select(row => new POStateDetailsEntities
+                            {
+                                ItemName = row.Field<string>("ItemName"),
+                                POQty = row.Field<int>("POQty"),
+                                GRNQty = row.Field<int>("GRNQty"),
+                                POStatus = row.Field<string>("POStatus")
+                            }).ToList();
+            }
+            return data;
+        }
+
     }
 }

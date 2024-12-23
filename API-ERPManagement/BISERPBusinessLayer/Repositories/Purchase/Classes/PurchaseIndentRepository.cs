@@ -370,6 +370,7 @@ namespace BISERPBusinessLayer.Repositories.Purchase.Classes
             }
             return pindentDetail;
         }
+
         public IEnumerable<PurchaseIndentEntities> GetPurchaseIndentForReport()
         {
             List<PurchaseIndentEntities> pindent = null;
@@ -481,6 +482,27 @@ namespace BISERPBusinessLayer.Repositories.Purchase.Classes
                                 ProjectName = row.Field<string>("ProjectName"),
                                 ItemName = row.Field<string>("ItemName"),
                                 ItemQty = row.Field<double>("ItemQty")
+                            }).ToList();
+            }
+            return data;
+        }
+
+        public IEnumerable<PRStateDetailsEntities> GetPRStateDetails(int? IndentId)
+        {
+            List<PRStateDetailsEntities> data = null;
+            using (DBHelper dbHelper = new DBHelper())
+            {
+                DBParameterCollection paramCollection = new DBParameterCollection();
+                paramCollection.Add(new DBParameter("IndentId", IndentId, DbType.Int32));
+                DataTable dt = dbHelper.ExecuteDataTable(PurchaseQueries.GetPRStateDetails, paramCollection, CommandType.StoredProcedure);
+                data = dt.AsEnumerable()
+                            .Select(row => new PRStateDetailsEntities
+                            {
+                                ItemName = row.Field<string>("ItemName"),
+                                PRQty = row.Field<int>("PRQty"),
+                                PRAuthorisedQty = row.Field<int>("PRAuthorisedQty"),
+                                POQty = row.Field<int>("POQty"),
+                                PRStatus = row.Field<string>("PRStatus")
                             }).ToList();
             }
             return data;

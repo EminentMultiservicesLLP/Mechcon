@@ -588,6 +588,36 @@
     });
 
     $(document).ready(function () {
+        var unitList = [];
+        $.ajax({
+            type: "GET",
+            url: "/Master/AllActiveUnit",
+            success: function (data) {
+                $.each(data, function (index, value) {
+                    unitList.push(value.UnitName)
+                });
+            }
+        });
+
+        const autoCompleteEditor = function (ui) {
+            const { $cell, rowData, dataIndx, column: { width }, cls } = ui;
+            const currentValue = $.trim(rowData[dataIndx]);
+
+            const $input = $("<input>", {
+                type: 'text',
+                name: dataIndx,
+                class: `${cls} pq-ac-editor`,
+                width: width - 6,
+                val: currentValue
+            }).appendTo($cell);
+
+            $input.autocomplete({
+                source: dataIndx === "SupplierName" ? suppliers : (dataIndx === "UnitName" ? unitList : packsizes),
+                minLength: 0
+            }).focus(function () {
+                $(this).autocomplete("search", "");
+            });
+        };
 
         var dateEditor = function (ui) {
             var $cell = ui.$cell,
@@ -627,7 +657,22 @@
             { title: "ItemCode", dataIndx: "ItemCode", width: '8%', dataType: "string", hidden: true },
             { title: "Item Name & Description", dataIndx: "ItemName", width: '29%', dataType: "string", editable: false },
             { title: "Description", dataIndx: "DescriptiveName", minWidth: '20%', dataType: "string", editable: true, editor: { type: "textarea", attr: "rows=5" }, hidden: true },
-            { title: "Unit", dataIndx: "UnitName", width: '6%', dataType: "string", editable: false },
+            {
+                title: "Unit", dataIndx: "UnitName", width: '6%', dataType: "string", editable: true,
+                editor: { type: autoCompleteEditor },
+                validations: [
+                    { type: 'minLen', value: 1, msg: "Required" },
+                    {
+                        type: function (ui) {
+                            var value = ui.value;
+                            if ($.inArray(ui.value, unitList) == -1) {
+                                ui.msg = value + " not found in list";
+                                return false;
+                            }
+                        }
+                    }
+                ]
+            },
             { title: "Make", dataIndx: "Make", width: '9%', dataType: "string", editable: false },
             { title: "MOC", dataIndx: "MaterialOfConstruct", width: '10%', dataType: "string", editable: false },
             { title: "HSN/SAC Code", dataIndx: "HSNCode", width: '5%', align: 'center', editable: false, hidden: true},
@@ -806,6 +851,7 @@
 
 
     $(document).ready(function () {
+        
         colIL = [
             { dataIndx: "state", maxWidth: 25, minWidth: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false, editor: false, dataType: 'bool', title: "<input type='checkbox' />", cb: { select: true, all: false, header: true } },
             { title: "Code", dataIndx: "Code", width: '20%', dataType: "string", filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } },
@@ -973,7 +1019,8 @@
             ShowAlert("error", "Please select product first!");
             return false;
         }
-        var items = $("#grid").pqGrid("getData", { dataIndx: ['ItemId', 'IndentDetailId', 'PackSize', 'packsizeid', 'ItemQty', 'state', 'CurrentQty', 'ItemName', 'DescriptiveName', 'Make', 'MaterialOfConstruct', 'IndentRemark', 'ItemsRequiredDate'] });
+        var items = $("#grid").pqGrid("getData", { dataIndx: ['ItemId', 'IndentDetailId', 'PackSize', 'packsizeid', 'ItemQty', 'state', 'CurrentQty', 'ItemName', 'DescriptiveName', 'Make', 'MaterialOfConstruct', 'IndentRemark', 'ItemsRequiredDate','UnitName'] });
+
 
         // Array of month names
         var monthNames = [
@@ -1004,12 +1051,17 @@
 
                 if (jLinq.from(selectedItemsMainGrid).lessEquals("ItemQty", 0).or(undefined).count() > 0) {
                     ShowAlert("error", "Please Enter ItemQty for selected items");
-                    return;
+                    return false;
                 }
 
                 if (jLinq.from(selectedItemsMainGrid).empty("ItemQty").or(undefined).count() > 0) {
                     ShowAlert("error", "Please Enter Quantity for selected items");
-                    return;
+                    return false;
+                }
+
+                if (jLinq.from(items).empty("UnitName").or(undefined).count() > 0) {
+                    ShowAlert("error", "Please Select Unit");
+                    return false;
                 }
             }
             else {
@@ -1253,7 +1305,6 @@
                             $("#grid").pqGrid("hideLoading");
                         },
                         success: function (data) {
-                            debugger
                             var dataMGrid = [];
                             $.each(data, function (key, value) {
                                 var grdData = {

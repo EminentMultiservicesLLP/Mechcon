@@ -52,20 +52,20 @@
 
                                 <div class="col-sm-2">
                                     @Html.LabelFor(m => m.IndentNumber)
-                                    @Html.TextBoxFor(m => m.IndentNumber, "", new { @disabled = "disabled" , @class = "form-control" })
+                                    @Html.TextBoxFor(m => m.IndentNumber, "", new { @disabled = "disabled", @class = "form-control" })
                                     @Html.HiddenFor(m => m.IndentId)
                                 </div>
                                 <div class="col-sm-2">
                                     @Html.LabelFor(model => model.IndentDate)
-                                    @Html.TextBoxFor(model => model.IndentDate, new { @disabled = "disabled" , @class = "IndentDate form-control" })
+                                    @Html.TextBoxFor(model => model.IndentDate, new { @disabled = "disabled", @class = "IndentDate form-control" })
                                 </div>
                                 <div class="col-sm-2">
                                     @Html.LabelFor(model => model.IndentNature)
-                                    @Html.TextBoxFor(model => model.IndentNature, new { @disabled = "disabled" , @class = "form-control" })
+                                    @Html.TextBoxFor(model => model.IndentNature, new { @disabled = "disabled", @class = "form-control" })
                                 </div>
                                 <div class="col-sm-3">
                                     @Html.LabelFor(m => m.Remarks)
-                                    @Html.TextAreaFor(model => model.Remarks, new { @disabled = "disabled" , @class = "form-control" })
+                                    @Html.TextAreaFor(model => model.Remarks, new { @disabled = "disabled", @class = "form-control" })
                                 </div>
                                 <div class="col-sm-3">
                                     <fieldset class="fieldsetCustom">
@@ -73,7 +73,9 @@
                                         <input type="radio" id="Authorized" name="AuthCancel" value="2" checked="checked">
                                         <label for="Authorized">Authorized</label>&nbsp;&nbsp;
                                         <input type="radio" id="Cancel" name="AuthCancel" value="3">
-                                        <label for="Cancel">Cancel</label>
+                                        <label for="Cancel">Cancel</label>&nbsp;&nbsp;
+                                        <input type="radio" id="Recheck" name="AuthCancel" value="0">
+                                        <label for="Recheck">Recheck</label>
                                     </fieldset>
                                 </div>
                             </div>
@@ -226,8 +228,8 @@
             return;
         }
 
-        // Check if AuthorizationStatusId is not 3
-        if ($("[name='AuthCancel']:checked").val() != 3) {
+        // Check if AuthorizationStatusId is 2
+        if ($("[name='AuthCancel']:checked").val() == "2") {
             // Validate if any AuthorisedQty is invalid
             const invalidAuthorisedQtyCount = selectedItemsMainGrid.filter(item => !item.AuthorisedQty || item.AuthorisedQty <= 0).length;
             if (invalidAuthorisedQtyCount > 0) {
@@ -255,7 +257,7 @@
             data: indents,
             success: function (msg) {
                 const authStatus = $("[name='AuthCancel']:checked").val();
-                const message = authStatus == "2" ? "Request authorized successfully." : "Request cancelled successfully.";
+                const message = authStatus == "2" ? "The request authorized successfully." : authStatus == "0" ? "The request has been successfully sent for recheck." : "The request cancelled successfully.";
                 ShowAlert("success", message);
                 Clearform();
             },

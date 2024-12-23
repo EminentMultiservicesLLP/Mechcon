@@ -9,7 +9,7 @@
     <Shape ID="DesignTable:dsPOOtherTerm" ZOrder="18" X="210" Y="23" Height="125" Width="183" AdapterExpanded="true" DataTableExpanded="true" OldAdapterHeight="0" OldDataTableHeight="0" SplitterPosition="121" />
     <Shape ID="DesignTable:dsPOPaymentterm" ZOrder="17" X="212" Y="284" Height="125" Width="203" AdapterExpanded="true" DataTableExpanded="true" OldAdapterHeight="0" OldDataTableHeight="0" SplitterPosition="121" />
     <Shape ID="DesignTable:dsDeliveryTerm" ZOrder="16" X="222" Y="558" Height="106" Width="158" AdapterExpanded="true" DataTableExpanded="true" OldAdapterHeight="0" OldDataTableHeight="0" SplitterPosition="102" />
-    <Shape ID="DesignTable:dsPurchaseOrder" ZOrder="15" X="4" Y="19" Height="563" Width="164" AdapterExpanded="true" DataTableExpanded="true" OldAdapterHeight="0" OldDataTableHeight="0" SplitterPosition="559" />
+    <Shape ID="DesignTable:dsPurchaseOrder" ZOrder="15" X="4" Y="19" Height="562" Width="164" AdapterExpanded="true" DataTableExpanded="true" OldAdapterHeight="0" OldDataTableHeight="0" SplitterPosition="558" />
     <Shape ID="DesignTable:POmaster" ZOrder="9" X="609" Y="20" Height="543" Width="150" AdapterExpanded="true" DataTableExpanded="true" OldAdapterHeight="0" OldDataTableHeight="0" SplitterPosition="539" />
     <Shape ID="DesignTable:POTax" ZOrder="14" X="412" Y="28" Height="144" Width="150" AdapterExpanded="true" DataTableExpanded="true" OldAdapterHeight="0" OldDataTableHeight="0" SplitterPosition="140" />
     <Shape ID="DesignTable:dsPOInspection" ZOrder="13" X="222" Y="156" Height="125" Width="154" AdapterExpanded="true" DataTableExpanded="true" OldAdapterHeight="0" OldDataTableHeight="0" SplitterPosition="121" />

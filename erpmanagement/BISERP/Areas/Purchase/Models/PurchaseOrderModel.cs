@@ -107,6 +107,7 @@ namespace BISERP.Area.Purchase.Models
         public List<POInspectionModel> POInspectio { get; set; }
         public string Message { get; set; }
         public string Transport { get; set; }
+        public string PurchaseTerm { get; set; }
         public string GSTIN { get; set; }
         public string SupEmail { get; set; }
         public string SupContactPerson { get; set; }
@@ -150,4 +151,12 @@ namespace BISERP.Area.Purchase.Models
         public string strAuthorisedOn { get; set; }
 
     }
+    public class POStateDetailsModel
+    {
+        public string ItemName { get; set; }
+        public int POQty { get; set; }
+        public int GRNQty { get; set; }
+        public string POStatus { get; set; }
+    }
+
 }

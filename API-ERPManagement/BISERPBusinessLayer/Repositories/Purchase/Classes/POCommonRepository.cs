@@ -97,7 +97,6 @@ namespace BISERPBusinessLayer.Repositories.Purchase.Classes
             }
             return entity;
         }
-
         public bool AuthCancelPO(PurchaseOrderEntities entity)
         {
             bool isSuccess = false;
@@ -110,44 +109,110 @@ namespace BISERPBusinessLayer.Repositories.Purchase.Classes
                 {
                     isSuccess = _ipurchaseorder.BeforePOAuth(entity, dbhelper);
 
-                    if (!isSuccess)
+                    if (isSuccess)
                     {
-                        dbhelper.RollbackTransaction(transaction);
-                        return false;
+                        foreach (var PODetail in entity.PODetails)
+                        {
+                            PODetail.ID = _iPODetails.CreateNewEntry(entity, PODetail, dbhelper);
+                            if (PODetail.ID <= 0)
+                            {
+                                isSuccess = false;
+                                break;
+                            }
+                        }
                     }
 
-                    foreach (var poDetail in entity.PODetails)
+                    if (isSuccess && entity.PODeliveryTerms != null)
                     {
-                        poDetail.ID = _iPODetails.CreateNewEntry(entity, poDetail, dbhelper);
+                        foreach (var DeliveryTerm in entity.PODeliveryTerms)
+                        {
+                            DeliveryTerm.DelTermID = _iPOdelivery.CreateNewEntry(entity, DeliveryTerm, dbhelper);
+                            if (DeliveryTerm.DelTermID <= 0)
+                            {
+                                isSuccess = false;
+                                break;
+                            }
+                        }
+                    }
 
-                        if (poDetail.ID <= 0)
+                    if (isSuccess && entity.POPaymenterms != null)
+                    {
+                        foreach (var PaymentTerm in entity.POPaymenterms)
+                        {
+                            PaymentTerm.PayTermID = _iPOpayment.CreateNewEntry(entity, PaymentTerm, dbhelper);
+                            if (PaymentTerm.PayTermID <= 0)
+                            {
+                                isSuccess = false;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (isSuccess && entity.POOtherTerms != null)
+                    {
+                        foreach (var OtherTerm in entity.POOtherTerms)
+                        {
+                            OtherTerm.OtherTermID = _iPOother.CreateNewEntry(entity, OtherTerm, dbhelper);
+                            if (OtherTerm.OtherTermID <= 0)
+                            {
+                                isSuccess = false;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (isSuccess && entity.POBasis != null)
+                    {
+                        foreach (var NEWBasis in entity.POBasis)
+                        {
+                            NEWBasis.BasisId = _iPOother.CreateNewBasisEntry(entity, NEWBasis, dbhelper);
+                            if (NEWBasis.BasisId <= 0)
+                            {
+                                isSuccess = false;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (isSuccess && entity.POInspectio != null)
+                    {
+                        foreach (var POInspection in entity.POInspectio)
+                        {
+                            POInspection.InspectionId = _iPOother.CreateNewInspectionEntry(entity, POInspection, dbhelper);
+                            if (POInspection.InspectionId <= 0)
+                            {
+                                isSuccess = false;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (isSuccess)
+                    {
+                        isSuccess = _ipurchaseorder.AuthCancelPurchaseOrder(entity, dbhelper);
+
+                        if (!isSuccess)
                         {
                             dbhelper.RollbackTransaction(transaction);
                             return false;
                         }
-                    }
 
-                    isSuccess = _ipurchaseorder.AuthCancelPurchaseOrder(entity, dbhelper);
-                    if (!isSuccess)
-                    {
-                        dbhelper.RollbackTransaction(transaction);
-                        return false;
-                    }
+                        if (entity.AuthorizationStatusId == 2)
+                        {
+                            _requestStatus.UpdatePOAuthRequestStatus(entity, dbhelper);
+                        }
 
-                    if (entity.AuthorizationStatusId == 2)
-                    {
-                        _requestStatus.UpdatePOAuthRequestStatus(entity, dbhelper);
+                        dbhelper.CommitTransaction(transaction);
+                        return true;
                     }
-
-                    dbhelper.CommitTransaction(transaction);
-                    return true;
                 }
                 catch (Exception ex)
                 {
                     dbhelper.RollbackTransaction(transaction);
-                    _loggger.LogError("Error in AuthCancelPO method of POCommonRepository : parameter :" + Environment.NewLine + ex.StackTrace);
-                    return false;
+                    _loggger.LogError("Error in AuthCancelPO method of POCommonRepository: " + ex);
                 }
+
+                return false;
             }
         }
 

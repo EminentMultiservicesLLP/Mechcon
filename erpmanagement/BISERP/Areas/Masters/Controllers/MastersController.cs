@@ -147,5 +147,9 @@ namespace BISERP.Areas.Masters.ControllerS
         {
             return PartialView();
         }
+        public ActionResult ProductMaster()
+        {
+            return PartialView();
+        }
     }
 }

@@ -461,5 +461,29 @@ namespace BISERPService.Controllers
                 return InternalServerError(ex);
             }
         }
+
+
+        [Route("getPRStateDetails")]
+        [Route("getPRStateDetails/{IndentId}")]
+        [AcceptVerbs("GET", "POST")]
+        public IHttpActionResult GetPRStateDetails(int? IndentId = null)
+        {
+            try
+            {
+                var sources = _ipIndent.GetPRStateDetails(IndentId).ToList();
+
+                if (sources == null || !sources.Any())
+                {
+                    return NotFound();
+                }
+
+                return Ok(sources);
+            }
+            catch (Exception ex)
+            {
+                _loggger.LogError("Error in GetPRStateDetails method of PurchaseIndentController:" + Environment.NewLine + ex.ToString());
+                return InternalServerError(ex);
+            }
+        }
     }
 }
