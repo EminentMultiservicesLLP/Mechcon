@@ -541,5 +541,29 @@ namespace BISERP.Area.Purchase.Controllers
                 return Json(new { error = "An error occurred while retrieving the data." }, JsonRequestBehavior.AllowGet);
             }
         }
+
+        [HttpGet]
+        public async Task<JsonResult> GetSupplierDeliveryReport(int? supplierID)
+        {
+            string _url = $"{url}/purchaseorder/getSupplierDeliveryReport/{supplierID}{Common.Constants.JsonTypeResult}";
+
+            try
+            {
+                var records = await Common.AsyncWebCalls.GetAsync<List<SupplierDeliveryReportModel>>(client, _url, CancellationToken.None);
+
+                if (records == null)
+                {
+                    return Json(new { success = false, message = "No records found" }, JsonRequestBehavior.AllowGet);
+                }
+
+                return Json(new { success = true, records }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error in GetSupplierDeliveryReport: {ex.Message} {Environment.NewLine} {ex.StackTrace}");
+                return Json(new { success = false, message = "An error occurred while retrieving Details" }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
     }
 }

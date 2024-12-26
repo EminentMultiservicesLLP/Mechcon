@@ -618,6 +618,32 @@ namespace BISERPBusinessLayer.Repositories.Purchase.Classes
             }
             return data;
         }
+        public IEnumerable<SupplierDeliveryReportEntities> GetSupplierDeliveryReport(int? supplierID)
+        {
+            List<SupplierDeliveryReportEntities> data = null;
+            using (DBHelper dbHelper = new DBHelper())
+            {
+                DBParameter param = new DBParameter("SupplierID", supplierID, DbType.Int32);
+                DataTable dt = dbHelper.ExecuteDataTable(PurchaseQueries.GetSupplierDeliveryReport, param, CommandType.StoredProcedure);
+
+                data = dt.AsEnumerable()
+                    .Select(row => new SupplierDeliveryReportEntities
+                    {
+                        POID = row.Field<int>("POID"),
+                        PONo = row.Field<string>("PONo"),
+                        ItemID = row.Field<int>("ItemID"),
+                        ItemName = row.Field<string>("ItemName"),
+                        POQty = row.Field<int>("POQty"),
+                        RequiredDate = row.Field<DateTime>("RequiredDate"),
+                        strRequiredDate = row.Field<DateTime?>("RequiredDate")?.ToString("dd-MMMM-yyyy") ?? string.Empty,
+                        GRNQty = row.Field<int>("GRNQty"),
+                        DeliveryDate = row.Field<DateTime>("DeliveryDate"),
+                        strDeliveryDate = row.Field<DateTime?>("DeliveryDate")?.ToString("dd-MMMM-yyyy") ?? string.Empty,
+                        DaysLate = row.Field<int>("DaysLate")
+                    }).ToList();
+            }
+            return data;
+        }
 
     }
 }

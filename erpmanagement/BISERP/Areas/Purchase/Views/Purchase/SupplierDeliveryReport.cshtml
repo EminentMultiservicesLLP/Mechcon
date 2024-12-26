@@ -1,0 +1,232 @@
+﻿<h5 class="page-header orangeDottedBottomBorder">Supplier Delivery Report</h5>
+
+<div class="panel-group">
+    <div class="panel panel-default">
+        <div class="panel-groupingBoder">
+            <div class="panel-heading">
+                <div class="panel-title">
+                    <a class="collapsediv" data-toggle="collapse" href="#SearchDetails">
+                        Supplier Delivery Report
+                    </a>
+                </div>
+            </div>
+            <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                <div class="panel-body">
+                    <div class="fill">
+                        <div class="submit-row">
+                            <div class="col-lg-3 col-md-4 col-sm-12 mb-3">
+                                <label class="required" for="SupplierID">Supplier</label>
+                                <select id="SupplierID" name="SupplierID" class="form-control">
+                                    <option value="">--Select Supplier--</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-2 col-md-4 col-sm-12 mb-3">
+                                <br />
+                                <button type="button" id="btnGo" class="btn btn-primary" onclick="go()">GO</button>
+                                <button type="button" class="btn btn-warning" id="btnResetT" onclick="clearFormData()">Clear</button>
+                            </div>
+
+                        </div>
+                        <fieldset class="fieldsetCustom">
+                            <legend class="legendCustom">Details</legend>
+                            <div id="SupplierDeliveryReportGrid"></div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function loadSupplier() {
+        $.ajax({
+            type: "GET",
+            url: "/Master/AllSupplier/",
+            dataType: "json",
+            success: function (data) {
+                debugger
+                const $supplierID = $('#SupplierID');
+                $supplierID.empty();
+
+                if (data.error) {
+                    $supplierID.append('<option value="">--Error loading supplier--</option>');
+                    console.error("Error loading supplier:", data.error);
+                    return;
+                }
+
+                $supplierID.append('<option value="">--Select Supplier--</option>');
+                data.forEach(function (supplier) {
+                    $supplierID.append(`<option value="${supplier.ID}">${supplier.Name}</option>`);
+                });
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                $('#SupplierID').empty();
+                $('#SupplierID').append('<option value="">--Error loading supplier--</option>');
+                console.error("Error loading sources:", errorThrown);
+            }
+        });
+    }
+    loadSupplier();
+
+    function go() {
+        const supplierID = $("#SupplierID").val();
+
+        if (!supplierID || supplierID == 0) {
+            ShowAlert("error", "Please select a Supplier first.");
+            return false;
+        }
+
+        loadSupplierDeliveryReportGrid(supplierID);
+    }
+
+    //-----------------------------------SupplierDeliveryReportGrid (Starts here)-----------------------------------//
+    var SupplierDeliveryReportGrid_GDM = { location: "local" };
+    var SupplierDeliveryReportGrid_GCM = [
+        {
+            title: "PO No",
+            dataIndx: "PONo",
+            width: '15%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Item Name",
+            dataIndx: "ItemName",
+            width: '35%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "PO Quantity",
+            dataIndx: "POQty",
+            width: '10%',
+            dataType: 'int',
+        },
+        {
+            title: "Required Date",
+            dataIndx: "strRequiredDate",
+            width: '10%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "GRN Quantity",
+            dataIndx: "GRNQty",
+            width: '10%',
+            dataType: 'int',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Delivery Date",
+            dataIndx: "strDeliveryDate",
+            width: '10%',
+        },
+        {
+            title: "Days Late",
+            dataIndx: "DaysLate",
+            width: '10%',
+        }
+    ];
+
+    var setSupplierDeliveryReportGrid = {
+        height: 500,
+        width: 'auto',
+        maxWidth: '100%',
+        minWidth: 800,
+        sortable: true,
+        autofill: true,
+        numberCell: { show: true },
+        hoverMode: 'row',
+        showTop: true,
+        showTitle: true,
+        showBottom: true,
+        resizable: true,
+        scrollModel: { autoFit: true },
+        filterModel: { on: true, mode: "AND", header: true },
+        draggable: false,
+        hwrap: false,
+        wrap: false,
+        editable: false,
+        columnBorders: true,
+        menuIcon: true,
+        selectionModel: { type: 'row', mode: 'single', cbHeader: false },
+        colModel: SupplierDeliveryReportGrid_GCM,
+        dataModel: SupplierDeliveryReportGrid_GDM,
+        pageModel: { type: "local", rPP: 50 },
+        toolbar: {
+            items: [
+                {
+                    type: "<label><b>Export data to Excel : </b> | </label>"
+                },
+                {
+                    type: 'button',
+                    label: "Export",
+                    icon: 'ui-icon-arrowthickstop-1-s',
+                    listener: function () {
+                        var format = 'xlsx',
+                            blob = workbook = this.exportData({
+                                format: format,
+                                workbook: true,
+                                render: true
+                            });
+
+                        blob = pq.excel.exportWb({ workbook: workbook })
+                        if (typeof blob === "string") {
+                            blob = new Blob([blob]);
+                        }
+
+                        var fileName = "SupplierDeliveryReport_" + formatDateTime(new Date()) + "." + format;
+
+                        saveAs(blob, fileName);
+                    }
+                }
+            ]
+        }
+    }
+    var $SupplierDeliveryReportGrid = $("#SupplierDeliveryReportGrid").pqGrid(setSupplierDeliveryReportGrid);
+    function loadSupplierDeliveryReportGrid(supplierID) {
+        debugger
+        var antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            url: "/PurchaseOrder/GetSupplierDeliveryReport",
+            data: { supplierID: supplierID },
+            dataType: "json",
+
+            beforeSend: function () {
+                $("#SupplierDeliveryReportGrid").pqGrid("showLoading");
+            },
+
+            complete: function () {
+                $("#SupplierDeliveryReportGrid").pqGrid("hideLoading");
+            },
+
+            success: function (response) {
+                const grid = $("#SupplierDeliveryReportGrid").pqGrid();
+
+                if (response.success) {
+                    grid.pqGrid("option", "dataModel.data", response.records);
+                } else {
+                    console.warn("No data found or an issue occurred: ", response.message);
+                    grid.pqGrid("option", "dataModel.data", []);
+                }
+
+                grid.pqGrid("refreshDataAndView");
+                PqGridRefreshClick(grid);
+            },
+
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Error loading Supplier Delivery Report grid:", textStatus, errorThrown);
+                console.error("Response text:", jqXHR.responseText);
+                $("#SupplierDeliveryReportGrid").pqGrid("hideLoading");
+            }
+        });
+
+    }
+    //-----------------------------------SupplierDeliveryReportGrid (Ends here)-----------------------------------//
+
+    function clearFormData() {
+        $("#SupplierID").val('');
+        ClearParamGrid('SupplierDeliveryReportGrid');
+    }
+</script>

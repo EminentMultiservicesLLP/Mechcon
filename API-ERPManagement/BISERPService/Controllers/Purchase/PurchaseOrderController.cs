@@ -409,5 +409,30 @@ namespace BISERPService.Controllers
                 return InternalServerError(ex);
             }
         }
+
+
+        [Route("getSupplierDeliveryReport")]
+        [Route("getSupplierDeliveryReport/{supplierID}")]
+        [HttpGet]
+        public IHttpActionResult GetSupplierDeliveryReport(int? supplierID = null)
+        {
+            try
+            {
+                var data = _ipurchaseorder.GetSupplierDeliveryReport(supplierID);
+
+                if (data == null)
+                {
+                    return NotFound(); // or return BadRequest("No data found for the specified enquiry ID.");
+                }
+
+                return Ok(data.ToList());
+            }
+            catch (Exception ex)
+            {
+                _loggger.LogError("Error in GetSupplierDeliveryReport of SM_ReportsController : parameter :" + Environment.NewLine + ex.StackTrace);
+                return InternalServerError(ex);
+            }
+        }
+
     }
 }

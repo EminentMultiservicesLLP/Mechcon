@@ -51,6 +51,7 @@ namespace BISERPBusinessLayer.QueryCollection.Purchase
         public const string PurchaseOrderAmendment = "sp_PurchaseOrderAmendment";
         public const string PurchaseOrderForReport = "sp_PurchaseOrderForRpt";
         public const string GetPOStateDetails = "sp_GetPOStateDetails";
+        public const string GetSupplierDeliveryReport = "sp_GetSupplierDeliveryReport";
 
 
         public const string DeleteIndentItem = "sp_DelIndentDetail";
