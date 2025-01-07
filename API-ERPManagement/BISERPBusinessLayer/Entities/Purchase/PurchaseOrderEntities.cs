@@ -141,5 +141,18 @@ namespace BISERPBusinessLayer.Entities.Purchase
         public int GRNQty { get; set; }
         public string POStatus { get; set; }
     }
-
+    public class SupplierDeliveryReportEntities
+    {
+        public int POID { get; set; }
+        public string PONo { get; set; }
+        public int ItemID { get; set; }
+        public string ItemName { get; set; }
+        public int POQty { get; set; }
+        public DateTime RequiredDate { get; set; }
+        public string strRequiredDate { get; set; }
+        public int GRNQty { get; set; }
+        public DateTime DeliveryDate { get; set; }
+        public string strDeliveryDate { get; set; }
+        public int DaysLate { get; set; }
+    }
 }
