@@ -91,7 +91,9 @@
                                     <input type="radio" id="Authorized" name="AuthCancel" value="2" checked="checked">
                                     <label for="Authorized">Authorized</label>&nbsp;&nbsp;
                                     <input type="radio" id="Cancel" name="AuthCancel" value="3">
-                                    <label for="Cancel">Cancel</label>
+                                    <label for="Cancel">Cancel</label>&nbsp;&nbsp;
+                                    <input type="radio" id="Recheck" name="AuthCancel" value="0">
+                                    <label for="Recheck">Recheck</label>
                                 </div>
 
                                 <div class="col-lg-2 col-md-4 col-sm-8">
@@ -408,14 +410,14 @@ $("#btnSave").on('click', function () {
             if (msg.success) {
                 if ($("[name='AuthCancel']:checked").val() == "2") {
                     ShowAlert("success", "PO authorized successfully.");
-                    SaveScandoc("files", POId, "Purchase", "POAuthorization");
+                }
+                else if ($("[name='AuthCancel']:checked").val() == "0") {
+                    ShowAlert("success", "The PO has been successfully sent for recheck.");
                 }
                 else {
                     ShowAlert("success", "PO cancelled successfully.");
-                    SaveScandoc("files", POId, "Purchase", "POAuthorization");
-                    $("#ddlStores").val("");
-                    $("#selAgainst").val("");
                 }
+                SaveScandoc("files", POId, "Purchase", "POAuthorization");
                 ClearForm();
             }
             else {
