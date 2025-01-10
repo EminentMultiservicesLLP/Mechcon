@@ -13,6 +13,7 @@ namespace BISERPBusinessLayer.Repositories.SM.Interfaces
         IEnumerable<ProductEntities> GetProducts();
         IEnumerable<LocationEntities> GetLocations();
         IEnumerable<TypeEntities> GetTypes();
+        IEnumerable<EnqTypeEntities> GetEnqTypes();
         IEnumerable<SectorEntities> GetSectors();
         IEnumerable<ZoneEntities> GetZones();
         IEnumerable<StatusEntities> GetEnqStatus();

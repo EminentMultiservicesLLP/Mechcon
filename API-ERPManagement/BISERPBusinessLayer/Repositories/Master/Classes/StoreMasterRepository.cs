@@ -780,6 +780,7 @@ namespace BISERPBusinessLayer.Repositories.Master.Classes
                                    ProjectID = row.Field<int?>("ProjectID"),
                                    ProjectCode = row.Field<string>("ProjectCode"),
                                    PONo = row.Field<string>("PONo"),
+                                   BudgetValue = row.Field<decimal?>("BudgetValue"),
                                }).ToList();
             }
             return workOrders;

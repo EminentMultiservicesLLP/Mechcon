@@ -98,6 +98,10 @@
                             </div>
                             <div class="row">
                                 <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                                    <label for="EnqType">EnqType</label>
+                                    <input type="text" id="EnqType" class="form-control" placeholder="Enquiry EnqType" disabled>
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
                                     <label for="Sector">Sector</label>
                                     <input type="text" id="Sector" class="form-control" placeholder="Enquiry Sector" disabled>
                                 </div>
@@ -117,12 +121,12 @@
                                     <label for="ContactNo">Contact Number</label>
                                     <input type="text" id="ContactNo" class="form-control" placeholder="Enquiry Contact Number" disabled>
                                 </div>
+                            </div>
+                            <div class="row">
                                 <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
                                     <label for="EmailID">Email Address</label>
                                     <input type="email" id="EmailID" class="form-control" placeholder="Enquiry Email Address" disabled>
                                 </div>
-                            </div>
-                            <div class="row">
                                 <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
                                     <label for="Place">Place</label>
                                     <input type="text" id="Place" class="form-control" placeholder="Enquiry Place" disabled>
@@ -376,6 +380,7 @@
                     $("#Location").val(details.Location);
                     details.LocationID = 1 ? GSTRate = 18 : GSTRate = 0;
                     $("#Type").val(details.Type);
+                    $("#EnqType").val(details.EnqType);
                     $("#Sector").val(details.Sector);
                     $("#Zone").val(details.Zone);
                     $("#Status").val(details.Status);
@@ -866,6 +871,7 @@
         $("#EmailID").val('');
         $("#Status").val('');
         $("#Type").val('');
+        $("#EnqType").val('');
         $("#Sector").val('');
         $("#Zone").val('');
         $("#CustomerMailMsg").val('');

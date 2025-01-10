@@ -200,6 +200,56 @@
                                     <tr>
                                         <th scope="row">
                                             <div class="row">
+                                                <div class="col-sm-4 tbl-required">Budget Value</div>
+                                                <div class="col-sm-8">
+                                                    <input type="number" id="BudgetValue" class="form-control" placeholder="Budget Value">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">Material Value</div>
+                                                <div class="col-sm-8">
+                                                    <input type="number" id="MaterialValue" class="form-control" placeholder="Material Value">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">Conversion Value</div>
+                                                <div class="col-sm-8">
+                                                    <input type="number" id="ConversionValue" class="form-control" placeholder="Conversion Value">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">Trans Value</div>
+                                                <div class="col-sm-8">
+                                                    <input type="number" id="TransValue" class="form-control" placeholder="Trans Value">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">E & C Value</div>
+                                                <div class="col-sm-8">
+                                                    <input type="number" id="ECValue" class="form-control" placeholder="E & C Value">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="row">
                                                 <div class="col-sm-4">PI Submission date for advance</div>
                                                 <div class="col-sm-8">
                                                     <input type="text" id="PIAdvSubmitDate" class="form-control datepicker" placeholder="PI Submission date for advance">
@@ -270,16 +320,16 @@
                                     <tr>
                                         <th scope="row">
                                             <div class="row">
-                                                <div class="col-sm-4">Consignee</div>
+                                                <div class="col-sm-4">Ship-To</div>
                                                 <div class="col-sm-8">
                                                     <select id="ConsigneeID" name="ConsigneeID" class="form-control">
-                                                        <option value="">--Select Consignee--</option>
+                                                        <option value="">--Select Ship-To--</option>
                                                     </select>
                                                 </div>
                                             </div>
                                         </th>
                                     </tr>
-                                    <tr>
+                                    <tr hidden>
                                         <th scope="row">
                                             <div class="row">
                                                 <div class="col-sm-4">Technical Specification</div>
@@ -382,14 +432,43 @@
                                     <tr>
                                         <th scope="row">
                                             <div class="row">
-                                                <div class="col-sm-4">Guarantee Type</div>
+                                                <div class="col-sm-4">Bank Guarantee</div>
                                                 <div class="col-sm-8">
                                                     <select class="form-control" id="GuaranteeType">
-                                                        <option value="">Select Guarantee Type</option>
-                                                        <option value="SBG">SBG</option>
-                                                        <option value="ABG">ABG</option>
-                                                        <option value="PBG">PBG</option>
+                                                        <option value="">Bank Guarantee</option>
+                                                        <option value="Yes">Yes</option>
+                                                        <option value="No">No</option>
                                                     </select>
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr class="BG">
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">SBG</div>
+                                                <div class="col-sm-8">
+                                                    <input type="number" class="form-control" id="SBG" placeholder="SBG">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr class="BG">
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">ABG</div>
+                                                <div class="col-sm-8">
+                                                    <input type="number" class="form-control" id="ABG" placeholder="ABG">
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr class="BG">
+                                        <th scope="row">
+                                            <div class="row">
+                                                <div class="col-sm-4">PBG</div>
+                                                <div class="col-sm-8">
+                                                    <input type="number" class="form-control" id="PBG" placeholder="PBG">
                                                 </div>
                                             </div>
                                         </th>
@@ -407,9 +486,9 @@
                                     <tr>
                                         <th scope="row">
                                             <div class="row">
-                                                <div class="col-sm-4">Transport</div>
+                                                <div class="col-sm-4">Frieght</div>
                                                 <div class="col-sm-8">
-                                                    <input type="text" class="form-control" id="Transport" placeholder="Transport">
+                                                    <input type="text" class="form-control" id="Transport" placeholder="Frieght">
                                                 </div>
                                             </div>
                                         </th>
@@ -417,14 +496,14 @@
                                     <tr>
                                         <th scope="row">
                                             <div class="row">
-                                                <div class="col-sm-4">1st Dispatch Date</div>
+                                                <div class="col-sm-4">Dispatch Date</div>
                                                 <div class="col-sm-8">
-                                                    <input type="text" class="form-control datepicker" id="DispatchDate1" placeholder="Select the 1st dispatch date">
+                                                    <input type="text" class="form-control datepicker" id="DispatchDate1" placeholder="Select the dispatch date">
                                                 </div>
                                             </div>
                                         </th>
                                     </tr>
-                                    <tr>
+                                    <tr hidden>
                                         <th scope="row">
                                             <div class="row">
                                                 <div class="col-sm-4">2nd Dispatch Date</div>
@@ -434,7 +513,7 @@
                                             </div>
                                         </th>
                                     </tr>
-                                    <tr>
+                                    <tr hidden>
                                         <th scope="row">
                                             <div class="row">
                                                 <div class="col-sm-4">3rd Dispatch Date</div>
@@ -444,7 +523,7 @@
                                             </div>
                                         </th>
                                     </tr>
-                                    <tr>
+                                    <tr hidden>
                                         <th scope="row">
                                             <div class="row">
                                                 <div class="col-sm-4">4th Dispatch Date</div>
@@ -454,7 +533,7 @@
                                             </div>
                                         </th>
                                     </tr>
-                                    <tr>
+                                    <tr hidden>
                                         <th scope="row">
                                             <div class="row">
                                                 <div class="col-sm-4">5th Dispatch Date</div>
@@ -467,7 +546,7 @@
                                     <tr>
                                         <th scope="row">
                                             <div class="row">
-                                                <div class="col-sm-4">Attachment</div>
+                                                <div class="col-sm-4">Technical Specification</div>
                                                 <div class="col-sm-8">
                                                     <input class="form-control btn-primary attachment" type="file" multiple accept=".jpg,.jpeg,.png,.pdf" id="Attachment" />
                                                 </div>
@@ -542,15 +621,15 @@
                     <div id="content">
                         <div id="content-tab">
                             <ul id="tabs" class="nav nav-tabs" data-tabs="tabs" style="padding: 1px;">
-                                <li class="active tab"><a href="#tab1" data-toggle="tab" style="margin: 0;">Project T & C</a></li>
-                                <li><a href="#tab2" data-toggle="tab" style="margin: 0;">Payment Terms</a></li>
-                                <li><a href="#tab3" data-toggle="tab" style="margin: 0;">Delivery Terms</a></li>
-                                <li><a href="#tab4" data-toggle="tab" style="margin: 0;">Freight</a></li>
-                                <li><a href="#tab5" data-toggle="tab" style="margin: 0;">P&F</a></li>
+                                @*<li class="active tab"><a href="#tab1" data-toggle="tab" style="margin: 0;">Project T & C</a></li>*@
+                                <li class="active tab"><a href="#tab2" data-toggle="tab" style="margin: 0;">Payment Terms</a></li>
+                                @*<li><a href="#tab3" data-toggle="tab" style="margin: 0;">Delivery Terms</a></li>*@
+                                @*<li><a href="#tab4" data-toggle="tab" style="margin: 0;">Freight</a></li>
+                                <li><a href="#tab5" data-toggle="tab" style="margin: 0;">P&F</a></li>*@
                             </ul>
                             <fieldset class="fieldsetCustom">
                                 <div id="my-tab-content" class="tab-content" style="border:none;padding:2px;">
-                                    <div class="tab-pane active" id="tab1" style="padding:0;">
+                                    <div class="tab-pane " id="tab1" style="padding:0;">
                                         <br>
                                         <div class="form-group" align="left">
                                             <button type="button" class="btn btn-primary" id="btnViewProjectTC">Add Term</button>
@@ -558,7 +637,7 @@
                                         </div>
                                         <div id="ProjectTCgrid"></div>
                                     </div>
-                                    <div class="tab-pane" id="tab2">
+                                    <div class="tab-pane" active id="tab2">
                                         <br>
                                         <div class="form-group" align="left">
                                             <button type="button" class="btn btn-primary" id="btnViewPayTerms">Add Term</button>
@@ -648,6 +727,7 @@
     var tempProjectID = 0;
     var tempOfferID = 0;
     let otherFieldIndx = 0;
+    $(".BG").hide();
 
     function getEnquiry() {
         $("#EnquiryLabel").autocomplete({
@@ -886,6 +966,11 @@
                 $("#PONo").val(data.PONo);
                 $("#PODate").datepicker("setDate", data.strPODate);
                 $("#POBaseValue").val(data.POBaseValue);
+                $("#BudgetValue").val(data.BudgetValue);
+                $("#MaterialValue").val(data.MaterialValue);
+                $("#ConversionValue").val(data.ConversionValue);
+                $("#TransValue").val(data.TransValue);
+                $("#ECValue").val(data.ECValue);
                 $("#PIAdvSubmitDate").datepicker("setDate", data.strPIAdvSubmitDate);
                 $("#ABGSubmitDate").datepicker("setDate", data.strABGSubmitDate);
                 $("#PIABGAdvSubmitDate").datepicker("setDate", data.strPIABGAdvSubmitDate);
@@ -910,7 +995,10 @@
                 $("#BriefTechnicalSpecification").val(data.BriefTechnicalSpecification);
                 $("#Quantity").val(data.Quantity);
                 $("#InstAndComm").val(data.InstAndComm);
-                $("#GuaranteeType").val(data.GuaranteeType);
+                $("#GuaranteeType").val(data.GuaranteeType).trigger("change");
+                $("#SBG").val(data.SBG);
+                $("#ABG").val(data.ABG);
+                $("#PBG").val(data.PBG);
                 $("#AdditionalContact").val(data.AdditionalContact);
 
             }
@@ -1202,6 +1290,7 @@
             { selector: "#PONo", placeholder: "PO No" },
             { selector: "#PODate", placeholder: "PO Date" },
             { selector: "#POBaseValue", placeholder: "PO Value" },
+            { selector: "#BudgetValue", placeholder: "Budget Value" },
             { selector: "#ABGSubmitDate", placeholder: "ABG Submit Date" },
         ];
 
@@ -1222,6 +1311,19 @@
         if (!piAdvSubmitDate && !piAbgAdvSubmitDate) {
             ShowAlert("error", "<b>One of the following is required:</b> <br/>(PI Submission date for ABG prepayment) <b> OR </b> (PI Submission date for advance payment).");
             return false;
+        }
+
+        if ($("#GuaranteeType").val() === "Yes") {
+            const bankGuaranteeFields = ["#SBG", "#ABG", "#PBG"];
+            const allFieldsInvalid = bankGuaranteeFields.every(selector => {
+                const value = $(selector).val();
+                return value === "" || value === "0" || value === 0;
+            });
+
+            if (allFieldsInvalid) {
+                ShowAlert("error", "Please enter Bank-Guarantee Value");
+                return false;
+            }
         }
 
         return true;
@@ -1263,6 +1365,11 @@
             PONo: $("#PONo").val(),
             PODate: $("#PODate").val(),
             POBaseValue: $("#POBaseValue").val(),
+            BudgetValue: $("#BudgetValue").val(),
+            MaterialValue: $("#MaterialValue").val(),
+            ConversionValue: $("#ConversionValue").val(),
+            TransValue: $("#TransValue").val(),
+            ECValue: $("#ECValue").val(),
             PIAdvSubmitDate: $("#PIAdvSubmitDate").val(),
             ABGSubmitDate: $("#ABGSubmitDate").val(),
             PIABGAdvSubmitDate: $("#PIABGAdvSubmitDate").val(),
@@ -1289,6 +1396,9 @@
             Quantity: $("#Quantity").val(),
             InstAndComm: $("#InstAndComm").val(),
             GuaranteeType: $("#GuaranteeType").val(),
+            SBG: $("#SBG").val(),
+            ABG: $("#ABG").val(),
+            PBG: $("#PBG").val(),
             AdditionalContact: $("#AdditionalContact").val(),
             OBOtherDetails: getOtherFeildDetails(),
             ProjectTCList: projectTCData,
@@ -1360,6 +1470,9 @@
         $("#Quantity").val('');
         $("#InstAndComm").val('');
         $("#GuaranteeType").val('');
+        $("#SBG").val('');
+        $("#ABG").val('');
+        $("#PBG").val('');
         $("#AdditionalContact").val('');
 
         $("#OtherFields").empty();
@@ -1372,6 +1485,7 @@
         ClearParamGrid("BasisTermgrid");
         loadUserGrid();
         clearEnquiryDetails();
+        $(".BG").hide();
     }
 
     function addOtherFields() {
@@ -1417,6 +1531,16 @@
         }
     });
 
+    $("#GuaranteeType").change(() => {
+        if ($("#GuaranteeType").val() == "Yes") {
+            $(".BG").show();
+        } else {
+            $(".BG").hide();
+            $("#SBG").val('');
+            $("#ABG").val('');
+            $("#PBG").val('');
+        }
+    });
     function clearEnquiryDetails() {
         tempOfferID = 0;
         $("#EnquiryID").val('');
@@ -1439,6 +1563,11 @@
         $("#Zone").val('');
         $("#CustomerMailMsg").val('');
         $("#POBaseValue").val('');
+        $("#BudgetValue").val('');
+        $("#MaterialValue").val('');
+        $("#ConversionValue").val('');
+        $("#TransValue").val('');
+        $("#ECValue").val('');
     }
 
     function showModal() {
@@ -2098,6 +2227,7 @@
 
     $("#content-tab").tabs({
         activate: function (event, ui) {
+            debugger
             let tabIndx = ui.newTab.index();
             const grids = [
                 $ProjectTCgrid,
@@ -2111,6 +2241,7 @@
             }
         }
     });
+    $PaymentTermgrid.pqGrid("refreshDataAndView");
 
 
     //---------------------------------------------------------------------Show Attachments-----------------------------------------------------------------//

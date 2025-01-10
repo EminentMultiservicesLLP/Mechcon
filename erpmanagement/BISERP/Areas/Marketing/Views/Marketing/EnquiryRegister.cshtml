@@ -89,6 +89,10 @@
                             </div>
                             <div class="row">
                                 <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                                    @Html.LabelFor(model => model.EnqTypeID, new { @class = "required" })
+                                    @Html.DropDownListFor(model => model.EnqTypeID, new SelectList(string.Empty, "Value", "Text"), "--Select Type--", new { @class = "wrapperdropdown-content form-control" })
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
                                     @Html.LabelFor(model => model.SectorID, new { @class = "required" })
                                     @Html.DropDownListFor(model => model.SectorID, new SelectList(string.Empty, "Value", "Text"), "--Select Sector--", new { @class = "wrapperdropdown-content form-control" })
                                 </div>
@@ -108,17 +112,17 @@
                                     @Html.LabelFor(model => model.ContactNo, new { @class = "" })
                                     @Html.TextBoxFor(model => model.ContactNo, new { @class = "form-control", placeholder = "Enter Contact Number" })
                                 </div>
+                            </div>
+                            <div class="row">
                                 <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
                                     @Html.LabelFor(model => model.EmailID, new { @class = "" })
                                     @Html.TextBoxFor(model => model.EmailID, new { @class = "form-control", placeholder = "Enter Email Address", @type = "email" })
                                 </div>
-                            </div>
-                            <div class="row">
                                 <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
                                     @Html.LabelFor(model => model.Place, new { @class = "" })
                                     @Html.TextBoxFor(model => model.Place, new { @class = "form-control", placeholder = "Enter Place" })
                                 </div>
-                                <div class="col-lg-2 col-md-4 col-sm-12 col-xs-12">
+                                <div class="col-lg-2 col-md-4 col-sm-12 col-xs-12" hidden>
                                     @Html.Label("Enq Status", new { @class = "required" })
                                     @Html.DropDownListFor(model => model.StatusID, new SelectList(string.Empty, "Value", "Text"), "--Select Status--", new { @class = "wrapperdropdown-content form-control" })
                                 </div>
@@ -126,7 +130,7 @@
                                     @Html.LabelFor(model => model.CustomerMailMsg, new { @class = "" })
                                     @Html.TextAreaFor(model => model.CustomerMailMsg, new { @class = "form-control", placeholder = "Enter Customer Message", rows = 3 })
                                 </div>
-                                <div class="col-sm-2">
+                                <div class="col-sm-2" hidden>
                                     <br />
                                     <button type="button" id="btnEnqRegFollowUp" class="btn btn-info" onclick="loadEnqRegFollowUpGrid()">Follow-Up History</button>
                                 </div>
@@ -156,6 +160,9 @@
 <script>
     var tempEnquiryID = 0;
     var clientData = [];
+    const $statusDropdown = $('#StatusID');
+    $statusDropdown.empty();
+    $statusDropdown.append('<option value="1">Live</option>');
 
     function loadSource() {
         $.ajax({
@@ -273,6 +280,35 @@
         });
     }
 
+    function loadEnqTypes() {
+        $.ajax({
+            type: "GET",
+            url: "/EnquiryRegister/GetEnqTypes",
+            dataType: "json",
+            success: function (data) {
+                const $enqTypeDropdown = $('#EnqTypeID');
+                $enqTypeDropdown.empty();
+
+                if (data.error) {
+                    $enqTypeDropdown.append('<option value="">--Error loading enqTypes--</option>');
+                    console.error("Error loading enqTypes:", data.error);
+                    return;
+                }
+
+                $enqTypeDropdown.append('<option value="">--Select EnqType--</option>');
+
+                data.forEach(function (enqType) {
+                    $enqTypeDropdown.append(`<option value="${enqType.EnqTypeID}">${enqType.EnqType}</option>`);
+                });
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                $('#EnqTypeID').empty();
+                $('#EnqTypeID').append('<option value="">--Error loading enqTypes--</option>');
+                console.error("Error loading enqTypes:", errorThrown);
+            }
+        });
+    }
+
     function loadSectors() {
         $.ajax({
             type: "GET",
@@ -313,7 +349,7 @@
 
                 if (data.error) {
                     $zoneDropdown.append('<option value="">--Error loading zones--</option>');
-                    console.error("Error loading zones:"+ data.error);
+                    console.error("Error loading zones:" + data.error);
                     return;
                 }
 
@@ -326,7 +362,7 @@
             error: function (xhr, textStatus, errorThrown) {
                 $('#ZoneID').empty();
                 $('#ZoneID').append('<option value="">--Error loading zones--</option>');
-                console.error("Error loading zones:"+ errorThrown);
+                console.error("Error loading zones:" + errorThrown);
             }
         });
     }
@@ -403,9 +439,10 @@
     loadProducts();
     loadLocations();
     loadTypes();
+    loadEnqTypes();
     loadSectors();
     loadZones();
-    loadEnqStatus();
+    //loadEnqStatus();
     getAllClient();
 
     //-----------------------------------EnquiryGrid (Starts here)-----------------------------------//
@@ -585,7 +622,7 @@
             },
 
             error: function (jqXHR, textStatus, errorThrown) {
-                console.error("Error loading Enquiry Follow-Up grid: "+ textStatus + errorThrown);
+                console.error("Error loading Enquiry Follow-Up grid: " + textStatus + errorThrown);
                 console.error("Response text: " + jqXHR.responseText);
                 $("#EnqRegFollowUpGrid").pqGrid("hideLoading");
             }
@@ -632,6 +669,7 @@
                     $("#ProductID").val(details.ProductID).change();
                     $("#LocationID").val(details.LocationID).change();
                     $("#TypeID").val(details.TypeID).change();
+                    $("#EnqTypeID").val(details.EnqTypeID).change();
                     $("#SectorID").val(details.SectorID).change();
                     $("#ZoneID").val(details.ZoneID).change();
                     $("#StatusID").val(details.StatusID).change();
@@ -658,6 +696,7 @@
             { selector: "#ProductID", placeholder: "Product" },
             { selector: "#LocationID", placeholder: "Location" },
             { selector: "#TypeID", placeholder: "Type" },
+            { selector: "#EnqTypeID", placeholder: "EnqTypeID" },
             { selector: "#SectorID", placeholder: "Sector" },
             { selector: "#ZoneID", placeholder: "Zone" },
             { selector: "#ClientID", placeholder: "Customer Name" },
@@ -696,6 +735,7 @@
             EmailID: $("#EmailID").val(),
             StatusID: $("#StatusID").val(),
             TypeID: $("#TypeID").val(),
+            EnqTypeID: $("#EnqTypeID").val(),
             SectorID: $("#SectorID").val(),
             ZoneID: $("#ZoneID").val(),
             CustomerMailMsg: $("#CustomerMailMsg").val(),
@@ -742,6 +782,7 @@
         $("#EmailID").val('');
         $("#StatusID").val('').trigger('change');
         $("#TypeID").val('').trigger('change');
+        $("#EnqTypeID").val('').trigger('change');
         $("#SectorID").val('').trigger('change');
         $("#ZoneID").val('').trigger('change');
         $("#CustomerMailMsg").val('');

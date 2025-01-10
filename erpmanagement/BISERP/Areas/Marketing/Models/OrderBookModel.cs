@@ -19,6 +19,11 @@ namespace BISERP.Areas.Marketing.Models
         public DateTime? PODate { get; set; }
         public string strPODate { get; set; }
         public double? POBaseValue { get; set; }
+        public decimal? BudgetValue { get; set; }
+        public decimal? MaterialValue { get; set; }
+        public decimal? ConversionValue { get; set; }
+        public decimal? TransValue { get; set; }
+        public decimal? ECValue { get; set; }
         public DateTime? PIAdvSubmitDate { get; set; }
         public string strPIAdvSubmitDate { get; set; }
         public DateTime? ABGSubmitDate { get; set; }
@@ -56,6 +61,9 @@ namespace BISERP.Areas.Marketing.Models
         public int? Quantity { get; set; }
         public string InstAndComm { get; set; }
         public string GuaranteeType { get; set; }
+        public decimal? SBG { get; set; }
+        public decimal? ABG { get; set; }
+        public decimal? PBG { get; set; }
         public string AdditionalContact { get; set; }
         public int? InsertedBy { get; set; }
         public DateTime? InsertedON { get; set; }

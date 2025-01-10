@@ -19,6 +19,7 @@ namespace BISERPBusinessLayer.QueryCollection.SM
         public const string GetProducts = "sp_SM_GetProducts";
         public const string GetLocations = "sp_SM_GetLocations";
         public const string GetTypes = "sp_SM_GetTypes";
+        public const string GetEnqTypes = "sp_SM_GetEnqTypes";
         public const string GetSectors = "sp_SM_GetSectors";
         public const string GetZones = "sp_SM_GetZones";
         public const string GetEnqStatus = "sp_SM_GetEnqStatus";

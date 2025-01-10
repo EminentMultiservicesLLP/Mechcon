@@ -63,7 +63,7 @@
                             <legend class="legendCustom">Enquiry Allocation</legend>
 
                             <div class="row">
-                                <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
+                                <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6" hidden>
                                     <label for="StatusID" class="">Enq Status</label>
                                     <select id="StatusID" class="form-control">
                                         <option value="null">All</option>
@@ -141,6 +141,10 @@
                             </div>
                             <div class="row">
                                 <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                                    <label for="EnqType">EnqType</label>
+                                    <input type="text" id="EnqType" class="form-control" placeholder="Enquiry EnqType" disabled>
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
                                     <label for="Sector">Sector</label>
                                     <input type="text" id="Sector" class="form-control" placeholder="Enquiry Sector" disabled>
                                 </div>
@@ -160,12 +164,12 @@
                                     <label for="ContactNo">Contact Number</label>
                                     <input type="text" id="ContactNo" class="form-control" placeholder="Enquiry Contact Number" disabled>
                                 </div>
+                            </div>
+                            <div class="row">
                                 <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
                                     <label for="EmailID">Email Address</label>
                                     <input type="email" id="EmailID" class="form-control" placeholder="Enquiry Email Address" disabled>
                                 </div>
-                            </div>
-                            <div class="row">
                                 <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
                                     <label for="Place">Place</label>
                                     <input type="text" id="Place" class="form-control" placeholder="Enquiry Place" disabled>
@@ -189,6 +193,9 @@
 </div>
 <script>
     var tempAllocationID = 0;
+    const $statusDropdown = $('#StatusID');
+    $statusDropdown.empty();
+    $statusDropdown.append('<option value="1">Live</option>');
 
     function loadStatus() {
         $.ajax({
@@ -295,6 +302,7 @@
                     $("#Product").val(details.Product);
                     $("#Location").val(details.Location);
                     $("#Type").val(details.Type);
+                    $("#EnqType").val(details.EnqType);
                     $("#Sector").val(details.Sector);
                     $("#Zone").val(details.Zone);
                     $("#Status").val(details.Status);
@@ -533,6 +541,7 @@
         $("#EmailID").val('');
         $("#Status").val('');
         $("#Type").val('');
+        $("#EnqType").val('');
         $("#Sector").val('');
         $("#Zone").val('');
         $("#CustomerMailMsg").val('');
@@ -549,7 +558,7 @@
 
     //-----------------------------------On Load-----------------------------------//
 
-    loadStatus();
+    //loadStatus();
     loadUsers();
     getEnquiry(null);
 

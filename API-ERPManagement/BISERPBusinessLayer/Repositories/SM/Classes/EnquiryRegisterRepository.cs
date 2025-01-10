@@ -80,6 +80,22 @@ namespace BISERPBusinessLayer.Repositories.SM.Classes
             return types;
         }
 
+        public IEnumerable<EnqTypeEntities> GetEnqTypes()
+        {
+            List<EnqTypeEntities> types = null;
+            using (DBHelper dbHelper = new DBHelper())
+            {
+                DataTable dt = dbHelper.ExecuteDataTable(MarketingQueries.GetEnqTypes, CommandType.StoredProcedure);
+                types = dt.AsEnumerable()
+                          .Select(row => new EnqTypeEntities
+                          {
+                              EnqTypeID = row.Field<int>("EnqTypeID"),
+                              EnqType = row.Field<string>("EnqType")
+                          }).ToList();
+            }
+            return types;
+        }
+
         public IEnumerable<SectorEntities> GetSectors()
         {
             List<SectorEntities> sectors = null;
@@ -167,6 +183,7 @@ namespace BISERPBusinessLayer.Repositories.SM.Classes
                     paramCollection.Add(new DBParameter("EmailID", entity.EmailID, DbType.String));
                     paramCollection.Add(new DBParameter("StatusID", entity.StatusID, DbType.Int32));
                     paramCollection.Add(new DBParameter("TypeID", entity.TypeID, DbType.Int32));
+                    paramCollection.Add(new DBParameter("EnqTypeID", entity.EnqTypeID, DbType.Int32));
                     paramCollection.Add(new DBParameter("SectorID", entity.SectorID, DbType.Int32));
                     paramCollection.Add(new DBParameter("ZoneID", entity.ZoneID, DbType.Int32));
                     paramCollection.Add(new DBParameter("InsertedBy", entity.InsertedBy, DbType.Int32));
@@ -250,6 +267,8 @@ namespace BISERPBusinessLayer.Repositories.SM.Classes
                         Status = row.Field<string>("Status"),
                         TypeID = row.Field<int?>("TypeID"),
                         Type = row.Field<string>("Type"),
+                        EnqTypeID = row.Field<int?>("EnqTypeID"),
+                        EnqType = row.Field<string>("EnqType"),
                         SectorID = row.Field<int?>("SectorID"),
                         Sector = row.Field<string>("Sector"),
                         ZoneID = row.Field<int?>("ZoneID"),

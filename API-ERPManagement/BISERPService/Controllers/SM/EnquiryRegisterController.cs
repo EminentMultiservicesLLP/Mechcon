@@ -110,6 +110,28 @@ namespace BISERPService.Controllers.SM
             }
         }
 
+        [Route("getEnqTypes")]
+        [AcceptVerbs("GET", "POST")]
+        public IHttpActionResult GetEnqTypes()
+        {
+            try
+            {
+                var types = _enquiryRegister.GetEnqTypes().ToList();
+
+                if (types == null || !types.Any())
+                {
+                    return NotFound();
+                }
+
+                return Ok(types);
+            }
+            catch (Exception ex)
+            {
+                _loggger.LogError("Error in GetEnqTypes method of EnquiryRegisterController:" + Environment.NewLine + ex.ToString());
+                return InternalServerError(ex);
+            }
+        }
+
         [Route("getSectors")]
         [AcceptVerbs("GET", "POST")]
         public IHttpActionResult GetSectors()

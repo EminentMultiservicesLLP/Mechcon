@@ -43,6 +43,9 @@ namespace BISERPBusinessLayer.Entities.SM
         public int? TypeID { get; set; }
         public string Type { get; set; }
 
+        public int? EnqTypeID { get; set; }
+        public string EnqType { get; set; }
+
         public int? SectorID { get; set; }
         public string Sector { get; set; }
 
@@ -94,6 +97,11 @@ namespace BISERPBusinessLayer.Entities.SM
     {
         public int TypeID { get; set; }
         public string Type { get; set; }
+    }
+    public class EnqTypeEntities
+    {
+        public int EnqTypeID { get; set; }
+        public string EnqType { get; set; }
     }
     public class SectorEntities
     {
