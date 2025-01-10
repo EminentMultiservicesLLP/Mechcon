@@ -21,5 +21,6 @@ namespace BISERPBusinessLayer.Entities.SM
         public int? ClientID { get; set; }
         public string ClientName { get; set; }
         public string PONo { get; set; }
+        public decimal? BudgetValue { get; set; }
     }
 }

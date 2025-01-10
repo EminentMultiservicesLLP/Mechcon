@@ -52,9 +52,13 @@ namespace BISERP.Areas.Marketing.Models
         public int? StatusID { get; set; }
         public string Status { get; set; }
 
-        [Display(Name = "Type")]
+        [Display(Name = "User Type")]
         public int? TypeID { get; set; }
         public string Type { get; set; }
+
+        [Display(Name = "Enq Type")]
+        public int? EnqTypeID { get; set; }
+        public string EnqType { get; set; }
 
         [Display(Name = "Sector")]
         public int? SectorID { get; set; }
@@ -107,6 +111,11 @@ namespace BISERP.Areas.Marketing.Models
     {
         public int TypeID { get; set; }
         public string Type { get; set; }
+    }
+    public class EnqTypeModel
+    {
+        public int EnqTypeID { get; set; }
+        public string EnqType { get; set; }
     }
     public class SectorModel
     {

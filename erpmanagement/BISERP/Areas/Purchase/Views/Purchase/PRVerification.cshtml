@@ -477,15 +477,10 @@
                 },
                 success: function (data) {
 
-                    //var dataMGrid = [];
-                    //$.each(data, function (index, value) {
-                    //    var grdData = {
-                    //        'IndentDetailId': value.IndentDetailId,'ItemId': value.ItemId,'ItemCode': value.ItemCode,'ItemName': value.ItemName,
-                    //        'UnitName': value.UnitName, 'Quantity': value.ItemQty, 'AuthorisedQty': value.ItemQty, 'OrderingUnit': value.PackSize, 'state': true,
-                    //        'DescriptiveName': value.DescriptiveName, 'HSNCode': value.HSNCode,'IndentRemark':value.IndentRemark
-                    //    };
-                    //    dataMGrid.push(grdData);
-                    //});
+                    for (let i = 0; i < data.length; i++) {
+                        data[i].AuthorisedQty = data[i].ItemQty;
+                    }
+
                     $grid.pqGrid("hideLoading");
                     $grid.pqGrid("option", "dataModel.data", data);
                     $grid.pqGrid("refreshDataAndView");

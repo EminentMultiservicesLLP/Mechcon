@@ -118,6 +118,28 @@ namespace BISERP.Areas.Marketing.Controllers
         }
 
         [HttpGet]
+        public async Task<JsonResult> GetEnqTypes()
+        {
+            try
+            {
+                string _url = $"{url}/enquiryRegister/getEnqTypes{Common.Constants.JsonTypeResult}";
+                List<EnqTypeModel> enqType = await Common.AsyncWebCalls.GetAsync<List<EnqTypeModel>>(client, _url, CancellationToken.None);
+
+                if (enqType == null || !enqType.Any())
+                {
+                    return Json(new { error = "No enqType found." }, JsonRequestBehavior.AllowGet);
+                }
+
+                return Json(enqType, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error in GetEnqTypes method:" + Environment.NewLine + ex.ToString());
+                return Json(new { error = "An error occurred while retrieving the enqType." }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpGet]
         public async Task<JsonResult> GetSectors()
         {
             try

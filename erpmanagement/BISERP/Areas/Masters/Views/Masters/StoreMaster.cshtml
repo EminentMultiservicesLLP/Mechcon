@@ -1050,13 +1050,14 @@
 
         if (workOrderID && workOrderID != 0) {
             const details = Enquiries.find(enq => enq.WorkOrderID == workOrderID);
-
+            debugger
             if (details) {
                 $("#ID").val(details.ProjectID || '');
                 $("#Code").val(details.ProjectCode || '');
                 $("#Name").val(details.ProjectCode || '');
                 $("#ddlClient").val(details.ClientID || '');
                 $("#ClientPoNo").val(details.PONo || '');
+                $("#ProjectBudget").val(details.BudgetValue || '');
                 $("#Nature").prop("disabled", true);
             } else {
                 ShowAlert("error", "No matching enquiry found for the selected Work Order.");

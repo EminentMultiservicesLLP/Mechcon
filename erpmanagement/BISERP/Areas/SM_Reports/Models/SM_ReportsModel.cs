@@ -96,7 +96,12 @@ namespace BISERP.Areas.SM_Reports.Models
         public string PONo { get; set; }
         public DateTime? PODate { get; set; }
         public string strPODate { get; set; }
-        public double? POBaseValue { get; set; }      
+        public double? POBaseValue { get; set; }
+        public decimal? BudgetValue { get; set; }
+        public decimal? MaterialValue { get; set; }
+        public decimal? ConversionValue { get; set; }
+        public decimal? TransValue { get; set; }
+        public decimal? ECValue { get; set; }
         public int? ProjectID { get; set; }
         public string ProjectCode { get; set; }
         public string ProjectDescription { get; set; }
@@ -118,6 +123,9 @@ namespace BISERP.Areas.SM_Reports.Models
         public int? Quantity { get; set; }
         public string InstAndComm { get; set; }
         public string GuaranteeType { get; set; }
+        public decimal? SBG { get; set; }
+        public decimal? ABG { get; set; }
+        public decimal? PBG { get; set; }
         public string AdditionalContact { get; set; }
         public string BillAddress { get; set; }
         public string GSTIN { get; set; }

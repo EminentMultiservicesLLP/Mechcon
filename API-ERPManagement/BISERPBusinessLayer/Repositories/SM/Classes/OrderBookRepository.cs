@@ -103,6 +103,11 @@ namespace BISERPBusinessLayer.Repositories.SM.Classes
                     paramCollection.Add(new DBParameter("PONo", entity.PONo, DbType.String));
                     paramCollection.Add(new DBParameter("PODate", entity.PODate, DbType.DateTime));
                     paramCollection.Add(new DBParameter("POBaseValue", entity.POBaseValue, DbType.Double));
+                    paramCollection.Add(new DBParameter("BudgetValue", entity.BudgetValue, DbType.Double));
+                    paramCollection.Add(new DBParameter("MaterialValue", entity.MaterialValue, DbType.Double));
+                    paramCollection.Add(new DBParameter("ConversionValue", entity.ConversionValue, DbType.Double));
+                    paramCollection.Add(new DBParameter("TransValue", entity.TransValue, DbType.Double));
+                    paramCollection.Add(new DBParameter("ECValue", entity.ECValue, DbType.Double));
                     paramCollection.Add(new DBParameter("PIAdvSubmitDate", entity.PIAdvSubmitDate, DbType.DateTime));
                     paramCollection.Add(new DBParameter("ABGSubmitDate", entity.ABGSubmitDate, DbType.DateTime));
                     paramCollection.Add(new DBParameter("PIABGAdvSubmitDate", entity.PIABGAdvSubmitDate, DbType.DateTime));
@@ -129,6 +134,9 @@ namespace BISERPBusinessLayer.Repositories.SM.Classes
                     paramCollection.Add(new DBParameter("Quantity", entity.Quantity, DbType.Int16));
                     paramCollection.Add(new DBParameter("InstAndComm", entity.InstAndComm, DbType.String));
                     paramCollection.Add(new DBParameter("GuaranteeType", entity.GuaranteeType, DbType.String));
+                    paramCollection.Add(new DBParameter("SBG", entity.SBG, DbType.Double));
+                    paramCollection.Add(new DBParameter("ABG", entity.ABG, DbType.Double));
+                    paramCollection.Add(new DBParameter("PBG", entity.PBG, DbType.Double));
                     paramCollection.Add(new DBParameter("AdditionalContact", entity.AdditionalContact, DbType.String));
                     paramCollection.Add(new DBParameter("OBOtherDetails", OBOtherDetails, DbType.Xml));
                     paramCollection.Add(new DBParameter("ProjectTCList", ProjectTCList, DbType.Xml));
@@ -189,6 +197,11 @@ namespace BISERPBusinessLayer.Repositories.SM.Classes
                                    PONo = row.Field<string>("PONo"),
                                    strPODate = row.Field<string>("strPODate"),
                                    POBaseValue = row.Field<double?>("POBaseValue"),
+                                   BudgetValue = row.Field<decimal?>("BudgetValue"),
+                                   MaterialValue = row.Field<decimal?>("MaterialValue"),
+                                   ConversionValue = row.Field<decimal?>("ConversionValue"),
+                                   TransValue = row.Field<decimal?>("TransValue"),
+                                   ECValue = row.Field<decimal?>("ECValue"),
                                    strPIAdvSubmitDate = row.Field<string>("strPIAdvSubmitDate"),
                                    strABGSubmitDate = row.Field<string>("strABGSubmitDate"),
                                    strPIABGAdvSubmitDate = row.Field<string>("strPIABGAdvSubmitDate"),
@@ -217,6 +230,9 @@ namespace BISERPBusinessLayer.Repositories.SM.Classes
                                    Quantity = row.Field<int?>("Quantity"),
                                    InstAndComm = row.Field<string>("InstAndComm"),
                                    GuaranteeType = row.Field<string>("GuaranteeType"),
+                                   SBG = row.Field<decimal?>("SBG"),
+                                   ABG = row.Field<decimal?>("ABG"),
+                                   PBG = row.Field<decimal?>("PBG"),
                                    AdditionalContact = row.Field<string>("AdditionalContact"),
                                    Deactive = row.Field<bool>("Deactive"),
                                }).ToList();
