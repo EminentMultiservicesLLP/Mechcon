@@ -2,16 +2,23 @@
 @Scripts.Render("~/bundles/jquerymodels")
 <script>
     $(function () {
-        $('#FromDate').datetimepicker({
-            format: 'DD-MMM-YYYY',
-            extraFormats: ['DD-MM-YYYY', 'DD-MM-YY'],
-            defaultDate: new Date()
-        });
-        $('#ToDate').datetimepicker({
-            format: 'DD-MMM-YYYY',
-            extraFormats: ['DD-MM-YYYY', 'DD-MM-YY'],
-            defaultDate: new Date()
-        });
+        $(".datepicker").datepicker({
+            showOn: "button",
+            buttonImage: "/Content/images/calendar.gif",
+            buttonImageOnly: true,
+            buttonText: "Select date",
+            'changeMonth': true,
+            'changeYear': true,
+            'yearRange': '2021:2030',
+            "format": "dd-M-yyyy",
+            todayBtn: "linked",
+            pickerPosition: "bottom-left",
+            "todayHighlight": true,
+            autoclose: true,
+        }).datepicker("setDate", new Date());
+        //$("#anim").change(function () {
+        //    $(".datepicker").datepicker("option", "showAnim", "fadeIn");
+        //});
     });
 </script>
 
@@ -35,15 +42,16 @@
                 <div id="content">
                     <div id="content-tab">
                         <ul id="tabs" class="nav nav-tabs" data-tabs="tabs" style="padding: 1px; /*white-space:wrap;*/">
-                            <li class="active tab"><a href="#tab1" data-toggle="tab" style="margin: 0;">Indent</a></li>
+                            <li class="active tab"><a href="#tab1" data-toggle="tab" style="margin: 0;">Request</a></li>
+                            <li><a href="#tab9" data-toggle="tab" style="margin: 0;">Purchase</a></li>
+                            <li><a href="#tab5" data-toggle="tab" style="margin: 0;">GRN</a></li>
                             <li><a href="#tab2" data-toggle="tab" style="margin: 0;">Issue</a></li>
                             <li><a href="#tab3" data-toggle="tab" style="margin: 0;">Material Return</a></li>
-                            <li><a href="#tab4" data-toggle="tab" style="margin: 0;">Purchase Return</a></li>
-                            <li><a href="#tab5" data-toggle="tab" style="margin: 0;">GRN</a></li>
-                            <li><a href="#tab6" data-toggle="tab" style="margin: 0;">Discrepancy</a></li>
+                            @*<li><a href="#tab4" data-toggle="tab" style="margin: 0;">Purchase Return</a></li>
+                                <li><a href="#tab6" data-toggle="tab" style="margin: 0;">Discrepancy</a></li>*@
                             <li><a href="#tab8" data-toggle="tab" style="margin: 0;">Stock</a></li>
                             <li><a href="#tab7" data-toggle="tab" style="margin: 0;">Dispatch</a></li>
-                            <li style="display:none;"><a href="#tab9" data-toggle="tab" style="margin: 0;">Supplier Bill</a></li>               @*hidden for further use*@
+                            <li style="display:none;"><a href="#tab10" data-toggle="tab" style="margin: 0;">Supplier Bill</a></li>               @*hidden for further use*@
                         </ul>
                         <fieldset class="fieldsetCustom">
 
@@ -60,22 +68,12 @@
                                     <div class="row" style="margin-left:2px">
                                         <div class="col-sm-3">
                                             @Html.Label("From Date")
-                                            <div class='input-group date' id='FromDate'>
-                                                <input type='text' class="form-control" />
-                                                <span class="input-group-addon">
-                                                    <span class="glyphicon glyphicon-calendar"></span>
-                                                </span>
-                                            </div>
+                                            <input class="form-control datepicker" id='FromDate' />
                                         </div>
 
                                         <div class="col-sm-3">
                                             @Html.Label("To Date")
-                                            <div class='input-group date' id='ToDate'>
-                                                <input type='text' class="form-control" />
-                                                <span class="input-group-addon">
-                                                    <span class="glyphicon glyphicon-calendar"></span>
-                                                </span>
-                                            </div>
+                                            <input class="form-control datepicker" id='ToDate' />
                                         </div>
                                         <div class="col-sm-3">
                                             @Html.Label("Project")
@@ -85,11 +83,9 @@
                                 </div>
 
                                 <div class="tab-pane active" id="tab1">
-
                                     <div class="row">
-
                                         <div class="col-sm-3">
-                                            @Html.Label("Indent No")
+                                            @Html.Label("Request No")
                                             @Html.TextBox("IndentNo", "", new { @class = "form-control", placeholder = "click here.." })
                                             @Html.Hidden("IndentId")
                                         </div>
@@ -101,26 +97,13 @@
                                             <button type="button" class="btn btn-primary" onclick="ResetForm()">Reset</button>
                                         </div>
                                     </div>
-                                    <div title="Select Indent No" id="IndentModal" style="display: none;">
+                                    <div title="Select Request No" id="IndentModal" style="display: none;">
                                         <div id="Indentgrid"></div>
                                     </div>
                                 </div>
 
                                 <div class="tab-pane" id="tab2">
-
-                                    @*<div class="row">
-                                            <div class="form-group form-horizontal">
-                                                <div class="col-sm-12">
-                                                    @Html.Label("Options")
-                                                    <input type="radio" name="Options" value="MaterialIssue" checked>Material Issue &nbsp;&nbsp;&nbsp;&nbsp;
-                                                    <input type="radio" name="Options" value="Item"> Item &nbsp;&nbsp;&nbsp;&nbsp;
-                                                    <input type="radio" name="Options" value="FromStore"> Project &nbsp;&nbsp;&nbsp;&nbsp;
-                                                    <input type="radio" name="Options" value="ToStore"> To Store &nbsp;&nbsp;&nbsp;&nbsp;
-                                                </div>
-                                            </div>
-                                        </div>*@
                                     <div class="row">
-
                                         <div class="col-sm-3">
                                             @Html.Label("Issue No")
                                             @Html.TextBox("IssueNo", "", new { @class = "form-control", placeholder = "click here.." })
@@ -160,23 +143,22 @@
                                     </div>
                                 </div>
 
-                                <div class="tab-pane" id="tab4">
-                                    <div class="row">
-                                        <div class="col-sm-3">
-                                            @Html.Label("Store/Supplier")
-                                            @Html.TextBox("Supplier", "", new Dictionary<string, object> { { "data-toggle", "modal" }, { "data-target", "#Modal" }, { "class", "form-control" } })
-                                        </div>
-                                    </div>
+                                <!--<div class="tab-pane" id="tab4">
+                                    <div class="row">-->
+                                @*<div class="col-sm-3">
+                                        @Html.Label("Store/Supplier")
+                                        @Html.TextBox("Supplier", "", new Dictionary<string, object> { { "data-toggle", "modal" }, { "data-target", "#Modal" }, { "class", "form-control" } })
+                                    </div>*@
+                                <!--</div>
                                     <div class="row">
                                         <div class="col-sm-12">
                                             <button type="button" class="btn btn-success" onclick="printReport('PurchaseReturnRpt')">Show</button>
                                             <button type="button" class="btn btn-primary" onclick="ResetForm()">Reset</button>
                                         </div>
                                     </div>
-                                </div>
+                                </div>-->
 
                                 <div class="tab-pane" id="tab5">
-
                                     <div class="row">
                                         <div class="col-sm-3">
                                             @Html.Label("Supplier")
@@ -209,21 +191,21 @@
                                     </div>
                                 </div>
 
-                                <div class="tab-pane" id="tab6">
-                                    <div class="row">
+                                @*<div class="tab-pane" id="tab6">
+                                        <div class="row">
 
-                                        <div class="col-sm-12">
-                                            <button type="button" class="btn btn-success" onclick="printReport('DiscrepancyRpt')">Show</button>
-                                            <button type="button" class="btn btn-primary" onclick="ResetForm()">Reset</button>
+                                            <div class="col-sm-12">
+                                                <button type="button" class="btn btn-success" onclick="printReport('DiscrepancyRpt')">Show</button>
+                                                <button type="button" class="btn btn-primary" onclick="ResetForm()">Reset</button>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
+                                    </div>*@
 
                                 <div class="tab-pane" id="tab7">
                                     <div class="row">
                                         <div class="col-sm-3">
                                             @Html.Label("Packing List No")
-                                            @Html.TextBox("PackingListNo", "", new { @class = "form-control" , placeholder="click here.."})
+                                            @Html.TextBox("PackingListNo", "", new { @class = "form-control", placeholder = "click here.." })
                                             @Html.Hidden("PackingListId")
                                         </div>
                                     </div>
@@ -271,29 +253,59 @@
                                     </div>
                                 </div>
 
-                                @*<div class="tab-pane" id="tab9">
+                                <div class="tab-pane" id="tab9">
                                     <div class="row">
-                                        <div class="form-group form-horizontal">
-                                            <div class="col-sm-3">
-                                                @Html.Label("Supplier")
-                                                @Html.TextBox("SupplierNameBill", "", new Dictionary<string, object> { { "class", "form-control " } })
-                                                @Html.Hidden("SupplierIDBill")
-                                            </div>
+                                        <div class="col-sm-3">
+                                            @Html.Label("Purchase Request No")
+                                            @Html.TextBox("PurchaseIndentNo", "", new { @class = "form-control", placeholder = "click here.." })
+                                            @Html.Hidden("PurchaseIndentId")
+                                            @Html.Hidden("PRStatus")
                                         </div>
+                                        <div class="col-sm-3">
+                                            @Html.Label("Purchase Order No")
+                                            @Html.TextBox("PONo", "", new { @class = "form-control", placeholder = "click here.." })
+                                            @Html.Hidden("POId")
+                                            @Html.Hidden("POStatus")
+                                        </div>
+
                                     </div>
                                     <div class="row">
                                         <div class="col-sm-12">
-                                            <button type="button" class="btn btn-success" onclick="printReport('SupplierBillRpt')">Show</button>
+                                            <button type="button" class="btn btn-success" onclick="printReport('PurchaseRpt')">Show</button>
                                             <button type="button" class="btn btn-primary" onclick="ResetForm()">Reset</button>
                                         </div>
+                                        <div title="Select PR No" id="PurchaseIndentmodel" style="display: none;">
+                                            <div id="PurchaseIndentgrid"></div>
+                                        </div>
+                                        <div title="Select PO No" id="POmodel" style="display: none;">
+                                            <div id="POgrid"></div>
+                                        </div>
                                     </div>
-                                    <div id="SupplierBillModal" title="Select Items" style="overflow:hidden;">
-                                        <div id="SupplierBillgrid"></div>
-                                    </div>
-                                </div>*@
+                                </div>
+
+                                @*<div class="tab-pane" id="tab10">
+                                        <div class="row">
+                                            <div class="form-group form-horizontal">
+                                                <div class="col-sm-3">
+                                                    @Html.Label("Supplier")
+                                                    @Html.TextBox("SupplierNameBill", "", new Dictionary<string, object> { { "class", "form-control " } })
+                                                    @Html.Hidden("SupplierIDBill")
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <button type="button" class="btn btn-success" onclick="printReport('SupplierBillRpt')">Show</button>
+                                                <button type="button" class="btn btn-primary" onclick="ResetForm()">Reset</button>
+                                            </div>
+                                        </div>
+                                        <div id="SupplierBillModal" title="Select Items" style="overflow:hidden;">
+                                            <div id="SupplierBillgrid"></div>
+                                        </div>
+                                    </div>*@
 
 
-                                <div @*style=" padding-left: 17px;"*@>
+                                <div>
                                     <div class="row">
                                         <div class="col-sm-12">
                                             <iframe id="iframeReportViewer" style="width: 100%; height: 800px"></iframe>
@@ -315,11 +327,11 @@
         loadUserReportCategory(76);
         ClearForm();
     });
-    $("#ddlStore").on('change', function () {        
+    $("#ddlStore").on('change', function () {
         if ($("#tab7").css('display') == 'block') {
             $("#PackingListNo").val() = '';
         }
-        else{
+        else {
             var storeId = $("#ddlStore").val();
             $.ajax({
                 type: "GET",
@@ -334,16 +346,16 @@
                     });
                 }
             });
-        }       
+        }
     })
 
-    $("#FromDate").on('change', function () {
-        $("#PackingListNo").val() = '';
-    })
-    
-    $("#ToDate").on('change', function () {
-        $("#PackingListNo").val() = '';
-    })
+    //$("#FromDate").on('change', function () {
+    //    $("#PackingListNo").val() = '';
+    //})
+
+    //$("#ToDate").on('change', function () {
+    //    $("#PackingListNo").val() = '';
+    //})
 
     function loadUserReportCategory(menuId) {
         $.ajax({
@@ -376,7 +388,7 @@
             async: true,
             success: function (data) {
                 $('#ddlStore').empty();
-                $('#ddlStore').append('<option value="">'+ "Select"+'</option>');
+                $('#ddlStore').append('<option value="">' + "Select" + '</option>');
                 $.each(data, function (index, value) {
                     $('#ddlStore').append('<option value="' + value.ID + '">' + value.Name + '</option>');
                 });
@@ -394,17 +406,21 @@
 
             let tabIndx = ui.newPanel.selector.substring(4);
             tabIndx == "1" ? loadUserReportCategory(76) : tabIndx == "2" ? loadUserReportCategory(77) : tabIndx == "3" ? loadUserReportCategory(78) : tabIndx == "4" ? loadUserReportCategory(82) : tabIndx == "5" ? loadUserReportCategory(80) : tabIndx == "6" ? loadUserReportCategory(81) :
-                tabIndx == "7" ? loadUserReportCategory(192) : tabIndx == "8" ? loadUserReportCategory(83) : tabIndx == "9" ? loadUserReportCategory(108) : loadUserReportCategory(76);
+                tabIndx == "7" ? loadUserReportCategory(192) : tabIndx == "8" ? loadUserReportCategory(83) : tabIndx == "9" ? loadUserReportCategory(170) : loadUserReportCategory(76);
         }
     });
     // ********************Clear Form************//
 
     function ClearForm() {
+        $("#ddlStore").closest('div').show();
         $("#iframeReportViewer").attr('src', "");
-        $('#FromDate').data("DateTimePicker").disable();
-        $('#ToDate').data("DateTimePicker").disable();
-        ResetDate("FromDate");
-        ResetDate("ToDate");
+
+        $('#FromDate').datepicker().datepicker("setDate", new Date());
+        $('#ToDate').datepicker().datepicker("setDate", new Date());
+        $('#FromDate').prop('disabled', true);
+        $('#ToDate').prop('disabled', true);
+        //ResetDate("FromDate");
+        //ResetDate("ToDate");
         $("#IndentNo").prop('disabled', true);
         $('#ddlStore').prop('disabled', true);
         $("#ItemNameMat").prop('disabled', true);
@@ -445,25 +461,34 @@
 
     $('#ddlReport').change(function () {
         ClearForm();
+
         if ($("#ddlReport").val() == "101") {
             $("#IndentNo").prop('disabled', false);
-            $('#FromDate').data("DateTimePicker").enable();
-            $('#ToDate').data("DateTimePicker").enable();
+            //$('#FromDate').data("DateTimePicker").enable();
+            //$('#ToDate').data("DateTimePicker").enable();
+            $('#FromDate').prop('disabled', false);
+            $('#ToDate').prop('disabled', false);
             $('#ddlStore').prop('disabled', false);
         }
         else if ($("#ddlReport").val() == "102") {
-            $('#FromDate').data("DateTimePicker").enable();
-            $('#ToDate').data("DateTimePicker").enable();
+            //$('#FromDate').data("DateTimePicker").enable();
+            //$('#ToDate').data("DateTimePicker").enable();
+            $('#FromDate').prop('disabled', false);
+            $('#ToDate').prop('disabled', false);
             $('#ddlStore').prop('disabled', false);
         }
         else if ($("#ddlReport").val() == "103") {
-            $('#FromDate').data("DateTimePicker").enable();
-            $('#ToDate').data("DateTimePicker").enable();
+            //$('#FromDate').data("DateTimePicker").enable();
+            //$('#ToDate').data("DateTimePicker").enable();
+            $('#FromDate').prop('disabled', false);
+            $('#ToDate').prop('disabled', false);
             $('#ddlStore').prop('disabled', false);
         }
         else if ($("#ddlReport").val() == "111") {
-            $('#FromDate').data("DateTimePicker").enable();
-            $('#ToDate').data("DateTimePicker").enable();
+            //$('#FromDate').data("DateTimePicker").enable();
+            //$('#ToDate').data("DateTimePicker").enable();
+            $('#FromDate').prop('disabled', false);
+            $('#ToDate').prop('disabled', false);
             $("#IssueNo").prop('disabled', false);
             $("#ddlStore").prop('disabled', false);
             $("#ItemNameMat").prop('disabled', true);
@@ -471,8 +496,10 @@
         }
         else if ($("#ddlReport").val() == "112") {
             $("input[type=radio]").attr('disabled', true);
-            $('#FromDate').data("DateTimePicker").enable();
-            $('#ToDate').data("DateTimePicker").enable();
+            //$('#FromDate').data("DateTimePicker").enable();
+            //$('#ToDate').data("DateTimePicker").enable();
+            $('#FromDate').prop('disabled', false);
+            $('#ToDate').prop('disabled', false);
             $("#IssueNo").prop('disabled', true);
             $("#ddlStore").prop('disabled', false);
             $("#ItemNameMat").prop('disabled', true);
@@ -486,62 +513,82 @@
         else if ($("#ddlReport").val() == "114") {
             /*$('input:radio[name="Options"][value="Item"]').prop('checked', true);*/
             $("#ItemNameMat").prop('disabled', false);
-            $('#FromDate').data("DateTimePicker").enable();
-            $('#ToDate').data("DateTimePicker").enable();
+            //$('#FromDate').data("DateTimePicker").enable();
+            //$('#ToDate').data("DateTimePicker").enable();
+            $('#FromDate').prop('disabled', false);
+            $('#ToDate').prop('disabled', false);
         }
         else if ($("#ddlReport").val() == "115") {
             /*$("input[type=radio]").attr('disabled', true);*/
             $("#ItemNameMat").prop('disabled', true);
             $("#IssueNo").prop('disabled', true);
-            $('#FromDate').data("DateTimePicker").enable();
-            $('#ToDate').data("DateTimePicker").enable();
+            //$('#FromDate').data("DateTimePicker").enable();
+            //$('#ToDate').data("DateTimePicker").enable();
+            $('#FromDate').prop('disabled', false);
+            $('#ToDate').prop('disabled', false);
             $("#ddlStore").prop('disabled', false);
         }
         else if ($("#ddlReport").val() == "206") {
             /* $("input[type=radio]").attr('disabled', true);*/
             $("#ItemNameMat").prop('disabled', true);
             $("#IssueNo").prop('disabled', true);
-            $('#FromDate').data("DateTimePicker").enable();
-            $('#ToDate').data("DateTimePicker").enable();
+            //$('#FromDate').data("DateTimePicker").enable();
+            //$('#ToDate').data("DateTimePicker").enable();
+            $('#FromDate').prop('disabled', false);
+            $('#ToDate').prop('disabled', false);
             $("#ddlStore").prop('disabled', true);
         }
         else if ($("#ddlReport").val() == "121") {
-            $('#FromDate').data("DateTimePicker").enable();
-            $('#ToDate').data("DateTimePicker").enable();
+            //$('#FromDate').data("DateTimePicker").enable();
+            //$('#ToDate').data("DateTimePicker").enable();
+            $('#FromDate').prop('disabled', false);
+            $('#ToDate').prop('disabled', false);
             $('#ddlStore').prop('disabled', false);
         }
         else if ($("#ddlReport").val() == "141") {
-            $('#FromDate').data("DateTimePicker").enable();
-            $('#ToDate').data("DateTimePicker").enable();
+            //$('#FromDate').data("DateTimePicker").enable();
+            //$('#ToDate').data("DateTimePicker").enable();
+            $('#FromDate').prop('disabled', false);
+            $('#ToDate').prop('disabled', false);
             $("#ddlStore").prop('disabled', false);
             $("#ddlSupplierGRN").prop('disabled', false);
         }
         else if ($("#ddlReport").val() == "142") {
-            $('#FromDate').data("DateTimePicker").enable();
-            $('#ToDate').data("DateTimePicker").enable();
+            //$('#FromDate').data("DateTimePicker").enable();
+            //$('#ToDate').data("DateTimePicker").enable();
+            $('#FromDate').prop('disabled', false);
+            $('#ToDate').prop('disabled', false);
             $("#ddlStore").prop('disabled', false);
             $("#ddlSupplierGRN").prop('disabled', false);
         }
         else if ($("#ddlReport").val() == "143") {
-            $('#FromDate').data("DateTimePicker").enable();
-            $('#ToDate').data("DateTimePicker").enable();
+            //$('#FromDate').data("DateTimePicker").enable();
+            //$('#ToDate').data("DateTimePicker").enable();
+            $('#FromDate').prop('disabled', false);
+            $('#ToDate').prop('disabled', false);
         }
         else if ($("#ddlReport").val() == "144") {
-            $('#FromDate').data("DateTimePicker").enable();
-            $('#ToDate').data("DateTimePicker").enable();
+            //$('#FromDate').data("DateTimePicker").enable();
+            //$('#ToDate').data("DateTimePicker").enable();
+            $('#FromDate').prop('disabled', false);
+            $('#ToDate').prop('disabled', false);
             $("#GRNItemName").prop('disabled', false);
         }
         else if ($("#ddlReport").val() == "232") {
             $("#ddlStore").prop('disabled', false);
         }
         else if ($("#ddlReport").val() == "151") {
-            $('#FromDate').data("DateTimePicker").enable();
-            $('#ToDate').data("DateTimePicker").enable();
+            //$('#FromDate').data("DateTimePicker").enable();
+            //$('#ToDate').data("DateTimePicker").enable();
+            $('#FromDate').prop('disabled', false);
+            $('#ToDate').prop('disabled', false);
             $("#ddlStore").prop('disabled', false);
         }
         else if ($("#ddlReport").val() == "240") {
-            $('#FromDate').data("DateTimePicker").enable();
-            $('#ToDate').data("DateTimePicker").enable();
+            //$('#FromDate').data("DateTimePicker").enable();
+            //$('#ToDate').data("DateTimePicker").enable();
+            $('#FromDate').prop('disabled', false);
+            $('#ToDate').prop('disabled', false);
             $("#ddlStore").prop('disabled', false);
         }
         else if ($("#ddlReport").val() == "161") {
@@ -553,8 +600,10 @@
             $('#ddlItemtype').prop('disabled', false);
         }
         else if ($("#ddlReport").val() == "163") {
-            $('#FromDate').data("DateTimePicker").enable();
-            $('#ToDate').data("DateTimePicker").enable();
+            //$('#FromDate').data("DateTimePicker").enable();
+            //$('#ToDate').data("DateTimePicker").enable();
+            $('#FromDate').prop('disabled', false);
+            $('#ToDate').prop('disabled', false);
             $('#ddlStore').prop('disabled', false);
             $('#ddlItemtype').prop('disabled', false);
             $("#ItemNameStock").prop('disabled', false);
@@ -565,19 +614,44 @@
             $('#ddlItemtype').prop('disabled', false);
         }
         else if ($("#ddlReport").val() == "165") {
-            $('#FromDate').data("DateTimePicker").enable();
-            $('#ToDate').data("DateTimePicker").enable();
+            //$('#FromDate').data("DateTimePicker").enable();
+            //$('#ToDate').data("DateTimePicker").enable();
+            $('#FromDate').prop('disabled', false);
+            $('#ToDate').prop('disabled', false);
             $('#ddlStore').prop('disabled', false);
             $('#ddlItemtype').prop('disabled', false);
         }
         else if ($("#ddlReport").val() == "166") {
-            $('#FromDate').data("DateTimePicker").enable();
+            /*$('#FromDate').data("DateTimePicker").enable();*/
+            $('#FromDate').prop('disabled', false);
             $("#MaxDays").prop('disabled', false);
         }
         else if ($("#ddlReport").val() == "185") {
-            $('#FromDate').data("DateTimePicker").enable();
-            $('#ToDate').data("DateTimePicker").enable();
+            //$('#FromDate').data("DateTimePicker").enable();
+            //$('#ToDate').data("DateTimePicker").enable();
+            $('#FromDate').prop('disabled', false);
+            $('#ToDate').prop('disabled', false);
             $('#SupplierNameBill').prop('disabled', false);
+        }
+        else if ($("#ddlReport").val() == "228") {
+            $("#ddlStore").closest('div').hide();
+            $('#PurchaseIndentNo').closest('div').hide()
+            $('#PurchaseIndentNo').prop('disabled', true);
+            $('#PONo').prop('disabled', false);
+            $('#PONo').closest('div').show();
+        }
+        else if ($("#ddlReport").val() == "237") {
+            $("#ddlStore").closest('div').hide();
+            $('#PurchaseIndentNo').prop('disabled', false);
+            $('#PurchaseIndentNo').closest('div').show();
+            $('#PONo').prop('disabled', true);
+            $('#PONo').closest('div').hide();
+        }
+        else if ($("#ddlReport").val() == "152") {
+            $('#FromDate').prop('disabled', false);
+            $('#ToDate').prop('disabled', false);
+            $('#ddlStore').prop('disabled', false);
+
         }
     });
 
@@ -586,7 +660,7 @@
         if ($("#ddlReport").val() == "" || $("#ddlReport").val() == "Select") {
             ShowAlert("error", "Please Select Report");
             return;
-        }
+        }       
         else if (string === "MaterialIndentRpt") {
             if ($("#ddlReport").val() == "101") {
                 if ($("#IndentId").val() == "") {
@@ -631,10 +705,15 @@
             }
         }
         else if (string === "GRNRpt") {
-
             if ($("#ddlReport").val() == "144") {
-                if ($("#GRNtemName").val() == "") {
+                if ($("#GRNItemName").val() == "") {
                     ShowAlert("error", "Please Select Item");
+                    return;
+                }
+            }
+            else if ($("#ddlReport").val() == "142") {
+                if ($("#ddlStore").val() == "") {
+                    ShowAlert("error", "Please Select Project");
                     return;
                 }
             }
@@ -644,15 +723,8 @@
                     return;
                 }
             }
-        } 
-        else if (string === "DiscrepancyRpt") {
-            if ($("#ddlReport").val() == "151") {
-                if ($("#ddlStore").val() == "" || $("#ddlStore").val() == "Select") {
-                    ShowAlert("error", "Please Select Store");
-                    return;
-                }
-            }
-        } else if (string === "DispatchRpt") {
+        }
+        else if (string === "DispatchRpt") {
             if ($("#ddlReport").val() == "240") {
                 if ($("#PackingListNo").val() == "") {
                     ShowAlert("error", "Please Select Packing List No.");
@@ -673,8 +745,34 @@
                     return;
                 }
             }
-        }
+            if ($("#ddlReport").val() == "151") {
+                if ($("#ddlStore").val() == "" || $("#ddlStore").val() == "Select") {
+                    ShowAlert("error", "Please Select Store");
+                    return;
+                }
+            }
+            if ($("#ddlReport").val() == "152") {
+                if ($("ddlStore").val() == "") {
+                    ShowAlert("error", "Please Select Store");
+                    return;
+                }
+            }
 
+        }
+        else if (string === 'PurchaseRpt') {
+            if ($("#ddlReport").val() == "228") {
+                if ($("#PurchaseRequestNo").val() == "") {
+                    ShowAlert("error", "Please Select Purchase Request No.");
+                    return;
+                }
+            }
+            else if ($("#ddlReport").val() == "237") {
+                if ($("#PONo").val() == "") {
+                    ShowAlert("error", "Please Select Purchase Order No.");
+                    return;
+                }
+            }
+        }
         ReportValidationCheck();
     }
 
@@ -683,8 +781,8 @@
             url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&indentid=" + $("#IndentId").val();
         }
         else if ($("#ddlReport").val() == "102" || $("#ddlReport").val() == "103") {
-           // console.log($("#ddlStore").val());
-            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&fromdate=" + $("#FromDate").data('date') + "&todate=" + $("#ToDate").data('date') + "&storeid=" + $("#ddlStore").val();
+            // console.log($("#ddlStore").val());
+            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&fromdate=" + $("#FromDate").val() + "&todate=" + $("#ToDate").val() + "&storeid=" + $("#ddlStore").val();
         }
         else if ($("#ddlReport").val() == "111") {
             url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&issueid=" + $("#IssueId").val();
@@ -704,7 +802,13 @@
                 fstoreid = tstoreid = 0;
             }
 
-            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&fromdate=" + $("#FromDate").data('date') + "&todate=" + $("#ToDate").data('date') + "&fstoreid=" + fstoreid + "&tstoreid=" + storeid; // storeid should be tstoreid
+            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&fromdate=" + $("#FromDate").val() + "&todate=" + $("#ToDate").val() + "&fstoreid=" + fstoreid + "&tstoreid=" + storeid; // storeid should be tstoreid
+        }
+        else if ($("#ddlReport").val() == "228") {
+            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&poId=" + $("#POId").val() + "&poType=" + $("#POStatus").val();
+        }
+        else if ($("#ddlReport").val() == "237") {
+            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&indentId=" + $("#PurchaseIndentId").val() + "&pIType=" + $("#PRStatus").val();
         }
         else if ($("#ddlReport").val() == "113") {
             url = "../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&issueid=" + $("#IssueId").val();
@@ -714,20 +818,20 @@
             if (itemid == "" || itemid == undefined)
                 itemid = 0;
 
-            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&fromdate=" + $("#FromDate").data('date') + "&todate=" + $("#ToDate").data('date') + "&itemid=" + itemid;
+            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&fromdate=" + $("#FromDate").val() + "&todate=" + $("#ToDate").val() + "&itemid=" + itemid;
         }
         else if ($("#ddlReport").val() == "115") {
             var storeid = $("#ddlStore").val();
             if (storeid == "" || storeid == undefined)
                 storeid = 0;
 
-            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&fromdate=" + $("#FromDate").data('date') + "&todate=" + $("#ToDate").data('date') + "&storeid=" + storeid;
+            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&fromdate=" + $("#FromDate").val() + "&todate=" + $("#ToDate").val() + "&storeid=" + storeid;
         }
         else if ($("#ddlReport").val() == "206") {
-            var fDate = $("#FromDate").data('date');
-            var tDate = $("#ToDate").data('date');
+            var fDate = $("#FromDate").val();
+            var tDate = $("#ToDate").val();
             if ((fDate != undefined && fDate.length > 0) || (tDate != undefined && tDate.length > 0))
-                url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&fromdate=" + $("#FromDate").data('date') + "&todate=" + $("#ToDate").data('date');
+                url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&fromdate=" + $("#FromDate").val() + "&todate=" + $("#ToDate").val();
             else
                 url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val();
         }
@@ -735,11 +839,11 @@
             var storeid = $("#ddlStore").val();
             if (storeid == "" || storeid == "Select" || storeid == undefined)
                 storeid = 0;
-            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&fromdate=" + $("#FromDate").data('date') + "&todate=" + $("#ToDate").data('date') + "&storeid=" + storeid;
+            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&fromdate=" + $("#FromDate").val() + "&todate=" + $("#ToDate").val() + "&storeid=" + storeid;
         }
         else if ($("#ddlReport").val() == "121") {
             console.log($("#ddlStore").val());
-            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&fromdate=" + $("#FromDate").data('date') + "&todate=" + $("#ToDate").data('date') + "&storeid=" + $("#ddlStore").val();
+            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&fromdate=" + $("#FromDate").val() + "&todate=" + $("#ToDate").val() + "&storeid=" + $("#ddlStore").val();
         }
         else if ($("#ddlReport").val() == "141") {
             var StoreId = $('#ddlStore').val();
@@ -750,7 +854,7 @@
             if (SuppId == "" || SuppId == undefined)
                 SuppId = 0;
 
-            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&fdate=" + $("#FromDate").data('date') + "&tdate=" + $("#ToDate").data('date') + "&storeid=" + StoreId + "&suppid=" + SuppId;
+            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&fdate=" + $("#FromDate").val() + "&tdate=" + $("#ToDate").val() + "&storeid=" + StoreId + "&suppid=" + SuppId;
         }
         else if ($("#ddlReport").val() == "142") {
             var StoreId = $('#ddlStore').val();
@@ -763,16 +867,16 @@
             if (GrnId == "" || GrnId == undefined)
                 GrnId = 0;
             var StoreName = $("#ddlStore :selected").text();
-            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&fdate=" + $("#FromDate").data('date') + "&tdate=" + $("#ToDate").data('date') + "&storeid=" + StoreId + "&suppid=" + SuppId + "&GrnId=" + GrnId + "&sname=" + StoreName;
+            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&fdate=" + $("#FromDate").val() + "&tdate=" + $("#ToDate").val() + "&storeid=" + StoreId + "&suppid=" + SuppId + "&GrnId=" + GrnId + "&sname=" + StoreName;
         }
         else if ($("#ddlReport").val() == "143") {
-            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&fdate=" + $("#FromDate").data('date') + "&tdate=" + $("#ToDate").data('date');
+            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&fdate=" + $("#FromDate").val() + "&tdate=" + $("#ToDate").val();
         }
         else if ($("#ddlReport").val() == "144") {
             var itemid = $("#GRNItemId").val();
             if (itemid == "" || itemid == undefined)
                 itemid = 0;
-            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&fdate=" + $("#FromDate").data('date') + "&tdate=" + $("#ToDate").data('date') + "&itemid=" + itemid;;
+            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&fdate=" + $("#FromDate").val() + "&tdate=" + $("#ToDate").val() + "&itemid=" + itemid;;
         }
         else if ($("#ddlReport").val() === "232") {
 
@@ -781,11 +885,14 @@
             url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&storeid=" + storeId;
         }
         else if ($("#ddlReport").val() == "151") {
-            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&fromdate=" + $("#FromDate").data('date') + "&todate=" + $("#ToDate").data('date') + "&storeid=" + $("#ddlStore").val();
+            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&fromdate=" + $("#FromDate").val() + "&todate=" + $("#ToDate").val() + "&storeid=" + $("#ddlStore").val();
+        }
+        else if ($("#ddlReport").val() == "152") {
+            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&fromdate=" + $("#FromDate").val() + "&todate=" + $("#ToDate").val() + "&storeid=" + $("#ddlStore").val();
         }
         else if ($("#ddlReport").val() == "240") {
-            url = "../../Reports/ReportViewer.aspx?reportid=" + 240 + "&packingListId=" + $("#PackingListId").val();
-            
+            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&packingListId=" + $("#PackingListId").val();
+
         }
         else if ($("#ddlReport").val() == "161") {
             var storeid = $("#ddlStore").val();
@@ -819,7 +926,7 @@
             if (itemid == "" || itemid == undefined)
                 itemid = 0;
 
-            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&fromdate=" + $("#FromDate").data('date') + "&todate=" + $("#ToDate").data('date') + "&storeid=" + storeid + "&typeid=" + typeid + "&itemid=" + itemid;
+            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&fromdate=" + $("#FromDate").val() + "&todate=" + $("#ToDate").val() + "&storeid=" + storeid + "&typeid=" + typeid + "&itemid=" + itemid;
         }
         else if ($("#ddlReport").val() == "164") {
             var storeid = $("#ddlStore").val();
@@ -829,7 +936,7 @@
             if (typeid == "" || typeid == undefined)
                 typeid = 0;
 
-            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&storeid=" + storeid + "&typeid=" + typeid + "&todate=" + $("#ToDate").data('date');
+            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&storeid=" + storeid + "&typeid=" + typeid + "&todate=" + $("#ToDate").val();
         }
         else if ($("#ddlReport").val() == "165") {
             var storeid = $("#ddlStore").val();
@@ -839,10 +946,10 @@
             if (typeid == "" || typeid == undefined)
                 typeid = 0;
 
-            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&fromdate=" + $("#FromDate").data('date') + "&todate=" + $("#ToDate").data('date') + "&storeid=" + storeid + "&typeid=" + typeid;
+            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&fromdate=" + $("#FromDate").val() + "&todate=" + $("#ToDate").val() + "&storeid=" + storeid + "&typeid=" + typeid;
         }
         else if ($("#ddlReport").val() == "166") {
-            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&maxdays=" + $("#MaxDays").val() + "&fromdate=" + $("#FromDate").data('date');
+            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&maxdays=" + $("#MaxDays").val() + "&fromdate=" + $("#FromDate").val();
 
         }
         else if ($("#ddlReport").val() == "185") {
@@ -850,7 +957,7 @@
             if (supplierid == "" || supplierid == undefined)
                 supplierid = 0;
 
-            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&fromdate=" + $("#FromDate").data('date') + "&todate=" + $("#ToDate").data('date') + "&supplierid=" + supplierid;
+            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&fromdate=" + $("#FromDate").val() + "&todate=" + $("#ToDate").val() + "&supplierid=" + supplierid;
         }
         else {
             url = "";
@@ -883,6 +990,8 @@
 
     function LoadIndentSearchGrid() {
         var StoreId = $("#ddlStore").val();
+        var fromdt = $("#FromDate").val()
+        var todt = $("#ToDate").val()
         $("#IndentModal").dialog({
             height: 500,
             width: 700,
@@ -894,10 +1003,11 @@
                     async: true,
                     method: "GET",
                     dataType: "JSON",
-                    data: { StoreId: StoreId, fromdate: $("#FromDate").data('date'), todate: $("#ToDate").data('date') },
+                    data: { StoreId: StoreId, fromdate: fromdt, todate: todt },
                     success: function (response) {
                         $("#Indentgrid").pqGrid("option", "dataModel.data", response);
                         $("#Indentgrid").pqGrid("refreshDataAndView");
+                        PqGridRefreshClick($("#Indentgrid"));
                     }
                 });
             },
@@ -914,11 +1024,11 @@
         var colM = [
             { title: "", dataIndx: "Indent_Id", dataType: "integer", hidden: true },
             {
-                title: "Indent No", dataIndx: "IndentNo", width: '50%',
+                title: "Request No", dataIndx: "IndentNo", width: '50%',
                 filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }, width: 200
             },
             {
-                title: "Indent Date", dataIndx: "strIndentDate", width: '50%', dataType: "date", filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                title: "Request Date", dataIndx: "strIndentDate", width: '50%', dataType: "date", filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
             }
         ];
 
@@ -968,14 +1078,14 @@
                     async: true,
                     method: "GET",
                     dataType: "JSON",
-                    data: { fromdate: $("#FromDate").data('date'), todate: $("#ToDate").data('date'), StoreId: $("#ddlStore").val() },
+                    data: { fromdate: $("#FromDate").val(), todate: $("#ToDate").val(), StoreId: $("#ddlStore").val() },
                     success: function (response) {
                         if (response) {
                             $IssueGrid.pqGrid("option", "dataModel.data", response.records);
                             $IssueGrid.pqGrid("refreshDataAndView");
                         }
                         else {
-                        $IssueGrid.pqGrid("refreshDataAndView");
+                            $IssueGrid.pqGrid("refreshDataAndView");
                         }
                     }
                 })
@@ -1166,7 +1276,7 @@
                     async: true,
                     method: "GET",
                     dataType: "JSON",
-                    data: { StoreId: $("#ddlStore").val(), fromdate: $("#FromDate").data('date'), todate: $("#ToDate").data('date'), SuppId: SuppId },
+                    data: { StoreId: $("#ddlStore").val(), fromdate: $("#FromDate").val(), todate: $("#ToDate").val(), SuppId: SuppId },
                     success: function (response) {
                         $GRNGrid.pqGrid("option", "dataModel.data", response.records);
                         $GRNGrid.pqGrid("refreshDataAndView");
@@ -1431,7 +1541,7 @@
     });
 
     //*****************************Packing list Grid ********************************//
-   
+
     $('#PackingListNo').on('click', function () {
         let StoreId = $("#ddlStore").val();
         if (StoreId == 0 || StoreId == '') {
@@ -1453,7 +1563,7 @@
                     async: true,
                     method: "GET",
                     dataType: "JSON",
-                    data: { StoreId: ID, fromdate: $("#FromDate").data('date'), todate: $("#ToDate").data('date')},
+                    data: { StoreId: ID, fromdate: $("#FromDate").val(), todate: $("#ToDate").val() },
                     success: function (response) {
                         if (response.success == true) {
                             $("#PackingListGrid").pqGrid("option", "dataModel.data", response.records);
@@ -1462,15 +1572,15 @@
                         }
                         else {
                             $("#PackingListGrid").pqGrid("option", "dataModel.data", []);
-                            $("#PackingListGrid").pqGrid("refreshDataAndView");                           
-                            
+                            $("#PackingListGrid").pqGrid("refreshDataAndView");
+
                         }
                     }
                 });
             },
             close: function (event, ui) {
-               
-               },
+
+            },
             show: {
                 effect: "blind",
                 duration: 500
@@ -1489,7 +1599,6 @@
                 title: "PackingList Date", dataIndx: "strPackingListDate", width: '50%', dataType: "date", filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
             }
         ];
-
         var setM = {
             width: "auto", //auto width
             height: "100%-30", //height in %age
@@ -1511,7 +1620,7 @@
             rowClick: function (evt, ui) {
                 ClosePopupWindow("PackingListModal");
                 if (ui.rowData) {
-                    var rowIndx = parseInt(ui.rowIndx);              
+                    var rowIndx = parseInt(ui.rowIndx);
                     var record = ui.rowData;
                     $("#PackingListId").val(record.PackingListId);
                     $("#PackingListNo").val(record.PackingListNo);
@@ -1521,4 +1630,182 @@
         $("#PackingListGrid").pqGrid(setM);
     });
     //
+
+
+    //************************ Purchase Request and Purchase Order Grid *********************
+
+    $('#PurchaseIndentNo').on('click', function () {
+        LoadPurchaseIndentGrid()
+    });
+
+    $('#PONo').on('click', function () {
+        LoadPOGrid()
+    })
+
+    function LoadPurchaseIndentGrid() {
+        $("#PurchaseIndentmodel").dialog({
+            height: 500,
+            width: 700,
+            modal: true,
+            open: function (evt, ui) {
+                $.ajax({
+                    url: "/PurchaseIndent/PurchaseIndentforRpt/",
+                    data: { storeId: 0 },
+                    cache: false,
+                    async: true,
+                    method: "GET",
+                    dataType: "JSON",
+                    success: function (response) {
+                        if (response) {
+                            $("#PurchaseIndentgrid").pqGrid("option", "dataModel.data", response.mimodel);
+                            $("#PurchaseIndentgrid").pqGrid("refreshDataAndView");
+                            PqGridRefreshClick($("#PurchaseIndentgrid"));
+                        }
+                        else {
+                            $("#PurchaseIndentgrid").pqGrid("option", "dataModel.data", []);
+                            $("#PurchaseIndentgrid").pqGrid("refreshDataAndView");
+                            PqGridRefreshClick($("#PurchaseIndentgrid"));
+                        }
+                    }
+                });
+            },
+            //close: function (event, ui) {
+            //},
+            //show: {
+            //    effect: "blind",
+            //    duration: 500
+            //}
+        });
+    }
+
+    $(document).ready(function () {
+        var dataPR = { location: "local", sorting: 'local' };
+        var colPR = [
+            { title: "", dataIndx: "IndentId", dataType: "integer", hidden: true },
+            {
+                title: "Purchase Request No", dataIndx: "IndentNumber", width: "50%",
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            },
+            {
+                title: "Purchase Request Date", dataIndx: "strIndentDate", width: "50%",
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            },
+        ];
+        var setPR = {
+            width: "auto", //auto width
+            height: "100%-30", //height in %age
+            sortable: false,
+            numberCell: { show: false },
+            hoverMode: 'cell',
+            showTop: false,
+            resizable: false,
+            draggable: false,
+            wrap: false,
+            editable: false,
+            columnBorders: true,
+            filterModel: { on: true, mode: "AND", header: true },
+            colModel: colPR,
+            dataModel: dataPR,
+            resizable: true,
+            virtualX: true,
+            pageModel: { type: "local", rPP: 20 },
+            rowClick: function (evt, ui) {
+                ClosePopupWindow("PurchaseIndentmodel");
+                if (ui.rowData) {
+                    var record = ui.rowData;
+                    $("#PurchaseIndentNo").val(record.IndentNumber);
+                    $("#PurchaseIndentId").val(record.IndentId);
+                    if (record.Status === "Authorised") {
+                        $("#PRStatus").val("Authorised");
+                    }
+                    else {
+                        $("#PRStatus").val("Provisional");
+                    }
+                }
+            }
+        };
+        $("#PurchaseIndentgrid").pqGrid(setPR);
+    });
+    function LoadPOGrid() {
+        $("#POmodel").dialog({
+            height: 500,
+            width: 700,
+            modal: true,
+            open: function (evt, ui) {
+                $.ajax({
+                    url: "/PurchaseOrder/PurchaseOrderForRpt",
+                    cache: false,
+                    async: true,
+                    method: "GET",
+                    dataType: "JSON",
+                    success: function (response) {
+                        if (response) {
+                            $("#POgrid").pqGrid("option", "dataModel.data", response.records);
+                            $("#POgrid").pqGrid("refreshDataAndView");
+                            PqGridRefreshClick($("#POgrid"));
+                        }
+                        else {
+                            $("#POgrid").pqGrid("option", "dataModel.data", []);
+                            $("#POgrid").pqGrid("refreshDataAndView");
+                            PqGridRefreshClick($("#POgrid"));
+                        }
+                    }
+                });
+            },
+            close: function (event, ui) {
+            },
+            show: {
+                effect: "blind",
+                duration: 500
+            }
+        });
+    }
+    $(document).ready(function () {
+        var dataPO = { location: "local", sorting: 'local' };
+        var colPO = [
+            { title: "", dataIndx: "ID", dataType: "integer", hidden: true },
+            {
+                title: "Purchase Order No", dataIndx: "PONo", width: "50%",
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            },
+            {
+                title: "Purchase Order Date", dataIndx: "strPODate", width: "50%",
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            },
+        ];
+        var setPO = {
+            width: "auto", //auto width
+            height: "100%-30", //height in %age
+            sortable: false,
+            numberCell: { show: false },
+            hoverMode: 'cell',
+            showTop: false,
+            resizable: false,
+            draggable: false,
+            wrap: false,
+            editable: false,
+            columnBorders: true,
+            filterModel: { on: true, mode: "AND", header: true },
+            colModel: colPO,
+            dataModel: dataPO,
+            resizable: true,
+            virtualX: true,
+            pageModel: { type: "local", rPP: 20 },
+            rowClick: function (evt, ui) {
+                ClosePopupWindow("POmodel");
+                if (ui.rowData) {
+                    var record = ui.rowData;
+                    $("#PONo").val(record.PONo);
+                    $("#POId").val(record.ID);
+                    if (record.Status === 'Authorised') {
+                        $("#POStatus").val("Authorised Purchase Order");
+                    }
+                    else {
+                        $("#POStatus").val("Provisional Purchase Order");
+                    }
+                }
+            }
+        };
+        $("#POgrid").pqGrid(setPO);
+    });
 </script>
