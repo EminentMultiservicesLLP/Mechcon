@@ -152,13 +152,15 @@
             { title: "", dataIndx: "IndentNature", dataType: "string", hidden: true },
             {
                 title: "Indent No", dataIndx: "IndentNumber", width: '24%',
-                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             },
             {
-                title: "Indent Date", dataIndx: "strIndentDate", width: '19%', dataType: "string"
+                title: "Indent Date", dataIndx: "strIndentDate", width: '19%', dataType: "string",
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             },
             {
-                title: "Project", dataIndx: "StoreName", width: '19%', dataType: "string"
+                title: "Project", dataIndx: "StoreName", width: '19%', dataType: "string",
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             },
             { title: "", dataIndx: "Storeid", dataType: "string", hidden: true },
             {
@@ -167,7 +169,7 @@
             },
             {
                 title: "Created By", dataIndx: "CreatedBy", width: '19%', dataType: "string",
-                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             },
             { title: "", dataIndx: "ItemCategoryId", dataType: "string", hidden: true }
         ];

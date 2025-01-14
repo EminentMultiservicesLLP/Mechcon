@@ -168,4 +168,32 @@ namespace BISERP.Areas.SM_Reports.Models
         public string BasisCode { get; set; }
         public string BasisDesc { get; set; }
     }
+
+    public class FunctionalReportListModel
+    {
+        public int ReportId { get; set; }
+        public  string Name { get; set;}
+        public bool Deactive { get; set;  }
+    }
+    public class ZoneWiseSalesReportModel
+    {
+        public string Zone { get; set; }
+        public decimal WonValue { get; set; }
+        public decimal Percentage { get; set; }
+    }
+
+    public class PersonWiseSalesReportModel
+    {
+        public string AllocatedTo { get; set; }
+        public int Count { get; set; }
+        public decimal WonValue { get; set; }
+        public decimal Percentage { get; set; }
+    }
+
+    public class StatusWiseSalesReportModel    {
+        public string Status { get; set; }
+        public int Count { get; set; }
+        public decimal WonValue { get; set; }
+        public decimal Percentage { get; set; }
+    }
 }

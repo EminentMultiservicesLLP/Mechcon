@@ -197,5 +197,97 @@ namespace BISERPService.Controllers.SM
                 return NotFound();
         }
 
+
+        [Route("getFunctionalReportList")]      
+        [HttpGet]
+        public IHttpActionResult GetFunctionalReportList()
+        {
+            try
+            {
+                var data = _SM_Reports.GetFunctionalReportList();
+
+                if (data == null)
+                {
+                    return NotFound(); // or return BadRequest("No data found for the specified enquiry ID.");
+                }
+
+                return Ok(data.ToList());
+            }
+            catch (Exception ex)
+            {
+                _loggger.LogError("Error in GetFunctionalReportList of SM_ReportsController : parameter :" + Environment.NewLine + ex.StackTrace);
+                return InternalServerError(ex);
+            }
+        }
+
+
+        [Route("getZoneWiseSaleRpt")]
+        [Route("getZoneWiseSaleRpt/{financialYearID}")]
+        [HttpGet]
+        public IHttpActionResult GetZoneWiseSaleRpt(int? financialYearID = null)
+        {
+            try
+            {
+                var data = _SM_Reports.GetZoneWiseSaleRpt(financialYearID);
+
+                if (data == null)
+                {
+                    return NotFound(); // or return BadRequest("No data found for the specified enquiry ID.");
+                }
+
+                return Ok(data.ToList());
+            }
+            catch (Exception ex)
+            {
+                _loggger.LogError("Error in GetZoneWiseSaleRpt of SM_ReportsController : parameter :" + Environment.NewLine + ex.StackTrace);
+                return InternalServerError(ex);
+            }
+        }
+
+        [Route("getPersonWiseSaleRpt")]
+        [Route("getPersonWiseSaleRpt/{financialYearID}")]
+        [HttpGet]
+        public IHttpActionResult GetPersonWiseSaleRpt(int? financialYearID = null)
+        {
+            try
+            {
+                var data = _SM_Reports.GetPersonWiseSaleRpt(financialYearID);
+
+                if (data == null)
+                {
+                    return NotFound(); // or return BadRequest("No data found for the specified enquiry ID.");
+                }
+
+                return Ok(data.ToList());
+            }
+            catch (Exception ex)
+            {
+                _loggger.LogError("Error in GetPersonWiseSaleRpt of SM_ReportsController : parameter :" + Environment.NewLine + ex.StackTrace);
+                return InternalServerError(ex);
+            }
+        }
+
+        [Route("getStatusWiseSaleRpt")]
+        [Route("getStatusWiseSaleRpt/{financialYearID}")]
+        [HttpGet]
+        public IHttpActionResult GetStatusWiseSaleRpt(int? financialYearID = null)
+        {
+            try
+            {
+                var data = _SM_Reports.GetStatusWiseSaleRpt(financialYearID);
+
+                if (data == null)
+                {
+                    return NotFound(); // or return BadRequest("No data found for the specified enquiry ID.");
+                }
+
+                return Ok(data.ToList());
+            }
+            catch (Exception ex)
+            {
+                _loggger.LogError("Error in GetStatusWiseSaleRpt of SM_ReportsController : parameter :" + Environment.NewLine + ex.StackTrace);
+                return InternalServerError(ex);
+            }
+        }
     }
 }

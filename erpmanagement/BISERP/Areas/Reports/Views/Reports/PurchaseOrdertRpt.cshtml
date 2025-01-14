@@ -106,39 +106,26 @@
             { title: "", dataIndx: "RefNo", dataType: "integer", hidden: true },
             {
                 title: "PO No", dataIndx: "PONo", width: 200,
-                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             },
             {
-                title: "PO Date", dataIndx: "strPODate", width: 100, dataType: "date"
+                title: "PO Date", dataIndx: "strPODate", width: 100, 
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             },
             {
                 title: "Supplier", dataIndx: "SupplierName", width: 100,
-                filter: {
-                    type: "select",
-                    condition: 'equal',
-                    prepend: { '': '--Select--' },
-                    valueIndx: "SupplierName",
-                    labelIndx: "SupplierName",
-                    listeners: ['change']
-                }
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             },
             {
-                title: "Project", dataIndx: "StoreName", width: 100, filter: {
-                    type: "select",
-                    condition: 'equal',
-                    prepend: { '': '--Select--' },
-                    valueIndx: "StoreName",
-                    labelIndx: "StoreName",
-                    listeners: ['change']
-                }
+                title: "Project", dataIndx: "StoreName", width: 100,
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             },
             {
                 title: "Indent No", dataIndx: "PurchaseIndentNo", width: 200, hidden: true
-
             },
             {
                 title: "Status", dataIndx: "Status", width: 100,
-                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             }
         ];
         var SetM = {

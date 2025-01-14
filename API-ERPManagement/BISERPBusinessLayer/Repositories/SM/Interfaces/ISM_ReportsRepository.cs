@@ -20,5 +20,9 @@ namespace BISERPBusinessLayer.Repositories.SM.Interfaces
         List<WORptDeliveryTerm> GetOrderBookDeliveryTerms(int? orderBookID);
         List<WORptOtherTerm> GetOrderBookOtherTerms(int? orderBookID);
         List<WORptBasisTerm> GetOrderBookBasisTerms(int? orderBookID);
+        IEnumerable<FunctionalReportListEntity> GetFunctionalReportList();
+        IEnumerable<ZoneWiseSalesReportEntities> GetZoneWiseSaleRpt(int? financialYearID);
+        IEnumerable<PersonWiseSalesReportEntities> GetPersonWiseSaleRpt(int? financialYearID);
+        IEnumerable<StatusWiseSalesReportEntities> GetStatusWiseSaleRpt(int? financialYearID);
     }
 }

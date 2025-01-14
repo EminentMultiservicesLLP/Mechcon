@@ -217,7 +217,7 @@ namespace BISERPBusinessLayer.Repositories.SM.Classes
                             }).FirstOrDefault();
             }
             return data;
-        }
+        }   
         public List<WORptPaymentTermDetails> GetOrderBookPaymentTerms(int? orderBookID)
         {
             List<WORptPaymentTermDetails> record = null;
@@ -298,6 +298,78 @@ namespace BISERPBusinessLayer.Repositories.SM.Classes
                             }).ToList();
             }
             return record;
+        }
+        public IEnumerable<FunctionalReportListEntity> GetFunctionalReportList()
+        {
+            List<FunctionalReportListEntity> data = null;
+            using (DBHelper dbHelper = new DBHelper())
+            {
+                DataTable dt = dbHelper.ExecuteDataTable(MarketingQueries.GetFunctionalReportList, CommandType.StoredProcedure);
+
+                data = dt.AsEnumerable()
+                            .Select(row => new FunctionalReportListEntity
+                            {
+                                ReportId = row.Field<int>("Id"),
+                                Name = row.Field<string>("Name"),                               
+                            }).ToList();
+            }
+            return data;
+        }
+        public IEnumerable<ZoneWiseSalesReportEntities> GetZoneWiseSaleRpt(int? financialYearID)
+        {
+            List<ZoneWiseSalesReportEntities> data = null;
+            using (DBHelper dbHelper = new DBHelper())
+            {
+                DBParameter param = new DBParameter("financialYearID", financialYearID, DbType.Int32);
+                DataTable dt = dbHelper.ExecuteDataTable(MarketingQueries.GetZoneWiseSaleRpt, param, CommandType.StoredProcedure);
+
+                data = dt.AsEnumerable()
+                            .Select(row => new ZoneWiseSalesReportEntities
+                            {
+                                Zone = row.Field<string>("Zone"),
+                                WonValue = row.Field<decimal>("WonValue"),
+                                Percentage = row.Field<decimal>("Percentage")
+                            }).ToList();
+            }
+            return data;
+        } 
+        public IEnumerable<PersonWiseSalesReportEntities> GetPersonWiseSaleRpt(int? financialYearID)
+        {
+            List<PersonWiseSalesReportEntities> data = null;
+            using (DBHelper dbHelper = new DBHelper())
+            {
+                DBParameter param = new DBParameter("financialYearID", financialYearID, DbType.Int32);
+                DataTable dt = dbHelper.ExecuteDataTable(MarketingQueries.GetPersonWiseSaleRpt, param, CommandType.StoredProcedure);
+
+                data = dt.AsEnumerable()
+                            .Select(row => new PersonWiseSalesReportEntities
+                            {
+                                AllocatedTo = row.Field<string>("AllocatedTo"),
+                                Count = row.Field<int>("Count"),
+                                WonValue = row.Field<decimal>("WonValue"),
+                                //Percentage = row.Field<decimal>("Percentage")
+                            }).ToList();
+            }
+            return data;
+        }
+        public IEnumerable<StatusWiseSalesReportEntities> GetStatusWiseSaleRpt(int? financialYearID)
+        {
+            List<StatusWiseSalesReportEntities> data = null;
+            using (DBHelper dbHelper = new DBHelper())
+            {
+                DBParameter param = new DBParameter("financialYearID", financialYearID, DbType.Int32);
+                DataTable dt = dbHelper.ExecuteDataTable(MarketingQueries.GetStatusWiseSaleRpt, param, CommandType.StoredProcedure);
+
+                data = dt.AsEnumerable()
+                            .Select(row => new StatusWiseSalesReportEntities
+                            {
+                                Status = row.Field<string>("Status"),
+                                Count = row.Field<int>("Count"),
+                               //WonValue = row.Field<decimal>("WonValue"),
+                                //Percentage = row.Field<decimal>("Percentage")
+                            }).ToList();
+            }
+            return data;
         }
     }
 }

@@ -71,5 +71,12 @@ namespace BISERPBusinessLayer.QueryCollection.SM
         public const string GetProductWiseSalesRpt = "sp_SM_GetProductWiseSalesRpt";
         public const string GetWorkOrderReport = "sp_SM_GetWrokOrderReport";
 
+        //Functional Report
+        public const string GetFunctionalReportList = "sp_SM_GetFunctionalReportList";
+        public const string GetZoneWiseSaleRpt = "sp_SM_GetZoneWiseSaleRpt";
+        public const string GetPersonWiseSaleRpt = "sp_SM_GetPersonWiseSaleRpt";
+        public const string GetStatusWiseSaleRpt = "sp_SM_GetStatusWiseSaleRpt";
+
+
     }
 }
