@@ -265,6 +265,8 @@
         $("#Deactive").attr("disabled", true);
         $("#ExpiryDtRequired").prop('checked', true);
         $("#BatchRequired").prop('checked', true);
+        $("#ddlItemtype").prop("disabled", false);
+
     }
     function LoadSuppliergrid() {
         $.ajax({
@@ -442,6 +444,7 @@
                 $("#DescriptiveName").val(data.DescriptiveName);
                 $("#ddlUnit").val(data.UnitID);
                 $("#ddlItemtype").val(data.ItemTypeID);
+                $("#ddlItemtype").prop("disabled", true);
                 $("#ddlItemgroup").val(data.ItemGroupID);
                 $("#ddlItemPackSize").val(data.PackSizeID);
                 $("#VatOn").val(data.VatOn);

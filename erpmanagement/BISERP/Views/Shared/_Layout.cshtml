@@ -42,7 +42,8 @@
                             <ul class="nav navbar-nav navbar-right">
                                 <li><a href="JavaScript: location.reload(true);">Refresh</a></li>
                                 <li><a class="navMenu" action="ChangePassword" controller="AdminPanel/AdminPanel" href="">Change Password</a></li>
-                                <li><a href="@Url.Action("LogOff", "Account")">Logout</a></li>
+                                <li><a href="@Url.Action("LogOff", "Account")">Logout</a></li>&nbsp;
+                                <li><a style="font-weight: bold; font-size: large;"><i class="fa fa-user-circle" aria-hidden="true"></i>&nbsp; @Convert.ToString(Session["AppUserName"])</a></li>&nbsp;
                             </ul>
                         </div>
                     </div>

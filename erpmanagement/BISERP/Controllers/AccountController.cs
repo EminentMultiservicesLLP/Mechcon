@@ -43,7 +43,10 @@ namespace BISERP.Controllers
         {
             if (ModelState.IsValid)
             {
-                Session["AppUserId"] = model.GetUserId(model.Username, model.Password);
+                var UserInfo = model.GetUserId(model.Username, model.Password);
+                Session["AppUserId"] = UserInfo.UserId;
+                Session["AppUserName"] = UserInfo.UserName;
+
                 var SideAndNavBarCSS = model.GetSideAndNavBarCSS(model.Username, model.Password);
                 Session["UserHeaderCss"] = SideAndNavBarCSS.Item1;
                 Session["UserSideBarMenuCSS"] = SideAndNavBarCSS.Item2;
@@ -73,6 +76,7 @@ namespace BISERP.Controllers
             Session["AppUserId"] = "";
             Session["UserHeaderCss"] = "";
             Session["UserSideBarMenuCSS"] = "";
+            Session["AppUserName"] = "";
             //WebSecurity.Logout();
             return RedirectToAction("Index", "Home");
         }

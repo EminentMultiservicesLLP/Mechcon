@@ -1,0 +1,394 @@
+﻿@Scripts.Render("~/bundles/jquerymodels")
+<script>
+    $(function () {
+        $(".datepicker").datepicker({
+            showOn: "button",
+            buttonImage: "/Content/images/calendar.gif",
+            buttonImageOnly: true,
+            buttonText: "Selectdate",
+            'changeMonth': true,
+            'changeYear': true,
+            'yearRange': '2021:2030',
+            "format": "dd-M-yyyy",
+            todayBtn: "linked",
+            pickerPosition: "bottom-left",
+            "todayHighlight": true,
+            autoclose: true,
+        });
+        $("#anim").change(function () {
+            $(".datepicker").datepicker("option", "showAnim", "fadeIn");
+        });
+        $("#GroupMasterDate").datepicker("setDate", new Date())
+    });
+</script>
+
+<h5 class="page-header orangeDottedBottomBorder">Enquiry GroupMaster</h5>
+
+<div id="SearchGridModal" class="modal fade" role="dialog" data-backdrop="false">
+    <div class="modal-dialog find-search-grid-modal">
+        <div class="modal-content gridmodal-content">
+            <div class="modal-header gridmodal-header">
+                <button type="button" class="close" onclick="closeModal()">&times;</button>
+                <h4 class="modal-title">GroupMaster Details.</h4>
+            </div>
+            <div class="modal-body">
+                <div class="fill">
+                    <div id="GroupMaster"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel-group">
+    <div class="panel panel-default">
+        <div class="panel-groupingBoder">
+            <div class="panel-heading">
+                <div class="panel-title">
+                    <a class="collapsediv" data-toggle="collapse" href="#SearchDetails">
+                        Enquiry GroupMaster
+                    </a>
+                </div>
+            </div>
+            <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                <div class="panel-body">
+                    <div class="fill">
+                        <div class="submit-row">
+                            <button type="button" id="btnSave" class="btn btn-success" onclick="SaveGroupMaster()">Save</button>
+                            <button type="button" class="btn btn-warning" id="btnResetT" onclick="clearFormData()">Clear</button>
+                            <button type="button" id="btnFind" class="btn btn-primary" onclick="showModal()">Find</button>
+                        </div>
+
+                        <fieldset class="fieldsetCustom">
+                            <legend class="legendCustom">Create Group</legend>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label for="GroupName" class="required">Group Name</label>
+                                    <input type="text" id="GroupName" name="GroupName" class="form-control" />
+                                </div>
+                                <div class="col-sm-6">
+                                    <label for="GroupDesc" class="required">Group Description</label>
+                                    <textarea id="GroupDesc" name="GroupDesc" class="form-control"></textarea>
+                                </div>
+                                <div class="col-sm-2">
+                                    <br />
+                                    <input type="checkbox" id="Deactive" name="Deactive" />
+                                    <label for="Deactive">Deactive</label>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="panel-group">
+                                    <div class="panel panel-default">
+                                        <div class="panel-groupingBoder">
+                                            <div class="panel-heading">
+                                                <div class="panel-title">
+                                                    <a class="collapsediv" data-toggle="collapse" href="#contentUser" style="color:white">
+                                                        User and Group Mapping
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div id="contentUser">
+                                                <div id="contentUser-tab">
+                                                    <div id="UserGrid"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var tempGroupID = 0;
+    //-----------------------------------GroupMaster (Starts here)-----------------------------------//
+    var GroupMaster_GDM = { location: "local" };
+
+    var GroupMaster_GCM = [
+        {
+            title: "GroupName",
+            dataIndx: "GroupName",
+            width: '40%',
+            filter: {
+                type: 'textbox',
+                condition: 'contain',
+                listeners: ['keyup']
+            }
+        },
+        {
+            title: "Group Desc",
+            dataIndx: "GroupDesc",
+            width: '60%',
+            filter: {
+                type: 'textbox',
+                condition: 'contain',
+                listeners: ['keyup']
+            }
+        }
+    ];
+
+
+    var setGroupMaster = {
+        height: 300,
+        width: 'auto',
+        maxWidth: '100%',
+        minWidth: 800,
+        sortable: true,
+        autofill: true,
+        numberCell: { show: true },
+        hoverMode: 'row',
+        showTop: true,
+        showTitle: true,
+        showBottom: true,
+        resizable: true,
+        //scrollModel: { autoFit: true },
+        filterModel: { on: true, mode: "AND", header: true },
+        draggable: false,
+        hwrap: false,
+        wrap: false,
+        editable: false,
+        columnBorders: true,
+        menuIcon: true,
+        selectionModel: { type: 'row', mode: 'single', cbHeader: false },
+        colModel: GroupMaster_GCM,
+        dataModel: GroupMaster_GDM,
+        pageModel: { type: "local" },
+        rowClick: function (evt, ui) {
+            if (ui.rowData) {
+                const data = ui.rowData;
+                clearFormData(true);
+                tempGroupID = data.GroupID;
+                $("#GroupName").val(data.GroupName);
+                $("#GroupDesc").val(data.GroupDesc);
+                $("#Deactive").prop('checked', data.Deactive);
+                loadUserGrid(tempGroupID);
+                closeModal();
+            }
+        }
+
+    }
+
+    var $GroupMaster = $("#GroupMaster").pqGrid(setGroupMaster);
+
+    function loadGroupMaster() {
+        var antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            data: { statusID: null },
+            url: "/GroupMaster/GetGroupMaster",
+            dataType: "json",
+
+            beforeSend: function () {
+                $("#GroupMaster").pqGrid("showLoading");
+            },
+
+            complete: function () {
+                $("#GroupMaster").pqGrid("hideLoading");
+            },
+
+            success: function (response) {
+                const grid = $("#GroupMaster").pqGrid();
+
+                if (response.success) {
+                    grid.pqGrid("option", "dataModel.data", response.records);
+                } else {
+                    console.warn("No data found or an issue occurred: ", response.message);
+                    grid.pqGrid("option", "dataModel.data", []);
+                }
+
+                grid.pqGrid("refreshDataAndView");
+                PqGridRefreshClick(grid);
+            },
+
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Error loading GroupMaster grid:", textStatus, errorThrown);
+                console.error("Response text:", jqXHR.responseText);
+                $("#GroupMaster").pqGrid("hideLoading");
+            }
+        });
+
+    }
+    //-----------------------------------GroupMaster (Ends here)-----------------------------------//
+
+    //-----------------------------------UserGrid (Starts here)-----------------------------------//
+    var UserGrid_GDM = { location: "local" };
+    var UserGrid_GCM = [
+        {
+            dataIndx: "State", maxWidth: 25, minWidth: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', resizable: false, sortable: false,
+            editor: false, dataType: 'bool', title: "<input type='checkbox' />",
+            cb: {
+                select: true,
+                all: false,
+                header: true
+            }
+        },
+        {
+            title: "Employee Name", dataIndx: "UserName", width: 700,
+            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+        }
+    ];
+    var setUserGrid = {
+        height: 403,
+        width: 'auto',
+        maxWidth: '100%',
+        minWidth: 800,
+        sortable: true,
+        autofill: true,
+        numberCell: { show: false },
+        hoverMode: 'row',
+        showTop: true,
+        showTitle: true,
+        showBottom: true,
+        resizable: true,
+        scrollModel: { autoFit: true },
+        filterModel: { on: true, mode: "AND", header: true },
+        draggable: false,
+        hwrap: false,
+        wrap: false,
+        editable: true,
+        columnBorders: true,
+        menuIcon: true,
+        selectionModel: { type: 'cell', mode: 'multiple', cbHeader: true },
+        colModel: UserGrid_GCM,
+        dataModel: UserGrid_GDM,
+        pageModel: { type: "local", rPP: 10 }
+    };
+    var $UserGrid = $("#UserGrid").pqGrid(setUserGrid);
+    function loadUserGrid(groupID) {
+        var antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            data: { GroupID: groupID },
+            url: "/GroupMaster/GetGroupUserMapping",
+            dataType: "json",
+
+            beforeSend: function () {
+                $("#UserGrid").pqGrid("showLoading");
+            },
+
+            complete: function () {
+                $("#UserGrid").pqGrid("hideLoading");
+            },
+
+            success: function (response) {
+                const grid = $("#UserGrid").pqGrid();
+
+                if (response.records.length > 0) {
+                    grid.pqGrid("option", "dataModel.data", response.records);
+                } else {
+                    console.warn("No data found or an issue occurred: ", response);
+                    grid.pqGrid("option", "dataModel.data", []);
+                }
+
+                grid.pqGrid("refreshDataAndView");
+                PqGridRefreshClick(grid);
+            },
+
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Error loading Sector Wise Sales Report grid:", textStatus, errorThrown);
+                console.error("Response text:", jqXHR.responseText);
+                $("#UserGrid").pqGrid("hideLoading");
+            }
+        });
+
+    }
+    loadUserGrid(null);
+    //-----------------------------------UserGrid (Ends here)-----------------------------------//
+
+
+    function validateFormData() {
+        const fields = [
+            { selector: "#GroupName", placeholder: "Group Name" },
+            { selector: "#GroupDesc", placeholder: "Group Desc" }
+        ];
+
+        for (const { selector, placeholder } of fields) {
+            const fieldValue = $(selector).val();
+            const fieldPlaceholder = $(selector).attr("placeholder") || placeholder;
+
+            if (!fieldValue) {
+                ShowAlert("error", `${fieldPlaceholder} is required!`);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    function SaveGroupMaster() {
+        if (!validateFormData()) {
+            return false;
+        }
+        const gridData = $("#UserGrid").pqGrid("option", "dataModel.data");
+
+        const selectedUser = gridData
+            .filter(user => user.State === true)
+            .map(user => ({ UserID: user.UserID }));
+
+
+        const Details = {
+            GroupID: tempGroupID,
+            GroupName: $("#GroupName").val(),
+            GroupDesc: $("#GroupDesc").val(),
+            Deactive: $("#Deactive").prop('checked'),
+            GroupUserMapping: selectedUser
+        };
+
+        const antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: "POST",
+            contentType: 'application/json; charset=utf-8',
+            url: "/GroupMaster/SaveGroupMaster",
+            data: JSON.stringify(Details),
+            success: function (response) {
+                if (response.success) {
+                    const message = Details.GroupID === 0 ? "GroupMaster saved successfully!" : "GroupMaster updated successfully!";
+                    ShowAlert("success", message);
+                    clearFormData();
+                } else {
+                    ShowAlert("error", response.message || "An error occurred while saving the GroupMaster.");
+                }
+            },
+            error: function (xhr, status, error) {
+                const errorMsg = xhr.responseText ? `Server Error: ${xhr.responseText}` : `Error: ${error}`;
+                ShowAlert("error", errorMsg);
+            }
+        });
+    }
+
+    function clearFormData(rowClick) {
+        tempGroupID = 0;
+        $("#GroupName").val("");
+        $("#GroupDesc").val("");
+        $("#Deactive").prop('checked', false);
+        if (!rowClick) {
+            loadUserGrid(null);
+        }
+    }
+
+    function showModal() {
+        $("#SearchGridModal").modal('show');
+        loadGroupMaster();
+    }
+
+    function closeModal() {
+        $("#SearchGridModal").modal('hide');
+    }
+
+</script>

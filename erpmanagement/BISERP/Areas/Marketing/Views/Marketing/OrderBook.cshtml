@@ -597,7 +597,7 @@
                     </div>
                     <div id="contentUser">
                         <div id="contentUser-tab">
-                            <div id="UserGrid"></div>
+                            <div id="GroupGrid"></div>
                         </div>
                     </div>
                 </div>
@@ -1428,7 +1428,7 @@
                     } finally {
                         const message = tempOrderBookID === 0 ? `Work Order registered successfully!<br> Project Code : <b>${response.Data.ProjectCode}</b>` : `Work Order updated successfully!<br> Project Code : <b>${response.Data.ProjectCode}</b>`;
                         if (tempOrderBookID === 0) {
-                            SendMail(response.Data.ProjectCode, message, fileSaveMsg);
+                            GetUserByGroups(response.Data.ProjectCode, message, fileSaveMsg);
                         } else {
                             ShowAlert("success", `${message} <br> ${fileSaveMsg}`);
                             clearFormData();
@@ -1483,7 +1483,7 @@
         ClearParamGrid("DeliveryTermgrid");
         ClearParamGrid("OtherTermgrid");
         ClearParamGrid("BasisTermgrid");
-        loadUserGrid();
+        loadGroupGrid();
         clearEnquiryDetails();
         $(".BG").hide();
     }
@@ -2227,7 +2227,6 @@
 
     $("#content-tab").tabs({
         activate: function (event, ui) {
-            debugger
             let tabIndx = ui.newTab.index();
             const grids = [
                 $ProjectTCgrid,
@@ -2410,9 +2409,9 @@
     }
 
 
-    //-----------------------------------UserGrid (Starts here)-----------------------------------//
-    var UserGrid_GDM = { location: "local" };
-    var UserGrid_GCM = [
+    //-----------------------------------GroupGrid (Starts here)-----------------------------------//
+    var GroupGrid_GDM = { location: "local" };
+    var GroupGrid_GCM = [
         {
             dataIndx: "State", maxWidth: 25, minWidth: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', resizable: false, sortable: false,
             editor: false, dataType: 'bool', title: "<input type='checkbox' />",
@@ -2423,11 +2422,11 @@
             }
         },
         {
-            title: "Employee Name", dataIndx: "UserName", width: 700,
+            title: "Group Name", dataIndx: "GroupName", width: 700,
             filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
         }
     ];
-    var setUserGrid = {
+    var setGroupGrid = {
         height: 403,
         width: 'auto',
         maxWidth: '100%',
@@ -2449,36 +2448,37 @@
         columnBorders: true,
         menuIcon: true,
         selectionModel: { type: 'cell', mode: 'multiple', cbHeader: true },
-        colModel: UserGrid_GCM,
-        dataModel: UserGrid_GDM,
+        colModel: GroupGrid_GCM,
+        dataModel: GroupGrid_GDM,
         pageModel: { type: "local", rPP: 10 }
     };
-    var $UserGrid = $("#UserGrid").pqGrid(setUserGrid);
-    function loadUserGrid() {
+    var $GroupGrid = $("#GroupGrid").pqGrid(setGroupGrid);
+    function loadGroupGrid(groupID) {
         var antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
         $.ajax({
             headers: {
                 "__RequestVerificationToken": antiForgeryToken
             },
             type: 'GET',
-            url: "/EmployeeEnrollment/GetUserDetails",
+            data: { statusID: null },
+            url: "/GroupMaster/GetGroupMaster",
             dataType: "json",
 
             beforeSend: function () {
-                $("#UserGrid").pqGrid("showLoading");
+                $("#GroupGrid").pqGrid("showLoading");
             },
 
             complete: function () {
-                $("#UserGrid").pqGrid("hideLoading");
+                $("#GroupGrid").pqGrid("hideLoading");
             },
 
             success: function (response) {
-                const grid = $("#UserGrid").pqGrid();
+                const grid = $("#GroupGrid").pqGrid();
 
-                if (response.length > 0) {
-                    grid.pqGrid("option", "dataModel.data", response);
+                if (response.success) {
+                    grid.pqGrid("option", "dataModel.data", response.records);
                 } else {
-                    console.warn("No data found or an issue occurred: ", response);
+                    console.warn("No data found or an issue occurred: ", response.message);
                     grid.pqGrid("option", "dataModel.data", []);
                 }
 
@@ -2489,57 +2489,89 @@
             error: function (jqXHR, textStatus, errorThrown) {
                 console.error("Error loading Sector Wise Sales Report grid:", textStatus, errorThrown);
                 console.error("Response text:", jqXHR.responseText);
-                $("#UserGrid").pqGrid("hideLoading");
+                $("#GroupGrid").pqGrid("hideLoading");
             }
         });
 
     }
-    loadUserGrid();
-    //-----------------------------------UserGrid (Ends here)-----------------------------------//
+    loadGroupGrid(null);
+    //-----------------------------------GroupGrid (Ends here)-----------------------------------//
 
-    function SendMail(projectCode, message, fileSaveMsg) {
-        $('#ContentViewSection').append('<div style="position:fixed;" id="loadingDiv1"><div class="loader1">Loading...</div></div>');
+    function GetUserByGroups(projectCode, message, fileSaveMsg) {
+        const loadingDivId = "loadingDiv1";
+        $('#ContentViewSection').append(`<div style="position:fixed;" id="${loadingDivId}"><div class="loader1">Loading...</div></div>`);
 
-        const gridData = $("#UserGrid").pqGrid("option", "dataModel.data");
-        const selectedUser = gridData.filter(user => user.State === true);
+        const gridData = $("#GroupGrid").pqGrid("option", "dataModel.data");
+        const selectedGroups = gridData.filter(user => user.State === true);
+        const groupIDs = selectedGroups.map(group => group.GroupID).join(",");
 
-        if (selectedUser.length > 0) {
-            const antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+        if (selectedGroups.length > 0) {
+            const antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
 
             $.ajax({
                 headers: {
                     "__RequestVerificationToken": antiForgeryToken
                 },
-                type: "POST",
-                traditional: true,
-                contentType: 'application/json; charset=utf-8',
-                url: "/OrderBook/SendMail",
-                data: JSON.stringify({
-                    ProjectCode: projectCode,
-                    SelectedUser: selectedUser,
-                }),
+                type: 'GET',
+                url: "/GroupMaster/GetUserByGroups",
+                data: { GroupIDs: groupIDs },
+                dataType: "json",
                 success: function (response) {
-                    let mailSaveMsg;
-                    if (response.success) {
-                        mailSaveMsg = `${response.message}`;
-                        ShowAlert("success", `${message} <br> ${fileSaveMsg} ${mailSaveMsg} `);
+                    if (response.records.length > 0) {
+                        // Send email
+                        sendEmail(projectCode, response.records, message, fileSaveMsg, loadingDivId);
                     } else {
-                        mailSaveMsg = ` but ${response.message}`;
-                        ShowAlert("info", `${message} <br> ${fileSaveMsg} ${mailSaveMsg} `);
+                        showAlertAndCleanup("info", message, fileSaveMsg, loadingDivId);
                     }
-                    clearFormData();
-                    $("#loadingDiv1").remove();
                 },
                 error: function () {
-                    ShowAlert("error", "An error occurred while sending the email.");
-                    $("#loadingDiv1").remove();
+                    ShowAlert("error", "An error occurred while fetching users.");
+                    $(`#${loadingDivId}`).remove();
                 }
             });
         } else {
-            ShowAlert("info", `${message} <br> ${fileSaveMsg}`);
-            clearFormData();
-            $("#loadingDiv1").remove();
+            showAlertAndCleanup("info", message, fileSaveMsg, loadingDivId);
         }
+    }
+
+    // Function to send email
+    function sendEmail(projectCode, selectedUsers, message, fileSaveMsg, loadingDivId) {
+        const antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: "POST",
+            traditional: true,
+            contentType: 'application/json; charset=utf-8',
+            url: "/OrderBook/SendMail",
+            data: JSON.stringify({
+                ProjectCode: projectCode,
+                SelectedUser: selectedUsers
+            }),
+            success: function (response) {
+                const mailSaveMsg = response.success
+                    ? `${response.message}`
+                    : `but ${response.message}`;
+                const alertType = response.success ? "success" : "info";
+
+                ShowAlert(alertType, `${message} <br> ${fileSaveMsg} ${mailSaveMsg}`);
+                clearFormData();
+                $(`#${loadingDivId}`).remove();
+            },
+            error: function () {
+                ShowAlert("error", "An error occurred while sending the email.");
+                $(`#${loadingDivId}`).remove();
+            }
+        });
+    }
+
+    // Function to show alert and cleanup
+    function showAlertAndCleanup(alertType, message, fileSaveMsg, loadingDivId) {
+        ShowAlert(alertType, `${message} <br> ${fileSaveMsg}`);
+        clearFormData();
+        $(`#${loadingDivId}`).remove();
     }
 
 </script>

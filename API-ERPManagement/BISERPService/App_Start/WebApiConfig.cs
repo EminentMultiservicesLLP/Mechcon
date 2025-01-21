@@ -240,6 +240,7 @@ namespace BISERPService
             container.RegisterType<ITrainingDaillyUpdatesRepository, TrainingDaillyUpdatesRepository>();
             container.RegisterType<IEmployeeEnrollmentRepository, EmployeeEnrollmentRepository>();
             container.RegisterType<IRoleAccessRepository, RoleAccessRepository>();
+            container.RegisterType<IGroupMasterRepository, GroupMasterRepository>();
             config.DependencyResolver = new UnityResolver(container);
             /***********billing Area*************/
             container.RegisterType<IClientBillingRepository, ClientBillingRepository>();
@@ -274,6 +275,8 @@ namespace BISERPService
             container.RegisterType<ISM_WorkOrderRepository, SM_WorkOrderRepository>();
             //SM_Reports
             container.RegisterType<ISM_ReportsRepository, SM_ReportsRepository>();
+            //SM_Dashboard
+            container.RegisterType<ISM_DashboardRepository, SM_DashboardRepository>();
 
             //----------------------------Ticket----------------------------//
             container.RegisterType<ITicketRegisterRepository, TicketRegisterRepository>();

@@ -35,7 +35,8 @@ namespace BISERP
                     "~/Scripts/jquery.PrintArea.js",
                     "~/Scripts/jLinq-2.2.1.js",
                     "~/Scripts/itemModelScript.js",
-                    "~/Scripts/jspdf.umd.min.js"
+                    "~/Scripts/jspdf.umd.min.js",
+                    "~/Scripts/apexChart/apexchart.js"
                     ));
 
             bundles.Add(new ScriptBundle("~/bundles/jquerymodels").Include(

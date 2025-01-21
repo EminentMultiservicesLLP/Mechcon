@@ -53,6 +53,10 @@ namespace BISERP.Areas.AdminPanel.Controllers
         {
             return PartialView();
         }
+        public ActionResult GroupMaster()
+        {
+            return PartialView();
+        }
         public ActionResult ChangePassword()
         {
             return PartialView();

@@ -77,37 +77,42 @@ namespace BISERP.Models
         /// <param name="_username">User name</param>
         /// <param name="_password">User password</param>
         /// <returns>True if user exist and password is correct</returns>
-        public int GetUserId(string _username, string _password)
+        /// 
+        public class UserInfo
         {
-            int UserId = 0;
-
+            public int UserId { get; set; }
+            public string UserName { get; set; }
+        }
+        public UserInfo GetUserId(string _username, string _password)
+        {
+            var userInfo = new UserInfo { UserId = 0, UserName = string.Empty };
             using (var cn = new SqlConnection(ConnectionString))
             {
-                string _sql = @"SELECT * FROM [dbo].[Um_Mst_User] WHERE [LoginName] = @u And [Password] = @p";
+                string _sql = @"SELECT * FROM [dbo].[Um_Mst_User] WHERE [LoginName] = @u AND [Password] = @p";
                 var cmd = new SqlCommand(_sql, cn);
                 cmd.Parameters.Add(new SqlParameter("@u", SqlDbType.NVarChar)).Value = _username;
                 cmd.Parameters.Add(new SqlParameter("@p", SqlDbType.NVarChar)).Value = _password;
                 cn.Open();
-                var reader = cmd.ExecuteReader();
-                if (reader.HasRows)
+
+                using (var reader = cmd.ExecuteReader())
                 {
-                    while (reader.Read())
+                    if (reader.HasRows)
                     {
-                        UserId = Convert.ToInt32(reader["UserID"].ToString());
-                        break;
+                        while (reader.Read())
+                        {
+                            userInfo.UserId = Convert.ToInt32(reader["UserID"].ToString());
+                            userInfo.UserName = reader["UserName"].ToString();
+                            break; // Exit loop after the first record
+                        }
                     }
-                    reader.Dispose();
-                    cmd.Dispose();
-                    return UserId;
                 }
-                else
-                {
-                    reader.Dispose();
-                    cmd.Dispose();
-                    return UserId;
-                }
+
+                cmd.Dispose();
             }
+
+            return userInfo;
         }
+
         public Tuple<string, string> GetSideAndNavBarCSS(string _username, string _password)
         {
             string UserSideBarMenuCSS = "";

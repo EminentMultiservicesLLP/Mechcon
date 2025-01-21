@@ -1050,7 +1050,6 @@
 
         if (workOrderID && workOrderID != 0) {
             const details = Enquiries.find(enq => enq.WorkOrderID == workOrderID);
-            debugger
             if (details) {
                 $("#ID").val(details.ProjectID || '');
                 $("#Code").val(details.ProjectCode || '');

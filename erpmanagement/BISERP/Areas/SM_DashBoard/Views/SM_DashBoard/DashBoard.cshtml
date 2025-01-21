@@ -1,0 +1,959 @@
+﻿@Scripts.Render("~/bundles/jquerymodels")
+<style>
+    .no-data-message {
+        text-align: center;
+        height: 296px;
+        color: red;
+        font-size: x-large;
+    }
+
+    .apexcharts-inner {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .chart-container {
+        width: 100%;
+        height: 100%;
+        min-height: 200px;
+        position: relative;
+    }
+
+    .chartFieldset {
+        padding-bottom: 0px;
+        margin-bottom: 0px;
+    }
+
+    @@media (max-width: 768px) {
+        .chart-container {
+            min-height: 300px; /* Adjust height for smaller screens */
+        }
+    }
+</style>
+<script>
+    $(function () {
+        $(".datepicker").datepicker({
+            showOn: "button",
+            buttonImage: "/Content/images/calendar.gif",
+            buttonImageOnly: true,
+            buttonText: "Selectdate",
+            'changeMonth': true,
+            'changeYear': true,
+            'yearRange': '2021:2030',
+            "format": "dd-M-yyyy",
+            todayBtn: "linked",
+            pickerPosition: "bottom-left",
+            "todayHighlight": true,
+            autoclose: true,
+        })
+        $("#anim").change(function () {
+            $(".datepicker").datepicker("option", "showAnim", "fadeIn");
+        });
+    });
+
+    function getFirstDateOfFinancialYear() {
+        const today = new Date();
+        const currentMonth = today.getMonth(); // Months are 0-based
+        const currentYear = today.getFullYear();
+
+        // Assuming financial year starts in April
+        const financialYearStartMonth = 3; // April (0-based index)
+        const financialYearStartYear = currentMonth >= financialYearStartMonth ? currentYear : currentYear - 1;
+
+        return new Date(financialYearStartYear, financialYearStartMonth, 1); // 1st April of the calculated year
+    }
+</script>
+
+<h5 class="page-header orangeDottedBottomBorder">Dashboard</h5>
+
+<fieldset class="fieldsetCustom">
+    <legend class="legendCustom">Select Period</legend>
+    <div class="row">
+        <div class="col-lg-2 col-md-4 col-sm-12 mb-3">
+            <label for="FromDate">From Date</label>
+            <input type="text" id="FromDate" class="form-control datepicker" />
+        </div>
+        <div class="col-lg-2 col-md-4 col-sm-12 mb-3">
+            <label for="ToDate">To Date</label>
+            <input type="text" id="ToDate" class="form-control datepicker" />
+        </div>
+        <div class="col-lg-2 col-md-4 col-sm-12 mb-3">
+            <label for="Category">Choose Category</label>
+            <select id="Category" class="form-control">
+                <option value="LocationWise">Location Wise</option>
+                <option value="ProductWise">Product Wise</option>
+            </select>
+
+        </div>
+        <div class="col-lg-2 col-md-4 col-sm-12 mb-3">
+            <br />
+            <button type="button" id="btnGo" class="btn btn-primary" onclick="go()">GO</button>
+            <button type="button" class="btn btn-warning" id="btnResetT" onclick="reset()">Reset</button>
+        </div>
+    </div>
+</fieldset>
+@*Received Enquiries Details*@
+<h5 class="page-header orangeDottedBottomBorder">Received Enquiries Details</h5>
+
+<div class="row">
+    <div class="col-sm-12 col-md-6">
+        <fieldset class="fieldsetCustom chartFieldset" id="receivedEnquiriesFS">
+            <legend class="legendCustom">Received Enquiries</legend>
+        </fieldset>
+    </div>
+    <div class="col-sm-12 col-md-6">
+        <fieldset class="fieldsetCustom chartFieldset" id="sourceEnquiriesFS">
+            <legend class="legendCustom">Source Enquiries</legend>
+        </fieldset>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12 col-md-6">
+        <fieldset class="fieldsetCustom chartFieldset" id="engineerEnquiriesFS">
+            <legend class="legendCustom">Engineer Enquiries</legend>
+        </fieldset>
+    </div>
+    <div class="col-sm-12 col-md-6">
+        <fieldset class="fieldsetCustom chartFieldset" id="sectorEnquiriesFS">
+            <legend class="legendCustom">Sector Enquiries</legend>
+        </fieldset>
+    </div>
+</div>
+
+@*Submitted Offers Details*@
+<h5 class="page-header orangeDottedBottomBorder">Submitted Offers Details</h5>
+
+<div class="row">
+    <div class="col-sm-12 col-md-6">
+        <fieldset class="fieldsetCustom chartFieldset" id="submittedOffersFS">
+            <legend class="legendCustom">Submitted Offers</legend>
+        </fieldset>
+    </div>
+    <div class="col-sm-12 col-md-6">
+        <fieldset class="fieldsetCustom chartFieldset" id="submittedSourceOffersFS">
+            <legend class="legendCustom">Submitted Source Offers</legend>
+        </fieldset>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12 col-md-6">
+        <fieldset class="fieldsetCustom chartFieldset" id="submittedEngineerOffersFS">
+            <legend class="legendCustom">Submitted Engineer Offers</legend>
+        </fieldset>
+    </div>
+    <div class="col-sm-12 col-md-6">
+        <fieldset class="fieldsetCustom chartFieldset" id="submittedSectorOffersFS">
+            <legend class="legendCustom">Submitted Sector Offers</legend>
+        </fieldset>
+    </div>
+</div>
+
+@*Received Offers Details*@
+<h5 class="page-header orangeDottedBottomBorder">Received Offers Details</h5>
+
+<div class="row">
+    <div class="col-sm-12 col-md-6">
+        <fieldset class="fieldsetCustom chartFieldset" id="receivedOffersFS">
+            <legend class="legendCustom">Received Offers</legend>
+        </fieldset>
+    </div>
+    <div class="col-sm-12 col-md-6">
+        <fieldset class="fieldsetCustom chartFieldset" id="receivedSourceOffersFS">
+            <legend class="legendCustom">Received Source Offers</legend>
+        </fieldset>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12 col-md-6">
+        <fieldset class="fieldsetCustom chartFieldset" id="receivedEngineerOffersFS">
+            <legend class="legendCustom">Received Engineer Offers</legend>
+        </fieldset>
+    </div>
+    <div class="col-sm-12 col-md-6">
+        <fieldset class="fieldsetCustom chartFieldset" id="receivedSectorOffersFS">
+            <legend class="legendCustom">Received Sector Offers</legend>
+        </fieldset>
+    </div>
+</div>
+
+@*Script for Location Wise*@
+<script>
+    //-----------------Start Location Wise Chart Rendering Function with Base Configuration --------------------//
+    function renderBarChart({ containerId, data, callFor }) {
+
+        // Remove existing chart and create a new container
+        $(`#${containerId}Chart`).remove();
+        $(`#${containerId}FS`).append(`<div id="${containerId}Chart" class="chart-container"></div>`);
+
+        // Check if data is valid
+        if (!data || data.length === 0 || data.every(item => (item.TotalCount || 0) === 0)) {
+            $(`#${containerId}Chart`).html('<div class="no-data-message" >No data available for the selected period.</div>');
+            return;
+        }
+
+        // Extract data points
+        const chartData = {
+            monthsName: data.map(item => item.MonthName),
+            totalCounts: data.map(item => item.TotalCount),
+            domesticCounts: data.map(item => item.DomesticCount),
+            exportCounts: data.map(item => item.ExportCount),
+            sezCounts: data.map(item => item.SEZCount),
+            totalValues: data.map(item => item.TotalValue),
+            domesticValues: data.map(item => item.DomesticValue),
+            exportValues: data.map(item => item.ExportValue),
+            sezValues: data.map(item => item.SEZValue),
+        };
+
+        // Tooltip formatter helper function
+        const getTooltipContent = (monthName, dataPointIndex) => {
+            if (callFor === "Enquiry") {
+                return `
+                <div style="padding: 10px; font-size: 14px; border: 1px solid #ccc; border-radius: 5px; background: #fff;">
+                    <strong>${monthName}</strong><br>
+                    Domestic Count: ${chartData.domesticCounts[dataPointIndex]}<br>
+                    Export Count: ${chartData.exportCounts[dataPointIndex]}<br>
+                    SEZ Count: ${chartData.sezCounts[dataPointIndex]}<br>
+                    Total Count: ${chartData.totalCounts[dataPointIndex]}
+                </div>`;
+            } else {
+                return `
+                <div style="padding: 10px; font-size: 14px; border: 1px solid #ccc; border-radius: 5px; background: #fff;">
+                    <strong>${monthName}</strong><br>
+                    Domestic Value: ${chartData.domesticValues[dataPointIndex]}<br>
+                    Export Value: ${chartData.exportValues[dataPointIndex]}<br>
+                    SEZ Value: ${chartData.sezValues[dataPointIndex]}<br>
+                    Total Value: ${chartData.totalValues[dataPointIndex]}
+                </div>`;
+            }
+        };
+
+        // Chart options
+        const options = {
+            series: [
+                { name: 'Domestic', data: chartData.domesticCounts },
+                { name: 'Export', data: chartData.exportCounts },
+                { name: 'SEZ', data: chartData.sezCounts }
+            ],
+            chart: {
+                type: 'bar',
+                height: 280,
+                toolbar: { show: false },
+                stacked: true,
+                events: {
+                    resize: (chart, width, height) => {
+                        chart.updateOptions({
+                            chart: { height: height || 280 }
+                        });
+                    }
+                }
+            },
+            plotOptions: {
+                bar: {
+                    horizontal: true,
+                    columnWidth: '50%',
+                    dataLabels: {
+                        total: {
+                            enabled: true,
+                            offsetX: 0,
+                            style: {
+                                fontSize: '13px',
+                                fontWeight: 900
+                            }
+                        }
+                    }
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                style: {
+                    fontFamily: 'Calibri',
+                    fontWeight: 'normal',
+                    colors: ['#000']
+                },
+                dropShadow: {
+                    enabled: false
+                }
+            },
+            xaxis: {
+                categories: chartData.monthsName,
+            },
+            grid: {
+                borderColor: '#e7e7e7',
+                row: {
+                    colors: ['#f3f3f3', 'transparent'],
+                    opacity: 0.5
+                }
+            },
+            tooltip: {
+                shared: true,
+                intersect: false,
+                custom: function ({ series, seriesIndex, dataPointIndex, w }) {
+                    const monthName = w.config.xaxis.categories[dataPointIndex];
+                    return getTooltipContent(monthName, dataPointIndex);
+                }
+            },
+            legend: {
+                position: 'top',
+                horizontalAlign: 'center'
+            },
+            responsive: [{
+                breakpoint: 768,
+                options: {
+                    chart: { height: 300 },
+                    plotOptions: { bar: { horizontal: false } }
+                }
+            }]
+        };
+
+        // Render the chart
+        const chart = new ApexCharts(document.querySelector(`#${containerId}Chart`), options);
+        chart.render();
+    }
+
+    function renderPieChart({ containerId, data, callFor }) {
+        // Remove existing chart and append a new container
+        $(`#${containerId}Chart`).remove();
+        $(`#${containerId}FS`).append(`<div id="${containerId}Chart" class="chart-container"></div>`);
+
+        // Handle no-data scenario
+        if (!data || data.length === 0 || data.every(item => (item.TotalCount || 0) === 0)) {
+            $(`#${containerId}Chart`).html(
+                `<div class="no-data-message" >
+                No data available for the selected period.
+            </div>`
+            );
+            return;
+        }
+
+        // Prepare series and labels for the chart
+        const series = data.map(item => item.TotalCount || 0);
+        const labels = data.map(item => item.Name || "Unknown");
+
+        // Define chart options
+        const options = {
+            series,
+            chart: {
+                height: 250,
+                type: 'pie',
+                toolbar: { show: false }
+            },
+            labels,
+            tooltip: {
+                shared: true,
+                intersect: false,
+                y: {
+                    formatter: function (_, opts) {
+                        const details = data[opts.seriesIndex];
+                        if (callFor === "Enquiry") {
+                            return `Domestic: ${details.DomesticCount || 0}, Export: ${details.ExportCount || 0}, SEZ: ${details.SEZCount || 0}, Total: ${details.TotalCount || 0}`;
+                        } else {
+                            return `Domestic: ${details.DomesticValue || 0}, Export: ${details.ExportValue || 0}, SEZ: ${details.SEZValue || 0}, Total: ${details.TotalValue || 0}`;
+                        }
+                    }
+                }
+            },
+            legend: {
+                position: 'top',
+                horizontalAlign: 'center'
+            },
+            dataLabels: {
+                enabled: true,
+                formatter: (val, opts) => `${val.toFixed(1)}% (${opts.w.globals.series[opts.seriesIndex]})`,
+                style: {
+                    fontFamily: 'Calibri',
+                    fontWeight: 'normal',
+                    colors: ['#000000']
+                },
+                dropShadow: { enabled: false }
+            },
+            responsive: [{
+                breakpoint: 768,
+                options: {
+                    chart: { height: 250 },
+                    legend: { position: 'bottom' }
+                }
+            }]
+        };
+
+        // Render the chart
+        const chart = new ApexCharts(document.querySelector(`#${containerId}Chart`), options);
+        chart.render();
+    }
+    //-----------------End Location Wise Chart Rendering Function with Base Configuration --------------------//
+
+    //-----------------Start Location Wise Functions for Received Enquiries--------------------//
+    function loadReceivedEnquiries(ToDate) {
+        loadData({
+            url: "/SM_DashBoard/SM_DashBoard/GetReceivedEnquiries",
+            data: { ToDate },
+            containerId: 'receivedEnquiries',
+            renderChart: renderBarChart,
+            callFor: "Enquiry"
+        });
+    }
+
+    function loadSourceEnquiries(FromDate, ToDate) {
+        loadData({
+            url: "/SM_DashBoard/SM_DashBoard/GetSourceEnquiries",
+            data: { FromDate, ToDate },
+            containerId: 'sourceEnquiries',
+            renderChart: renderPieChart,
+            callFor: "Enquiry"
+        });
+    }
+
+    function loadEngineerEnquiries(FromDate, ToDate) {
+        loadData({
+            url: "/SM_DashBoard/SM_DashBoard/GetEngineerEnquiries",
+            data: { FromDate, ToDate },
+            containerId: 'engineerEnquiries',
+            renderChart: renderPieChart,
+            callFor: "Enquiry"
+        });
+    }
+
+    function loadSectorEnquiries(FromDate, ToDate) {
+        loadData({
+            url: "/SM_DashBoard/SM_DashBoard/GetSectorEnquiries",
+            data: { FromDate, ToDate },
+            containerId: 'sectorEnquiries',
+            renderChart: renderPieChart,
+            callFor: "Enquiry"
+        });
+    }
+    //-----------------End Location Wise Functions for Received Enquiries--------------------//
+
+    //-----------------Start Location Wise Functions for Submitted Offers--------------------//
+    function loadSubmittedOffers(ToDate) {
+        loadData({
+            url: "/SM_DashBoard/SM_DashBoard/GetSubmittedOffers",
+            data: { ToDate },
+            containerId: 'submittedOffers',
+            renderChart: renderBarChart,
+            callFor: "Offer"
+        });
+    }
+
+    function loadSubmittedSourceOffers(FromDate, ToDate) {
+        loadData({
+            url: "/SM_DashBoard/SM_DashBoard/GetSubmittedSourceOffers",
+            data: { FromDate, ToDate },
+            containerId: 'submittedSourceOffers',
+            renderChart: renderPieChart,
+            callFor: "Offer"
+        });
+    }
+
+    function loadSubmittedEngineerOffers(FromDate, ToDate) {
+        loadData({
+            url: "/SM_DashBoard/SM_DashBoard/GetSubmittedEngineerOffers",
+            data: { FromDate, ToDate },
+            containerId: 'submittedEngineerOffers',
+            renderChart: renderPieChart,
+            callFor: "Offer"
+        });
+    }
+
+    function loadSubmittedSectorOffers(FromDate, ToDate) {
+        loadData({
+            url: "/SM_DashBoard/SM_DashBoard/GetSubmittedSectorOffers",
+            data: { FromDate, ToDate },
+            containerId: 'submittedSectorOffers',
+            renderChart: renderPieChart,
+            callFor: "Offer"
+        });
+    }
+    //-----------------End Location Wise Functions for Submitted Offers--------------------//
+
+    //-----------------Start Location Wise Functions for Received Offers--------------------//
+    function loadReceivedOffers(ToDate) {
+        loadData({
+            url: "/SM_DashBoard/SM_DashBoard/GetReceivedOffers",
+            data: { ToDate },
+            containerId: 'receivedOffers',
+            renderChart: renderBarChart,
+            callFor: "Offer"
+        });
+    }
+
+    function loadReceivedSourceOffers(FromDate, ToDate) {
+        loadData({
+            url: "/SM_DashBoard/SM_DashBoard/GetReceivedSourceOffers",
+            data: { FromDate, ToDate },
+            containerId: 'receivedSourceOffers',
+            renderChart: renderPieChart,
+            callFor: "Offer"
+        });
+    }
+
+    function loadReceivedEngineerOffers(FromDate, ToDate) {
+        loadData({
+            url: "/SM_DashBoard/SM_DashBoard/GetReceivedEngineerOffers",
+            data: { FromDate, ToDate },
+            containerId: 'receivedEngineerOffers',
+            renderChart: renderPieChart,
+            callFor: "Offer"
+        });
+    }
+
+    function loadReceivedSectorOffers(FromDate, ToDate) {
+        loadData({
+            url: "/SM_DashBoard/SM_DashBoard/GetReceivedSectorOffers",
+            data: { FromDate, ToDate },
+            containerId: 'receivedSectorOffers',
+            renderChart: renderPieChart,
+            callFor: "Offer"
+        });
+    }
+    //-----------------End Location Wise Functions for Received Offers--------------------//
+</script>
+
+@*Script for Product Wise*@
+<script>
+    //-----------------Start Product Wise Chart Rendering Function with Base Configuration --------------------//
+    function renderBarChart_PW({ containerId, data, callFor }) {
+
+        // Remove existing chart and create a new container
+        $(`#${containerId}Chart`).remove();
+        $(`#${containerId}FS`).append(`<div id="${containerId}Chart" class="chart-container"></div>`);
+
+        // Check if data is valid
+        if (!data || data.length === 0 || data.every(item => (item.TotalCount || 0) === 0)) {
+            $(`#${containerId}Chart`).html('<div class="no-data-message" >No data available for the selected period.</div>');
+            return;
+        }
+
+        // Extract data points
+        const chartData = {
+            monthsName: data.map(item => item.MonthName),
+            totalCounts: data.map(item => item.TotalCount),
+            systemsCounts: data.map(item => item.SystemsCount),
+            productsCounts: data.map(item => item.ProductsCount),
+            sparesCounts: data.map(item => item.SparesCount),
+            servicesCounts: data.map(item => item.ServicesCount),
+            totalValues: data.map(item => item.TotalValue),
+            systemsValues: data.map(item => item.SystemsValue),
+            productsValues: data.map(item => item.ProductsValue),
+            sparesValues: data.map(item => item.SparesValue),
+            servicesValues: data.map(item => item.ServicesValue),
+        };
+
+        // Tooltip formatter helper function
+        const getTooltipContent = (monthName, dataPointIndex) => {
+            if (callFor === "Enquiry") {
+                return `
+                <div style="padding: 10px; font-size: 14px; border: 1px solid #ccc; border-radius: 5px; background: #fff;">
+                    <strong>${monthName}</strong><br>
+                    Systems Count: ${chartData.systemsCounts[dataPointIndex]}<br>
+                    Products Count: ${chartData.productsCounts[dataPointIndex]}<br>
+                    Spares Count: ${chartData.sparesCounts[dataPointIndex]}<br>
+                    Services Count: ${chartData.servicesCounts[dataPointIndex]}<br>
+                    Total Count: ${chartData.totalCounts[dataPointIndex]}
+                </div>`;
+            } else {
+                return `
+                <div style="padding: 10px; font-size: 14px; border: 1px solid #ccc; border-radius: 5px; background: #fff;">
+                    <strong>${monthName}</strong><br>
+                    Systems Value: ${chartData.systemsValues[dataPointIndex]}<br>
+                    Products Value: ${chartData.productsValues[dataPointIndex]}<br>
+                    Spares Value: ${chartData.sparesValues[dataPointIndex]}<br>
+                    Services Value: ${chartData.servicesValues[dataPointIndex]}<br>
+                    Total Value: ${chartData.totalValues[dataPointIndex]}
+                </div>`;
+            }
+        };
+
+        // Chart options
+        const options = {
+            series: [
+                { name: 'Systems', data: chartData.systemsCounts },
+                { name: 'Products', data: chartData.productsCounts },
+                { name: 'Spares', data: chartData.sparesCounts },
+                { name: 'Services', data: chartData.servicesCounts }
+            ],
+            chart: {
+                type: 'bar',
+                height: 280,
+                toolbar: { show: false },
+                stacked: true,
+                events: {
+                    resize: (chart, width, height) => {
+                        chart.updateOptions({
+                            chart: { height: height || 280 }
+                        });
+                    }
+                }
+            },
+            plotOptions: {
+                bar: {
+                    horizontal: true,
+                    columnWidth: '50%',
+                    dataLabels: {
+                        total: {
+                            enabled: true,
+                            offsetX: 0,
+                            style: {
+                                fontSize: '13px',
+                                fontWeight: 900
+                            }
+                        }
+                    }
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                style: {
+                    fontFamily: 'Calibri',
+                    fontWeight: 'normal',
+                    colors: ['#000']
+                },
+                dropShadow: {
+                    enabled: false
+                }
+            },
+            xaxis: {
+                categories: chartData.monthsName,
+            },
+            grid: {
+                borderColor: '#e7e7e7',
+                row: {
+                    colors: ['#f3f3f3', 'transparent'],
+                    opacity: 0.5
+                }
+            },
+            tooltip: {
+                shared: true,
+                intersect: false,
+                custom: function ({ series, seriesIndex, dataPointIndex, w }) {
+                    const monthName = w.config.xaxis.categories[dataPointIndex];
+                    return getTooltipContent(monthName, dataPointIndex);
+                }
+            },
+            legend: {
+                position: 'top',
+                horizontalAlign: 'center'
+            },
+            responsive: [{
+                breakpoint: 768,
+                options: {
+                    chart: { height: 300 },
+                    plotOptions: { bar: { horizontal: false } }
+                }
+            }]
+        };
+
+        // Render the chart
+        const chart = new ApexCharts(document.querySelector(`#${containerId}Chart`), options);
+        chart.render();
+    }
+
+    function renderPieChart_PW({ containerId, data, callFor }) {
+        // Remove existing chart and append a new container
+        $(`#${containerId}Chart`).remove();
+        $(`#${containerId}FS`).append(`<div id="${containerId}Chart" class="chart-container"></div>`);
+
+        // Handle no-data scenario
+        if (!data || data.length === 0 || data.every(item => (item.TotalCount || 0) === 0)) {
+            $(`#${containerId}Chart`).html(
+                `<div class="no-data-message" >
+                No data available for the selected period.
+            </div>`
+            );
+            return;
+        }
+
+        // Prepare series and labels for the chart
+        const series = data.map(item => item.TotalCount || 0);
+        const labels = data.map(item => item.Name || "Unknown");
+
+        // Define chart options
+        const options = {
+            series,
+            chart: {
+                height: 250,
+                type: 'pie',
+                toolbar: { show: false }
+            },
+            labels,
+            tooltip: {
+                shared: true,
+                intersect: false,
+                y: {
+                    formatter: function (_, opts) {
+                        const details = data[opts.seriesIndex];
+                        if (callFor === "Enquiry") {
+                            return `Systems: ${details.SystemsCount || 0}, Products: ${details.ProductsCount || 0}, Spares: ${details.SparesCount || 0},  Services: ${details.ServicesCount || 0}, Total: ${details.TotalCount || 0}`;
+                        } else {
+                            return `Systems: ${details.SystemsValue || 0}, Products: ${details.ProductsValue || 0}, Spares: ${details.SparesValue || 0}, Spares: ${details.SparesValue || 0}, Total: ${details.TotalValue || 0}`;
+                        }
+                    }
+                }
+            },
+            legend: {
+                position: 'top',
+                horizontalAlign: 'center'
+            },
+            dataLabels: {
+                enabled: true,
+                formatter: (val, opts) => `${val.toFixed(1)}% (${opts.w.globals.series[opts.seriesIndex]})`,
+                style: {
+                    fontFamily: 'Calibri',
+                    fontWeight: 'normal',
+                    colors: ['#000000']
+                },
+                dropShadow: { enabled: false }
+            },
+            responsive: [{
+                breakpoint: 768,
+                options: {
+                    chart: { height: 250 },
+                    legend: { position: 'bottom' }
+                }
+            }]
+        };
+
+        // Render the chart
+        const chart = new ApexCharts(document.querySelector(`#${containerId}Chart`), options);
+        chart.render();
+    }
+    //-----------------End Product Wise Chart Rendering Function with Base Configuration --------------------//
+
+    //-----------------Start Product Wise Functions for Received Enquiries--------------------//
+    function loadReceivedEnquiriesPW(ToDate) {
+        loadData({
+            url: "/SM_DashBoard/SM_DashBoard/GetReceivedEnquiriesPW",
+            data: { ToDate },
+            containerId: 'receivedEnquiries',
+            renderChart: renderBarChart_PW,
+            callFor: "Enquiry"
+        });
+    }
+
+    function loadSourceEnquiriesPW(FromDate, ToDate) {
+        loadData({
+            url: "/SM_DashBoard/SM_DashBoard/GetSourceEnquiriesPW",
+            data: { FromDate, ToDate },
+            containerId: 'sourceEnquiries',
+            renderChart: renderPieChart_PW,
+            callFor: "Enquiry"
+        });
+    }
+
+    function loadEngineerEnquiriesPW(FromDate, ToDate) {
+        loadData({
+            url: "/SM_DashBoard/SM_DashBoard/GetEngineerEnquiriesPW",
+            data: { FromDate, ToDate },
+            containerId: 'engineerEnquiries',
+            renderChart: renderPieChart_PW,
+            callFor: "Enquiry"
+        });
+    }
+
+    function loadSectorEnquiriesPW(FromDate, ToDate) {
+        loadData({
+            url: "/SM_DashBoard/SM_DashBoard/GetSectorEnquiriesPW",
+            data: { FromDate, ToDate },
+            containerId: 'sectorEnquiries',
+            renderChart: renderPieChart_PW,
+            callFor: "Enquiry"
+        });
+    }
+    //-----------------End Product Wise Functions for Received Enquiries--------------------//
+
+    //-----------------Start Product Wise Functions for Submitted Offers--------------------//
+    function loadSubmittedOffersPW(ToDate) {
+        loadData({
+            url: "/SM_DashBoard/SM_DashBoard/GetSubmittedOffersPW",
+            data: { ToDate },
+            containerId: 'submittedOffers',
+            renderChart: renderBarChart_PW,
+            callFor: "Offer"
+        });
+    }
+
+    function loadSubmittedSourceOffersPW(FromDate, ToDate) {
+        loadData({
+            url: "/SM_DashBoard/SM_DashBoard/GetSubmittedSourceOffersPW",
+            data: { FromDate, ToDate },
+            containerId: 'submittedSourceOffers',
+            renderChart: renderPieChart_PW,
+            callFor: "Offer"
+        });
+    }
+
+    function loadSubmittedEngineerOffersPW(FromDate, ToDate) {
+        loadData({
+            url: "/SM_DashBoard/SM_DashBoard/GetSubmittedEngineerOffersPW",
+            data: { FromDate, ToDate },
+            containerId: 'submittedEngineerOffers',
+            renderChart: renderPieChart_PW,
+            callFor: "Offer"
+        });
+    }
+
+    function loadSubmittedSectorOffersPW(FromDate, ToDate) {
+        loadData({
+            url: "/SM_DashBoard/SM_DashBoard/GetSubmittedSectorOffersPW",
+            data: { FromDate, ToDate },
+            containerId: 'submittedSectorOffers',
+            renderChart: renderPieChart_PW,
+            callFor: "Offer"
+        });
+    }
+    //-----------------End Product Wise Functions for Submitted Offers--------------------//
+
+    //-----------------Start Product Wise Functions for Received Offers--------------------//
+    function loadReceivedOffersPW(ToDate) {
+        loadData({
+            url: "/SM_DashBoard/SM_DashBoard/GetReceivedOffersPW",
+            data: { ToDate },
+            containerId: 'receivedOffers',
+            renderChart: renderBarChart_PW,
+            callFor: "Offer"
+        });
+    }
+
+    function loadReceivedSourceOffersPW(FromDate, ToDate) {
+        loadData({
+            url: "/SM_DashBoard/SM_DashBoard/GetReceivedSourceOffersPW",
+            data: { FromDate, ToDate },
+            containerId: 'receivedSourceOffers',
+            renderChart: renderPieChart_PW,
+            callFor: "Offer"
+        });
+    }
+
+    function loadReceivedEngineerOffersPW(FromDate, ToDate) {
+        loadData({
+            url: "/SM_DashBoard/SM_DashBoard/GetReceivedEngineerOffersPW",
+            data: { FromDate, ToDate },
+            containerId: 'receivedEngineerOffers',
+            renderChart: renderPieChart_PW,
+            callFor: "Offer"
+        });
+    }
+
+    function loadReceivedSectorOffersPW(FromDate, ToDate) {
+        loadData({
+            url: "/SM_DashBoard/SM_DashBoard/GetReceivedSectorOffersPW",
+            data: { FromDate, ToDate },
+            containerId: 'receivedSectorOffers',
+            renderChart: renderPieChart_PW,
+            callFor: "Offer"
+        });
+    }
+    //-----------------End Product Wise Functions for Received Offers--------------------//
+</script>
+
+@*Common Script*@
+<script>
+    function loadData({ url, data, containerId, renderChart, callFor }) {
+        const antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+
+        $.ajax({
+            headers: { "__RequestVerificationToken": antiForgeryToken },
+            type: 'GET',
+            url: url,
+            data: data,
+            dataType: "json",
+            success(response) {
+                if (response.success && Array.isArray(response.records)) {
+                    renderChart({
+                        containerId: containerId,
+                        data: response.records,
+                        callFor: callFor
+                    });
+                } else {
+                    alert(response.message || `Unable to load data for ${containerId}.`);
+                    renderChart({
+                        containerId: containerId,
+                        data: [],
+                        callFor: callFor
+                    });
+                }
+            },
+            error() {
+                alert(`An error occurred while loading data for ${containerId}. Please try again later.`);
+            }
+        });
+    }
+
+    function go() {
+
+        const fromDate = $("#FromDate").val();
+        const toDate = $("#ToDate").val();
+
+        // Check if the From Date is earlier than the To Date
+        if (new Date(fromDate) > new Date(toDate)) {
+            ShowAlert("warning", "From Date cannot be later than To Date.");
+            return;
+        }
+
+        if ($("#Category").val() === "LocationWise") {
+
+            // Proceed with loading Received Enquiries
+            loadReceivedEnquiries(toDate);
+            loadSourceEnquiries(fromDate, toDate);
+            loadEngineerEnquiries(fromDate, toDate);
+            loadSectorEnquiries(fromDate, toDate);
+
+            // Proceed with loading Submitted Offers
+            loadSubmittedOffers(toDate);
+            loadSubmittedSourceOffers(fromDate, toDate);
+            loadSubmittedEngineerOffers(fromDate, toDate);
+            loadSubmittedSectorOffers(fromDate, toDate);
+
+            // Proceed with loading Received Offers
+            loadReceivedOffers(toDate);
+            loadReceivedSourceOffers(fromDate, toDate);
+            loadReceivedEngineerOffers(fromDate, toDate);
+            loadReceivedSectorOffers(fromDate, toDate);
+
+        } else {
+
+            // Proceed with loading Received Enquiries
+            loadReceivedEnquiriesPW(toDate);
+            loadSourceEnquiriesPW(fromDate, toDate);
+            loadEngineerEnquiriesPW(fromDate, toDate);
+            loadSectorEnquiriesPW(fromDate, toDate);
+
+            // Proceed with loading Submitted Offers
+            loadSubmittedOffersPW(toDate);
+            loadSubmittedSourceOffersPW(fromDate, toDate);
+            loadSubmittedEngineerOffersPW(fromDate, toDate);
+            loadSubmittedSectorOffersPW(fromDate, toDate);
+
+            // Proceed with loading Received Offers
+            loadReceivedOffersPW(toDate);
+            loadReceivedSourceOffersPW(fromDate, toDate);
+            loadReceivedEngineerOffersPW(fromDate, toDate);
+            loadReceivedSectorOffersPW(fromDate, toDate);
+
+        }
+
+    }
+
+    function reset() {
+
+        $("#FromDate").datepicker("setDate", getFirstDateOfFinancialYear());
+        $("#ToDate").datepicker("setDate", new Date());
+        $("#Category").val("LocationWise");
+
+        loadReceivedEnquiries(null);
+        loadSourceEnquiries(null, null);
+        loadEngineerEnquiries(null, null);
+        loadSectorEnquiries(null, null);
+
+        loadSubmittedOffers(null);
+        loadSubmittedSourceOffers(null, null);
+        loadSubmittedEngineerOffers(null, null);
+        loadSubmittedSectorOffers(null, null);
+
+        loadReceivedOffers(null);
+        loadReceivedSourceOffers(null, null);
+        loadReceivedEngineerOffers(null, null);
+        loadReceivedSectorOffers(null, null);
+
+    }
+    reset();
+</script>
