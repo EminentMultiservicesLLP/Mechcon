@@ -286,13 +286,13 @@
                     { title: "BranchName", dataIndx: "BranchName", width: 160 },
                     {
                         title: "OrderNO", dataIndx: "Code", width: 160,
-                        filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                        filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
                     },
                     { title: "EmployeeType", dataIndx: "StrEmployeeType", width: 70 },
                     {
-                        title: "Employee", dataIndx: "EmployeeName", width: 150, filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                        title: "Employee", dataIndx: "EmployeeName", width: 150, filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
                     },
-                    { title: "TicketCode", dataIndx: "TicketCode", width: 100, filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } },
+                    { title: "TicketCode", dataIndx: "TicketCode", width: 100, filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] } },
                     { title: "TrainingDate", dataIndx: "StrTrainingDate", width: 100 , hidden: true},
                     { title: "Slot", dataIndx: "BatchName", width: 200, dataType: "string" },
                     { title: "Details", dataIndx: "Details", width: 170, dataType: "string", hidden: true },

@@ -42,7 +42,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                                  OpeningBalance = row.Field<double>("PreviousBalanceQty"),
 
                                  DocDate = row.Field<DateTime>("DocDate"),
-                                 strDocDate = Convert.ToDateTime(row.Field<DateTime>("DocDate")).ToString("dd-MMMM-yyyy"),
+                                 strDocDate = Convert.ToDateTime(row.Field<DateTime>("DocDate")).ToString("dd-MMM-yyyy"),
                                  DocId = row.Field<int>("docid"),
                                  Description = row.Field<string>("Description"),
                                  ReceiptNo = row.Field<string>("ReceiptNo"),
@@ -86,7 +86,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                                 OpeningBalance = row.Field<double>("PreviousBalanceQty"),
 
                                 DocDate = row.Field<DateTime?>("DocDate"),
-                                strDocDate = Convert.ToDateTime(row.Field<DateTime?>("DocDate")).ToString("dd-MMMM-yyyy"),
+                                strDocDate = Convert.ToDateTime(row.Field<DateTime?>("DocDate")).ToString("dd-MMM-yyyy"),
 
                                 DocId = row.Field<int>("docid"),
                                 Description = row.Field<string>("Description"),

@@ -54,7 +54,7 @@ namespace BISERPBusinessLayer.Repositories.Asset.Classes
                                 PANNo = row.Field<string>("PANNo"),
                                 CreditPeriod = row.Field<int>("CreditPeriod"),
                                 //DateOfAssociation = row.Field<DateTime>("DateOfAssociation"),
-                                strDateOfAssociation = Convert.ToDateTime(row.Field<DateTime>("DateOfAssociation")).ToString("dd-MMMM-yyyy"),
+                                strDateOfAssociation = Convert.ToDateTime(row.Field<DateTime>("DateOfAssociation")).ToString("dd-MMM-yyyy"),
                                 BankName = row.Field<string>("BankName"),
                                 BankAcNo = row.Field<string>("BankAcNo"),
                                 RTGSCODE = row.Field<string>("RTGSCODE"),

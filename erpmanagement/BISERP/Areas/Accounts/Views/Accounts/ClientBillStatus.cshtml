@@ -52,11 +52,11 @@
                           },
                           {
                               title: "Client", dataIndx: "ClientName", width: 100, dataType: "string", editable: false,
-                              filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                              filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
                           },
              {
                  title:"Bill No" ,dataIndx: "BillNo", width: 150, dataType: "string", editable: false,
-                 filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                 filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
              },
              { title: "Bill Date ", dataIndx: "StrBillDate", width: 130, dataType: "double", editable: false },
             {

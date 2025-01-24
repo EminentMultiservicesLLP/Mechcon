@@ -61,7 +61,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                                 BillDate = row.Field<DateTime>("BillDate"),
                                 BillAmount = row.Field<double>("BillAmount"),
                                 SuppilerId = row.Field<int>("SuppilerId"),
-                                strBillDate = Convert.ToDateTime(row.Field<DateTime>("BillDate")).ToString("dd-MMMM-yyyy"),
+                                strBillDate = Convert.ToDateTime(row.Field<DateTime>("BillDate")).ToString("dd-MMM-yyyy"),
                             }).ToList();
             }
             return bill;

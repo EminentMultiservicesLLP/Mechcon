@@ -33,7 +33,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                             {
                                 IndentNo = row.Field<string>("Indent Number"),
                                 Indent_Date = row.Field<DateTime?>("Indent Date"),
-                                strIndentDate = Convert.ToDateTime(row.Field<DateTime?>("Indent Date")).ToString("dd-MMMM-yyyy"),
+                                strIndentDate = Convert.ToDateTime(row.Field<DateTime?>("Indent Date")).ToString("dd-MMM-yyyy"),
                                 ToStore = row.Field<string>("To Store"),
                                 FromStore = row.Field<string>("From Store"),
                                 Indent_id = row.Field<int?>("Indent_id"),

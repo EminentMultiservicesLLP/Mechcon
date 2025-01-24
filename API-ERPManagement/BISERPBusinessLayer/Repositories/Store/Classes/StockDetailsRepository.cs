@@ -39,7 +39,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                                  StoreName = row.Field<string>("Store"),
                                  ExpiryDate = row.Field<DateTime>("ExpiryDate"),
                                  Qty = row.Field<double>("Qty"),
-                                 strExpiryDate = Convert.ToDateTime(row.Field<DateTime>("ExpiryDate")).ToString("dd-MMMM-yyyy"),
+                                 strExpiryDate = Convert.ToDateTime(row.Field<DateTime>("ExpiryDate")).ToString("dd-MMM-yyyy"),
                                
                              }).ToList();
              }
@@ -95,7 +95,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                                 ExpiryDate = row.Field<DateTime>("ExpiryDate"),
                                 Qty = row.Field<double>("Qty"),
                                 MRP = row.Field<double>("MRP"),
-                                strExpiryDate = Convert.ToDateTime(row.Field<DateTime>("ExpiryDate")).ToString("dd-MMMM-yyyy"),
+                                strExpiryDate = Convert.ToDateTime(row.Field<DateTime>("ExpiryDate")).ToString("dd-MMM-yyyy"),
 
                             }).ToList();
             }

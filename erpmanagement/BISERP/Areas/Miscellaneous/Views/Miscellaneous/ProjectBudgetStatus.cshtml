@@ -87,11 +87,11 @@
          { title: "ProjectId", dataIndx: "ID", width: 250,hidden:true },
         {
             title: "Project", dataIndx: "Code", width: 300, dataType: "string", editable: false,
-            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
         },
         {
             title: "Project Name ", dataIndx: "Name", width: 300, dataType: "string", editable: false,
-            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
         },
         { title: "ItemCategoryid", dataIndx: "StoreTypeID", width: 250, hidden: true },
             { title: "Item Category", dataIndx: "StoreTypeName", width: 200 },

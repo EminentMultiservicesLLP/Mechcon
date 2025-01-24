@@ -99,27 +99,27 @@
                 { dataIndx: "GRNId", width: 10, dataType: "integer", hidden: true },
                 {
                     title: "GRN No", dataIndx: "GRNNo", width: 150, dataType: "string",
-                        filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                        filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
                 },
                 { title: "GRN Date", dataIndx: "strGRNDate", dataType: "string", width: 120 },
                 { dataIndx: "Storeid", width: 10, dataType: "integer", hidden: true },
                 {
                     title: "Store Name", dataIndx: "StoreName", width: 90, dataType: "string", hidden: true,
-                    filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                    filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
                 },
                 {
                     title: "Project Code", dataIndx: "ProjectCode", width: 90, dataType: "string",
-                    filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                    filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
                 },
                 { dataIndx: "ClientId", width: 10, dataType: "integer", hidden: true },
                 {
                     title: "Party", dataIndx: "ClientName", width: 90, dataType: "string",
-                    filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                    filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
                 },
                 { dataIndx: "ConsigneeId", width: 10, dataType: "integer", hidden: true },
                 {
                     title: "Consignee", dataIndx: "ConsigneeName", width: 90, dataType: "string",
-                    filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                    filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
                 },
                 { title: "Invoice No", dataIndx: "InvoiceNo", width: 90, dataType: "string" },
                 { title: "Invoice Date", dataIndx: "strInvoiceDate", dataType: "string", width: 120 },
@@ -129,7 +129,7 @@
                 { dataIndx: "ItemCategoryId", width: 10, dataType: "integer", hidden: true },
                 {
                     title: "Goods/Services", dataIndx: "ItemCategoryName", width: 100, dataType: "string",
-                    filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                    filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
                 },
                 { title: "GSTIN", dataIndx: "GSTIN", width: 10, dataType: "string" },
                 { title: "State", dataIndx: "StateName", dataType: "string", width: 100 },
@@ -138,7 +138,7 @@
                 { dataIndx: "PoID", width: 10, dataType: "integer", hidden: true },
                 {
                     title: "PO No", dataIndx: "PONo", width: 130, dataType: "string",
-                    filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                    filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
                 },
                 { title: "Payment Term", dataIndx: "PaymentTerm", dataType: "string", width: 100 },
                 { title: "Delivery Term", dataIndx: "DeliveryTerm", dataType: "string", width: 100 },
@@ -150,7 +150,7 @@
                 { dataIndx: "ItemID", width: 10, dataType: "integer", hidden: true },
                 {
                     title: "Item", dataIndx: "ItemName", width: 120, dataType: "string",
-                    filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                    filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
                 },
                 { title: "Packsize", dataIndx: "Packsize", dataType: "string", width: 90 },
                 { title: "Unit", dataIndx: "UnitName", dataType: "string", width: 90 },

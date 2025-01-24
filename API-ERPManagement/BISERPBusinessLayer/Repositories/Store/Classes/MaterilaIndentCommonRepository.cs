@@ -165,7 +165,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                                 Indent_ToStoreID = row.Field<int>("Indent_ToStore"),
                                 Indent_FromStoreID = row.Field<Int32>("Indent_FromStore"),
                                 Indent_Date = row.Field<DateTime?>("Indent_Date"),
-                                strIndentDate = Convert.ToDateTime(row.Field<DateTime>("Indent_Date")).ToString("dd-MMMM-yyyy"),
+                                strIndentDate = Convert.ToDateTime(row.Field<DateTime>("Indent_Date")).ToString("dd-MMM-yyyy"),
                                 Prioritystr = row.Field<string>("Prioritystr"),
                                 Priority =row.Field<int>("Priority"),
                                 Remarks = row.Field<string>("Remarks"),
@@ -205,7 +205,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                                 Indent_FromStore = row.Field<string>("FromStore"),
                                 Indent_FromStoreID = row.Field<Int32>("Indent_FromStore"),
                                 Indent_Date = row.Field<DateTime?>("Indent_Date"),
-                                strIndentDate = Convert.ToDateTime(row.Field<DateTime>("Indent_Date")).ToString("dd-MMMM-yyyy"),
+                                strIndentDate = Convert.ToDateTime(row.Field<DateTime>("Indent_Date")).ToString("dd-MMM-yyyy"),
                             }).GroupBy(test => test.Indent_Id).Select(grp => grp.First()).ToList();
             }
             return MaterialIndent;
@@ -232,7 +232,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                                 Indent_ToStoreID = row.Field<int>("Indent_ToStore"),
                                 Indent_FromStoreID = row.Field<Int32>("Indent_FromStore"),
                                 Indent_Date = row.Field<DateTime?>("Indent_Date"),
-                                strIndentDate = Convert.ToDateTime(row.Field<DateTime>("Indent_Date")).ToString("dd-MMMM-yyyy"),
+                                strIndentDate = Convert.ToDateTime(row.Field<DateTime>("Indent_Date")).ToString("dd-MMM-yyyy"),
                                 Prioritystr = row.Field<string>("Prioritystr"),
                                 Priority = row.Field<int>("Priority")
                             }).GroupBy(test => test.Indent_Id).Select(grp => grp.First()).ToList();

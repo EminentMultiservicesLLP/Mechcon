@@ -349,7 +349,7 @@ namespace BISERPBusinessLayer.Repositories.Purchase.Classes
                                 ID = row.Field<int>("POID"),
                                 PONo = row.Field<string>("PONo"),
                                 PODate = row.Field<DateTime>("PODate"),
-                                strPODate = Convert.ToDateTime(row.Field<DateTime>("PODate")).ToString("dd-MMMM-yyyy"),
+                                strPODate = Convert.ToDateTime(row.Field<DateTime>("PODate")).ToString("dd-MMM-yyyy"),
                                 RFQNo = row.Field<string>("IndentNumber"),
                                 // StoreId = row.Field<int?>("StoreId"),
                                 RFQId = row.Field<int>("RFQId"),

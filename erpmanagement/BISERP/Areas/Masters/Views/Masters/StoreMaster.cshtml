@@ -513,7 +513,7 @@
                 dataIndx: "Code",
                 width: 100,
                 dataType: "string",
-                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] },
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] },
                 hidden: true
             },
             {
@@ -521,9 +521,9 @@
                 dataIndx: "Name",
                 width: 200,
                 dataType: "string",
-                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             },
-            { title: "Item Type", dataIndx: "itemtypename", width: 90, filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }  },
+            { title: "Item Type", dataIndx: "itemtypename", width: 90, filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }  },
 
         ];
         dataMItemList = {
@@ -606,7 +606,7 @@
                         dataIndx: "Code",
                         width: 100,
                         dataType: "string", editable: false,
-                        filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] },
+                        filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] },
                         hidden: true
                     },
                     {
@@ -614,7 +614,7 @@
                         dataIndx: "ItemName",
                         width: 500,
                         dataType: "string", editable: false,
-                        filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                        filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
                     },
                     {
                         title: "Description",
@@ -768,11 +768,11 @@
             { dataIndx: "ProjectTCID", dataType: "integer", editable: false, hidden: true },
             {
                 title: "Code", dataIndx: "ProjectTCCode", width: '37%', dataType: "string", editable: false,
-                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             },
             {
                 title: "Desc", dataIndx: "ProjectTCDesc", width: '60%', dataType: "string", editable: false,
-                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             },
         ];
 

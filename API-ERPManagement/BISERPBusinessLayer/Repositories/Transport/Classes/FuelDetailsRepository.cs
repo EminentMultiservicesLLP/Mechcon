@@ -66,7 +66,7 @@ namespace BISERPBusinessLayer.Repositories.Transport.Classes
                                 EndReading = row.Field<double>("EndReading"),
                                 BalanceAmount = row.Field<double>("BalanceAmount"),
                                 CompletedDate = row.Field<DateTime?>("CompletedDate"),
-                                StrCompletedDate = Convert.ToDateTime(row.Field<DateTime?>("CompletedDate")).ToString("dd-MMMM-yyyy"),
+                                StrCompletedDate = Convert.ToDateTime(row.Field<DateTime?>("CompletedDate")).ToString("dd-MMM-yyyy"),
                                 Completed = row.Field<bool>("Completed")
                             }).ToList();
             }

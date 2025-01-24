@@ -265,7 +265,7 @@ namespace BISERPBusinessLayer.Repositories.Asset.Classes
                                 IFSCCODE = row.Field<string>("IFSCCODE"),
                                 CreditPeriod = row.Field<int>("CreditPeriod"),
                                 //strDateOfAssociation = row.Field<string>("DateOfAssociation").,
-                                strDateOfAssociation = Convert.ToDateTime(row.Field<DateTime>("DateOfAssociation")).ToString("dd-MMMM-yyyy"),
+                                strDateOfAssociation = Convert.ToDateTime(row.Field<DateTime>("DateOfAssociation")).ToString("dd-MMM-yyyy"),
                                 MICRNo = row.Field<string>("MICRNo"),
                                 FullAddress = row.Field<string>("FullAddress")
                             }).ToList();

@@ -100,11 +100,11 @@
                  { title: "", dataIndx: "GRNId", dataType: "integer", hidden: true },
             {
                 title: "Vendor name", dataIndx: "VendorName", dataType: "string", hidden: false, minWidth: 130, editable: false,
-                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             },
             {
                 title: "GRN No", dataIndx: "GRNNo", dataType: "string", hidden: false, minWidth: 130, editable: false,
-                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             },
                 { title: "GRN Date", dataIndx: "strGRNDate", width: 100, dataType: "date", editable: false },
                 { title: "Payable Amount", dataIndx: "TotalAmount", width: 80, editable: false },
@@ -163,7 +163,7 @@
                 { title: "", dataIndx: "VendorbillId", dataType: "integer", hidden: true },
                 {
                     title: "Bill No", dataIndx: "VendorbillNo", width: 200,
-                    filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                    filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
                 },
                 { title: "Bill Date", dataIndx: "StrVendorBillDate", width: 100, dataType: "string" },
                 { title: "Paid Amount", dataIndx: "PayingAmount", width: 100, },

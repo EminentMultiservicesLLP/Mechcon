@@ -153,7 +153,7 @@
         $(document).ready(function () {
             var colM = [
                 { title: "", dataIndx: "DiscrepancyId", width: 10, dataType: "integer", editable: false, hidden: true },
-                { title: "Discrepancy No", dataIndx: "DiscrepancyNo", width: '100%', dataType: "string", editable: false, filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } },
+                { title: "Discrepancy No", dataIndx: "DiscrepancyNo", width: '100%', dataType: "string", editable: false, filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] } },
                 { title: "StoreName", dataIndx: "StoreName", width: 170, dataType: "string", hidden: true },
                 { title: "Remarks", dataIndx: "Remarks", width: 170, dataType: "string", hidden: true },
             ];

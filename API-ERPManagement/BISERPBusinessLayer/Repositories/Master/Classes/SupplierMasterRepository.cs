@@ -107,7 +107,7 @@ namespace BISERPBusinessLayer.Repositories.Master.Classes
                                 GroupID = row.Field<int?>("GroupID"),
                                 CreditPeriod = row.Field<int?>("CreditPeriod"),
                                 DateOfAssociation = row.Field<DateTime?>("DateOfAssociation"),
-                                strDateOfAssociation = Convert.ToDateTime(row.Field<DateTime?>("DateOfAssociation")).ToString("dd-MMMM-yyyy"),
+                                strDateOfAssociation = Convert.ToDateTime(row.Field<DateTime?>("DateOfAssociation")).ToString("dd-MMM-yyyy"),
                                 Fax = row.Field<string>("Fax"),
                                 Phone1 = row.Field<string>("Phone1"),
                                 Phone2 = row.Field<string>("Phone2"),

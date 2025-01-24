@@ -459,8 +459,8 @@
             dataList = { location: 'local', sorting: 'local', paging: 'local', dataType: 'JSON' };
             var setAssetCol = [
                    { dataIndx: "AssetId", hidden: true },
-                   { title: "AssetCode", dataIndx: "AssetCode", width: 100, dataType: "string", filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } },
-                   { title: "Item Name", dataIndx: "ItemName", width: 200, dataType: "string", filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } },
+                   { title: "AssetCode", dataIndx: "AssetCode", width: 100, dataType: "string", filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] } },
+                   { title: "Item Name", dataIndx: "ItemName", width: 200, dataType: "string", filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] } },
                    { title: "Serial No", dataIndx: "SerialNo", width: 90 },
                    { title: "Model No", dataIndx: "ModelNo", width: 80 },
             ];

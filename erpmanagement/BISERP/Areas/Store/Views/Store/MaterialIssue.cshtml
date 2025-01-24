@@ -262,10 +262,10 @@
                     { title: "", dataIndx: "Indent_ToStoreID", dataType: "integer", hidden: true },
                     {
                         title: "Request No", dataIndx: "IndentNo", width: 400,
-                        filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }, width: 200
+                        filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }, width: 200
                     },
                     {
-                        title: "Request Date", dataIndx: "strIndentDate", width: 150, dataType: "date", filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                        title: "Request Date", dataIndx: "strIndentDate", width: 150, dataType: "date", filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
                     },
                     {
                         title: "Project", dataIndx: "Indent_FromStore", dataType: "string", width: 160, filter: {

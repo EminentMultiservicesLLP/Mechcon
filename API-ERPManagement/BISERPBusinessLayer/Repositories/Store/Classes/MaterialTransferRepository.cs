@@ -82,7 +82,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                                 IssueNo = row.Field<string>("IssueNo"),
                                 IndentNo = row.Field<string>("IndentNo"),
                                 IssueDate = row.Field<DateTime>("IssueDate"),
-                                strIssueDate = Convert.ToDateTime(row.Field<DateTime>("IssueDate")).ToString("dd-MMMM-yyyy"),
+                                strIssueDate = Convert.ToDateTime(row.Field<DateTime>("IssueDate")).ToString("dd-MMM-yyyy"),
                                 StoreId = row.Field<int?>("StoreId"),
                                 FromStoreId = row.Field<int?>("FromStoreId"),
                                 Indent_Id = row.Field<int?>("Indent_Id"),

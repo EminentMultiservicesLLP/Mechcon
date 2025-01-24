@@ -220,7 +220,7 @@
                 { title: "", dataIndx: "ID", width: 10, dataType: "integer", editable: false, hidden: true },
                 { title: "", dataIndx: "BatchId", width: 10, dataType: "integer", editable: false, hidden: true },
                 { title: "Code", dataIndx: "Code", width: 100, dataType: "string", hidden: true },
-                { title: "ItemName", dataIndx: "Name", width: '45%', dataType: "string", editable: false, filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } },
+                { title: "ItemName", dataIndx: "Name", width: '45%', dataType: "string", editable: false, filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] } },
                 { title: "UnitName", dataIndx: "UnitName", width: '20%', dataType: "string", editable: false },
                 { title: "BatchName", dataIndx: "BatchName", width: '20%', dataType: "string", editable: false },
                 { title: "ExpiryDate", dataIndx: "ExpiryDate", width: 120, dataType: "string", hidden: true },

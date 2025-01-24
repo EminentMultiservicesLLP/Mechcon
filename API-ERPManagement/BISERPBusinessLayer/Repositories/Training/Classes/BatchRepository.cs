@@ -116,8 +116,8 @@ namespace BISERPBusinessLayer.Repositories.Training.Classes
                                 NoOfDays = row.Field<int>("NoOfDays"),
                                 NoOfSlot = row.Field<int>("NoOfSlot"),
                                 TrainingTypeId = row.Field<int>("TrainingTypeId"),
-                               // strFromDate = Convert.ToDateTime(row.Field<DateTime?>("FromDate")).ToString("dd-MMMM-yyyy"),
-                               // strToDate = Convert.ToDateTime(row.Field<DateTime?>("ToDate")).ToString("dd-MMMM-yyyy"),
+                               // strFromDate = Convert.ToDateTime(row.Field<DateTime?>("FromDate")).ToString("dd-MMM-yyyy"),
+                               // strToDate = Convert.ToDateTime(row.Field<DateTime?>("ToDate")).ToString("dd-MMM-yyyy"),
                                 Deactive = row.Field<Boolean>("Deactive")
                                 //TraniningSlotCode = row.Field<string>("Code"),
                             }).ToList();

@@ -703,7 +703,7 @@
                     { title: "", dataIndx: "IsRenewal", hidden: true },                    
                     {
                         title: "Issue No", dataIndx: "IssueNo", width: 200,
-                        filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                        filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
                     },
                     { title: "Issue Date", dataIndx: "strIssueDate", width: 170, dataType: "date" },
                     {
@@ -728,7 +728,7 @@
                     },
                     { title: "TicketCode", dataIndx: "TicketCode", width: 100 },
                     {
-                        title: "Employee", dataIndx: "EmpName", width: 250, filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                        title: "Employee", dataIndx: "EmpName", width: 250, filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
                     }
             ];
 

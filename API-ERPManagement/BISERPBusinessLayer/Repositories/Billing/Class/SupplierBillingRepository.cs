@@ -111,7 +111,7 @@ namespace BISERPBusinessLayer.Repositories.Billing.Class
                             .Select(row => new SupplierBillingEntity
                             {
                                 PONo = row.Field<string>("PONo"),
-                                PODate = Convert.ToDateTime(row.Field<DateTime>("PODate")).ToString("dd-MMMM-yyyy"),
+                                PODate = Convert.ToDateTime(row.Field<DateTime>("PODate")).ToString("dd-MMM-yyyy"),
                                 PoAmount = row.Field<double>("PoAmount"),
                                 POId = row.Field<int>("POId")
                             }).ToList();
@@ -134,7 +134,7 @@ namespace BISERPBusinessLayer.Repositories.Billing.Class
                                 ID = row.Field<int>("ID"),
                                 PoID = row.Field<int>("POId"),
                                 GRNNo = row.Field<string>("GRNNo"),
-                                strGRNDate = Convert.ToDateTime(row.Field<DateTime>("GRNDate")).ToString("dd-MMMM-yyyy"),
+                                strGRNDate = Convert.ToDateTime(row.Field<DateTime>("GRNDate")).ToString("dd-MMM-yyyy"),
                                 TotalAmount = row.Field<double>("TotalAmount"),
                                 PaidAmount = row.Field<double>("PaidAmount"),
                                 BillStatus = row.Field<string>("BillStatus"),
@@ -154,7 +154,7 @@ namespace BISERPBusinessLayer.Repositories.Billing.Class
                             {
                                 ID = row.Field<int>("ID"),
                                 GRNNo = row.Field<string>("GRNNo"),
-                                strGRNDate = Convert.ToDateTime(row.Field<DateTime>("GRNDate")).ToString("dd-MMMM-yyyy"),
+                                strGRNDate = Convert.ToDateTime(row.Field<DateTime>("GRNDate")).ToString("dd-MMM-yyyy"),
                                 TotalAmount = row.Field<double>("TotalAmount"),
                                 PaidAmount = row.Field<double>("PaidAmount"),
                                 SupplierName = row.Field<string>("SupplierName")
@@ -175,7 +175,7 @@ namespace BISERPBusinessLayer.Repositories.Billing.Class
                             {
                                 GRNId = row.Field<int>("GRNId"),
                                 SupplierbillNo = row.Field<string>("SupplierbillNo"),
-                                StrSupplierBillDate = Convert.ToDateTime(row.Field<DateTime>("SupplierBillDate")).ToString("dd-MMMM-yyyy"),
+                                StrSupplierBillDate = Convert.ToDateTime(row.Field<DateTime>("SupplierBillDate")).ToString("dd-MMM-yyyy"),
                                 PayingAmount = row.Field<double>("PayingAmount"),
                                 DiscountAmount = row.Field<double>("DiscountAmount"),
                                 DiscountReason = row.Field<string>("DiscountReason"),
@@ -225,7 +225,7 @@ namespace BISERPBusinessLayer.Repositories.Billing.Class
                                 VendorName = row.Field<string>("VendorName"),
                                 ID = row.Field<int>("GRNId"),
                                 GRNNo = row.Field<string>("GRNNo"),
-                                strGRNDate = Convert.ToDateTime(row.Field<DateTime>("GRNDate")).ToString("dd-MMMM-yyyy"),
+                                strGRNDate = Convert.ToDateTime(row.Field<DateTime>("GRNDate")).ToString("dd-MMM-yyyy"),
                                 TotalAmount = row.Field<double>("TotalAmount"),
                                 PaidAmount = row.Field<double>("PaidAmount"),
                             }).ToList();
@@ -327,7 +327,7 @@ namespace BISERPBusinessLayer.Repositories.Billing.Class
                             {
                                 ID = row.Field<int>("GRNId"),
                                 VendorbillNo = row.Field<string>("VendorbillNo"),
-                                StrVendorBillDate = Convert.ToDateTime(row.Field<DateTime>("VendorBillDate")).ToString("dd-MMMM-yyyy"),
+                                StrVendorBillDate = Convert.ToDateTime(row.Field<DateTime>("VendorBillDate")).ToString("dd-MMM-yyyy"),
                                 PayingAmount = row.Field<double>("PayingAmount"),
                                 DiscountAmount = row.Field<double>("DiscountAmount"),
                                 DiscountReason = row.Field<string>("DiscountReason"),
@@ -389,7 +389,7 @@ namespace BISERPBusinessLayer.Repositories.Billing.Class
                             {
                                 ID = row.Field<int>("ID"),
                                 GRNNo = row.Field<string>("GRNNo"),
-                                strGRNDate = Convert.ToDateTime(row.Field<DateTime>("GRNDate")).ToString("dd-MMMM-yyyy"),
+                                strGRNDate = Convert.ToDateTime(row.Field<DateTime>("GRNDate")).ToString("dd-MMM-yyyy"),
                                 TotalAmount = row.Field<double>("TotalAmount"),
                                 PaidAmount = row.Field<double>("PaidAmount"),
                                 SupplierName = row.Field<string>("SupplierName"),

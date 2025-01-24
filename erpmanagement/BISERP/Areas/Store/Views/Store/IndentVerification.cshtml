@@ -335,27 +335,27 @@ $(document).ready(function () {
         { title: "", dataIndx: "Indent_ToStoreID", dataType: "integer", hidden: true },
         {
             title: "MR No", dataIndx: "IndentNo", width: "18%",
-            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
         },
         {
             title: "Mr Date", dataIndx: "strIndentDate", width: "16%",
-            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
         },
         {
             title: "Project Code", dataIndx: "Indent_FromStore", width: "17%",
-            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
         },
         {
             title: "Item Type", dataIndx: "ItemCategory", width: "17%",
-            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
         },
         {
             title: "Created-By", dataIndx: "InsertedByName", width: "16%",
-            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
         },
         {
             title: "Verified-By", dataIndx: "VerifiedByName", width: "16%",
-            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
         },
     ];
     var setM = {

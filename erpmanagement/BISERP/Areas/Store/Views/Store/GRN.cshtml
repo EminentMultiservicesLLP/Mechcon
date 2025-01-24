@@ -1479,19 +1479,19 @@
             { dataIndx: "ID", width: 10, sortable: false, hidden: true },
             {
                 dataIndx: "StoreName", width: 150, title: "Project Code", sortable: true
-                , filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                , filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             },
             {
                 dataIndx: "PONo", width: 150, title: "PO No", sortable: true
-                , filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                , filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             },
             {
                 dataIndx: "strPODate", width: 150, title: "PO Date", sortable: true
-                , filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                , filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             },
             {
                 dataIndx: "SupplierName", width: 100, title: "Supplier Name"
-                , filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                , filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             },
             { dataIndx: "SupplierID", width: 50, hidden: true },
         ];
@@ -1605,27 +1605,27 @@
             { title: "", dataIndx: "Notes", dataType: "integer", editable: false, hidden: true },
             {
                 title: "Project Name", dataIndx: "StoreName", width: "16%", dataType: "string", editable: false,
-                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             },
             {
                 title: "GRN No", dataIndx: "GRNNo", width: "18%", dataType: "string", editable: false,
-                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             },
             {
                 title: "GRN Date", dataIndx: "strGRNDate", width: "16%", dataType: "string", editable: false,
-                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             },
             {
                 title: "Supplier", dataIndx: "SupplierName", width: "18%", dataType: "string", editable: false,
-                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             },
             {
                 title: "DC No", dataIndx: "DCNo", width: "16%", dataType: "double", editable: false,
-                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             },
             {
                 title: "Created-By", dataIndx: "InsertedByName", width: "16%", dataType: "string", editable: false,
-                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             },
         ];
 
@@ -1787,8 +1787,8 @@
         var datavendor = { location: "local", sorting: 'local' }
         var colvendor = [
             { title: "", dataIndx: "VendorId", dataType: "integer", hidden: true },
-            { title: "Code", dataIndx: "Code", width: 100, filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } },
-            { title: "Vendor", dataIndx: "Name", width: 200, filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } }
+            { title: "Code", dataIndx: "Code", width: 100, filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] } },
+            { title: "Vendor", dataIndx: "Name", width: 200, filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] } }
         ];
         var vendor = {
             height: 500,

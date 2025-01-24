@@ -174,7 +174,7 @@
                 { title: "", dataIndx: "POId", dataType: "integer", hidden: true },
                 {
                     title: "PO No", dataIndx: "PONo", width: 200,
-                    filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                    filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
                 },
                 { title: "PO Date", dataIndx: "PODate", width: 100, dataType: "string" },
                 { title: "Po Amount", dataIndx: "PoAmount", width: 100, },

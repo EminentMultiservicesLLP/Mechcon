@@ -305,7 +305,7 @@
             dataIndx: "Code",
             width: 100,
             dataType: "string",
-            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] },
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] },
             hidden: true
         },
         {
@@ -313,7 +313,7 @@
             dataIndx: "Name",
             width: 200,
             dataType: "string",
-            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
         },
         { title: "Unit Name", dataIndx: "UnitName", width: 90 },
         { title: "PackSize", dataIndx: "PackSize", width: 80 },

@@ -143,7 +143,7 @@ namespace BISERPBusinessLayer.Repositories.Asset.Classes
                                 ID = row.Field<int>("ID"),
                                 PONo = row.Field<string>("PONo"),
                                 PODate = row.Field<DateTime>("PODate"),
-                                strPODate = Convert.ToDateTime(row.Field<DateTime>("PODate")).ToString("dd-MMMM-yyyy"),
+                                strPODate = Convert.ToDateTime(row.Field<DateTime>("PODate")).ToString("dd-MMM-yyyy"),
                             }).ToList();
            
             }

@@ -93,7 +93,7 @@
              },
              {
                  title: "Bill No", dataIndx: "BillNo", width: 200, dataType: "string", editable: false,
-                 filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                 filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
              },
              { title: "Bill Date", dataIndx: "StrBillDate", width: 200, dataType: "string", editable: false },
              { title: "Total Bill Amt", dataIndx: "NetAmt", width: 100, dataType: "string", editable: false },
@@ -336,7 +336,7 @@
              { title: "RecieptId", dataIndx: "RecieptId", width: 150, dataType: "integer", editable: false, hidden: true },
             {
                 title: "Bill receipt No", dataIndx: "RecieptNo", width: 200, dataType: "string", editable: false ,
-                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             },
             {
                 title: "Bill No", dataIndx: "BillNo", width: 200, dataType: "string", editable: false

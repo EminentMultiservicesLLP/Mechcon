@@ -236,8 +236,8 @@
             var dataManufactureM = { location: "local", sorting: 'local' }
             var colManufactureM = [
                     { title: "", dataIndx: "ID", dataType: "integer", hidden: true },
-                    { title: "Code", dataIndx: "Code", width: 100, filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } },
-                    { title: "Manufacturer", dataIndx: "Name", width: 200, filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } }
+                    { title: "Code", dataIndx: "Code", width: 100, filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] } },
+                    { title: "Manufacturer", dataIndx: "Name", width: 200, filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] } }
             ];
             var ManufactureM = {
                 height: 300,
@@ -303,7 +303,7 @@
                     { title: "", dataIndx: "ManufactureId", dataType: "integer", hidden: true },
                     {
                         title: "Issue No", dataIndx: "IssueNo", width: 400,
-                        filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                        filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
                     },
                     {
                         title: "Issue Date", dataIndx: "strIssueDate", width: 200, dataType: "date"
@@ -463,7 +463,7 @@
                    { dataIndx: "ID", hidden: true },
                    { dataIndx: "ExpiryDate", hidden: true },
                    { title: "Code", dataIndx: "Code", width: 100, dataType: "string", hidden: true },
-                   { title: "Item Name", dataIndx: "Name", width: 200, dataType: "string", filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } },
+                   { title: "Item Name", dataIndx: "Name", width: 200, dataType: "string", filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] } },
                    { title: "Unit Name", dataIndx: "UnitName", width: 90 },
                    { title: "PackSizeID", dataIndx: "PackSizeID", hidden: true },
                    { title: "PackSize", dataIndx: "PackSize", width: 80 },

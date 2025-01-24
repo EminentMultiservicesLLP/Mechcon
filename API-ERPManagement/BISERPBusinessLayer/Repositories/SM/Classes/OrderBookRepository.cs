@@ -30,7 +30,7 @@ namespace BISERPBusinessLayer.Repositories.SM.Classes
                             {
                                 EnquiryID = row.Field<int>("EnquiryID"),
                                 EnquiryNo = row.Field<string>("EnquiryNo"),
-                                strEnquiryDate = Convert.ToDateTime(row.Field<DateTime>("EnquiryDate")).ToString("dd-MMMM-yyyy"),
+                                strEnquiryDate = Convert.ToDateTime(row.Field<DateTime>("EnquiryDate")).ToString("dd-MMM-yyyy"),
                                 ClientName = row.Field<string>("ClientName"),
                                 AllocatedToName = row.Field<string>("AllocatedToName")
                             }).ToList();
@@ -71,7 +71,7 @@ namespace BISERPBusinessLayer.Repositories.SM.Classes
                                 OfferRegisterID = row.Field<int>("OfferRegisterID"),
                                 OfferID = row.Field<int>("OfferID"),
                                 OfferNo = row.Field<string>("OfferNo"),
-                                strOfferDate = Convert.ToDateTime(row.Field<DateTime>("OfferDate")).ToString("dd-MMMM-yyyy"),
+                                strOfferDate = Convert.ToDateTime(row.Field<DateTime>("OfferDate")).ToString("dd-MMM-yyyy"),
                                 OfferRemark = row.Field<string>("OfferRemark"),
                                 POBaseValue = row.Field<double>("POBaseValue"),
                                 GSTAmount = row.Field<double>("GSTAmount"),
@@ -189,7 +189,7 @@ namespace BISERPBusinessLayer.Repositories.SM.Classes
                                {
                                    EnquiryID = row.Field<int?>("EnquiryID"),
                                    EnquiryNo = row.Field<string>("EnquiryNo"),
-                                   strEnquiryDate = Convert.ToDateTime(row.Field<DateTime>("EnquiryDate")).ToString("dd-MMMM-yyyy"),
+                                   strEnquiryDate = Convert.ToDateTime(row.Field<DateTime>("EnquiryDate")).ToString("dd-MMM-yyyy"),
                                    ClientName = row.Field<string>("ClientName"),
                                    OrderBookID = row.Field<int>("OrderBookID"),
                                    OrderBookNo = row.Field<string>("OrderBookNo"),

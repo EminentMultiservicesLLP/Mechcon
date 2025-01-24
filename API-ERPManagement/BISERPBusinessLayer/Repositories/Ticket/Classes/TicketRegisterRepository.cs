@@ -130,7 +130,7 @@ namespace BISERPBusinessLayer.Repositories.Ticket.Classes
                             {
                                 TicketID = row.Field<int>("TicketID"),
                                 TicketNo = row.Field<string>("TicketNo"),
-                                strTicketDate = row.Field<DateTime?>("TicketDate")?.ToString("dd-MMMM-yyyy") ?? string.Empty,
+                                strTicketDate = row.Field<DateTime?>("TicketDate")?.ToString("dd-MMM-yyyy") ?? string.Empty,
                                 Subject = row.Field<string>("Subject"),
                                 Description = row.Field<string>("Description"),
                                 PriorityID = row.Field<int?>("PriorityID"),

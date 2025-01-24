@@ -49,7 +49,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                                 DiscrepancyId = row.Field<int>("DiscrepancyId"),
                                 DiscrepancyNo = row.Field<string>("DiscrepancyNo"),
                                 DiscrepancyDate = row.Field<DateTime>("DiscrepancyDate"),
-                                strDiscrepancyDate = Convert.ToDateTime(row.Field<DateTime>("DiscrepancyDate")).ToString("dd-MMMM-yyyy"),
+                                strDiscrepancyDate = Convert.ToDateTime(row.Field<DateTime>("DiscrepancyDate")).ToString("dd-MMM-yyyy"),
                                 StoreName = row.Field<string>("StoreName"),
                                 StoreId = row.Field<int?>("StoreId"),
                                 Remarks = row.Field<string>("Remarks")

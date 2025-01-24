@@ -102,15 +102,15 @@
     colSummaryGrid = [
         {
             title: "Client Name ", dataIndx: "ClientName", width: 300, dataType: "string", editable: false,
-            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
         },
         {
             title: "Project Name ", dataIndx: "ProjectName", width: 300, dataType: "string", editable: false,
-            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
         },
         {
             title: "Project Code ", dataIndx: "ProjectCode", width: 300, dataType: "string", editable: false,
-            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
         },
             {title: "Client Total", dataIndx: "ClientTotal", width: 250},
             {title: "Supplier Total", dataIndx: "SupplierTotal", width: 250},

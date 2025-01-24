@@ -173,7 +173,7 @@ namespace BISERPBusinessLayer.Repositories.SM.Classes
                             {
                                 EnquiryID = row.Field<int?>("EnquiryID"),
                                 EnquiryNo = row.Field<string>("EnquiryNo"),
-                                strEnquiryDate = Convert.ToDateTime(row.Field<DateTime>("EnquiryDate")).ToString("dd-MMMM-yyyy"),
+                                strEnquiryDate = Convert.ToDateTime(row.Field<DateTime>("EnquiryDate")).ToString("dd-MMM-yyyy"),
                                 ClientName = row.Field<string>("ClientName"),
                                 ConsigneeName = row.Field<string>("ConsigneeName"),
                                 ConsigneeAddress = row.Field<string>("ConsigneeAddress"),

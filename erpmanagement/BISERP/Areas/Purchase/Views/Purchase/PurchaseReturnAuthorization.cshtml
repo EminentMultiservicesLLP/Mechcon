@@ -259,13 +259,13 @@
             { title: "", dataIndx: "Supplier", dataType: "integer", hidden: true },
             {
                 title: "Return No", dataIndx: "PRNo", width: '100%',
-                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             },
             {
-                title: "Return Date", dataIndx: "StrPRDate", width: 150, dataType: "date", hidden: true, filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                title: "Return Date", dataIndx: "StrPRDate", width: 150, dataType: "date", hidden: true, filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             },
             {
-                title: "GRN No", dataIndx: "Grnno", width: 120, dataType: "string", hidden: true, filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                title: "GRN No", dataIndx: "Grnno", width: 120, dataType: "string", hidden: true, filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             },
 
         ];

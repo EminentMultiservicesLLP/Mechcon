@@ -51,7 +51,7 @@ namespace BISERPBusinessLayer.Repositories.Ticket.Classes
                             {
                                 TicketID = row.Field<int>("TicketID"),
                                 TicketNo = row.Field<string>("TicketNo"),
-                                strTicketDate = row.Field<DateTime?>("TicketDate")?.ToString("dd-MMMM-yyyy") ?? string.Empty,
+                                strTicketDate = row.Field<DateTime?>("TicketDate")?.ToString("dd-MMM-yyyy") ?? string.Empty,
                                 TicketAge = row.Field<int>("TicketAge"),
                                 Subject = row.Field<string>("Subject"),
                                 ClientName = row.Field<string>("ClientName"),

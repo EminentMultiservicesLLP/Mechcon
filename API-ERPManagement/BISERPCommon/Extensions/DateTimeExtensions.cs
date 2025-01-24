@@ -11,7 +11,7 @@ namespace BISERPCommon.Extensions
         public static string DateTimeFormat1(this DateTime? dt)
         {
             if (dt == null) return "";
-            else return Convert.ToDateTime(dt).ToString("dd-MMMM-yyyy");
+            else return Convert.ToDateTime(dt).ToString("dd-MMM-yyyy");
         }
         public static string DateTimeFormat2(this DateTime? dt)
         {

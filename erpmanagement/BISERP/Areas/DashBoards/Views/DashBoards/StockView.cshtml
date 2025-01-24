@@ -95,11 +95,11 @@
                     { title: "", dataIndx: "ID", dataType: "integer", hidden: true },
                     {
                         title: "Itemcode", dataIndx: "Itemcode", dataType: "string", width: 190, hidden:true,
-                        filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                        filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
                     },
                     {
                         title: "ItemName", dataIndx: "ItemName", dataType: "string", width: 300,
-                        filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                        filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
                     },
                     {
                         title: "Store", dataIndx: "StoreName", dataType: "string", width: 250, hidden: true,
@@ -114,7 +114,7 @@
                     },
                     {
                         title: "Batch", dataIndx: "Batch", dataType: "string", width: 200,hidden: true ,
-                        filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                        filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
                     },
                     { title: "Expiry Date", dataIndx: "strExpiryDate", dataType: "string", width: 200, hidden: true },
                     { title: "Qty", dataIndx: "Qty", dataType: "double", width: 200 },                    

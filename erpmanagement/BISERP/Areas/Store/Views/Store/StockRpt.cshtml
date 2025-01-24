@@ -268,10 +268,10 @@
                 { title: "", dataIndx: "ID", dataType: "integer", hidden: true },
                 {
                     title: "Item Name", dataIndx: "Name", width: 400,
-                    filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                    filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
                 },
                 {
-                    title: "Category", dataIndx: "itemtypename", width: 150, dataType: "date", filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                    title: "Category", dataIndx: "itemtypename", width: 150, dataType: "date", filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
                 }
         ];
 

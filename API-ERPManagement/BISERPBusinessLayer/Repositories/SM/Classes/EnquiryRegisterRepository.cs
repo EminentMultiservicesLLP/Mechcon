@@ -229,7 +229,7 @@ namespace BISERPBusinessLayer.Repositories.SM.Classes
                             {
                                 EnquiryID = row.Field<int>("EnquiryID"),
                                 EnquiryNo = row.Field<string>("EnquiryNo"),
-                                strEnquiryDate = Convert.ToDateTime(row.Field<DateTime>("EnquiryDate")).ToString("dd-MMMM-yyyy"),
+                                strEnquiryDate = Convert.ToDateTime(row.Field<DateTime>("EnquiryDate")).ToString("dd-MMM-yyyy"),
                                 ClientName = row.Field<string>("ClientName")
                             }).ToList();
             }
@@ -249,7 +249,7 @@ namespace BISERPBusinessLayer.Repositories.SM.Classes
                         EnquiryID = row.Field<int>("EnquiryID"),
                         EnquiryNo = row.Field<string>("EnquiryNo"),
                         EnquiryDate = row.Field<DateTime?>("EnquiryDate"),
-                        strEnquiryDate = row.Field<DateTime?>("EnquiryDate")?.ToString("dd-MMMM-yyyy"),
+                        strEnquiryDate = row.Field<DateTime?>("EnquiryDate")?.ToString("dd-MMM-yyyy"),
                         SourceID = row.Field<int?>("SourceID"),
                         Source = row.Field<string>("Source"),
                         ProductID = row.Field<int?>("ProductID"),
@@ -292,7 +292,7 @@ namespace BISERPBusinessLayer.Repositories.SM.Classes
                             .Select(row => new EnqRegFollowUpDetails
                             {
                                 FollowUpID = row.Field<int>("FollowUpID"),
-                                strFollowUpDate = row.Field<DateTime>("FollowUpDate") != null ? Convert.ToDateTime(row.Field<DateTime>("FollowUpDate")).ToString("dd-MMMM-yyyy"): string.Empty,
+                                strFollowUpDate = row.Field<DateTime>("FollowUpDate") != null ? Convert.ToDateTime(row.Field<DateTime>("FollowUpDate")).ToString("dd-MMM-yyyy"): string.Empty,
                                 EnquiryID = row.Field<int>("EnquiryID"),
                                 EnquiryNo = row.Field<string>("EnquiryNo"),
                                 StatusID = row.Field<int>("StatusID"),

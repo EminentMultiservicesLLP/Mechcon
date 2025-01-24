@@ -127,13 +127,13 @@
             { title: "", dataIndx: "ID", dataType: "integer", hidden: true },
             {
                 title: "Supplier name", dataIndx: "SupplierName", dataType: "string", hidden: false, minWidth: 130, editable: false,
-                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             },
             { title: "GSTIN", dataIndx: "SupGSTIN", width: 80, editable: false },
             { title: "Invoice No", dataIndx: "InvoiceNo", width: 80, editable: false },
             {
                 title: "GRN No", dataIndx: "GRNNo", dataType: "string", hidden: false, minWidth: 130, editable: false,
-                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             },
             { title: "GRN Date", dataIndx: "strGRNDate", width: 100, dataType: "date", editable: false },
             { title: "Payable Amount", dataIndx: "TotalAmount", width: 80, editable: false },

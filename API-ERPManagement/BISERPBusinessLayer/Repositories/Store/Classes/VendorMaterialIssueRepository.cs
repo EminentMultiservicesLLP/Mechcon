@@ -30,7 +30,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                                 IssueNo = row.Field<string>("IssueNo"),
                                 StoreId = row.Field<int>("StoreId"),
                                 IssueDate = row.Field<DateTime>("IssueDate"),
-                                strIssueDate = Convert.ToDateTime(row.Field<DateTime>("IssueDate")).ToString("dd-MMMM-yyyy"),
+                                strIssueDate = Convert.ToDateTime(row.Field<DateTime>("IssueDate")).ToString("dd-MMM-yyyy"),
                                 VendorId = row.Field<int>("ManufactureId"),
                                 Vendor = row.Field<string>("Manufacturer"),
                                 //Nature = row.Field<int>("Nature"),
@@ -97,7 +97,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                                 IssueId = row.Field<int>("IssueId"),
                                 IssueNo = row.Field<string>("IssueNo"),
                                 IssueDate = row.Field<DateTime>("IssueDate"),
-                                strIssueDate = Convert.ToDateTime(row.Field<DateTime>("IssueDate")).ToString("dd-MMMM-yyyy"),
+                                strIssueDate = Convert.ToDateTime(row.Field<DateTime>("IssueDate")).ToString("dd-MMM-yyyy"),
                                // StoreId = row.Field<int>("StoreId"),
                                 VendorId = row.Field<int>("ManufactureId"),
                                 Vendor = row.Field<string>("Manufacturer"),
@@ -125,7 +125,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                                 StoreId = row.Field<int>("StoreId"),
                                 VendorId = row.Field<int>("ManufactureId"),
                                 IssueDate = row.Field<DateTime>("IssueDate"),
-                                strIssueDate = Convert.ToDateTime(row.Field<DateTime>("IssueDate")).ToString("dd-MMMM-yyyy"),
+                                strIssueDate = Convert.ToDateTime(row.Field<DateTime>("IssueDate")).ToString("dd-MMM-yyyy"),
                                 Nature = row.Field<int>("Nature")
                             }).FirstOrDefault();
             }

@@ -30,7 +30,7 @@ namespace BISERPBusinessLayer.Repositories.SM.Classes
                             {
                                 EnquiryID = row.Field<int>("EnquiryID"),
                                 EnquiryNo = row.Field<string>("EnquiryNo"),
-                                strEnquiryDate = Convert.ToDateTime(row.Field<DateTime>("EnquiryDate")).ToString("dd-MMMM-yyyy"),
+                                strEnquiryDate = Convert.ToDateTime(row.Field<DateTime>("EnquiryDate")).ToString("dd-MMM-yyyy"),
                                 ClientName = row.Field<string>("ClientName")
                             }).ToList();
             }
@@ -90,8 +90,8 @@ namespace BISERPBusinessLayer.Repositories.SM.Classes
                                 FeasibilityStudy = row.Field<Boolean>("FeasibilityStudy"),
                                 AllocatedTo = row.Field<int?>("AllocatedTo"),
                                 AllocatedToName = row.Field<string>("AllocatedToName"),
-                                strAllocationDate = Convert.ToDateTime(row.Field<DateTime>("AllocationDate")).ToString("dd-MMMM-yyyy"),
-                                strQRDate = row.Field<DateTime?>("QRDate") != null ? Convert.ToDateTime(row.Field<DateTime?>("QRDate")).ToString("dd-MMMM-yyyy"): string.Empty,
+                                strAllocationDate = Convert.ToDateTime(row.Field<DateTime>("AllocationDate")).ToString("dd-MMM-yyyy"),
+                                strQRDate = row.Field<DateTime?>("QRDate") != null ? Convert.ToDateTime(row.Field<DateTime?>("QRDate")).ToString("dd-MMM-yyyy"): string.Empty,
                                 Comment = row.Field<string>("Comment")
                             }).ToList();
             }

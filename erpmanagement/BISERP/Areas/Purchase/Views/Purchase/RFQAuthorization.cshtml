@@ -409,23 +409,23 @@
         },
         {
             title: "Project Code", dataIndx: "StoreName", width: "14%", dataType: "string",
-            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
         },
         {
             title: "Item Type", dataIndx: "ItemCategory", width: "14%",
-            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
         },
         {
             title: "RFQ-Nature", dataIndx: "strIndentNature", width: "14%", dataType: "string",
-            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
         },
         {
             title: "Created-By", dataIndx: "InsertedByName", width: "14%", dataType: "string",
-            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
         },
         {
             title: "Authorized-By", dataIndx: "AuthorizedByName", width: "14%", dataType: "string",
-            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
         },
         { title: "", dataIndx: "ItemCategoryId", dataType: "string", hidden: true }
     ];

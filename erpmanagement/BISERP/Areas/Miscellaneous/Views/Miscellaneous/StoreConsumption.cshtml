@@ -183,7 +183,7 @@
                     { title: "", dataIndx: "BatchId", dataType: "integer", hidden: true },
                     {
                         title: "ItemName", dataIndx: "Name", width: 150, dataType: "string",
-                        filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                        filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
                     },
                     { title: "Batch", dataIndx: "BatchName", dataType: "string", width: 80 },
                     { title: "StockQty", dataIndx: "CurrentQty", dataType: "double", width: 80 },
@@ -232,7 +232,7 @@
                 { title: "", dataIndx: "BatchId", dataType: "integer", hidden: true },
                 {
                     title: "ItemName", dataIndx: "Name", width: 150, dataType: "string",
-                    filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                    filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
                 },
                 { title: "Batch", dataIndx: "BatchName", dataType: "string", width: 80 },
                 { title: "StockQty", dataIndx: "CurrentQty", dataType: "double", width: 80 },

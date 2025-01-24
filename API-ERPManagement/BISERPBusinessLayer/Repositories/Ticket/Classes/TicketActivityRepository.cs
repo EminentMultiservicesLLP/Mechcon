@@ -32,7 +32,7 @@ namespace BISERPBusinessLayer.Repositories.Ticket.Classes
                             {
                                 TicketID = row.Field<int>("TicketID"),
                                 TicketNo = row.Field<string>("TicketNo"),
-                                strTicketDate = row.Field<DateTime?>("TicketDate")?.ToString("dd-MMMM-yyyy") ?? string.Empty,
+                                strTicketDate = row.Field<DateTime?>("TicketDate")?.ToString("dd-MMM-yyyy") ?? string.Empty,
                                 Subject = row.Field<string>("Subject"),
                                 Description = row.Field<string>("Description"),
                                 PriorityID = row.Field<int?>("PriorityID"),
@@ -120,9 +120,9 @@ namespace BISERPBusinessLayer.Repositories.Ticket.Classes
                             {
                                 TicketID = row.Field<int>("TicketID"),
                                 ActivityID = row.Field<int>("ActivityID"),
-                                strActivityDate = row.Field<DateTime?>("ActivityDate")?.ToString("dd-MMMM-yyyy") ?? string.Empty,
+                                strActivityDate = row.Field<DateTime?>("ActivityDate")?.ToString("dd-MMM-yyyy") ?? string.Empty,
                                 Activity = row.Field<string>("Activity"),
-                                strResponseDate = row.Field<DateTime?>("ResponseDate")?.ToString("dd-MMMM-yyyy") ?? string.Empty,
+                                strResponseDate = row.Field<DateTime?>("ResponseDate")?.ToString("dd-MMM-yyyy") ?? string.Empty,
                                 Response = row.Field<string>("Response"),
                                 StatusID = row.Field<int?>("StatusID"),
                                 Status = row.Field<string>("Status"),

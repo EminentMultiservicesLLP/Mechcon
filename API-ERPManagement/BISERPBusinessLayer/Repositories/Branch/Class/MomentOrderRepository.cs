@@ -67,7 +67,7 @@ namespace BISERPBusinessLayer.Repositories.Branch.Class
                                 Temporaryname = row.Field<string>("Temporaryname"),
                                 TicketCode = row.Field<string>("TicketCode"),
                                 TrainingDate = row.Field<DateTime>("TrainingDate"),
-                                StrTrainingDate = Convert.ToDateTime(row.Field<DateTime>("TrainingDate")).ToString("dd-MMMM-yyyy"),
+                                StrTrainingDate = Convert.ToDateTime(row.Field<DateTime>("TrainingDate")).ToString("dd-MMM-yyyy"),
                                 BatchId = row.Field<int>("BatchId"),
                                 BatchName = row.Field<string>("BatchName"),
                                 Medical = row.Field<bool>("Medical"),

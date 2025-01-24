@@ -686,8 +686,8 @@
                     cb: { select: true,all: false,header: true}
                 },
                 { title: "", dataIndx: "ID", dataType: "integer", hidden: true },
-                { title: "Code", dataIndx: "Code", width: 100, editable: false, filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } },
-                { title: "Supplier Name", dataIndx: "Name", width: 400, editable: false, filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } }
+                { title: "Code", dataIndx: "Code", width: 100, editable: false, filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] } },
+                { title: "Supplier Name", dataIndx: "Name", width: 400, editable: false, filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] } }
         ];
         var SuppM = {
             width: '100%',
@@ -739,8 +739,8 @@
     //                cb: { select: true, all: false, header: true }
     //            },
     //            { title: "", dataIndx: "ID", dataType: "integer", hidden: true },
-    //            { title: "Code", dataIndx: "Code", width: 200, editable: false, filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } },
-    //            { title: "Item Name", dataIndx: "Name", width: 300, editable: false, filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } }
+    //            { title: "Code", dataIndx: "Code", width: 200, editable: false, filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] } },
+    //            { title: "Item Name", dataIndx: "Name", width: 300, editable: false, filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] } }
     //    ];
     //    var ItemM = {
     //        width: '100%',

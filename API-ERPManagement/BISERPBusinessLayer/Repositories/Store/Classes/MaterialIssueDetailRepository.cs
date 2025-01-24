@@ -56,7 +56,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                                 UnitName = row.Field<string>("UnitName"),                                
                                 BatchId = row.Field<int?>("BatchId"),
                                 BatchName = row.Field<string>("BatchName"),
-                                ExpiryDate = Convert.ToDateTime(row.Field<DateTime?>("ExpiryDate")).ToString("dd-MMMM-yyyy"),
+                                ExpiryDate = Convert.ToDateTime(row.Field<DateTime?>("ExpiryDate")).ToString("dd-MMM-yyyy"),
                                 Item_Stock = row.Field<double?>("Item_Stock"),
                                 IssuedQuantity = row.Field<double>("IssuedQuantity"),
                                 AuthorisedQuantity = row.Field<double?>("AuthorisedQuantity")

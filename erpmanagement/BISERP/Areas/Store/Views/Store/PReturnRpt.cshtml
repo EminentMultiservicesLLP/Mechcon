@@ -131,10 +131,10 @@
               //  { title: "", dataIndx: "Supplier Code", dataType: "integer", hidden: true },
                 {
                     title: "Code", dataIndx: "IndentNo", width: 400,
-                    filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }, width: 200
+                    filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }, width: 200
                 },
                 {
-                    title: "Supplier Name", dataIndx: "strIndentDate", width: 150, dataType: "date", filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                    title: "Supplier Name", dataIndx: "strIndentDate", width: 150, dataType: "date", filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
                 },
         ];
 
@@ -168,7 +168,7 @@
               //  { title: "", dataIndx: "Supplier Code", dataType: "integer", hidden: true },
                 {
                     title: "Name", dataIndx: "IndentNo", width: 600,
-                    filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }, width: 600
+                    filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }, width: 600
                 },
         ];
 

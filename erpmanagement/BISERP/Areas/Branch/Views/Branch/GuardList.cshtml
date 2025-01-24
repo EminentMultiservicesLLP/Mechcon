@@ -170,11 +170,11 @@
                 },
                 {
                     title: "TicketCode", dataIndx: "TicketCode", width: 70,
-                    filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                    filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
                 },
                 {
                     title: "Employee", dataIndx: "EmployeeName", width: 250, dataType: "string",
-                    filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                    filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
                 },
                 { title: "Gender", dataIndx: "Gender", width: 50, dataType: "string" },
                 { title: "Age", dataIndx: "Age", width: 30, dataType: "string" },

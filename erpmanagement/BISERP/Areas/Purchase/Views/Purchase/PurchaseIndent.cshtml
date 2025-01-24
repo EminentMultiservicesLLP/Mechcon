@@ -487,19 +487,19 @@
             },
             {
                 title: "Project Code", dataIndx: "StoreName", width: "17%", dataType: "string",
-                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             },
             {
                 title: "Item Type", dataIndx: "ItemCategory", width: "17%",
-                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             },
             {
                 title: "PR-Nature", dataIndx: "strIndentNature", width: "16%", dataType: "string",
-                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             },
             {
                 title: "Created-By", dataIndx: "InsertedByName", width: "16%", dataType: "string",
-                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             }
 
         ];
@@ -861,10 +861,10 @@
         
         colIL = [
             { dataIndx: "state", maxWidth: 25, minWidth: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false, editor: false, dataType: 'bool', title: "<input type='checkbox' />", cb: { select: true, all: false, header: true } },
-            { title: "Code", dataIndx: "Code", width: '20%', dataType: "string", filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } },
-            { title: "Item Name & Description", dataIndx: "Name", width: '37%', dataType: "string", editable: false, filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } },
-            { title: "Make", dataIndx: "Make", width: '20%', dataType: "string", filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } },
-            { title: "MOC", dataIndx: "MaterialOfConstruct", width: '20%', dataType: "string", filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }},
+            { title: "Code", dataIndx: "Code", width: '20%', dataType: "string", filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] } },
+            { title: "Item Name & Description", dataIndx: "Name", width: '37%', dataType: "string", editable: false, filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] } },
+            { title: "Make", dataIndx: "Make", width: '20%', dataType: "string", filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] } },
+            { title: "MOC", dataIndx: "MaterialOfConstruct", width: '20%', dataType: "string", filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }},
             { title: "HSN/SAC Code", dataIndx: "HSNCode", width: "22%", editable: false, hidden: true },
             { title: "Unit Name", dataIndx: "UnitName", width: '23%', dataType: "string", editable: false, hidden: true },
             { title: "Pending Stock", dataIndx: "PendingStock", width: 120, dataType: "float", hidden: true },
@@ -1504,7 +1504,7 @@
             { title: "", dataIndx: "IndentIdTemplateId", dataType: "integer", hidden: true },
             {
                 title: "TemplateName", dataIndx: "IndentTemplateName", dataType: "string", hidden: false, width: "99.5%",
-                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             },
 
         ];

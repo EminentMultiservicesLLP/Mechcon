@@ -39,7 +39,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                                 BillAmount = row.Field<double>("BillAmount"),
                                 PartyPayable = row.Field<double>("PartyPayable"),
                                 SupplierName = row.Field<string>("SupplierName"),
-                                strBillDate = Convert.ToDateTime(row.Field<DateTime>("BillDate")).ToString("dd-MMMM-yyyy"),
+                                strBillDate = Convert.ToDateTime(row.Field<DateTime>("BillDate")).ToString("dd-MMM-yyyy"),
                             }).ToList();
             }
             return SupplierBill;

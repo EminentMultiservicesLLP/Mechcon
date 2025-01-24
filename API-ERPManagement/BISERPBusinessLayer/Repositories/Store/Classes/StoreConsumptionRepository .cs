@@ -29,7 +29,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                                 BatchId = row.Field<int>("BatchId"),
                                 Unit = row.Field<string>("Unit"),
                                 ExpiryDate = row.Field<DateTime?>("ExpiryDate"),
-                                strExpiryDate = Convert.ToDateTime(row.Field<DateTime?>("ExpiryDate")).ToString("dd-MMMM-yyyy"),
+                                strExpiryDate = Convert.ToDateTime(row.Field<DateTime?>("ExpiryDate")).ToString("dd-MMM-yyyy"),
                                 ItemName = row.Field<string>("ItemName"),
                                 Batch = row.Field<string>("Batch"),
                                 StockQty = row.Field<double>("StockQty")
@@ -77,7 +77,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                                 ConsumptionId = row.Field<int>("ConsumptionId"),
                                 ConsumptionCode = row.Field<string>("ConsumptionCode"),
                                 ConsumptionDate = row.Field<DateTime?>("ConsumptionDate"),
-                                strConsumptionDate = Convert.ToDateTime(row.Field<DateTime?>("ConsumptionDate")).ToString("dd-MMMM-yyyy"),
+                                strConsumptionDate = Convert.ToDateTime(row.Field<DateTime?>("ConsumptionDate")).ToString("dd-MMM-yyyy"),
                                 StoreId = row.Field<int?>("StoreId"),
                                 store = row.Field<string>("Store"),
                             }).ToList();

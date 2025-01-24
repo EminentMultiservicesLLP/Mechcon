@@ -715,8 +715,8 @@ namespace BISERPBusinessLayer.Repositories.Master.Classes
                             {
                                 Type = row.Field<string>("Type"),
                                 Number = row.Field<string>("Number"),
-                                //Date = Convert.ToDateTime(row.Field<DateTime?>("Date")).ToString("dd-MMMM-yyyy")
-                                Date = row.Field<DateTime?>("Date")?.ToString("dd-MMMM-yyyy") ?? ""
+                                //Date = Convert.ToDateTime(row.Field<DateTime?>("Date")).ToString("dd-MMM-yyyy")
+                                Date = row.Field<DateTime?>("Date")?.ToString("dd-MMM-yyyy") ?? ""
 
                             }).ToList();
             }
@@ -774,7 +774,7 @@ namespace BISERPBusinessLayer.Repositories.Master.Classes
                                {
                                    WorkOrderID = row.Field<int>("WorkOrderID"),
                                    EnquiryNo = row.Field<string>("EnquiryNo"),
-                                   strEnquiryDate = Convert.ToDateTime(row.Field<DateTime>("EnquiryDate")).ToString("dd-MMMM-yyyy"),
+                                   strEnquiryDate = Convert.ToDateTime(row.Field<DateTime>("EnquiryDate")).ToString("dd-MMM-yyyy"),
                                    ClientID = row.Field<int?>("ClientID"),
                                    ClientName = row.Field<string>("ClientName"),
                                    ProjectID = row.Field<int?>("ProjectID"),

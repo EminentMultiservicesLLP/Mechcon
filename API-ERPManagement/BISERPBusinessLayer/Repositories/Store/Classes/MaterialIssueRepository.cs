@@ -38,7 +38,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                                 Indent_FromStoreID = row.Field<int?>("Indent_FromStoreID"),
                                 Indent_ToStoreID = row.Field<int?>("Indent_ToStoreID"),
                                 Indent_Date = row.Field<DateTime?>("Indent_Date"),
-                                strIndentDate = Convert.ToDateTime(row.Field<DateTime>("Indent_Date")).ToString("dd-MMMM-yyyy"),
+                                strIndentDate = Convert.ToDateTime(row.Field<DateTime>("Indent_Date")).ToString("dd-MMM-yyyy"),
                                 Indent_Type = row.Field<string>("Indent_Type")
                             }).FirstOrDefault();
             }
@@ -59,7 +59,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                                 IssueNo = row.Field<string>("IssueNo"),
                                 IndentNo = row.Field<string>("IndentNo"),
                                 IssueDate = row.Field<DateTime>("IssueDate"),
-                                strIssueDate = Convert.ToDateTime(row.Field<DateTime>("IssueDate")).ToString("dd-MMMM-yyyy"),
+                                strIssueDate = Convert.ToDateTime(row.Field<DateTime>("IssueDate")).ToString("dd-MMM-yyyy"),
                                 StoreId = row.Field<int?>("StoreId"),
                                 FromStoreId = row.Field<int?>("FromStoreId"),
                                 Indent_Id = row.Field<int?>("Indent_Id"),
@@ -89,7 +89,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                                 IssueNo = row.Field<string>("IssueNo"),
                                 IndentNo = row.Field<string>("IndentNo"),
                                 IssueDate = row.Field<DateTime>("IssueDate"),
-                                strIssueDate = Convert.ToDateTime(row.Field<DateTime>("IssueDate")).ToString("dd-MMMM-yyyy"),
+                                strIssueDate = Convert.ToDateTime(row.Field<DateTime>("IssueDate")).ToString("dd-MMM-yyyy"),
                                 StoreId = row.Field<int?>("StoreId"),
                                 FromStoreId = row.Field<int?>("FromStoreId"),
                                 Indent_Id = row.Field<int?>("Indent_Id"),
@@ -122,7 +122,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                                 IssueNo = row.Field<string>("IssueNo"),
                                 IndentNo = row.Field<string>("IndentNo"),
                                 IssueDate = row.Field<DateTime>("IssueDate"),
-                                strIssueDate = Convert.ToDateTime(row.Field<DateTime>("IssueDate")).ToString("dd-MMMM-yyyy"),
+                                strIssueDate = Convert.ToDateTime(row.Field<DateTime>("IssueDate")).ToString("dd-MMM-yyyy"),
                                 StoreId = row.Field<int?>("StoreId"),
                                 FromStoreId = row.Field<int?>("FromStoreId"),
                                 Indent_Id = row.Field<int?>("Indent_Id"),
@@ -150,7 +150,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                                 IssueNo = row.Field<string>("IssueNo"),
                                 IndentNo = row.Field<string>("IndentNo"),
                                 IssueDate = row.Field<DateTime>("IssueDate"),
-                                strIssueDate = Convert.ToDateTime(row.Field<DateTime>("IssueDate")).ToString("dd-MMMM-yyyy"),
+                                strIssueDate = Convert.ToDateTime(row.Field<DateTime>("IssueDate")).ToString("dd-MMM-yyyy"),
                                 StoreId = row.Field<int?>("StoreId"),
                                 FromStoreId = row.Field<int?>("FromStoreId"),
                                 Indent_Id = row.Field<int?>("Indent_Id"),
@@ -178,7 +178,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                                 IssueNo = row.Field<string>("IssueNo"),
                                 IndentNo = row.Field<string>("IndentNo"),
                                 IssueDate = row.Field<DateTime>("IssueDate"),
-                                strIssueDate = Convert.ToDateTime(row.Field<DateTime>("IssueDate")).ToString("dd-MMMM-yyyy"),
+                                strIssueDate = Convert.ToDateTime(row.Field<DateTime>("IssueDate")).ToString("dd-MMM-yyyy"),
                                 StoreId = row.Field<int?>("StoreId"),
                                 FromStoreId = row.Field<int?>("FromStoreId"),
                                 Indent_Id = row.Field<int?>("Indent_Id"),
@@ -210,7 +210,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                                 Indent_FromStoreID = row.Field<int?>("Indent_FromStoreID"),
                                 Indent_ToStoreID = row.Field<int?>("Indent_ToStoreID"),
                                 Indent_Date = row.Field<DateTime?>("Indent_Date"),
-                                strIndentDate = Convert.ToDateTime(row.Field<DateTime>("Indent_Date")).ToString("dd-MMMM-yyyy"),
+                                strIndentDate = Convert.ToDateTime(row.Field<DateTime>("Indent_Date")).ToString("dd-MMM-yyyy"),
                                 Indent_Type = row.Field<string>("Indent_Type")
                             }).ToList();
             }
@@ -340,7 +340,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                                 IssueId = row.Field<int>("IssueId"),
                                 IssueNo = row.Field<string>("IssueNo"),
                                 IssueDate = row.Field<DateTime>("IssueDate"),
-                                strIssueDate = Convert.ToDateTime(row.Field<DateTime>("IssueDate")).ToString("dd-MMMM-yyyy"),
+                                strIssueDate = Convert.ToDateTime(row.Field<DateTime>("IssueDate")).ToString("dd-MMM-yyyy"),
                                 FromStore = row.Field<string>("FromStore"),
                                 ToStore = row.Field<string>("ToStore"),
                                 StoreId = row.Field<int?>("StoreId"),

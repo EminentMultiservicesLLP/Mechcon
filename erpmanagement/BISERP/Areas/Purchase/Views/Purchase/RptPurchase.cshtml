@@ -138,14 +138,14 @@
     dataList = { location: 'local', sorting: 'local', paging: 'local', dataType: 'JSON' };
     var setpocols = [
         { title: "", dataIndx: "ID", dataType: "integer", hidden: true },
-        { title: "PO No", dataIndx: "PONo", width: 200, filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } },
+        { title: "PO No", dataIndx: "PONo", width: 200, filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] } },
          {
              title: "Supplier", dataIndx: "SupplierName", width: 100,
-             filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+             filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
          },
         {
             title: "Project Code", dataIndx: "StoreName", width: 100,
-            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
         },
     ];
     setsetpoList = {

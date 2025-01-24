@@ -55,7 +55,7 @@ namespace BISERPBusinessLayer.Repositories.Asset.Classes
                                 AssetCode = row.Field<string>("AssetCode"),
                                 ItemName = row.Field<string>("ItemName"),
                                 ScheduleDate = row.Field<DateTime>("ScheduleDate"),
-                                StrScheduleDate = Convert.ToDateTime(row.Field<DateTime>("ScheduleDate")).ToString("dd-MMMM-yyyy"),
+                                StrScheduleDate = Convert.ToDateTime(row.Field<DateTime>("ScheduleDate")).ToString("dd-MMM-yyyy"),
                                 MaintenanceTypeId = row.Field<int>("MaintenanceTypeId"),
                                 MaintenanceType = row.Field<string>("MaintainanceType"),
                                 TODO = row.Field<string>("TODO"),

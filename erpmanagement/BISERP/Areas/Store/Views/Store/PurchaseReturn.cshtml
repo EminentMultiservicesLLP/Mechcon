@@ -372,7 +372,7 @@
                          { title: "", dataIndx: "supplierid", dataType: "integer", hidden: true },
                         {
                             title: "GRN No", dataIndx: "Grnno", width: 230,align: "center",
-                            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] ,width:230 }
+                            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] ,width:230 }
                         },
                         {
                             title: "GRN Date", dataIndx: "StrGrndate", width: 180, dataType: "date", align: "center"
@@ -380,7 +380,7 @@
 
                         {
                             title: "StoreName", dataIndx: "Store", width: 120, dataType: "string",
-                            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }, hidden: true
+                            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }, hidden: true
                         },
 
                         {

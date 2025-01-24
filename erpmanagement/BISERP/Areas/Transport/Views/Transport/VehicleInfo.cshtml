@@ -850,7 +850,7 @@
                 { title: "", dataIndx: "ModelId", dataType: "integer", hidden: true },
                 {
                     title: "Vehicle No", dataIndx: "VehicleNo", width: 400,
-                    filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                    filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
                 },
                 {
                     title: "Branch", dataIndx: "BranchName", width: 200,
@@ -1548,7 +1548,7 @@
                 { title: "", dataIndx: "BranchId", dataType: "integer", hidden: true },
                 {
                     title: "Ticket Code", dataIndx: "TicketCode", width: 400,
-                    filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }, width: 200
+                    filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }, width: 200
                 },
                 {
                     title: "Driver Name", dataIndx: "EmpName", width: 150, dataType: "string",

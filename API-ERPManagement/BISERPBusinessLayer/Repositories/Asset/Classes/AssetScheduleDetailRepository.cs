@@ -48,7 +48,7 @@ namespace BISERPBusinessLayer.Repositories.Asset.Classes
         //                    {
         //                        ScheduleId = row.Field<int>("ScheduleId"),
         //                        ScheduleDate = row.Field<DateTime>("ScheduleDate"),
-        //                        StrScheduleDate = Convert.ToDateTime(row.Field<DateTime>("ScheduleDate")).ToString("dd-MMMM-yyyy"),
+        //                        StrScheduleDate = Convert.ToDateTime(row.Field<DateTime>("ScheduleDate")).ToString("dd-MMM-yyyy"),
         //                        MaintenanceTypeId = row.Field<int>("MaintenanceTypeId"),
         //                        MaintenanceType = row.Field<string>("MaintainanceType"),
         //                        TODO = row.Field<string>("TODO"),
@@ -72,7 +72,7 @@ namespace BISERPBusinessLayer.Repositories.Asset.Classes
                                 ItemName = row.Field<string>("ItemName"),
                                 ScheduleId = row.Field<int>("ScheduleId"),
                                 ScheduleDate = row.Field<DateTime>("ScheduleDate"),
-                                StrScheduleDate = Convert.ToDateTime(row.Field<DateTime>("ScheduleDate")).ToString("dd-MMMM-yyyy"),
+                                StrScheduleDate = Convert.ToDateTime(row.Field<DateTime>("ScheduleDate")).ToString("dd-MMM-yyyy"),
                             }).ToList();
             }
             return AMC;
@@ -92,7 +92,7 @@ namespace BISERPBusinessLayer.Repositories.Asset.Classes
                                 ItemName = row.Field<string>("ItemName"),
                                 ScheduleId = row.Field<int>("ScheduleId"),
                                 ScheduleDate = row.Field<DateTime>("ScheduleDate"),
-                                StrScheduleDate = Convert.ToDateTime(row.Field<DateTime>("ScheduleDate")).ToString("dd-MMMM-yyyy"),
+                                StrScheduleDate = Convert.ToDateTime(row.Field<DateTime>("ScheduleDate")).ToString("dd-MMM-yyyy"),
                             }).ToList();
             }
             return AMC;
@@ -114,7 +114,7 @@ namespace BISERPBusinessLayer.Repositories.Asset.Classes
                                 ScheduleId = row.Field<int>("ScheduleId"),
                                 ScheduleDate = row.Field<DateTime>("ScheduleDate"),
                                 MaintenanceType = row.Field<string>("MaintenanceType"), 
-                                StrScheduleDate = Convert.ToDateTime(row.Field<DateTime>("ScheduleDate")).ToString("dd-MMMM-yyyy"),
+                                StrScheduleDate = Convert.ToDateTime(row.Field<DateTime>("ScheduleDate")).ToString("dd-MMM-yyyy"),
                             }).ToList();
             }
             return AMC;

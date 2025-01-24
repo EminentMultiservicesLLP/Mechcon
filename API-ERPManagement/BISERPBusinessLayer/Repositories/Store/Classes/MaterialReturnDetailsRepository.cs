@@ -30,7 +30,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                                 ItemName = row.Field<string>("ItemName"),
                                 Batch = row.Field<string>("Batch"),
                                 ExpiryDate = row.Field<DateTime?>("ExpiryDate"),
-                                strExpiryDate = Convert.ToDateTime(row.Field<DateTime?>("ExpiryDate")).ToString("dd-MMMM-yyyy"),
+                                strExpiryDate = Convert.ToDateTime(row.Field<DateTime?>("ExpiryDate")).ToString("dd-MMM-yyyy"),
                                 IssueQty = row.Field<double?>("IssueQty"),
 
                             }).ToList();
@@ -78,7 +78,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                                 BatchId = row.Field<int?>("BatchId"),
                                 Batch = row.Field<string>("Batch"),
                                 ExpiryDate = row.Field<DateTime?>("ExpiryDate"),
-                                strExpiryDate = Convert.ToDateTime(row.Field<DateTime?>("ExpiryDate")).ToString("dd-MMMM-yyyy"),
+                                strExpiryDate = Convert.ToDateTime(row.Field<DateTime?>("ExpiryDate")).ToString("dd-MMM-yyyy"),
                                 StockQty = row.Field<double?>("StockQty"),
                                 Quantity = row.Field<int?>("Quantity"),
                                 Reason = row.Field<string>("Reason"),

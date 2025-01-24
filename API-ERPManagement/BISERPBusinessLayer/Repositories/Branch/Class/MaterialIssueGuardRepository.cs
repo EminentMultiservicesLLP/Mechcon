@@ -70,8 +70,8 @@ namespace BISERPBusinessLayer.Repositories.Branch.Class
                                 ReceivedAmount = row.Field<double>("ReceivedAmount"),
                                 InstallmentPeriod = row.Field<int>("InstallmentPeriod"),
                                 IssueDate = row.Field<DateTime>("IssueDate"),
-                                strIssueDate = Convert.ToDateTime(row.Field<DateTime>("IssueDate")).ToString("dd-MMMM-yyyy"),
-                                strStartDate = Convert.ToDateTime(row.Field<DateTime>("StartDate")).ToString("dd-MMMM-yyyy")                                
+                                strIssueDate = Convert.ToDateTime(row.Field<DateTime>("IssueDate")).ToString("dd-MMM-yyyy"),
+                                strStartDate = Convert.ToDateTime(row.Field<DateTime>("StartDate")).ToString("dd-MMM-yyyy")                                
                             }).ToList();
             }
             return issuelist;
@@ -107,8 +107,8 @@ namespace BISERPBusinessLayer.Repositories.Branch.Class
                                 BalanceAmount = row.Field<double>("BalanceAmount"),
                                 AdminCharges = row.Field<double>("AdminCharges"),
                                 OtherCharges = row.Field<double>("OtherCharges"),
-                                strIssueDate = Convert.ToDateTime(row.Field<DateTime>("IssueDate")).ToString("dd-MMMM-yyyy"),
-                                strStartDate = Convert.ToDateTime(row.Field<DateTime>("StartDate")).ToString("dd-MMMM-yyyy"),
+                                strIssueDate = Convert.ToDateTime(row.Field<DateTime>("IssueDate")).ToString("dd-MMM-yyyy"),
+                                strStartDate = Convert.ToDateTime(row.Field<DateTime>("StartDate")).ToString("dd-MMM-yyyy"),
                                 GuarantorName1 = row.Field<string>("GuarantorName1"),
                                 GuarantorName2 = row.Field<string>("GuarantorName2"),
                                 Guarantor1 = row.Field<int?>("Guarantor1"),
@@ -150,7 +150,7 @@ namespace BISERPBusinessLayer.Repositories.Branch.Class
                                 IssueId = row.Field<int>("IssueId"),
                                 IssueNo = row.Field<string>("IssueNo"),
                                 IssueDate = row.Field<DateTime>("IssueDate"),
-                                strIssueDate = Convert.ToDateTime(row.Field<DateTime>("IssueDate")).ToString("dd-MMMM-yyyy"),
+                                strIssueDate = Convert.ToDateTime(row.Field<DateTime>("IssueDate")).ToString("dd-MMM-yyyy"),
                             }).ToList();
             }
             return issuelist;
