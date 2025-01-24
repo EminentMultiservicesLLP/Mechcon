@@ -169,4 +169,32 @@ namespace BISERPBusinessLayer.Entities.SM
         public string BasisCode { get; set; }
         public string BasisDesc { get; set; }
     }
+    public class FunctionalReportListEntity
+    {
+        public int ReportId { get; set; }
+        public string Name { get; set; }
+        public bool Deactive { get; set; }
+    }
+    public class ZoneWiseSalesReportEntities
+    {
+        public string Zone { get; set; }
+        public decimal WonValue { get; set; }
+        public decimal Percentage { get; set; }
+    } 
+    
+    public class PersonWiseSalesReportEntities
+    {
+        public string AllocatedTo { get; set; }
+        public int Count { get; set; }
+        public decimal WonValue { get; set; }
+        public decimal Percentage { get; set; }
+    }
+
+    public class StatusWiseSalesReportEntities
+    {
+        public string Status { get; set; }
+        public int Count { get; set; }
+        public decimal WonValue { get; set; }
+        public decimal Percentage { get; set; }
+    }
 }

@@ -1,0 +1,607 @@
+﻿
+<h5 class="page-header orangeDottedBottomBorder">Functional Report</h5>
+
+<div class="panel-group">
+    <div class="panel panel-default">
+        <div class="panel-groupingBoder">
+            <div class="panel-heading">
+                <div class="panel-title">
+                    <a class="collapsediv" data-toggle="collapse" href="#SearchDetails">
+                        Functional Report
+                    </a>
+                </div>
+            </div>
+            <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                <div class="panel-body">
+                    <div class="fill">
+                        <div class="submit-row">
+                            <div class="col-lg-2 col-md-4 col-sm-12 mb-3">
+                                <label class="required" for="ddlFuncReportList">Functional Reports </label>
+                                <select id="ddlFuncReportList" class="form-control">
+                                    <option value="">--Select Report--</option>
+                                </select>
+                            </div>
+
+                            <div class="col-lg-2 col-md-4 col-sm-12 mb-3">
+                                <label class="required" for="FinancialYearID">Financial Year</label>
+                                <select id="FinancialYearID" name="FinancialYearID" class="form-control">
+                                    <option value="">--Select Financial Year--</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-2 col-md-4 col-sm-12 mb-3">
+                                <br />
+                                <button type="button" id="btnGo" class="btn btn-primary" onclick="go()">GO</button>
+                                <button type="button" class="btn btn-warning" id="btnResetT" onclick="clearFormData()">Clear</button>
+                            </div>
+
+                        </div>
+                        <fieldset class="fieldsetCustom">
+                            <legend class="legendCustom">Details</legend>
+                            <div id="GridSection"></div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('.fieldsetCustom').hide()
+        loadFunctionalReport()
+        loadFinancialYear()
+    });
+    function loadFunctionalReport() {
+        var antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: "GET",
+            url: "/SM_Reports/SM_Reports/GetFunctionalReportList",
+            dataType: "json",
+            success: function (data) {
+                const $ddlReport = $('#ddlFuncReportList');
+                $ddlReport.empty();
+                if (data.error) {
+                    $ddlReport.append('<option value="">--Error loading functional Report--</option>');
+                }
+                $ddlReport.append('<option value="">--Select --</option>');
+                data.records.forEach(function (functionalReport) {
+                    $ddlReport.append(`<option value="${functionalReport.ReportId}">${functionalReport.Name}</option>`);
+                });
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                $('#ddlFuncReportList').empty();
+                $('#ddlFuncReportList').append('<option value="">--Error loading sources--</option>');
+                console.error("Error loading data:", errorThrown);
+            }
+        })
+    }
+    function loadFinancialYear() {
+        $.ajax({
+            type: "GET",
+            url: "/ResourceTarget/GetFinancialYear",
+            dataType: "json",
+            success: function (data) {
+                const $financialYearID = $('#FinancialYearID');
+                $financialYearID.empty();
+
+                if (data.error) {
+                    $financialYearID.append('<option value="">--Error loading financial years--</option>');
+                    console.error("Error loading financial years:", data.error);
+                    return;
+                }
+
+                $financialYearID.append('<option value="">--Select Financial Year--</option>');
+                data.forEach(function (financialYear) {
+                    $financialYearID.append(`<option value="${financialYear.FinancialYearID}">${financialYear.FinancialYear}</option>`);
+                });
+                $financialYearID.val(1);
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                $('#FinancialYearID').empty();
+                $('#FinancialYearID').append('<option value="">--Error loading sources--</option>');
+                console.error("Error loading sources:", errorThrown);
+            }
+        });
+    }
+    //CommonGrid
+    function CommonGridOption(colData, dataModel, ExportFileName, Total, SumTotal, Count) {
+        return GridOptions = {
+            height: 500,
+            width: 'auto',
+            maxWidth: '100%',
+            minWidth: 800,
+            sortable: true,
+            autofill: true,
+            numberCell: { show: true },
+            hoverMode: 'row',
+            showTop: true,
+            showTitle: true,
+            showBottom: true,
+            resizable: true,
+            scrollModel: { autoFit: false },
+            filterModel: { on: true, mode: "AND", header: true },
+            draggable: false,
+            hwrap: false,
+            wrap: false,
+            editable: false,
+            columnBorders: true,
+            menuIcon: true,
+            selectionModel: { type: 'row', mode: 'single', cbHeader: false },
+            colModel: colData,
+            dataModel: dataModel,
+            pageModel: { type: "local", rPP: 50 },
+            summaryData: [
+                { [Total]: 'Total', summaryRow: true, pq_fn: { [SumTotal]: 'sum(B:B)', [Count]: 'sum(C:C)', Percentage: 'sum(C:C)' } },
+            ],
+            toolbar: {
+                items: [
+                    {
+                        type: "<label><b>Export data to Excel : </b> | </label>"
+                    },
+                    {
+                        type: 'button',
+                        label: "Export",
+                        icon: 'ui-icon-arrowthickstop-1-s',
+                        listener: function () {
+                            var format = 'xlsx',
+                                blob = workbook = this.exportData({
+                                    format: format,
+                                    workbook: true,
+                                    render: true
+                                });
+
+                            blob = pq.excel.exportWb({ workbook: workbook })
+                            if (typeof blob === "string") {
+                                blob = new Blob([blob]);
+                            }
+
+                            var fileName = ExportFileName + formatDateTime(new Date()) + "." + format;
+
+                            saveAs(blob, fileName);
+                        }
+                    }
+                ]
+            }
+
+        }
+    }
+
+    $("#btnGo").on('click', function () {
+        const financialYearID = $("#FinancialYearID").val();
+        const functionRptID = $("#ddlFuncReportList").val();
+        if (!functionRptID || functionRptID == 0) {
+            ShowAlert("error", "Please select a Functional Report Name.");
+            return false;
+        }
+        else if (!financialYearID || financialYearID == 0) {
+            ShowAlert("error", "Please select a Financial Year.");
+            return false;
+        }
+        else {
+            if (functionRptID === '1') {
+                loadSectorWiseSalesReportGrid(financialYearID);
+            }
+            else if (functionRptID === '2') {
+                loadProductWiseSalesReportGrid(financialYearID);
+            }
+            else if (functionRptID === '3') {
+                loadRegionWiseSalesReportGrid(financialYearID);
+            }
+            else if (functionRptID === '4') {
+                loadLocationWiseSalesReportGrid(financialYearID);
+            }
+            else if (functionRptID === '5') {
+                loadStatusWiseSalesReportGrid(financialYearID);
+            }
+            else if (functionRptID === '6') {
+                loadPersonWiseSalesReportGrid(financialYearID);
+            }
+        }
+    })
+    //On change of ddlReport
+    $("#ddlFuncReportList").on('change', function () {
+        let RptId = $("#ddlFuncReportList").val();
+      
+        if (RptId === '1') {
+            LoadSecotrWiseGrid()
+        }
+        else if (RptId === '2') {
+            LoadProductWiseGrid()
+        }
+        else if (RptId === '3') {
+            LoadRegionWiseGrid()
+        }
+        else if (RptId === '4') {
+            LoadLocationWiseGrid()
+        }
+        else if (RptId === '5') {
+            LoadStatusWise()
+        }
+        else if (RptId === '6') {
+            LoadPersonWiseGrid()
+        }
+        else {
+            $('.fieldsetCustom').hide()
+        }
+    })
+    // Load Grid Report wise
+    function LoadSecotrWiseGrid() {                             //*****1        
+        if ($('#GridSection').children().length > 0) { $('#GridSection').pqGrid("destroy"); }
+        $('.fieldsetCustom').show()
+        var SectorWiseSalesReportGrid_GDM = { location: "local" };
+        var SectorWiseSalesReportGrid_GCM = [
+            {
+                title: "Sector", dataIndx: "Sector", width: '34%', filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            },
+            {
+                title: "Won Value", dataIndx: "WonValue", width: '33%', dataType: 'float', format: '##,###.00',
+            },
+            {
+                title: "Percentage (%)", dataIndx: "Percentage", width: '33%', dataType: 'float', format: '##,###.00',
+            }
+        ];
+        var $SectorWiseSalesReportGrid = $("#GridSection").pqGrid(CommonGridOption(SectorWiseSalesReportGrid_GCM, SectorWiseSalesReportGrid_GDM, 'SectorWiseSalesReport_', 'Sector', 'WonValue'));
+    }
+    function LoadProductWiseGrid() {                            //*****2
+        if ($('#GridSection').children().length > 0) $('#GridSection').pqGrid("destroy");
+        $('.fieldsetCustom').show();
+        var ProductWiseSalesReportGrid_GDM = { location: "local" };
+        var ProductWiseSalesReportGrid_GCM = [
+            {
+                title: "Product",
+                dataIndx: "Product",
+                width: '34%',
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            },
+            {
+                title: "Won Value",
+                dataIndx: "WonValue",
+                width: '33%',
+                dataType: 'float',
+                format: '##,###.00',
+            },
+            {
+                title: "Percentage (%)",
+                dataIndx: "Percentage",
+                width: '33%',
+                dataType: 'float',
+                format: '##,###.00',
+            }
+        ];
+
+        var $ProductWiseSalesReportGrid = $("#GridSection").pqGrid(CommonGridOption(ProductWiseSalesReportGrid_GCM, ProductWiseSalesReportGrid_GDM, 'ProductWiseSalesReport_', 'Product', 'WonValue'));
+    }
+    function LoadRegionWiseGrid() {                             //*****3
+        if ($('#GridSection').children().length > 0) $('#GridSection').pqGrid("destroy");
+        $('.fieldsetCustom').show();
+
+        var RegionWiseSalesReportGrid_GDM = { location: "local" };
+        var RegionWiseSalesReportGrid_GCM = [
+            {
+                title: "Region",
+                dataIndx: "Zone",
+                width: '34%',
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            },
+            {
+                title: "Won Value",
+                dataIndx: "WonValue",
+                width: '33%',
+                dataType: 'float',
+                format: '##,###.00',
+            },
+            {
+                title: "Percentage (%)",
+                dataIndx: "Percentage",
+                width: '33%',
+                dataType: 'float',
+                format: '##,###.00',
+            }
+        ];
+        var $RegionWiseSalesReportGrid = $("#GridSection").pqGrid(CommonGridOption(RegionWiseSalesReportGrid_GCM, RegionWiseSalesReportGrid_GDM, 'RegionWiseSalesReport_', 'Zone', 'WonValue'));
+    }
+    function LoadLocationWiseGrid() {                           //*****4
+        if ($('#GridSection').children().length > 0) $('#GridSection').pqGrid("destroy");
+        $('.fieldsetCustom').show();
+
+        var LocationWiseSalesReportGrid_GDM = { location: "local" };
+        var LocationWiseSalesReportGrid_GCM = [
+            {
+                title: "Location",
+                dataIndx: "Location",
+                width: '34%',
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            },
+            {
+                title: "Won Value",
+                dataIndx: "WonValue",
+                width: '33%',
+                dataType: 'float',
+                format: '##,###.00',
+            },
+            {
+                title: "Percentage (%)",
+                dataIndx: "Percentage",
+                width: '33%',
+                dataType: 'float',
+                format: '##,###.00',
+            }
+        ];
+        var $LocationWiseSalesReportGrid = $("#GridSection").pqGrid(CommonGridOption(LocationWiseSalesReportGrid_GCM, LocationWiseSalesReportGrid_GDM, 'LocationWiseSalesReport_', 'Location', 'WonValue'));
+    }
+    function LoadStatusWise() {                                 //*****5
+        if ($('#GridSection').children().length > 0) $('#GridSection').pqGrid("destroy");
+        $('.fieldsetCustom').show();
+
+        var StatusWiseSalesReportGrid_GDM = { location: "local" };
+        var StatusWiseSalesReportGrid_GCM = [
+            {
+                title: "Status",
+                dataIndx: "Status",
+                width: '50%',
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            },
+            {
+                title: "Count",
+                dataIndx: "Count",
+                width: '50%',
+                align: 'right',
+                //format: '##,###.00',
+            }
+        ];
+        var $StatusWiseSalesReportGrid = $("#GridSection").pqGrid(CommonGridOption(StatusWiseSalesReportGrid_GCM, StatusWiseSalesReportGrid_GDM, 'StatusWiseSalesReport_', 'Status', 'Count'));
+    }
+    function LoadPersonWiseGrid() {                             //*****6
+        if ($('#GridSection').children().length > 0) $('#GridSection').pqGrid("destroy");
+        $('.fieldsetCustom').show();
+
+        var PersonWiseSalesReportGrid_GDM = { location: "local" };
+        var PersonWiseSalesReportGrid_GCM = [
+            {
+                title: "Person",
+                dataIndx: "AllocatedTo",
+                width: '33%',
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            },            
+            {
+                title: "Won Value",
+                dataIndx: "WonValue",
+                width: '33%',
+                dataType: 'float',
+                format: '##,###.00',
+            },
+            {
+                title: "Count",
+                dataIndx: "Count",
+                width: '32%',
+                align: 'right',
+                // format: '##,###.00',
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            },
+        ];
+        var $PersonWiseSalesReportGrid = $("#GridSection").pqGrid(CommonGridOption(PersonWiseSalesReportGrid_GCM, PersonWiseSalesReportGrid_GDM, 'PersonWiseSalesReport_', 'AllocatedTo', 'WonValue','Count'));
+    }
+
+    //************************ Loading Data Area Wise ****************************
+
+    function loadSectorWiseSalesReportGrid(financialYearID) {
+        var antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            url: "/SM_Reports/SM_Reports/GetSectorWiseSalesRpt",
+            data: { financialYearID: financialYearID },
+            dataType: "json",
+            beforeSend: function () {
+                $("#GridSection").pqGrid("showLoading");
+            },
+            complete: function () {
+                $("#GridSection").pqGrid("hideLoading");
+            },
+            success: function (response) {
+                const grid = $("#GridSection").pqGrid();
+                if (response.success) {
+                    grid.pqGrid("option", "dataModel.data", response.records);
+                } else {
+                    console.warn("No data found or an issue occurred: ", response.message);
+                    grid.pqGrid("option", "dataModel.data", []);
+                }
+                grid.pqGrid("refreshDataAndView");
+                PqGridRefreshClick(grid);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Error loading Sector Wise Sales Report grid:", textStatus, errorThrown);
+                console.error("Response text:", jqXHR.responseText);
+                $("#GridSection").pqGrid("hideLoading");
+            }
+        });
+    }
+    function loadProductWiseSalesReportGrid(financialYearID) {
+        var antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            url: "/SM_Reports/SM_Reports/GetProductWiseSalesRpt",
+            data: { financialYearID: financialYearID },
+            dataType: "json",
+            beforeSend: function () {
+                $("#GridSection").pqGrid("showLoading");
+            },
+            complete: function () {
+                $("#GridSection").pqGrid("hideLoading");
+            },
+            success: function (response) {
+                const grid = $("#GridSection").pqGrid();
+                if (response.success) {
+                    grid.pqGrid("option", "dataModel.data", response.records);
+                } else {
+                    console.warn("No data found or an issue occurred: ", response.message);
+                    grid.pqGrid("option", "dataModel.data", []);
+                }
+                grid.pqGrid("refreshDataAndView");
+                PqGridRefreshClick(grid);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Error loading Product Wise Sales Report grid:", textStatus, errorThrown);
+                console.error("Response text:", jqXHR.responseText);
+                $("#GridSection").pqGrid("hideLoading");
+            }
+        });
+    }
+    function loadRegionWiseSalesReportGrid(financialYearID) {
+        var antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            url: "/SM_Reports/SM_Reports/GetZoneWiseSaleRpt",
+            data: { financialYearID: financialYearID },
+            dataType: "json",
+            beforeSend: function () {
+                $("#GridSection").pqGrid("showLoading");
+            },
+            complete: function () {
+                $("#GridSection").pqGrid("hideLoading");
+            },
+            success: function (response) {
+                const grid = $("#GridSection").pqGrid();
+                if (response.success) {
+                    grid.pqGrid("option", "dataModel.data", response.records);
+                } else {
+                    console.warn("No data found or an issue occurred: ", response.message);
+                    grid.pqGrid("option", "dataModel.data", []);
+                }
+                grid.pqGrid("refreshDataAndView");
+                PqGridRefreshClick(grid);
+            },
+
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Error loading Region Wise Sales Report grid:", textStatus, errorThrown);
+                console.error("Response text:", jqXHR.responseText);
+                $("#GridSection").pqGrid("hideLoading");
+            }
+        });
+    }
+    function loadLocationWiseSalesReportGrid(financialYearID) {
+        var antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            url: "/SM_Reports/SM_Reports/GetLocationWiseSalesRpt",
+            data: { financialYearID: financialYearID },
+            dataType: "json",
+            beforeSend: function () {
+                $("#GridSection").pqGrid("showLoading");
+            },
+            complete: function () {
+                $("#GridSection").pqGrid("hideLoading");
+            },
+            success: function (response) {
+                const grid = $("#GridSection").pqGrid();
+                if (response.success) {
+                    grid.pqGrid("option", "dataModel.data", response.records);
+                } else {
+                    console.warn("No data found or an issue occurred: ", response.message);
+                    grid.pqGrid("option", "dataModel.data", []);
+                }
+                grid.pqGrid("refreshDataAndView");
+                PqGridRefreshClick(grid);
+            },
+
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Error loading Location Wise Sales Report grid:", textStatus, errorThrown);
+                console.error("Response text:", jqXHR.responseText);
+                $("#GridSection").pqGrid("hideLoading");
+            }
+        });
+    }
+    function loadPersonWiseSalesReportGrid(financialYearID) {
+        var antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            url: "/SM_Reports/SM_Reports/GetPersonWiseSaleRpt",
+            data: { financialYearID: financialYearID },
+            dataType: "json",
+            beforeSend: function () {
+                $("#GridSection").pqGrid("showLoading");
+            },
+            complete: function () {
+                $("#GridSection").pqGrid("hideLoading");
+            },
+            success: function (response) {
+                const grid = $("#GridSection").pqGrid();
+                if (response.success) {
+                    grid.pqGrid("option", "dataModel.data", response.records);
+                } else {
+                    console.warn("No data found or an issue occurred: ", response.message);
+                    grid.pqGrid("option", "dataModel.data", []);
+                }
+                grid.pqGrid("refreshDataAndView");
+                PqGridRefreshClick(grid);
+            },
+
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Error loading Person Wise Sales Report grid:", textStatus, errorThrown);
+                console.error("Response text:", jqXHR.responseText);
+                $("#GridSection").pqGrid("hideLoading");
+            }
+        });
+    }
+    function loadStatusWiseSalesReportGrid(financialYearID) {
+        var antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            url: "/SM_Reports/SM_Reports/GetStatusWiseSaleRpt",
+            data: { financialYearID: financialYearID },
+            dataType: "json",
+            beforeSend: function () {
+                $("#GridSection").pqGrid("showLoading");
+            },
+            complete: function () {
+                $("#GridSection").pqGrid("hideLoading");
+            },
+            success: function (response) {
+                const grid = $("#GridSection").pqGrid();
+                if (response.success) {
+                    grid.pqGrid("option", "dataModel.data", response.records);
+                } else {
+                    console.warn("No data found or an issue occurred: ", response.message);
+                    grid.pqGrid("option", "dataModel.data", []);
+                }
+                grid.pqGrid("refreshDataAndView");
+                PqGridRefreshClick(grid);
+            },
+
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Error loading Status Wise Sales Report grid:", textStatus, errorThrown);
+                console.error("Response text:", jqXHR.responseText);
+                $("#GridSection").pqGrid("hideLoading");
+            }
+        });
+    }
+    //-----------------------------------EnquiryRegisterReportGrid (Ends here)-----------------------------------//
+
+    function clearFormData() {
+        $("#FinancialYearID").val('');
+        $("#ddlFuncReportList").val('');
+        $('#GridSection').pqGrid("destroy");
+        $('.fieldsetCustom').hide();
+    }
+</script>

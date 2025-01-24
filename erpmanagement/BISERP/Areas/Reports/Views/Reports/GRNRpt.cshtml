@@ -126,32 +126,19 @@
             { title: "", dataIndx: "Notes", dataType: "string", hidden: true },
             {
                 title: "GRN Number", dataIndx: "GRNNo", width: 400,
-                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             },
             {
-                title: "GRN Date", dataIndx: "strGRNDate", width: 200, dataType: "string"
+                title: "GRN Date", dataIndx: "strGRNDate", width: 200, dataType: "string",
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             },
             {
                 title: "Project Code", dataIndx: "StoreName", width: 200, dataType: "string",
-                filter: {
-                    type: "select",
-                    condition: 'equal',
-                    prepend: { '': '--Select--' },
-                    valueIndx: "StoreName",
-                    labelIndx: "StoreName",
-                    listeners: ['change']
-                }
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             },
             {
                 title: "SupplierName", dataIndx: "SupplierName", width: 200, dataType: "string",
-                filter: {
-                    type: "select",
-                    condition: 'equal',
-                    prepend: { '': '--Select--' },
-                    valueIndx: "SupplierName",
-                    labelIndx: "SupplierName",
-                    listeners: ['change']
-                }
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             },
             {
                 title: "DC Number", dataIndx: "DCNo", width: 200, dataType: "date", hidden: true

@@ -657,14 +657,14 @@
 
     //*********************************Report Call Section *********************-//
     function printReport(string) {
-        if ($("#ddlReport").val() == "" || $("#ddlReport").val() == "Select") {
+        if ($("#ddlReport").val() == "" || $("#ddlReport").val() == 0) {
             ShowAlert("error", "Please Select Report");
             return;
         }       
         else if (string === "MaterialIndentRpt") {
             if ($("#ddlReport").val() == "101") {
                 if ($("#IndentId").val() == "") {
-                    ShowAlert("error", "Please Select Indent No");
+                    ShowAlert("error", "Please Select Request No");
                     return;
                 }
             }
@@ -678,7 +678,7 @@
             }
             else if ($("#ddlReport").val() == "112") {
                 if ($("#ddlStore").val() == "" || $("#ddlStore").val() == "Select") {
-                    ShowAlert("error", "Please Select Store");
+                    ShowAlert("error", "Please Select Project ");
                     return;
                 }
 
@@ -691,7 +691,7 @@
             }
             else if ($("#ddlReport").val() == "115") {
                 if ($("#ddlStore").val() == "" || $("#ddlStore").val() == "Select") {
-                    ShowAlert("error", "Please Select Store");
+                    ShowAlert("error", "Please Select Project ");
                     return;
                 }
             }
@@ -699,7 +699,7 @@
         else if (string === "MaterialReturnRpt") {
             if ($("#ddlReport").val() == "121") {
                 if ($("#ddlStore").val() == "") {
-                    ShowAlert("error", "Please Select Store");
+                    ShowAlert("error", "Please Select Project ");
                     return;
                 }
             }
@@ -735,7 +735,7 @@
         else if (string === "StockRpt") {
             if ($("#ddlReport").val() == "161" || $("#ddlReport").val() == "162") {
                 if ($("#ddlStore").val() == "" || $("#ddlStore").val() == "Select Store" || $("#ddlStore").val() == undefined) {
-                    ShowAlert("error", "Please Select Store");
+                    ShowAlert("error", "Please Select Project ");
                     return;
                 }
             }
@@ -747,13 +747,13 @@
             }
             if ($("#ddlReport").val() == "151") {
                 if ($("#ddlStore").val() == "" || $("#ddlStore").val() == "Select") {
-                    ShowAlert("error", "Please Select Store");
+                    ShowAlert("error", "Please Select Project ");
                     return;
                 }
             }
             if ($("#ddlReport").val() == "152") {
                 if ($("ddlStore").val() == "") {
-                    ShowAlert("error", "Please Select Store");
+                    ShowAlert("error", "Please Select Project ");
                     return;
                 }
             }
@@ -981,7 +981,7 @@
     //****** MaterialIndent Report ******************/
     $('#IndentNo').on('click', function () {
         if ($("#ddlStore").val() == "") {
-            ShowAlert("error", "Please Select Store");
+            ShowAlert("error", "Please Select Project ");
             return;
         }
         LoadIndentSearchGrid();
@@ -1412,7 +1412,7 @@
 
     $('#ItemNameStock').on('click', function () {
         if ($("#ddlStore").val() == "" || $("#ddlStore").val() == "Select Store" || $("#ddlStore").val() == undefined) {
-            ShowAlert("error", "Please Select Store");
+            ShowAlert("error", "Please Select Project ");
             return;
         }
         LoadItemGridStock();

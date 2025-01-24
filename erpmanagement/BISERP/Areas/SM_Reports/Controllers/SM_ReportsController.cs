@@ -70,6 +70,10 @@ namespace BISERP.Areas.SM_Reports.Controllers
             return PartialView();
         }
 
+        public ActionResult FunctionalReport()
+        {
+            return PartialView();
+        }
         #endregion Views
 
         #region GetReportsCall
@@ -209,6 +213,96 @@ namespace BISERP.Areas.SM_Reports.Controllers
             {
                 _logger.LogError($"Error in GetProductWiseSalesRpt: {ex.Message} {Environment.NewLine} {ex.StackTrace}");
                 return Json(new { success = false, message = "An error occurred while retrieving enquiry" }, JsonRequestBehavior.AllowGet);
+            }
+        }
+        
+        [HttpGet]
+        public async Task<JsonResult> GetFunctionalReportList()
+        {
+            string _url = $"{url}/sm_Reports/getFunctionalReportList/{Common.Constants.JsonTypeResult}";
+
+            try
+            {
+                var records = await Common.AsyncWebCalls.GetAsync<List<FunctionalReportListModel>>(client, _url, CancellationToken.None);
+
+                if (records == null)
+                {
+                    return Json(new { success = false, message = "No records found" }, JsonRequestBehavior.AllowGet);
+                }
+
+                return Json(new { success = true, records }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error in GetFunctionalReportList: {ex.Message} {Environment.NewLine} {ex.StackTrace}");
+                return Json(new { success = false, message = "An error occurred while retrieving data" }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> GetZoneWiseSaleRpt(int? financialYearID)
+        {
+            string _url = $"{url}/sm_Reports/getZoneWiseSaleRpt/{financialYearID}{Common.Constants.JsonTypeResult}";
+
+            try
+            {
+                var records = await Common.AsyncWebCalls.GetAsync<List<ZoneWiseSalesReportModel>>(client, _url, CancellationToken.None);
+
+                if (records == null)
+                {
+                    return Json(new { success = false, message = "No records found" }, JsonRequestBehavior.AllowGet);
+                }
+
+                return Json(new { success = true, records }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error in GetZoneWiseSaleRpt: {ex.Message} {Environment.NewLine} {ex.StackTrace}");
+                return Json(new { success = false, message = "An error occurred while retrieving Zone Wise Data" }, JsonRequestBehavior.AllowGet);
+            }
+        }
+        [HttpGet]
+        public async Task<JsonResult> GetPersonWiseSaleRpt(int? financialYearID)
+        {
+            string _url = $"{url}/sm_Reports/getPersonWiseSaleRpt/{financialYearID}{Common.Constants.JsonTypeResult}";
+
+            try
+            {
+                var records = await Common.AsyncWebCalls.GetAsync<List<PersonWiseSalesReportModel>>(client, _url, CancellationToken.None);
+
+                if (records == null)
+                {
+                    return Json(new { success = false, message = "No records found" }, JsonRequestBehavior.AllowGet);
+                }
+
+                return Json(new { success = true, records }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error in GetPersonWiseSaleRpt: {ex.Message} {Environment.NewLine} {ex.StackTrace}");
+                return Json(new { success = false, message = "An error occurred while retrieving Person Wise Data" }, JsonRequestBehavior.AllowGet);
+            }
+        }   
+        [HttpGet]
+        public async Task<JsonResult> GetStatusWiseSaleRpt(int? financialYearID)
+        {
+            string _url = $"{url}/sm_Reports/getStatusWiseSaleRpt/{financialYearID}{Common.Constants.JsonTypeResult}";
+
+            try
+            {
+                var records = await Common.AsyncWebCalls.GetAsync<List<StatusWiseSalesReportModel>>(client, _url, CancellationToken.None);
+
+                if (records == null)
+                {
+                    return Json(new { success = false, message = "No records found" }, JsonRequestBehavior.AllowGet);
+                }
+
+                return Json(new { success = true, records }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error in GetStatusWiseSaleRpt: {ex.Message} {Environment.NewLine} {ex.StackTrace}");
+                return Json(new { success = false, message = "An error occurred while retrieving Status Wise Data" }, JsonRequestBehavior.AllowGet);
             }
         }
 

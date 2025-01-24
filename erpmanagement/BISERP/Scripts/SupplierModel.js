@@ -1,7 +1,7 @@
 ﻿var colSupplierM = [
                     { title: "", dataIndx: "ID", dataType: "integer", hidden: true },
-                    { title: "Code", dataIndx: "Code", width: 200 },
-                    { title: "Supplier Name", dataIndx: "Name", width: 200, filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] } }
+    { title: "Code", dataIndx: "Code", width: 200, filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }},
+    { title: "Supplier Name", dataIndx: "Name", width: 200, filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }}
 ];
 
 dataSupplierM = {
