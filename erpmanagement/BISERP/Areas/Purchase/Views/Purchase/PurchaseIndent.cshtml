@@ -420,7 +420,7 @@
     function ClearForm() {
         $("#IndentId").val("");
         $("#IndentDate").datepicker().datepicker("setDate", new Date());
-        $("#IndentNature").val(0);
+        $("#IndentNature").val(0).trigger('change');
         $("#ddlStores").val("");
         $("#ProductID").val("");
         $("#ddlItemtype").val("");
@@ -570,8 +570,12 @@
                         $PurchaseItemDetailsGrid.pqGrid("hideLoading");
                     },
                     success: function (data) {
+                        const details = data.map(item => {
+                            item.pq_cellattr = { ItemName: { title: item.ItemName } };
+                            return item;
+                        });
                         $PurchaseItemDetailsGrid.pqGrid("hideLoading");
-                        $PurchaseItemDetailsGrid.pqGrid("option", "dataModel.data", data);
+                        $PurchaseItemDetailsGrid.pqGrid("option", "dataModel.data", details);
                         $PurchaseItemDetailsGrid.pqGrid("refreshDataAndView");
                     },
                     error: function (request, status, error) {
@@ -695,7 +699,10 @@
         setIID = {
             height: '300',
             maxheight: '400',
+            rowHt: 30,
             title: "Purchase Indent Item Details",
+            rowHt: 40,
+            autoRow: false,
             sortable: false,
             numberCell: { show: false },
             selectionModel: { type: 'row' },
@@ -872,8 +879,6 @@
             { title: "", dataIndx: "PackSize", width: 70, dataType: "string", editable: false, hidden: true }
         ];
 
-
-
         dataIL = {
             location: 'local',
             sorting: 'local',
@@ -1006,7 +1011,11 @@
             };
             dataMGrid.push(grdData);
         });
-        $PurchaseItemDetailsGrid.pqGrid("option", "dataModel.data", dataMGrid);
+        const details = dataMGrid.map(item => {
+            item.pq_cellattr = { ItemName: { title: item.ItemName } };
+            return item;
+        });
+        $PurchaseItemDetailsGrid.pqGrid("option", "dataModel.data", details);
         $PurchaseItemDetailsGrid.pqGrid("refreshDataAndView");
     });
 
@@ -1324,8 +1333,12 @@
                                 }
                                 dataMGrid.push(grdData);
                             });
+                            const details = dataMGrid.map(item => {
+                                item.pq_cellattr = { ItemName: { title: item.ItemName } };
+                                return item;
+                            });
                             $("#grid").pqGrid("hideLoading");
-                            $("#grid").pqGrid("option", "dataModel.data", dataMGrid);
+                            $("#grid").pqGrid("option", "dataModel.data", details);
                             $("#grid").pqGrid("refreshDataAndView");
                         },
                         error: function (request, status, error) {

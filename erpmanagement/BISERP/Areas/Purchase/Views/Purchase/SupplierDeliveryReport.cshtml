@@ -1,5 +1,50 @@
 ﻿<h5 class="page-header orangeDottedBottomBorder">Supplier Delivery Report</h5>
+<style>
+    .pq-grid-cell {
+        background: inherit;
+    }
 
+    .pq-td-border-right > .pq-grid-row > .pq-grid-cell {
+        border-right-color: #ccc;
+        border-bottom-color: #ccc;
+    }
+</style>
+<script>
+    $(function () {
+        $(".datepicker").datepicker({
+            showOn: "button",
+            buttonImage: "/Content/images/calendar.gif",
+            buttonImageOnly: true,
+            buttonText: "Selectdate",
+            'changeMonth': true,
+            'changeYear': true,
+            'yearRange': '2021:2030',
+            "format": "dd-M-yyyy",
+            todayBtn: "linked",
+            pickerPosition: "bottom-left",
+            "todayHighlight": true,
+            autoclose: true,
+        })
+        $("#anim").change(function () {
+            $(".datepicker").datepicker("option", "showAnim", "fadeIn");
+        });
+    });
+
+    function getFirstDateOfFinancialYear() {
+        const today = new Date();
+        const currentMonth = today.getMonth(); // Months are 0-based
+        const currentYear = today.getFullYear();
+
+        // Assuming financial year starts in April
+        const financialYearStartMonth = 3; // April (0-based index)
+        const financialYearStartYear = currentMonth >= financialYearStartMonth ? currentYear : currentYear - 1;
+
+        return new Date(financialYearStartYear, financialYearStartMonth, 1); // 1st April of the calculated year
+    }
+
+    $("#FromDate").datepicker("setDate", getFirstDateOfFinancialYear());
+    $("#ToDate").datepicker("setDate", new Date());
+</script>
 <div class="panel-group">
     <div class="panel panel-default">
         <div class="panel-groupingBoder">
@@ -14,6 +59,14 @@
                 <div class="panel-body">
                     <div class="fill">
                         <div class="submit-row">
+                            <div class="col-lg-2 col-md-4 col-sm-12 mb-3">
+                                <label for="FromDate">From Date</label>
+                                <input type="text" id="FromDate" class="form-control datepicker" />
+                            </div>
+                            <div class="col-lg-2 col-md-4 col-sm-12 mb-3">
+                                <label for="ToDate">To Date</label>
+                                <input type="text" id="ToDate" class="form-control datepicker" />
+                            </div>
                             <div class="col-lg-3 col-md-4 col-sm-12 mb-3">
                                 <label class="required" for="SupplierID">Supplier</label>
                                 <select id="SupplierID" name="SupplierID" class="form-control">
@@ -44,7 +97,6 @@
             url: "/Master/AllSupplier/",
             dataType: "json",
             success: function (data) {
-                debugger
                 const $supplierID = $('#SupplierID');
                 $supplierID.empty();
 
@@ -69,6 +121,14 @@
     loadSupplier();
 
     function go() {
+        const fromDate = $("#FromDate").val();
+        const toDate = $("#ToDate").val();
+
+        // Check if the From Date is earlier than the To Date
+        if (new Date(fromDate) > new Date(toDate)) {
+            ShowAlert("warning", "From Date cannot be later than To Date.");
+            return;
+        }
         const supplierID = $("#SupplierID").val();
 
         if (!supplierID || supplierID == 0) {
@@ -76,7 +136,7 @@
             return false;
         }
 
-        loadSupplierDeliveryReportGrid(supplierID);
+        loadSupplierDeliveryReportGrid(supplierID, fromDate, toDate);
     }
 
     //-----------------------------------SupplierDeliveryReportGrid (Starts here)-----------------------------------//
@@ -91,142 +151,203 @@
         {
             title: "Item Name",
             dataIndx: "ItemName",
-            width: '35%',
+            width: '25%',
             filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
         },
         {
             title: "PO Quantity",
             dataIndx: "POQty",
             width: '10%',
-            dataType: 'int',
+            dataType: 'float',
         },
         {
             title: "Required Date",
             dataIndx: "strRequiredDate",
             width: '10%',
-            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            //filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
         },
         {
             title: "GRN Quantity",
             dataIndx: "GRNQty",
             width: '10%',
-            dataType: 'int',
-            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            dataType: 'float'
         },
         {
             title: "Delivery Date",
             dataIndx: "strDeliveryDate",
             width: '10%',
+            //filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Rejected Qty",
+            dataIndx: "RejectedQty",
+            width: '10%',
+            dataType: 'float',
+            render: function (ui) {
+                debugger
+                if (ui.cellData > 0) {
+                    return `<div style="background-color: #d90000; color: white; font-size: large;">${ui.cellData}</div>`;
+                }
+            }
         },
         {
             title: "Days Late",
             dataIndx: "DaysLate",
             width: '10%',
+            dataType: 'float',
+            render: function (ui) {
+                debugger
+                if (ui.cellData > 0) {
+                    return `<div style="background-color: #ff9900; color: black; font-size: large;">${ui.cellData}</div>`;
+                } else {
+                    return `<div>${0}</div>`;
+                }
+            }
         }
     ];
-
     var setSupplierDeliveryReportGrid = {
-        height: 500,
+        title: 'Supplier Report',
+        height: 600,
         width: 'auto',
         maxWidth: '100%',
+        rowHt: 30,
+        freezeCols: 4,
         minWidth: 800,
         sortable: true,
-        autofill: true,
-        numberCell: { show: true },
-        hoverMode: 'row',
+        autofill: false,
+        autoRow: false,
+        numberCell: { show: false },
         showTop: true,
         showTitle: true,
         showBottom: true,
         resizable: true,
-        scrollModel: { autoFit: true },
+        scrollModel: { autoFit: false },
         filterModel: { on: true, mode: "AND", header: true },
         draggable: false,
         hwrap: false,
         wrap: false,
         editable: false,
-        columnBorders: true,
         menuIcon: true,
-        selectionModel: { type: 'row', mode: 'single', cbHeader: false },
+        selectionModel: { type: 'cell', mode: 'single', cbHeader: false },
         colModel: SupplierDeliveryReportGrid_GCM,
         dataModel: SupplierDeliveryReportGrid_GDM,
         pageModel: { type: "local", rPP: 50 },
-        toolbar: {
-            items: [
-                {
-                    type: "<label><b>Export data to Excel : </b> | </label>"
-                },
-                {
-                    type: 'button',
-                    label: "Export",
-                    icon: 'ui-icon-arrowthickstop-1-s',
-                    listener: function () {
-                        var format = 'xlsx',
-                            blob = workbook = this.exportData({
-                                format: format,
-                                workbook: true,
-                                render: true
-                            });
+        rowInit: function (ui) {
+            return {
+                style: "background:white;"
+            };
+        },
+        summaryData: [
+            { pq_fn: { RejectedQty: 'sum(G:G)', DaysLate: 'sum(H:H)' } },
+        ],
+        //toolbar: {
+        //    items: [
+        //        {
+        //            type: "<label><b>Export data to Excel : </b> | </label>"
+        //        },
+        //        {
+        //            type: 'button',
+        //            label: "Export",
+        //            icon: 'ui-icon-arrowthickstop-1-s',
+        //            listener: function () {
+        //                var format = 'xlsx',
+        //                    blob = workbook = this.exportData({
+        //                        format: format,
+        //                        workbook: true,
+        //                        render: true
+        //                    });
 
-                        blob = pq.excel.exportWb({ workbook: workbook })
-                        if (typeof blob === "string") {
-                            blob = new Blob([blob]);
-                        }
+        //                blob = pq.excel.exportWb({ workbook: workbook })
+        //                if (typeof blob === "string") {
+        //                    blob = new Blob([blob]);
+        //                }
 
-                        var fileName = "SupplierDeliveryReport_" + formatDateTime(new Date()) + "." + format;
+        //                var fileName = "SupplierDeliveryReport_" + formatDateTime(new Date()) + "." + format;
 
-                        saveAs(blob, fileName);
-                    }
-                }
-            ]
-        }
-    }
+        //                saveAs(blob, fileName);
+        //            }
+        //        }
+        //    ]
+        //}
+    };
+
     var $SupplierDeliveryReportGrid = $("#SupplierDeliveryReportGrid").pqGrid(setSupplierDeliveryReportGrid);
-    function loadSupplierDeliveryReportGrid(supplierID) {
-        debugger
-        var antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+
+    function loadSupplierDeliveryReportGrid(supplierID, fromDate, toDate) {
+        const antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+        const grid = $("#SupplierDeliveryReportGrid").pqGrid();
+
         $.ajax({
-            headers: {
-                "__RequestVerificationToken": antiForgeryToken
-            },
+            headers: { "__RequestVerificationToken": antiForgeryToken },
             type: 'GET',
             url: "/PurchaseOrder/GetSupplierDeliveryReport",
-            data: { supplierID: supplierID },
+            data: { supplierID: supplierID, FromDate: fromDate, ToDate: toDate },
             dataType: "json",
-
             beforeSend: function () {
-                $("#SupplierDeliveryReportGrid").pqGrid("showLoading");
+                grid.pqGrid("showLoading");
             },
-
             complete: function () {
-                $("#SupplierDeliveryReportGrid").pqGrid("hideLoading");
+                grid.pqGrid("hideLoading");
             },
-
             success: function (response) {
-                const grid = $("#SupplierDeliveryReportGrid").pqGrid();
-
                 if (response.success) {
-                    grid.pqGrid("option", "dataModel.data", response.records);
+                    const details = response.records.map(item => {
+                        item.pq_cellattr = { ItemName: { title: item.ItemName } };
+                        return item;
+                    });
+
+                    grid.pqGrid("option", "dataModel.data", details);
+
+                    const mergeColumns = ['PONo', 'ItemName', 'POQty', 'strRequiredDate'];
+                    const colModel = grid.pqGrid("option", "colModel");
+                    const data = grid.pqGrid("option", "dataModel.data");
+                    const mergeCells = [];
+
+                    mergeColumns.forEach(dataIndx => {
+                        const colIndex = colModel.findIndex(col => col.dataIndx === dataIndx);
+                        if (colIndex === -1) return;
+
+                        let rowCount = 1;
+
+                        for (let i = data.length - 1; i > 0; i--) {
+                            if (data[i][dataIndx] === data[i - 1][dataIndx]) {
+                                rowCount++;
+                            } else {
+                                if (rowCount > 1) {
+                                    mergeCells.push({ r1: i, c1: colIndex, rc: rowCount, cc: 1 });
+                                }
+                                rowCount = 1;
+                            }
+                        }
+
+                        // Handle the first row if it's part of a merge
+                        if (rowCount > 1) {
+                            mergeCells.push({ r1: 0, c1: colIndex, rc: rowCount, cc: 1 });
+                        }
+                    });
+
+                    grid.pqGrid("option", "mergeCells", mergeCells);
+                    grid.pqGrid("refreshDataAndView");
                 } else {
                     console.warn("No data found or an issue occurred: ", response.message);
                     grid.pqGrid("option", "dataModel.data", []);
+                    grid.pqGrid("refreshDataAndView");
                 }
-
-                grid.pqGrid("refreshDataAndView");
-                PqGridRefreshClick(grid);
             },
-
             error: function (jqXHR, textStatus, errorThrown) {
                 console.error("Error loading Supplier Delivery Report grid:", textStatus, errorThrown);
                 console.error("Response text:", jqXHR.responseText);
-                $("#SupplierDeliveryReportGrid").pqGrid("hideLoading");
+                grid.pqGrid("hideLoading");
             }
         });
-
     }
+
     //-----------------------------------SupplierDeliveryReportGrid (Ends here)-----------------------------------//
 
     function clearFormData() {
         $("#SupplierID").val('');
         ClearParamGrid('SupplierDeliveryReportGrid');
+        $("#FromDate").datepicker("setDate", getFirstDateOfFinancialYear());
+        $("#ToDate").datepicker("setDate", new Date());
     }
 </script>

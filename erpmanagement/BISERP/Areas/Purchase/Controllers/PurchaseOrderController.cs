@@ -543,9 +543,9 @@ namespace BISERP.Area.Purchase.Controllers
         }
 
         [HttpGet]
-        public async Task<JsonResult> GetSupplierDeliveryReport(int? supplierID)
+        public async Task<JsonResult> GetSupplierDeliveryReport(int? supplierID, string FromDate = null, string ToDate = null)
         {
-            string _url = $"{url}/purchaseorder/getSupplierDeliveryReport/{supplierID}{Common.Constants.JsonTypeResult}";
+            string _url = $"{url}/purchaseorder/getSupplierDeliveryReport/{supplierID}/{FromDate}/{ToDate}{Common.Constants.JsonTypeResult}";
 
             try
             {

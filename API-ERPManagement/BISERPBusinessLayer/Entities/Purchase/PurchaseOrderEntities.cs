@@ -147,12 +147,13 @@ namespace BISERPBusinessLayer.Entities.Purchase
         public string PONo { get; set; }
         public int ItemID { get; set; }
         public string ItemName { get; set; }
-        public int POQty { get; set; }
-        public DateTime RequiredDate { get; set; }
+        public decimal? POQty { get; set; }
+        public DateTime? RequiredDate { get; set; }
         public string strRequiredDate { get; set; }
-        public int GRNQty { get; set; }
-        public DateTime DeliveryDate { get; set; }
+        public decimal? GRNQty { get; set; }
+        public DateTime? DeliveryDate { get; set; }
         public string strDeliveryDate { get; set; }
+        public decimal? RejectedQty { get; set; }
         public int DaysLate { get; set; }
     }
 }

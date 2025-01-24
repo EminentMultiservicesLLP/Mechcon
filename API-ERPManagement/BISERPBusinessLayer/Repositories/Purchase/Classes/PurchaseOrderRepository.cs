@@ -618,12 +618,15 @@ namespace BISERPBusinessLayer.Repositories.Purchase.Classes
             }
             return data;
         }
-        public IEnumerable<SupplierDeliveryReportEntities> GetSupplierDeliveryReport(int? supplierID)
+        public IEnumerable<SupplierDeliveryReportEntities> GetSupplierDeliveryReport(int? supplierID, string FromDate, string ToDate)
         {
             List<SupplierDeliveryReportEntities> data = null;
             using (DBHelper dbHelper = new DBHelper())
             {
-                DBParameter param = new DBParameter("SupplierID", supplierID, DbType.Int32);
+                DBParameterCollection param = new DBParameterCollection();
+                param.Add(new DBParameter("SupplierID", supplierID, DbType.Int32));
+                param.Add(new DBParameter("FromDate", FromDate, DbType.String));
+                param.Add(new DBParameter("ToDate", ToDate, DbType.String));
                 DataTable dt = dbHelper.ExecuteDataTable(PurchaseQueries.GetSupplierDeliveryReport, param, CommandType.StoredProcedure);
 
                 data = dt.AsEnumerable()
@@ -633,12 +636,13 @@ namespace BISERPBusinessLayer.Repositories.Purchase.Classes
                         PONo = row.Field<string>("PONo"),
                         ItemID = row.Field<int>("ItemID"),
                         ItemName = row.Field<string>("ItemName"),
-                        POQty = row.Field<int>("POQty"),
-                        RequiredDate = row.Field<DateTime>("RequiredDate"),
-                        strRequiredDate = row.Field<DateTime?>("RequiredDate")?.ToString("dd-MMMM-yyyy") ?? string.Empty,
-                        GRNQty = row.Field<int>("GRNQty"),
-                        DeliveryDate = row.Field<DateTime>("DeliveryDate"),
-                        strDeliveryDate = row.Field<DateTime?>("DeliveryDate")?.ToString("dd-MMMM-yyyy") ?? string.Empty,
+                        POQty = row.Field<decimal?>("POQty"),
+                        RequiredDate = row.Field<DateTime?>("RequiredDate"),
+                        strRequiredDate = row.Field<DateTime?>("RequiredDate")?.ToString("dd-MMM-yyyy") ?? string.Empty,
+                        GRNQty = row.Field<decimal?>("GRNQty"),
+                        DeliveryDate = row.Field<DateTime?>("DeliveryDate"),
+                        strDeliveryDate = row.Field<DateTime?>("DeliveryDate")?.ToString("dd-MMM-yyyy") ?? string.Empty,
+                        RejectedQty = row.Field<decimal?>("RejectedQty"),
                         DaysLate = row.Field<int>("DaysLate")
                     }).ToList();
             }

@@ -23,6 +23,7 @@ namespace BISERP.Area.Purchase.Models
         public string Make { get; set; }
         public string MaterialOfConstruct { get; set; }
         public string IndentRemark { get; set; }
+        public string RequiredDate { get; set; }
         public string SizeOrWeight { get; set; }
         public string POIndentRemark { get; set; }
         public double? Rate { get; set; }

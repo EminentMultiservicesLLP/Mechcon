@@ -412,13 +412,13 @@ namespace BISERPService.Controllers
 
 
         [Route("getSupplierDeliveryReport")]
-        [Route("getSupplierDeliveryReport/{supplierID}")]
+        [Route("getSupplierDeliveryReport/{supplierID}/{FromDate}/{ToDate}")]
         [HttpGet]
-        public IHttpActionResult GetSupplierDeliveryReport(int? supplierID = null)
+        public IHttpActionResult GetSupplierDeliveryReport(int? supplierID = null, string FromDate = null, string ToDate = null)
         {
             try
             {
-                var data = _ipurchaseorder.GetSupplierDeliveryReport(supplierID);
+                var data = _ipurchaseorder.GetSupplierDeliveryReport(supplierID, FromDate, ToDate);
 
                 if (data == null)
                 {

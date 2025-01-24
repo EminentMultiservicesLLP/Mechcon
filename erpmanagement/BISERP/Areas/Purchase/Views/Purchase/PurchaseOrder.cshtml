@@ -74,21 +74,21 @@
                 <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
                     <div class="panel-body">
                         <div class="submit-row">
-                        <div class="col-sm-6" style="text-align:start">
-                            @*<a data-toggle="collapse" class="btn btn-info" href="#SearchDetails">Show/Hide top Search Panel</a>*@
-                            <button type="button" class="btn btn-success" id="btnSavePurchaseOrder">Save</button>
-                            <button type="button" class="btn btn-primary" id="btnAddPO">Reset</button>
-                            <button type="button" class="btn btn-danger" id="btAuthorisedRFQ">Authorised-PR</button>
-                        </div>
-                        <div class="col-sm-6" style="text-align:end">
-                            <button type="button" class="btn btn-info" id="btnSearch">Find</button>
-                            <a data-toggle="collapse" class="btn btn-warning" id="btnExport" href="#ReportPreview">Report</a>&nbsp;&nbsp;&nbsp;
-                            <div hidden>
-                                @Html.Label("Select Report Type -- ") &nbsp;&nbsp;&nbsp;
-                                @Html.RadioButton("ReportType", "Vertical", true)&nbsp; Vertical &nbsp;&nbsp;
-                                @Html.RadioButton("ReportType", "Horizontal")&nbsp; Horizontal
+                            <div class="col-sm-6" style="text-align:start">
+                                @*<a data-toggle="collapse" class="btn btn-info" href="#SearchDetails">Show/Hide top Search Panel</a>*@
+                                <button type="button" class="btn btn-success" id="btnSavePurchaseOrder">Save</button>
+                                <button type="button" class="btn btn-primary" id="btnAddPO">Reset</button>
+                                <button type="button" class="btn btn-danger" id="btAuthorisedRFQ">Authorised-PR</button>
                             </div>
-                        </div>
+                            <div class="col-sm-6" style="text-align:end">
+                                <button type="button" class="btn btn-info" id="btnSearch">Find</button>
+                                <a data-toggle="collapse" class="btn btn-warning" id="btnExport" href="#ReportPreview">Report</a>&nbsp;&nbsp;&nbsp;
+                                <div hidden>
+                                    @Html.Label("Select Report Type -- ") &nbsp;&nbsp;&nbsp;
+                                    @Html.RadioButton("ReportType", "Vertical", true)&nbsp; Vertical &nbsp;&nbsp;
+                                    @Html.RadioButton("ReportType", "Horizontal")&nbsp; Horizontal
+                                </div>
+                            </div>
                         </div>
                         <fieldset class="fieldsetCustom">
                             <legend class="legendCustom">Purchase Order Form</legend>
@@ -391,6 +391,33 @@
             <div>
                 <a class="prev slide-prev" onclick="plusSlides(-1)">❮</a>
                 <a class="next slide-next" onclick="plusSlides(1)">❯</a>
+            </div>
+        </div>
+    </div>
+
+    @* RequiredDate *@
+    <div class="modal" id="RequiredDatePopUpModel" role="dialog" data-backdrop="false">
+        <div class="modal-dialog">
+            <div class="modal-content" style="width:650px;height:100%;display:inline-block;">
+                <div class="modal-header" style="min-height: 51.43px; padding: 15px; border-bottom: 1px solid #e5e5e5;">
+                    <div class="col-sm-8 col-md-8">
+                        <h4 class="modal-title"><b>Select Required Date</b></h4>
+                    </div>
+                    <div class="col-sm-4 col-md-4">
+                        <button type="button" class="close" data-dismiss="modal" style="align-content:flex-end">&times;</button>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-6 col-lg-4">
+                            <label for="RequiredDateM">Required Date</label>
+                            <input class="form-control datepicker" name="RequiredDateM" id="RequiredDateM" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="padding: 10px; text-align: right; border-top: 1px solid #e5e5e5;">
+                    <button type="button" class="save btn btn-success" data-dismiss="modal" style="align-content:flex-end" onclick="setRequiredDate()">Set</button>
+                </div>
             </div>
         </div>
     </div>
@@ -1276,6 +1303,8 @@
             height: 260,
             maxheight: '400',
             title: "Item Details",
+            rowHt: 40,
+            autoRow: false,
             sortable: false,
             numberCell: { show: false },
             scrollModel: { flexContent: true },
@@ -1363,6 +1392,8 @@
                 { title: "Make", dataIndx: "Make", width: 200, dataType: "string", align: "left", editable: false },
                 { title: "MOC", dataIndx: "MaterialOfConstruct", width: 200, dataType: "string", align: "left", editable: false },
                 { title: "PR Remark", dataIndx: "IndentRemark", width: 300, dataType: "string", align: "left", editable: false },
+                { title: "", editable: false, minWidth: 30, sortable: false, align: 'center', render: function (ui) { return '<button type="button" onclick="addRequiredDate(' + ui.rowIndx + ');"></button>'; } },
+                { title: "RequiredDate", dataIndx: "RequiredDate", width: 300, dataType: "string", align: "left", editable: false },
                 { title: "Size/Wt.", dataIndx: "SizeOrWeight", width: 70, dataType: "string", align: "left", editable: true },
                 { title: "PO Remark", dataIndx: "POIndentRemark", width: 300, dataType: "string", align: "left", editable: true },
                 { title: "PR PendingQty", dataIndx: "PendingQty", width: 70, dataType: "float", align: "left", editable: false },
@@ -1540,7 +1571,20 @@
             open: function () { $(".ui-dialog").position({ of: "#pogrid" }); },
             autoOpen: false
         });
+        
     });
+    function addRequiredDate(rowIndex) {
+        selectedRequiredDate_RowIndx = rowIndex;
+        $("#RequiredDatePopUpModel").modal("show");
+        const gridData = $("#pogrid").pqGrid("option", "dataModel.data");
+        $("#RequiredDateM").datepicker("setDate", gridData[selectedRequiredDate_RowIndx].RequiredDate);
+    }
+    // Function to set the required date in the grid
+    function setRequiredDate() {
+        const gridData = $("#pogrid").pqGrid("option", "dataModel.data");
+        gridData[selectedRequiredDate_RowIndx].RequiredDate = $("#RequiredDateM").val();
+        $("#pogrid").pqGrid("refreshDataAndView");
+    }
     /********* Search Grid *********/
     $(document).ready(function () {
         var dataM = { location: "local", sorting: 'local' };
@@ -1672,14 +1716,18 @@
                             $.each(data.PODetails, function (index, value) {
                                 var grdData = {
                                     'ID': value.ID, 'POIndDtlId': value.POIndDtlId, 'ItemID': value.ItemID, 'ItemName': value.ItemName, 'TaxRate': value.TaxRate, 'Qty': value.Qty, 'PackSize': value.PackSize, 'Rate': value.Rate, 'MRP': value.MRP,
-                                    'OrderingUnit': value.OrderingUnit, 'Make': value.Make, 'MaterialOfConstruct': value.MaterialOfConstruct, 'IndentRemark': value.IndentRemark, 'SizeOrWeight': value.SizeOrWeight, 'POIndentRemark': value.POIndentRemark,'FreeQty': value.FreeQty, 'Amount': value.Amount,
+                                    'OrderingUnit': value.OrderingUnit, 'Make': value.Make, 'MaterialOfConstruct': value.MaterialOfConstruct, 'IndentRemark': value.IndentRemark, 'RequiredDate': value.RequiredDate,'SizeOrWeight': value.SizeOrWeight, 'POIndentRemark': value.POIndentRemark,'FreeQty': value.FreeQty, 'Amount': value.Amount,
                                     'TaxIds': value.TaxIds, 'Tax': value.Tax, 'TaxAmount': value.TaxAmount, 'TransC': value.TransC, 'OctroiC': value.OctroiC,
                                     'OtherC': value.OtherC, 'LoadUnloadC': value.LoadUnloadC, 'DiscountPer': value.discountper, 'Discount': value.Discount, 'NetAmount': value.NetAmount,
                                     'SupplierName': value.SupplierName, 'DescriptiveName': value.DescriptiveName, 'SGST': value.SGST, 'CGST': value.CGST, 'IGST': value.IGST, 'UGST': value.UGST, 'HSNCode': value.HSNCode, 'SavedQty': value.Qty
                                 }
                                 dataMGrid.push(grdData);
                             });
-                            $pogrid.pqGrid("option", "dataModel.data", dataMGrid);
+                            const details = dataMGrid.map(item => {
+                                item.pq_cellattr = { ItemName: { title: item.ItemName } };
+                                return item;
+                            });
+                            $pogrid.pqGrid("option", "dataModel.data", details);
                             $pogrid.pqGrid("refreshDataAndView");
 
                             var colM = $pogrid.pqGrid("option", "colModel");
@@ -2672,17 +2720,22 @@
                         success: function (data) {
                             var dataMGrid = [];
                             $.each(data.IndentDetails, function (index, value) {
+                                debugger
                                 var grdData = {
                                     'POIndDtlId': value.IndentDetailId, 'ItemID': value.ItemId, 'SupplierId': $("#SupplierId").val(), 'SupplierName': $("#SupplierName").val(),
                                     'ItemName': value.ItemName, 'TaxRate': value.TaxRate, 'PendingQty': value.PendingQty, 'Qty': value.PendingQty, 'Amount': 0, 'TaxAmount': value.TaxAmount, 'PackSize': value.PackSize,
                                     'PackSizeId': value.PackSizeId, 'Rate': value.ItemRate, 'MRP': value.MRP, 'OrderingUnit': value.UnitName, 'Make': value.Make, 'MaterialOfConstruct': value.MaterialOfConstruct, 'IndentRemark': value.IndentRemark,
-                                    'FreeQty': 0, 'OctroiC': 0, 'OtherC': 0, 'LoadUnloadC': 0, 'TransC': 0, 'DiscountPer': value.DiscountPer,
+                                    'RequiredDate': value.ItemsRequiredDate, 'FreeQty': 0, 'OctroiC': 0, 'OtherC': 0, 'LoadUnloadC': 0, 'TransC': 0, 'DiscountPer': value.DiscountPer,
                                     'Discount': value.Discount, 'NetAmount': 0, 'DescriptiveName': value.DescriptiveName,
                                     'SGST': 0, 'CGST': 0, 'IGST': 0, 'UGST': 0, 'HSNCode': value.HSNCode
                                 }
                                 dataMGrid.push(grdData);
                             });
-                            $pogrid.pqGrid("option", "dataModel.data", dataMGrid);
+                            const details = dataMGrid.map(item => {
+                                item.pq_cellattr = { ItemName: { title: item.ItemName } };
+                                return item;
+                            });
+                            $pogrid.pqGrid("option", "dataModel.data", details);
                             try {
                                 $pogrid.pqGrid("refreshDataAndView");
                             } catch (e) {

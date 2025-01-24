@@ -208,18 +208,21 @@
     dataList = { location: 'local', sorting: 'local', paging: 'local', dataType: 'JSON' };
     var setUserCol = [
         { title: "UserID", dataIndx: "UserID", width: '7%' },
-        { title: "User Code", dataIndx: "UserCode", width: '13%' },
+        {
+            title: "User Code", dataIndx: "UserCode", width: '13%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
         {
             title: "Employee Name", dataIndx: "UserName", width: '30%',
-            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
         },
         {
             title: "Department", dataIndx: "Department", width: '25%',
-            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
         },
         {
             title: "Designation", dataIndx: "Designation", width: '25%',
-            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
         },
     ];
     setUserList = {
