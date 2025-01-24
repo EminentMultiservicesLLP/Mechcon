@@ -223,8 +223,10 @@
     <Compile Include="Areas\AdminPanel\AdminPanelAreaRegisteration.cs" />
     <Compile Include="Areas\AdminPanel\Controllers\AdminPanelController.cs" />
     <Compile Include="Areas\AdminPanel\Controllers\EmployeeEnrollmentController.cs" />
+    <Compile Include="Areas\AdminPanel\Controllers\GroupMasterController.cs" />
     <Compile Include="Areas\AdminPanel\Controllers\RoleAccessController.cs" />
     <Compile Include="Areas\AdminPanel\Models\EmployeeEnrollmentModel.cs" />
+    <Compile Include="Areas\AdminPanel\Models\GroupMaster.cs" />
     <Compile Include="Areas\AdminPanel\Models\Menu.cs" />
     <Compile Include="Areas\AdminPanel\Models\RoleAccessModel.cs" />
     <Compile Include="Areas\Asset\AssetAreaRegistration.cs" />
@@ -344,6 +346,7 @@
     <Compile Include="Areas\Masters\Controllers\OtherTermMasterController.cs" />
     <Compile Include="Areas\Masters\Controllers\PackingListController.cs" />
     <Compile Include="Areas\Masters\Controllers\PaymentTermMasterController.cs" />
+    <Compile Include="Areas\Masters\Controllers\ProductMasterController.cs" />
     <Compile Include="Areas\Masters\Controllers\ProjectTCMasterController.cs" />
     <Compile Include="Areas\Masters\Controllers\StoreMasterController.cs" />
     <Compile Include="Areas\Masters\Controllers\VendorMasterController.cs" />
@@ -356,6 +359,7 @@
     <Compile Include="Areas\Masters\Models\InspectionMasterModel.cs" />
     <Compile Include="Areas\Masters\Models\MechconMasterModel.cs" />
     <Compile Include="Areas\Masters\Models\PackingListModel.cs" />
+    <Compile Include="Areas\Masters\Models\ProductMasterModel.cs" />
     <Compile Include="Areas\Masters\Models\ProjectTCMasterModel.cs" />
     <Compile Include="Areas\Masters\Models\VendorMasterModel.cs" />
     <Compile Include="Areas\Miscellaneous\Controllers\EMailTabController.cs" />
@@ -378,6 +382,9 @@
     <Compile Include="Areas\ScanDoc\Models\ScanDocModel.cs" />
     <Compile Include="Areas\ScanDoc\ScanDocAreaRegistration.cs" />
     <Compile Include="Areas\DashBoards\Controllers\DashBoardController.cs" />
+    <Compile Include="Areas\SM_DashBoard\Controllers\SM_DashBoardController.cs" />
+    <Compile Include="Areas\SM_DashBoard\Models\SM_DashBoard.cs" />
+    <Compile Include="Areas\SM_DashBoard\SM_DashBoardAreaRegistration.cs" />
     <Compile Include="Areas\SM_Reports\Controllers\SM_ReportsController.cs" />
     <Compile Include="Areas\SM_Reports\Models\SM_ReportsModel.cs" />
     <Compile Include="Areas\SM_Reports\SM_ReportsAreaRegistration.cs" />
@@ -389,6 +396,14 @@
     <Compile Include="Areas\Store\Models\Store\Reports\MaterialIssueAllBranchEntity.cs" />
     <Compile Include="Areas\Miscellaneous\Models\StoreQuantityLimits.cs" />
     <Compile Include="Areas\Store\StoreAreaRegistration.cs" />
+    <Compile Include="Areas\Ticket\Controllers\TicketActivityController.cs" />
+    <Compile Include="Areas\Ticket\Controllers\TicketController.cs" />
+    <Compile Include="Areas\Ticket\Controllers\TicketRegisterController.cs" />
+    <Compile Include="Areas\Ticket\Controllers\TKT_DashboardController.cs" />
+    <Compile Include="Areas\Ticket\Models\Dashboard.cs" />
+    <Compile Include="Areas\Ticket\Models\TicketActivity.cs" />
+    <Compile Include="Areas\Ticket\Models\TicketRegister.cs" />
+    <Compile Include="Areas\Ticket\TicketAreaRegistration.cs" />
     <Compile Include="Areas\Training\Controllers\BatchMasterController.cs" />
     <Compile Include="Areas\Training\Controllers\BatchMasterModel.cs" />
     <Compile Include="Areas\Training\Controllers\BatchTypeController.cs" />
@@ -484,6 +499,7 @@
     <Compile Include="Areas\Store\Controllers\CreatePurchaseIndentController.cs" />
     <Compile Include="Areas\Miscellaneous\Controllers\DiscrepancyController.cs" />
     <Compile Include="Areas\Store\Controllers\GRNController.cs" />
+    <Compile Include="Controllers\EmailController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MasterController.cs" />
@@ -611,7 +627,22 @@
     <Compile Include="SqlServerTypes\Loader.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Areas\Marketing\Views\Marketing\EnquiryAllocation.cshtml" />
+    <Content Include="Areas\Marketing\Views\Marketing\EnquiryRegister.cshtml" />
+    <Content Include="Areas\Marketing\Views\Marketing\OfferRegister.cshtml" />
+    <Content Include="Areas\Marketing\Views\Marketing\OrderBook.cshtml" />
+    <Content Include="Areas\Marketing\Views\Marketing\ResourceTarget.cshtml" />
+    <Content Include="Areas\Marketing\Views\Marketing\WorkOrder.cshtml" />
+    <Content Include="Areas\Marketing\Views\Web.config" />
     <Content Include="Areas\Miscellaneous\Views\Miscellaneous\EMailTab.cshtml" />
+    <Content Include="Areas\SM_Reports\Views\SM_Reports\EnquiryRegisterReport.cshtml" />
+    <Content Include="Areas\SM_Reports\Views\SM_Reports\LocationWiseSalesRpt.cshtml" />
+    <Content Include="Areas\SM_Reports\Views\SM_Reports\MasterListProjectsRpt.cshtml" />
+    <Content Include="Areas\SM_Reports\Views\SM_Reports\OrderBookRpt.cshtml" />
+    <Content Include="Areas\SM_Reports\Views\SM_Reports\ProductWiseSalesRpt.cshtml" />
+    <Content Include="Areas\SM_Reports\Views\SM_Reports\ResourceWiseMonthlyStatusRpt.cshtml" />
+    <Content Include="Areas\SM_Reports\Views\SM_Reports\SectorWiseSalesRpt.cshtml" />
+    <Content Include="Areas\SM_Reports\Views\Web.config" />
     <Content Include="Content\assets\fonts\fa-solid-900.eot" />
     <Content Include="Content\assets\fonts\fa-solid-900.svg" />
     <Content Include="Content\assets\fonts\fa-solid-900.ttf" />
@@ -1047,21 +1078,15 @@
     <Content Include="Areas\Purchase\Views\Purchase\WOAuthorization.cshtml" />
     <Content Include="Areas\Configuration\Views\Configuration\StockView.cshtml" />
     <Content Include="Areas\AdminPanel\Views\AdminPanel\ChangePassword.cshtml" />
-    <Content Include="Areas\Marketing\Views\Web.config" />
-    <Content Include="Areas\Marketing\Views\Marketing\EnquiryRegister.cshtml" />
-    <Content Include="Areas\Marketing\Views\Marketing\EnquiryAllocation.cshtml" />
-    <Content Include="Areas\Marketing\Views\Marketing\OfferRegister.cshtml" />
-    <Content Include="Areas\Marketing\Views\Marketing\OrderBook.cshtml" />
-    <Content Include="Areas\Marketing\Views\Marketing\WorkOrder.cshtml" />
-    <Content Include="Areas\Marketing\Views\Marketing\ResourceTarget.cshtml" />
-    <Content Include="Areas\SM_Reports\Views\SM_Reports\EnquiryRegisterReport.cshtml" />
-    <Content Include="Areas\SM_Reports\Views\SM_Reports\LocationWiseSalesRpt.cshtml" />
-    <Content Include="Areas\SM_Reports\Views\SM_Reports\MasterListProjectsRpt.cshtml" />
-    <Content Include="Areas\SM_Reports\Views\SM_Reports\OrderBookRpt.cshtml" />
-    <Content Include="Areas\SM_Reports\Views\SM_Reports\ProductWiseSalesRpt.cshtml" />
-    <Content Include="Areas\SM_Reports\Views\SM_Reports\ResourceWiseMonthlyStatusRpt.cshtml" />
-    <Content Include="Areas\SM_Reports\Views\SM_Reports\SectorWiseSalesRpt.cshtml" />
-    <Content Include="Areas\SM_Reports\Views\Web.config" />
+    <Content Include="Areas\AdminPanel\Views\AdminPanel\GroupMaster.cshtml" />
+    <Content Include="Areas\Masters\Views\Masters\ProductMaster.cshtml" />
+    <Content Include="Areas\SM_DashBoard\Views\SM_DashBoard\DashBoard.cshtml" />
+    <Content Include="Areas\SM_DashBoard\Views\Web.config" />
+    <Content Include="Areas\SM_Reports\Views\SM_Reports\WorkOrderReport.cshtml" />
+    <Content Include="Areas\Ticket\Views\Ticket\Dashboard.cshtml" />
+    <Content Include="Areas\Ticket\Views\Ticket\TicketActivity.cshtml" />
+    <Content Include="Areas\Ticket\Views\Ticket\TicketRegister.cshtml" />
+    <Content Include="Areas\Ticket\Views\Web.config" />
     <None Include="Content\DataSet\Billing.xsd" />
     <Content Include="Content\DataSet\Billing.xss">
       <DependentUpon>Billing.xsd</DependentUpon>
@@ -1154,6 +1179,7 @@
     <Content Include="Images\underConstruction.png" />
     <Content Include="Reports\AssetReport.aspx" />
     <Content Include="Reports\ReportViewer.aspx" />
+    <Content Include="Scripts\apexChart\apexchart.js" />
     <Content Include="Scripts\bootstrap-datepicker.min.js" />
     <Content Include="Scripts\bootstrap-datetimepicker.js" />
     <Content Include="Scripts\bootstrap-datetimepicker.min.js" />
@@ -1589,7 +1615,9 @@
     <Folder Include="Areas\Marketing\Views\Shared\" />
     <Folder Include="Areas\Reports\Models\" />
     <Folder Include="Areas\ScanDoc\Views\Shared\" />
+    <Folder Include="Areas\SM_DashBoard\Views\Shared\" />
     <Folder Include="Areas\SM_Reports\Views\Shared\" />
+    <Folder Include="Areas\Ticket\Views\Shared\" />
     <Folder Include="Models\Branch\" />
     <Folder Include="Models\Purchase\" />
     <Folder Include="Views\Master\" />

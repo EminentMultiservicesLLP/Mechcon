@@ -147,6 +147,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Caching\MemoryCaching.cs" />
     <Compile Include="Controllers\AdminPanel\EmployeeEnrollmentController.cs" />
+    <Compile Include="Controllers\AdminPanel\GroupMasterController.cs" />
     <Compile Include="Controllers\AdminPanel\RoleAccessController.cs" />
     <Compile Include="Controllers\Asset\AMCProviderController.cs" />
     <Compile Include="Controllers\Asset\AssetController.cs" />
@@ -190,6 +191,7 @@
     <Compile Include="Controllers\SM\OfferRegisterController.cs" />
     <Compile Include="Controllers\SM\OrderBookController.cs" />
     <Compile Include="Controllers\SM\ResourceTargetController.cs" />
+    <Compile Include="Controllers\SM\SM_DashBoardController.cs" />
     <Compile Include="Controllers\SM\SM_ReportsController.cs" />
     <Compile Include="Controllers\SM\SM_WorkOrderController.cs" />
     <Compile Include="Controllers\Store\AdjustmentVoucherController.cs" />
@@ -222,6 +224,7 @@
     <Compile Include="Controllers\Store\OtherTermsController.cs" />
     <Compile Include="Controllers\Store\PackingListController.cs" />
     <Compile Include="Controllers\Store\PaymentTermsController.cs" />
+    <Compile Include="Controllers\Store\ProductMasterController.cs" />
     <Compile Include="Controllers\Store\ProjectTCController.cs" />
     <Compile Include="Controllers\Store\PurchaseMaterialIndentController.cs" />
     <Compile Include="Controllers\Store\PurchaseReturnController.cs" />
@@ -240,6 +243,9 @@
     <Compile Include="Controllers\Store\UnitsController.cs" />
     <Compile Include="Controllers\Store\ValuesController.cs" />
     <Compile Include="Controllers\Store\VendorMaterialIssueController.cs" />
+    <Compile Include="Controllers\Ticket\TicketActivityController.cs" />
+    <Compile Include="Controllers\Ticket\TicketRegisterController.cs" />
+    <Compile Include="Controllers\Ticket\TKT_DashboardController.cs" />
     <Compile Include="Controllers\Training\BatchController.cs" />
     <Compile Include="Controllers\Training\BatchTypeController.cs" />
     <Compile Include="Controllers\Training\BudgetHeadsController.cs" />

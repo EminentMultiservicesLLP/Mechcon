@@ -77,6 +77,7 @@
   <ItemGroup>
     <Compile Include="Commons.cs" />
     <Compile Include="Entities\AdminPanel\EmployeeEnrollmentEntity.cs" />
+    <Compile Include="Entities\AdminPanel\GroupMaster.cs" />
     <Compile Include="Entities\Asset\AMCProviderEntity.cs" />
     <Compile Include="Entities\Asset\AssetDetailEntity.cs" />
     <Compile Include="Entities\Asset\AssetEntity.cs" />
@@ -141,6 +142,7 @@
     <Compile Include="Entities\Masters\OthersTermsMasterEntities.cs" />
     <Compile Include="Entities\Masters\PackingListEntity.cs" />
     <Compile Include="Entities\Masters\PaymentTermsMasterEntities.cs" />
+    <Compile Include="Entities\Masters\ProductMasterEntities.cs" />
     <Compile Include="Entities\Masters\ProjectTCMasterEntities.cs" />
     <Compile Include="Entities\Masters\StateMasterEntities.cs" />
     <Compile Include="Entities\Masters\StoreItemTypeMappingMasterEntities.cs" />
@@ -170,6 +172,7 @@
     <Compile Include="Entities\SM\OfferRegisterEntities.cs" />
     <Compile Include="Entities\SM\OrderBookEntities.cs" />
     <Compile Include="Entities\SM\ResourceTargetEntities.cs" />
+    <Compile Include="Entities\SM\SM_DashBoardEntities.cs" />
     <Compile Include="Entities\SM\SM_ReportsEntities.cs" />
     <Compile Include="Entities\SM\WorkOrderEntities.cs" />
     <Compile Include="Entities\Store\AdjustmentVoucherDtEntity.cs" />
@@ -210,6 +213,9 @@
     <Compile Include="Entities\Store\SupplierBillPaymentEntity.cs" />
     <Compile Include="Entities\Store\VendorMaterialIssueDtEntity.cs" />
     <Compile Include="Entities\Store\VendorMaterialIssueEntity.cs" />
+    <Compile Include="Entities\Ticket\DashboardEntity.cs" />
+    <Compile Include="Entities\Ticket\TicketActivityEntity.cs" />
+    <Compile Include="Entities\Ticket\TicketRegisterEntity.cs" />
     <Compile Include="Entities\Training\BatchEntity .cs" />
     <Compile Include="Entities\Training\BatchTypeEntity.cs" />
     <Compile Include="Entities\Training\BudgetHeadsEntity.cs" />
@@ -263,13 +269,19 @@
     <Compile Include="QueryCollection\Purchase\PurchaseQueries.cs" />
     <Compile Include="QueryCollection\ScanDoc\ScanDocQueries.cs" />
     <Compile Include="QueryCollection\SM\MarketingQueries.cs" />
+    <Compile Include="QueryCollection\SM\SM_DashboardQueries.cs" />
     <Compile Include="QueryCollection\Store\StoreQuery.cs" />
+    <Compile Include="QueryCollection\Ticket\DashboardQueries.cs" />
+    <Compile Include="QueryCollection\Ticket\TicketActivityQueries.cs" />
+    <Compile Include="QueryCollection\Ticket\TicketRegisterQueries.cs" />
     <Compile Include="QueryCollection\Training\TrainingQueries.cs" />
     <Compile Include="QueryCollection\Transport\TransportQuery.cs" />
     <Compile Include="QueryCollection\UserManagement\UserAccess.cs" />
     <Compile Include="Repositories\AdminPanel\Classes\EmployeeEnrollmentRepository.cs" />
+    <Compile Include="Repositories\AdminPanel\Classes\GroupMasterRepository.cs" />
     <Compile Include="Repositories\AdminPanel\Classes\RoleAccessRepository.cs" />
     <Compile Include="Repositories\AdminPanel\Interfaces\IEmployeeEnrollmentRepository.cs" />
+    <Compile Include="Repositories\AdminPanel\Interfaces\IGroupMasterRepository.cs" />
     <Compile Include="Repositories\AdminPanel\Interfaces\IRoleAccessRepository.cs" />
     <Compile Include="Repositories\Asset\Classes\AMCProviderRepository.cs" />
     <Compile Include="Repositories\Asset\Classes\AssetCommonRepository.cs" />
@@ -382,6 +394,7 @@
     <Compile Include="Repositories\Master\Classes\OthersTermsMasterRepository.cs" />
     <Compile Include="Repositories\Master\Classes\PackingListRepository.cs" />
     <Compile Include="Repositories\Master\Classes\PaymentTermsMasterRepository.cs" />
+    <Compile Include="Repositories\Master\Classes\ProductMasterRepository.cs" />
     <Compile Include="Repositories\Master\Classes\ProjectTCMasterRepository.cs" />
     <Compile Include="Repositories\Master\Classes\StateMasterRepository.cs" />
     <Compile Include="Repositories\Master\Classes\StoreItemTypeMappingRepository.cs" />
@@ -408,6 +421,7 @@
     <Compile Include="Repositories\Master\Interfaces\IOthersTermsMasterRepository.cs" />
     <Compile Include="Repositories\Master\Interfaces\IPackingListRepository.cs" />
     <Compile Include="Repositories\Master\Interfaces\IPaymentTermsMasterRepository.cs" />
+    <Compile Include="Repositories\Master\Interfaces\IProductMasterRepository.cs" />
     <Compile Include="Repositories\Master\Interfaces\IProjectTCMasterRepository.cs" />
     <Compile Include="Repositories\Master\Interfaces\IStateMasterRepository.cs" />
     <Compile Include="Repositories\Master\Interfaces\IStoreItemTypeMappingRepository.cs" />
@@ -458,6 +472,7 @@
     <Compile Include="Repositories\SM\Classes\OfferRegisterRepository.cs" />
     <Compile Include="Repositories\SM\Classes\OrderBookRepository.cs" />
     <Compile Include="Repositories\SM\Classes\ResourceTargetRepository.cs" />
+    <Compile Include="Repositories\SM\Classes\SM_DashboardRepository.cs" />
     <Compile Include="Repositories\SM\Classes\SM_ReportsRepository.cs" />
     <Compile Include="Repositories\SM\Classes\SM_WorkOrderRepository.cs" />
     <Compile Include="Repositories\SM\Interfaces\IEnquiryAllocationRepository.cs" />
@@ -465,6 +480,7 @@
     <Compile Include="Repositories\SM\Interfaces\IOfferRegisterRepository.cs" />
     <Compile Include="Repositories\SM\Interfaces\IOrderBookRepository.cs" />
     <Compile Include="Repositories\SM\Interfaces\IResourceTargetRepository.cs" />
+    <Compile Include="Repositories\SM\Interfaces\ISM_DashboardRepository.cs" />
     <Compile Include="Repositories\SM\Interfaces\ISM_ReportsRepository.cs" />
     <Compile Include="Repositories\SM\Interfaces\ISM_WorkOrderRepository.cs" />
     <Compile Include="Repositories\Store\Classes\AdjustmentVoucherCommonRepository.cs" />
@@ -561,6 +577,12 @@
     <Compile Include="Repositories\Store\Interfaces\IVendorMaterialIssueCommonRepository.cs" />
     <Compile Include="Repositories\Store\Interfaces\IVendorMaterialIssueDtRepository.cs" />
     <Compile Include="Repositories\Store\Interfaces\IVendorMaterialIssueRepository.cs" />
+    <Compile Include="Repositories\Ticket\Classes\DashboardRepository.cs" />
+    <Compile Include="Repositories\Ticket\Classes\TicketActivityRepository.cs" />
+    <Compile Include="Repositories\Ticket\Classes\TicketRegisterRepository.cs" />
+    <Compile Include="Repositories\Ticket\Interfaces\IDashboardRepository.cs" />
+    <Compile Include="Repositories\Ticket\Interfaces\ITicketActivityRepository.cs" />
+    <Compile Include="Repositories\Ticket\Interfaces\ITicketRegisterRepository.cs" />
     <Compile Include="Repositories\Training\Classes\BatchRepository.cs" />
     <Compile Include="Repositories\Training\Classes\BatchTypeRepository.cs" />
     <Compile Include="Repositories\Training\Classes\BudgetHeadsRepository.cs" />
