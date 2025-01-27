@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BISERP.Areas.AdminPanel.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -52,5 +53,11 @@ namespace BISERP.Areas.Ticket.Models
         public string Status { get; set; }
         public string Description { get; set; }
         public bool? Deactive { get; set; }
+    }
+    public class SendMail
+    {
+        public string TicketNo { get; set; }
+        public List<EmployeeEnrollmentModel> SelectedUser { get; set; }
+
     }
 }

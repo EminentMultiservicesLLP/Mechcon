@@ -4,6 +4,7 @@
     .tbl-required {
         color: red;
     }
+
     .table {
         margin: 0;
     }
@@ -175,6 +176,30 @@
                             </table>
 
                         </fieldset>
+                        <div class="row">
+                            <div class="col-sm-12">
+
+                                <div class="panel-group">
+                                    <div class="panel panel-default">
+                                        <div class="panel-groupingBoder">
+                                            <div class="panel-heading">
+                                                <div class="panel-title">
+                                                    <a class="collapsediv" data-toggle="collapse" href="#contentUser" style="color:white">
+                                                        Send Email to
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div id="contentUser">
+                                                <div id="contentUser-tab">
+                                                    <div id="GroupGrid"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -184,7 +209,7 @@
 
 <script>
     var tempTicketID = 0;
-
+    var userData = [];
     function getAllClient() {
         $.ajax({
             type: 'GET',
@@ -263,10 +288,11 @@
             headers: {
                 "__RequestVerificationToken": antiForgeryToken
             },
-            url: "/RoleAccess/GetUsers",
+            url: "/EmployeeEnrollment/GetUserDetails",
             success: function (data) {
-                data.data.forEach(function (status) {
-                    $('#AllocatedTo').append(`<option value="${status.UserId}">${status.UserName}</option>`);
+                userData = data;
+                data.forEach(function (status) {
+                    $('#AllocatedTo').append(`<option value="${status.UserID}">${status.UserName}</option>`);
                 });
             }
         });
@@ -506,8 +532,12 @@
             success: function (response) {
                 if (response.success) {
                     const message = Details.TicketID === 0 ? "Ticket No : " + response.Data.TicketNo + " saved successfully!" : "Ticket updated successfully!";
-                    ShowAlert("success", message);
-                    clearFormData();
+                    if (tempTicketID === 0) {
+                        GetUserByGroups(response.Data.TicketNo, message);
+                    } else {
+                        ShowAlert("success", `${message}`);
+                        clearFormData();
+                    }
                 } else {
                     ShowAlert("error", response.message || "An error occurred while saving the enquiry.");
                 }
@@ -531,6 +561,7 @@
         $("#PriorityID").val('');
         $("#AllocatedTo").val('');
         $("#StatusID").val('');
+        loadGroupGrid(null);
     }
 
     function showModal() {
@@ -542,4 +573,195 @@
         $("#SearchGridModal").modal('hide');
         $("#EnqRegFollowUpGridModal").modal('hide');
     }
+
+    //-----------------------------------GroupGrid (Starts here)-----------------------------------//
+    var GroupGrid_GDM = { location: "local" };
+    var GroupGrid_GCM = [
+        {
+            dataIndx: "State", maxWidth: 25, minWidth: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', resizable: false, sortable: false,
+            editor: false, dataType: 'bool', title: "<input type='checkbox' />",
+            cb: {
+                select: true,
+                all: false,
+                header: true
+            }
+        },
+        {
+            title: "Group Name", dataIndx: "GroupName", width: 300,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Group Desc", dataIndx: "GroupDesc", width: 700,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        }
+    ];
+    var setGroupGrid = {
+        height: 403,
+        width: 'auto',
+        maxWidth: '100%',
+        minWidth: 800,
+        sortable: true,
+        autofill: true,
+        numberCell: { show: false },
+        hoverMode: 'row',
+        showTop: true,
+        showTitle: true,
+        showBottom: true,
+        resizable: true,
+        scrollModel: { autoFit: true },
+        filterModel: { on: true, mode: "AND", header: true },
+        draggable: false,
+        hwrap: false,
+        wrap: false,
+        editable: true,
+        columnBorders: true,
+        menuIcon: true,
+        selectionModel: { type: 'cell', mode: 'multiple', cbHeader: true },
+        colModel: GroupGrid_GCM,
+        dataModel: GroupGrid_GDM,
+        pageModel: { type: "local", rPP: 10 }
+    };
+    var $GroupGrid = $("#GroupGrid").pqGrid(setGroupGrid);
+    function loadGroupGrid(groupID) {
+        var antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            data: { statusID: null },
+            url: "/GroupMaster/GetGroupMaster",
+            dataType: "json",
+
+            beforeSend: function () {
+                $("#GroupGrid").pqGrid("showLoading");
+            },
+
+            complete: function () {
+                $("#GroupGrid").pqGrid("hideLoading");
+            },
+
+            success: function (response) {
+                const grid = $("#GroupGrid").pqGrid();
+
+                if (response.success) {
+                    grid.pqGrid("option", "dataModel.data", response.records);
+                } else {
+                    console.warn("No data found or an issue occurred: ", response.message);
+                    grid.pqGrid("option", "dataModel.data", []);
+                }
+
+                grid.pqGrid("refreshDataAndView");
+                PqGridRefreshClick(grid);
+            },
+
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Error loading Sector Wise Sales Report grid:", textStatus, errorThrown);
+                console.error("Response text:", jqXHR.responseText);
+                $("#GroupGrid").pqGrid("hideLoading");
+            }
+        });
+
+    }
+    loadGroupGrid(null);
+    //-----------------------------------GroupGrid (Ends here)-----------------------------------//
+    function GetUserByGroups(ticketNo, message) {
+        const loadingDivId = "loadingDiv1";
+        $('#ContentViewSection').append(`<div style="position:fixed;" id="${loadingDivId}"><div class="loader1">Loading...</div></div>`);
+
+        const gridData = $("#GroupGrid").pqGrid("option", "dataModel.data");
+        const selectedGroups = gridData.filter(group => group.State === true);
+        const groupIDs = selectedGroups.map(group => group.GroupID).join(",");
+        const allocatedUserId = $("#AllocatedTo").val();
+        const statusID = $("#StatusID").val();
+
+        if (selectedGroups.length > 0) {
+            const antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+
+            $.ajax({
+                headers: {
+                    "__RequestVerificationToken": antiForgeryToken
+                },
+                type: 'GET',
+                url: "/GroupMaster/GetUserByGroups",
+                data: { GroupIDs: groupIDs },
+                dataType: "json",
+                success: function (response) {
+                    if (response.records.length > 0) {
+                        const checkUser = response.records.find(user => user.UserID == allocatedUserId);
+
+                        if (!checkUser && statusID == 2) {
+                            const allocatedUserDetails = userData.find(user => user.UserID == allocatedUserId);
+                            if (allocatedUserDetails) {
+                                response.records.push(allocatedUserDetails);
+                            }
+                        }
+
+                        // Send email
+                        sendEmail(ticketNo, response.records, message, loadingDivId);
+
+                    } else {
+                        showAlertAndCleanup("info", message, loadingDivId);
+                    }
+                },
+                error: function () {
+                    ShowAlert("error", "An error occurred while fetching users.");
+                    $(`#${loadingDivId}`).remove();
+                }
+            });
+        }
+        else if (allocatedUserId && statusID == 2) {
+            const allocatedUserDetails = userData.find(user => user.UserID == allocatedUserId);
+            if (allocatedUserDetails) {
+                sendEmail(ticketNo, [allocatedUserDetails], message, loadingDivId);
+            }
+            else {
+                showAlertAndCleanup("info", message, loadingDivId);
+            }
+        }
+        else {
+            showAlertAndCleanup("info", message, loadingDivId);
+        }
+    }
+
+    // Function to send email
+    function sendEmail(ticketNo, selectedUsers, message, loadingDivId) {
+        const antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: "POST",
+            traditional: true,
+            contentType: 'application/json; charset=utf-8',
+            url: "/TicketRegister/SendMail",
+            data: JSON.stringify({
+                TicketNo: ticketNo,
+                SelectedUser: selectedUsers
+            }),
+            success: function (response) {
+                const mailSaveMsg = response.success
+                    ? `${response.message}`
+                    : `but ${response.message}`;
+                const alertType = response.success ? "success" : "info";
+
+                ShowAlert(alertType, `${message} <br> ${mailSaveMsg}`);
+                clearFormData();
+                $(`#${loadingDivId}`).remove();
+            },
+            error: function () {
+                ShowAlert("error", "An error occurred while sending the email.");
+                $(`#${loadingDivId}`).remove();
+            }
+        });
+    }
+
+    // Function to show alert and cleanup
+    function showAlertAndCleanup(alertType, message, loadingDivId) {
+        ShowAlert(alertType, `${message}`);
+        clearFormData();
+        $(`#${loadingDivId}`).remove();
+    }
+
 </script>

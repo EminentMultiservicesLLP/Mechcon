@@ -387,7 +387,7 @@ namespace BISERP.Areas.Marketing.Controllers
 
                 emailBody = emailBody.Replace("[ProjectCode]", projectCode);
 
-                int emailSendStatus = new EmailController().NewSmtpSettings(emailId, emailBody, subject, "");
+                int emailSendStatus = new EmailController().SmtpSettings(emailId, emailBody, subject, "");
 
                 return emailSendStatus == 1 ? 1 : 0;
             }
@@ -397,7 +397,6 @@ namespace BISERP.Areas.Marketing.Controllers
                 return 0;
             }
         }
-
         #endregion Send Mail
 
     }

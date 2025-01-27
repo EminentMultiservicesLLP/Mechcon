@@ -15,39 +15,7 @@ namespace BISERP.Controllers
 {
     public class EmailController : Controller
     {
-
-        public int SmtpSettings(string toAddress, string body, string subject)
-        {
-            int Result = 0;
-            try
-            {
-                string fromAddress = ConfigurationManager.AppSettings["mailUserID"];
-                string fromPassword = EncryptDecryptDES.DecryptString(ConfigurationManager.AppSettings["mailPassword"]);
-                var smtp = new System.Net.Mail.SmtpClient();
-                {
-                    smtp.Host = ConfigurationManager.AppSettings["smtpHost"];
-                    smtp.Port = Convert.ToInt32(ConfigurationManager.AppSettings["smtpPortNo"]);
-                    smtp.EnableSsl = Convert.ToBoolean(ConfigurationManager.AppSettings["sslSecurityStatus"]);
-                    smtp.DeliveryMethod = System.Net.Mail.SmtpDeliveryMethod.Network;
-                    smtp.Credentials = new NetworkCredential(fromAddress, fromPassword);
-                    smtp.Timeout = 20000;
-                }
-                MailAddress from = new MailAddress(fromAddress);
-                MailAddress to = new MailAddress(toAddress);
-                MailMessage message = new MailMessage(from, to);
-                message.Body = body;
-                message.Subject = subject;
-                smtp.Send(message);
-                Result = 1;
-            }
-            catch (Exception ex)
-            {
-
-                Result = 0;
-            }
-            return Result;
-        }
-        public int NewSmtpSettings(string toAddress, string body, string subject, string MailAttachment = "")
+        public int SmtpSettings(string toAddress, string body, string subject, string MailAttachment = "")
         {
             int Result = 0;
             try

@@ -1,9 +1,12 @@
 ﻿using BISERP.Areas.Ticket.Models;
+using BISERP.Controllers;
 using BISERP.Filters;
 using BISERPCommon;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Formatting;
@@ -171,6 +174,70 @@ namespace BISERP.Areas.Ticket.Controllers
                 return Json(new { success = false, message = "An error occurred while retrieving ticket" }, JsonRequestBehavior.AllowGet);
             }
         }
+
+        #region Send Mail
+        [HttpPost]
+        public ActionResult SendMail(SendMail model)
+        {
+            int mailSentCount = 0;
+
+            foreach (var user in model.SelectedUser)
+            {
+                try
+                {
+                    if (!string.IsNullOrWhiteSpace(user.EmailId))
+                    {
+                        if (SendEmail(model.TicketNo, user.EmailId) == 1)
+                        {
+                            mailSentCount++;
+                        }
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error while sending email to {user.EmailId}: {ex}");
+                }
+            }
+
+            if (mailSentCount > 0)
+            {
+                return Json(new { success = true, message = "Mail Sent Successfully!" });
+            }
+            else
+            {
+                return Json(new { success = false, message = "Failed To Send Mail!" });
+            }
+        }
+
+        public int SendEmail(string TicketNo, string emailId)
+        {
+            try
+            {
+                string subject = "New Ticket";
+
+                string notificationPath = ConfigurationManager.AppSettings["TicketNotification"];
+                string fullPath = Path.Combine(HttpRuntime.AppDomainAppPath, notificationPath);
+
+                string emailBody;
+                using (var reader = new StreamReader(fullPath))
+                {
+                    emailBody = reader.ReadToEnd();
+                }
+
+                emailBody = emailBody.Replace("[TicketNo]", TicketNo);
+
+                int emailSendStatus = new EmailController().SmtpSettings(emailId, emailBody, subject, "");
+
+                return emailSendStatus == 1 ? 1 : 0;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error while preparing or sending email: {ex}");
+                return 0;
+            }
+        }
+        #endregion Send Mail
 
     }
 }

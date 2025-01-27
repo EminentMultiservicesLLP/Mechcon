@@ -2720,7 +2720,6 @@
                         success: function (data) {
                             var dataMGrid = [];
                             $.each(data.IndentDetails, function (index, value) {
-                                debugger
                                 var grdData = {
                                     'POIndDtlId': value.IndentDetailId, 'ItemID': value.ItemId, 'SupplierId': $("#SupplierId").val(), 'SupplierName': $("#SupplierName").val(),
                                     'ItemName': value.ItemName, 'TaxRate': value.TaxRate, 'PendingQty': value.PendingQty, 'Qty': value.PendingQty, 'Amount': 0, 'TaxAmount': value.TaxAmount, 'PackSize': value.PackSize,

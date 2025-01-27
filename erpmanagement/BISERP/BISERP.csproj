@@ -779,6 +779,7 @@
     <Content Include="Content\MessageBox\lobibox.min.css" />
     <Content Include="Content\metisMenu.min.css" />
     <Content Include="Content\NewCSS.css" />
+    <Content Include="Content\Notification.html" />
     <Content Include="Content\PIXEDEN.css" />
     <Content Include="Content\pqgrid\images\horiz-bg.png" />
     <Content Include="Content\pqgrid\images\horiz-slider-bg.png" />
@@ -859,6 +860,7 @@
     <Content Include="Content\sb-admin-2.css" />
     <Content Include="Content\scrolltabs.css" />
     <Content Include="Content\Site.css" />
+    <Content Include="Content\TicketNotification.html" />
     <Content Include="Content\timeout-dialog.css" />
     <Content Include="Content\UploadFile\Purchase\POAuthorization\18804\66366705-12ec-46f2-913d-bd207819b7c2.jpg" />
     <Content Include="Content\UploadFile\Purchase\PurchaseIndentRpt\18804\66366705-12ec-46f2-913d-bd207819b7c2.jpg" />
