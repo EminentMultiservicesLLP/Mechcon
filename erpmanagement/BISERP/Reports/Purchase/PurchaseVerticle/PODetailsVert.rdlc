@@ -827,7 +827,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=(Fields!Discount.Value/(Fields!Rate.Value*Fields!Qty.Value))*100 &amp;" %"</Value>
+                              <Value>=Round((Fields!Discount.Value/(Fields!Rate.Value*Fields!Qty.Value))*100,2) &amp;" %"</Value>
                               <Style>
                                 <FontFamily>Calibri</FontFamily>
                                 <FontSize>8pt</FontSize>
@@ -852,6 +852,7 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
+                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
                 <TablixCell>
@@ -2692,7 +2693,7 @@
         </Style>
       </Tablix>
     </ReportItems>
-    <Height>2.24794in</Height>
+    <Height>1.99794in</Height>
     <Style>
       <Border>
         <Style>None</Style>
@@ -2701,18 +2702,8 @@
   </Body>
   <Width>8.28168in</Width>
   <Page>
-    <PageHeader>
-      <Height>1in</Height>
-      <PrintOnFirstPage>true</PrintOnFirstPage>
-      <PrintOnLastPage>true</PrintOnLastPage>
-      <Style>
-        <Border>
-          <Style>None</Style>
-        </Border>
-      </Style>
-    </PageHeader>
     <PageFooter>
-      <Height>1in</Height>
+      <Height>0.01042in</Height>
       <PrintOnFirstPage>true</PrintOnFirstPage>
       <PrintOnLastPage>true</PrintOnLastPage>
       <Style>
