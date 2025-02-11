@@ -555,5 +555,98 @@ namespace BISERPService.Controllers
                 return InternalServerError(ex);
             }
         }
+
+        [System.Web.Http.Route("getPRDashboardCount/{financialYear}")]
+        [System.Web.Http.Route("getPRDashboardCount/{financialYear}/{StoreID}")]
+        [System.Web.Http.HttpGet]
+        public IHttpActionResult GetPRDashboardCount(string financialYear = null ,int? StoreID = null)
+        {
+            try
+            {
+                var data = _storeMaster.GetPRDashboardCount(financialYear, StoreID);
+
+                if (data == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(data.ToList());
+            }
+            catch (Exception ex)
+            {
+                _loggger.LogError("Error in GetPRDashboardCount of StoreMasterController : parameter :" + Environment.NewLine + ex.StackTrace);
+                return InternalServerError(ex);
+            }
+        }
+
+        [System.Web.Http.Route("getPODashboardCount/{financialYear}")]
+        [System.Web.Http.Route("getPODashboardCount/{financialYear}/{StoreID}")]
+        [System.Web.Http.HttpGet]
+        public IHttpActionResult GetPODashboardCount(string financialYear = null, int? StoreID = null)
+        {
+            try
+            {
+                var data = _storeMaster.GetPODashboardCount(financialYear, StoreID);
+
+                if (data == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(data.ToList());
+            }
+            catch (Exception ex)
+            {
+                _loggger.LogError("Error in GetPODashboardCount of StoreMasterController : parameter :" + Environment.NewLine + ex.StackTrace);
+                return InternalServerError(ex);
+            }
+        }
+
+        [System.Web.Http.Route("getGRNDashboardCount/{financialYear}")]
+        [System.Web.Http.Route("getGRNDashboardCount/{financialYear}/{StoreID}")]
+        [System.Web.Http.HttpGet]
+        public IHttpActionResult GetGRNDashboardCount(string financialYear = null, int? StoreID = null)
+        {
+            try
+            {
+                var data = _storeMaster.GetGRNDashboardCount(financialYear, StoreID);
+
+                if (data == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(data.ToList());
+            }
+            catch (Exception ex)
+            {
+                _loggger.LogError("Error in GetGRNDashboardCount of StoreMasterController : parameter :" + Environment.NewLine + ex.StackTrace);
+                return InternalServerError(ex);
+            }
+        }
+
+        [System.Web.Http.Route("getMRDashboardCount/{financialYear}")]
+        [System.Web.Http.Route("getMRDashboardCount/{financialYear}/{StoreID}")]
+        [System.Web.Http.HttpGet]
+        public IHttpActionResult GetMRDashboardCount(string financialYear = null, int? StoreID = null)
+        {
+            try
+            {
+                var data = _storeMaster.GetMRDashboardCount(financialYear, StoreID);
+
+                if (data == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(data.ToList());
+            }
+            catch (Exception ex)
+            {
+                _loggger.LogError("Error in GetMRDashboardCount of StoreMasterController : parameter :" + Environment.NewLine + ex.StackTrace);
+                return InternalServerError(ex);
+            }
+        }
+
     }
 }

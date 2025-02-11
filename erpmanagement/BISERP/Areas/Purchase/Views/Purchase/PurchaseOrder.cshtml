@@ -305,11 +305,6 @@
         </div>
     </div>
 
-    <div id="popup-dialog-crud" style="display:none;">
-        <form id="crud-form">
-            <div id="Taxgrid"></div>
-        </form>
-    </div>
     <div id="IndentModal" title="Select Request No" style="display: none;">
         <div id="Indentgrid"></div>
     </div>
@@ -339,23 +334,27 @@
             </div>
         </div>*@
 
-
+    <div id="TaxModal" title="Select Tax" style="display: none;">
+        <div id="Taxgrid"></div>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" id="btnUpdateTax">Update</button>
+        <button type="button" class="btn btn-danger closeJQModel" data-dismiss="modal">Close</button>
+    </div>
 
     <div id="ItemModal" title="Select Item" style="display: none;">
         <div id="Itemgrid"></div>
         <button type="button" class="btn btn-primary" data-dismiss="modal" id="btnAddItems">Add</button>
-        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-danger closeJQModel" data-dismiss="modal">Close</button>
     </div>
 
     <div id="DeliveryItemModal" title="Select Delivery Terms" style="display: none;">
         <div id="SearchDeliveryTermgrid"></div>
         <button type="button" class="btn btn-primary" data-dismiss="modal" id="btnAddDeliveryTerm">Add</button>
-        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-danger closeJQModel" data-dismiss="modal">Close</button>
     </div>
     <div id="PaymentItemModal" title="Select Payment Terms" style="display: none;">
         <div id="SearchPaymentTermgrid"></div>
         <button type="button" class="btn btn-primary" data-dismiss="modal" id="btnAddPaymentTerm">Add</button>
-        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-danger closeJQModel" data-dismiss="modal">Close</button>
     </div>
 
     <div id="OtherItemModal" title="Select Freight" style="display: none;">
@@ -439,6 +438,7 @@
     var $Basis; var $SearchBasisTermgrid;
     var tempcategoryId = 0, budgetbalanc = 0, selectedPORowIndx = null;
     var deliveryAddress = "";
+    var rowIndxForTax;
     loadMechconData();
     function loadMechconData() {
         $.ajax({
@@ -530,7 +530,24 @@
             }
         });
     }
-
+    function editRow(rowIndx) {
+        rowIndxForTax = rowIndx;
+        $("#TaxModal").dialog({
+            width: 883,
+            modal: true,
+            open: function (evt, ui) {
+                $.ajax({
+                    type: "GET",
+                    url: "/Master/TaxMaster",
+                    datatype: "Json",
+                    success: function (data) {
+                        $Taxgrid.pqGrid("option", "dataModel.data", data);
+                        $Taxgrid.pqGrid("refreshDataAndView");
+                    }
+                });
+            }
+        });
+    }
     function LoadTaxgrid() {
         $.ajax({
             type: "GET",
@@ -1103,65 +1120,51 @@
 
     }
     //********* PO Grid Functions *********/
-    function editRow(rowIndx) {
-        if (rowIndx != null) {
-            var row = $pogrid.pqGrid('getRowData', { rowIndx: rowIndx });
-            LoadTaxgrid();
+    $('#btnUpdateTax').on('click', function () {
+        ClosePopupWindow("TaxModal");
+        let rowIndx = rowIndxForTax;
+        var getData = $("#Taxgrid").pqGrid("option", "dataModel.data");
+        var selectedItems = jLinq.from(getData).equals("state", true).select();
 
-            $("#popup-dialog-crud").dialog({
-                title: "Edit Record (" + (rowIndx + 1) + ")",
-                buttons: {
-                    Update: function () {
-                        var getData = $("#Taxgrid").pqGrid("option", "dataModel.data");
-                        var selectedItems = jLinq.from(getData).equals("state", true).select();
+        var totalTax = 0;
+        var TaxIds = [];
+        var sgst = 0, cgst = 0, igst = 0, ugst = 0;
 
-                        var totalTax = 0;
-                        var TaxIds = [];
-                        var sgst = 0, cgst = 0, igst = 0, ugst = 0;
+        $.each(selectedItems, function (key, value) {
+            totalTax += parseFloat(value.Tax_percentage);
+            TaxIds.push(value.Taxid);
 
-                        $.each(selectedItems, function (key, value) {
-                            totalTax += parseFloat(value.Tax_percentage);
-                            TaxIds.push(value.Taxid);
+            switch (value.Tax_name) {
+                case 'SGST':
+                    sgst += parseFloat(value.Tax_percentage);
+                    break;
+                case 'CGST':
+                    cgst += parseFloat(value.Tax_percentage);
+                    break;
+                case 'IGST':
+                    igst += parseFloat(value.Tax_percentage);
+                    break;
+                case 'UGST':
+                    ugst += parseFloat(value.Tax_percentage);
+                    break;
+            }
+        });
 
-                            switch (value.Tax_name) {
-                                case 'SGST':
-                                    sgst += parseFloat(value.Tax_percentage);
-                                    break;
-                                case 'CGST':
-                                    cgst += parseFloat(value.Tax_percentage);
-                                    break;
-                                case 'IGST':
-                                    igst += parseFloat(value.Tax_percentage);
-                                    break;
-                                case 'UGST':
-                                    ugst += parseFloat(value.Tax_percentage);
-                                    break;
-                            }
-                        });
+        $("#pogrid").pqGrid('updateRow', {
+            rowIndx: rowIndx,
+            newRow: {
+                'Tax': totalTax,
+                'TaxIds': TaxIds,
+                'SGST': sgst,
+                'CGST': cgst,
+                'IGST': igst,
+                'UGST': ugst
+            }
+        });
 
-                        $("#pogrid").pqGrid('updateRow', {
-                            rowIndx: rowIndx,
-                            newRow: {
-                                'Tax': totalTax,
-                                'TaxIds': TaxIds,
-                                'SGST': sgst,
-                                'CGST': cgst,
-                                'IGST': igst,
-                                'UGST': ugst
-                            }
-                        });
-
-                        $("#pogrid").pqGrid("refreshRow", { rowIndx: rowIndx });
-                        CalculateTotalAmount();
-                        $(this).dialog("close");
-                    },
-                    Close: function () {
-                        $(this).dialog("close");
-                    }
-                }
-            }).dialog("open");
-        }
-    }
+        $("#pogrid").pqGrid("refreshRow", { rowIndx: rowIndx });
+        CalculateTotalAmount();
+    });
 
     $(document).ready(function () {
         $("#BED").keyup(function () {
@@ -1442,20 +1445,7 @@
 
                 { title: "TaxIds", dataIndx: "TaxIds", width: 90, dataType: "string", editable: true, hidden: true },
                 {
-                    title: "", editable: false, minWidth: 30, sortable: false, listeners: [{ click: editRow }], render: function (ui) {
-                        return "<button type='button' class='edit_btn'></button>";
-                    },
-                    postRender: function (ui) {
-                        var rowIndx = ui.rowIndx,
-                            grid = this,
-                            $cell = grid.getCell(ui);
-
-                        //edit button
-                        $cell.find(".edit_btn").button({ icons: { primary: 'ui-icon-pencil' } })
-                            .bind("click", function (evt) {
-                                editRow(rowIndx, grid, true);
-                            });
-                    }
+                    title: "", editable: false, minWidth: 30, sortable: false, align: 'center', render: function (ui) { return '<button type="button" onclick="editRow(' + ui.rowIndx + ');"></button>'; }
                 },
                 { title: "Tax", dataIndx: "Tax", width: 90, dataType: "float", editable: true, hidden: true },
                 {
@@ -1571,7 +1561,7 @@
             open: function () { $(".ui-dialog").position({ of: "#pogrid" }); },
             autoOpen: false
         });
-        
+
     });
     function addRequiredDate(rowIndex) {
         selectedRequiredDate_RowIndx = rowIndex;
@@ -1690,7 +1680,6 @@
                     $("#GrandTotal").val(record.GrandTotal);
                     $("#Details").val(record.Details);
                     $prePOGrandtotal = record.GrandTotal;
-                    console.log(record.Details);
                     $.ajax({
                         type: "GET",
                         url: "/StoreMaster/GetProjectBudget",
@@ -2782,6 +2771,10 @@
         $("#SearchGridModal").modal('hide');
         $("#ReportModal").modal('hide');
     }
+
+    $(".closeJQModel").click(() => {
+        $(".ui-dialog-titlebar-close").click();
+    });
 
     $("#content-tab").tabs({  //Refreshing grids on tab change
         activate: function (event, ui) {

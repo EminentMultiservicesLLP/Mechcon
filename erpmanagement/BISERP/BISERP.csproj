@@ -1089,6 +1089,9 @@
     <Content Include="Areas\Ticket\Views\Ticket\TicketActivity.cshtml" />
     <Content Include="Areas\Ticket\Views\Ticket\TicketRegister.cshtml" />
     <Content Include="Areas\Ticket\Views\Web.config" />
+    <Content Include="Areas\Purchase\Views\Purchase\POStatus.cshtml" />
+    <Content Include="Areas\Purchase\Views\Purchase\PRStatus.cshtml" />
+    <Content Include="Areas\Purchase\Views\Purchase\SupplierDeliveryReport.cshtml" />
     <None Include="Content\DataSet\Billing.xsd" />
     <Content Include="Content\DataSet\Billing.xss">
       <DependentUpon>Billing.xsd</DependentUpon>

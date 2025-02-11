@@ -785,6 +785,89 @@ namespace BISERPBusinessLayer.Repositories.Master.Classes
             }
             return workOrders;
         }
+        public IEnumerable<DashboardCount> GetPRDashboardCount(string financialYear , int? StoreID)
+        {
+            List<DashboardCount> data = null;
+            using (DBHelper dbHelper = new DBHelper())
+            {
+                DBParameterCollection param = new DBParameterCollection();
+                param.Add(new DBParameter("FinancialYear", financialYear, DbType.String));
+                param.Add(new DBParameter("StoreID", StoreID, DbType.String));
 
+                DataTable dt = dbHelper.ExecuteDataTable(MasterQueries.GetPRDashboardCount, param, CommandType.StoredProcedure);
+
+                data = dt.AsEnumerable()
+                            .Select(row => new DashboardCount
+                            {
+                                AuthorizationStatusID = row.Field<int>("AuthorizationStatusID"),
+                                AuthorizationStatus = row.Field<string>("AuthorizationStatus"),
+                                RequestCount = row.Field<int>("RequestCount")
+                            }).ToList();
+            }
+            return data;
+        }
+        public IEnumerable<DashboardCount> GetPODashboardCount(string financialYear, int? StoreID)
+        {
+            List<DashboardCount> data = null;
+            using (DBHelper dbHelper = new DBHelper())
+            {
+                DBParameterCollection param = new DBParameterCollection();
+                param.Add(new DBParameter("FinancialYear", financialYear, DbType.String));
+                param.Add(new DBParameter("StoreID", StoreID, DbType.String));
+
+                DataTable dt = dbHelper.ExecuteDataTable(MasterQueries.GetPODashboardCount, param, CommandType.StoredProcedure);
+
+                data = dt.AsEnumerable()
+                            .Select(row => new DashboardCount
+                            {
+                                AuthorizationStatusID = row.Field<int>("AuthorizationStatusID"),
+                                AuthorizationStatus = row.Field<string>("AuthorizationStatus"),
+                                RequestCount = row.Field<int>("RequestCount")
+                            }).ToList();
+            }
+            return data;
+        }
+        public IEnumerable<DashboardCount> GetGRNDashboardCount(string financialYear, int? StoreID)
+        {
+            List<DashboardCount> data = null;
+            using (DBHelper dbHelper = new DBHelper())
+            {
+                DBParameterCollection param = new DBParameterCollection();
+                param.Add(new DBParameter("FinancialYear", financialYear, DbType.String));
+                param.Add(new DBParameter("StoreID", StoreID, DbType.String));
+
+                DataTable dt = dbHelper.ExecuteDataTable(MasterQueries.GetGRNDashboardCount, param, CommandType.StoredProcedure);
+
+                data = dt.AsEnumerable()
+                            .Select(row => new DashboardCount
+                            {
+                                AuthorizationStatusID = row.Field<int>("AuthorizationStatusID"),
+                                AuthorizationStatus = row.Field<string>("AuthorizationStatus"),
+                                RequestCount = row.Field<int>("RequestCount")
+                            }).ToList();
+            }
+            return data;
+        }
+        public IEnumerable<DashboardCount> GetMRDashboardCount(string financialYear, int? StoreID)
+        {
+            List<DashboardCount> data = null;
+            using (DBHelper dbHelper = new DBHelper())
+            {
+                DBParameterCollection param = new DBParameterCollection();
+                param.Add(new DBParameter("FinancialYear", financialYear, DbType.String));
+                param.Add(new DBParameter("StoreID", StoreID, DbType.String));
+
+                DataTable dt = dbHelper.ExecuteDataTable(MasterQueries.GetMRDashboardCount, param, CommandType.StoredProcedure);
+
+                data = dt.AsEnumerable()
+                            .Select(row => new DashboardCount
+                            {
+                                AuthorizationStatusID = row.Field<int>("AuthorizationStatusID"),
+                                AuthorizationStatus = row.Field<string>("AuthorizationStatus"),
+                                RequestCount = row.Field<int>("RequestCount")
+                            }).ToList();
+            }
+            return data;
+        }
     }
 }

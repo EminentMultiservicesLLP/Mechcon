@@ -171,6 +171,10 @@ namespace BISERPBusinessLayer.QueryCollection.Masters
         public const string GetDeliverablesDetail = "dbsp_GetDeliverablesDetail";
         public const string GetBudgetStatus = "dbsp_GetBudgetStatus";
         public const string GetEnqForProjectMaster = "sp_SM_GetEnqForProjectMaster";
+        public const string GetPRDashboardCount = "sp_INV_GetPRDashboardCount";
+        public const string GetPODashboardCount = "sp_INV_GetPODashboardCount";
+        public const string GetGRNDashboardCount = "sp_INV_GetGRNDashboardCount";
+        public const string GetMRDashboardCount = "sp_INV_GetMRDashboardCount";
 
         public const string SaveClearanceNote = "sp_InsUpd_SaveClearanceNote";
         public const string GetClearanceNote = "dbsp_GetClearanceNote";
