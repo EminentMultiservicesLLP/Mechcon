@@ -15,10 +15,7 @@
             pickerPosition: "bottom-left",
             "todayHighlight": true,
             autoclose: true,
-        }).datepicker("setDate", new Date());
-        //$("#anim").change(function () {
-        //    $(".datepicker").datepicker("option", "showAnim", "fadeIn");
-        //});
+        })
     });
 </script>
 
@@ -35,7 +32,7 @@
                 <div class="panel-heading">
                     <div class="panel-title">
                         <a class="collapsediv" data-toggle="collapse" href="#content" style="color:white">
-                            Purchase Order Tab
+                            All Reports
                         </a>
                     </div>
                 </div>
@@ -61,11 +58,22 @@
                                 <div>
                                     <div class="row" style="margin-left:2px">
                                         <div class="col-sm-3">
-                                            @Html.Label("Select Report")
+                                            @Html.Label("Select Report", null, new { @class = "required" })
                                             @Html.DropDownList("ddlReport", new SelectList(string.Empty, "Value", "Text"), new { @class = "form-control" })
                                         </div>
+                                        <div class="col-sm-3">
+                                            <label class="required" for="financialYear">Financial Year</label>
+                                            <select id="financialYear" name="financialYear" class="form-control">
+                                                <option value="">--Select Financial Year--</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label for="Project" class="required">Project</label>
+                                            <input id="ddlStoreLabel" class="form-control" type="text" placeholder="Search by - Project">
+                                            <input type="hidden" id="ddlStore">
+                                        </div>
                                     </div>
-                                    <div class="row" style="margin-left:2px">
+                                    <div class="row" style="margin-left:2px" hidden>
                                         <div class="col-sm-3">
                                             @Html.Label("From Date")
                                             <input class="form-control datepicker" id='FromDate' />
@@ -74,10 +82,6 @@
                                         <div class="col-sm-3">
                                             @Html.Label("To Date")
                                             <input class="form-control datepicker" id='ToDate' />
-                                        </div>
-                                        <div class="col-sm-3">
-                                            @Html.Label("Project")
-                                            @Html.DropDownList("ddlStore", new SelectList(string.Empty, "Value", "Text"), "", new { @class = "form-control" })
                                         </div>
                                     </div>
                                 </div>
@@ -90,7 +94,6 @@
                                             @Html.Hidden("IndentId")
                                         </div>
                                     </div>
-                                    <br>
                                     <div class="row">
                                         <div class="col-sm-12">
                                             <button type="button" class="btn btn-success" onclick="printReport('MaterialIndentRpt')">Show</button>
@@ -117,7 +120,6 @@
                                         </div>
                                     </div>
 
-                                    <br>
                                     <div class="row">
                                         <div class="col-sm-12">
                                             <button type="button" class="btn btn-success" onclick="printReport('MaterialIssueRpt')">Show</button>
@@ -144,7 +146,7 @@
                                 </div>
 
                                 <!--<div class="tab-pane" id="tab4">
-                                    <div class="row">-->
+                                <div class="row">-->
                                 @*<div class="col-sm-3">
                                         @Html.Label("Store/Supplier")
                                         @Html.TextBox("Supplier", "", new Dictionary<string, object> { { "data-toggle", "modal" }, { "data-target", "#Modal" }, { "class", "form-control" } })
@@ -164,7 +166,7 @@
                                             @Html.Label("Supplier")
                                             @Html.DropDownList("ddlSupplierGRN", new SelectList(string.Empty, "Value", "Text"), "All Supplier", new { @class = "form-control" })
                                         </div>
-                                        <div class="col-sm-3">
+                                        <div class="col-sm-3" hidden>
                                             @Html.Label("GrnNo")
                                             @Html.TextBox("GrnNo", "", new { @class = "form-control", placeholder = "click here.." })
                                             @Html.Hidden("GRNId")
@@ -327,27 +329,90 @@
         loadUserReportCategory(76);
         ClearForm();
     });
-    $("#ddlStore").on('change', function () {
-        if ($("#tab7").css('display') == 'block') {
-            $("#PackingListNo").val() = '';
-        }
-        else {
-            var storeId = $("#ddlStore").val();
-            $.ajax({
-                type: "GET",
-                url: "/Master/GetItemTypeByStoreId",
-                data: { storeId: storeId },
-                datatype: "Json",
-                success: function (data) {
-                    $("#ddlItemtype").html("");
-                    $('#ddlItemtype').append('<option value="' + "0" + '">' + "All" + '</option>');
-                    $.each(data, function (index, value) {
-                        $('#ddlItemtype').append('<option value="' + value.ID + '">' + value.Name + '</option>');
-                    });
+
+    function loadFinancialYear() {
+        const $financialYear = $('#financialYear');
+
+        $.ajax({
+            type: "GET",
+            url: "/ResourceTarget/GetFinancialYear",
+            dataType: "json",
+            success: function (data) {
+                $financialYear.empty();
+
+                if (data.error) {
+                    $financialYear.append('<option value="">--Error loading financial years--</option>');
+                    console.error("Error loading financial years:", data.error);
+                    return;
                 }
-            });
+
+                if (data.length) {
+                    data.forEach(({ FinancialYear }) => {
+                        $financialYear.append(`<option value="${FinancialYear}">${FinancialYear}</option>`);
+                    });
+
+                    const currentFinancialYear = getCurrentFinancialYear();
+                    $financialYear.val(currentFinancialYear);
+
+                    GetStoreFinancialYearWise(currentFinancialYear);
+
+                    const { startDate, endDate } = getFinancialYearDates(currentFinancialYear);
+                    $("#FromDate").datepicker("setDate", startDate);
+                    $("#ToDate").datepicker("setDate", endDate);
+                } else {
+                    $financialYear.append('<option value="">--No financial years available--</option>');
+                }
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                $financialYear.empty();
+                $financialYear.append('<option value="">--Error loading financial years--</option>');
+                console.error("Error loading financial years:", errorThrown);
+            }
+        });
+    }
+
+    loadFinancialYear();
+
+    $("#financialYear").on("change", function () {
+        const financialYear = $(this).val();
+        GetStoreFinancialYearWise(financialYear);
+        const { startDate, endDate } = getFinancialYearDates(financialYear);
+        $("#FromDate").datepicker("setDate", startDate);
+        $("#ToDate").datepicker("setDate", endDate);
+    });
+
+
+    $("#ddlStore").on('change', function () {
+        const storeId = $("#ddlStore").val(); // Store the value once
+
+        if (storeId) { // Checks for null, undefined, or empty string
+            if ($("#tab7").is(':visible')) { // Use `is` for readability
+                $("#PackingListNo").val("");
+            } else {
+                $.ajax({
+                    type: "GET",
+                    url: "/Master/GetItemTypeByStoreId",
+                    data: { storeId },
+                    dataType: "json", // Corrected casing for `dataType`
+                    success: function (data) {
+                        const $ddlItemtype = $("#ddlItemtype");
+                        $ddlItemtype.empty(); // Clear the dropdown
+                        $ddlItemtype.append('<option value="0">All</option>'); // Add default option
+
+                        // Append each item from the response
+                        $.each(data, function (index, value) {
+                            $ddlItemtype.append(`<option value="${value.ID}">${value.Name}</option>`);
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error fetching item types:", error);
+                        alert("An error occurred while loading item types. Please try again.");
+                    }
+                });
+            }
         }
-    })
+    });
+
 
     //$("#FromDate").on('change', function () {
     //    $("#PackingListNo").val() = '';
@@ -376,25 +441,65 @@
                 }
             }
         });
-        //*******Load store****//
-        if (menuId == "80") loadGrnStore();
-        else loadAllStore();
     }
-    function loadAllStore() {
+
+    function GetStoreFinancialYearWise(financialYear) {
+        $("#ddlStoreLabel").autocomplete({
+            source: [],
+            minLength: 0,
+            select: handleStoreSelection,
+            change: handleStoreSelection,
+        });
+
         $.ajax({
             type: "GET",
-            url: "/Master/AllStores",
+            url: "/Master/GetStoreFinancialYearWise",
+            data: { financialYear },
             datatype: "Json",
             async: true,
             success: function (data) {
-                $('#ddlStore').empty();
-                $('#ddlStore').append('<option value="">' + "Select" + '</option>');
-                $.each(data, function (index, value) {
-                    $('#ddlStore').append('<option value="' + value.ID + '">' + value.Name + '</option>');
-                });
+                if (data && data.length > 0) {
+                    const suggestions = data.map(function (store) {
+                        return {
+                            label: store.Name,
+                            value: store.ID
+                        };
+                    });
+                    $("#ddlStoreLabel").autocomplete("option", "source", suggestions);
+                } else {
+                    $("#ddlStoreLabel").autocomplete("option", "source", [{ label: "--No Stores Found--", value: "" }]);
+                }
+            },
+            error: function () {
+                $("#ddlStoreLabel").autocomplete("option", "source", [{ label: "--Error loading stores--", value: "" }]);
             }
         });
     }
+
+    // This function will handle the store selection logic
+    function handleStoreSelection(event, ui) {
+        event.preventDefault();
+        const $storeLabel = $(event.target);
+        const $storeID = $("#ddlStore");
+
+        if (ui.item && ui.item.value) {
+            if (ui.item.label === "--No Stores Found--" || ui.item.label === "--Error loading stores--") {
+                $storeLabel.val('');
+                $storeID.val('').trigger('change');
+            } else {
+                $storeLabel.val(ui.item.label.trim())
+                $storeID.val(ui.item.value).trigger('change');
+            }
+        } else {
+            $storeLabel.val('');
+            $storeID.val('').trigger('change');
+        }
+    }
+    // Trigger the autocomplete dropdown when the user focuses on the input field
+    $("#ddlStoreLabel").on("focus", function () {
+        $(this).autocomplete("search", "");
+    });
+
 
 
     //***********************On Change of Tab *********************************//
@@ -407,6 +512,7 @@
             let tabIndx = ui.newPanel.selector.substring(4);
             tabIndx == "1" ? loadUserReportCategory(76) : tabIndx == "2" ? loadUserReportCategory(77) : tabIndx == "3" ? loadUserReportCategory(78) : tabIndx == "4" ? loadUserReportCategory(82) : tabIndx == "5" ? loadUserReportCategory(80) : tabIndx == "6" ? loadUserReportCategory(81) :
                 tabIndx == "7" ? loadUserReportCategory(192) : tabIndx == "8" ? loadUserReportCategory(83) : tabIndx == "9" ? loadUserReportCategory(170) : loadUserReportCategory(76);
+
         }
     });
     // ********************Clear Form************//
@@ -415,25 +521,9 @@
         $("#ddlStore").closest('div').show();
         $("#iframeReportViewer").attr('src', "");
 
-        $('#FromDate').datepicker().datepicker("setDate", new Date());
-        $('#ToDate').datepicker().datepicker("setDate", new Date());
-        $('#FromDate').prop('disabled', true);
-        $('#ToDate').prop('disabled', true);
-        //ResetDate("FromDate");
-        //ResetDate("ToDate");
-        $("#IndentNo").prop('disabled', true);
-        $('#ddlStore').prop('disabled', true);
-        $("#ItemNameMat").prop('disabled', true);
-        $("#IssueNo").prop('disabled', true);
-        $("#ddlSupplierGRN").prop('disabled', true);
-        $("#GrnNo").prop('disabled', true);
-        $("#GRNItemName").prop('disabled', true);
-        $("#MaxDays").prop('disabled', true);
-        $('#ddlItemtype').prop('disabled', true);
-        $("#ItemNameStock").prop('disabled', true);
-        $('#SupplierNameBill').prop('disabled', true);
-
         $("#ddlStore").val("");
+        $("#ddlStoreLabel").val("");
+        $("#financialYear").val(getCurrentFinancialYear()).trigger("change");
         $("#IndentId").val("");
         $("#IndentNo").val("");
         $("#IssueId").val("");
@@ -449,7 +539,28 @@
         $("#ItemIdStock").val("");
         $("#SupplierNameBill").val("");
         $("#SupplierIDBill").val("");
+        $("#PackingListNo").val("");
 
+        $("#ddlStore").closest('div').hide();
+        $("#ddlStoreLabel").closest('div').hide();
+        $("#PurchaseIndentNo").closest('div').hide();
+        $("#PONo").closest('div').hide();
+        $("#PackingListNo").closest('div').hide();
+        $("#IndentId").closest('div').hide();
+        $("#IndentNo").closest('div').hide();
+        $("#IssueId").closest('div').hide();
+        $("#IssueNo").closest('div').hide();
+        $("#ItemNameMat").closest('div').hide();
+        $("#ItemIdMat").closest('div').hide();
+        $("#ddlSupplierGRN").closest('div').hide();
+        $("#GrnNo").closest('div').hide();
+        $("#GRNId").closest('div').hide();
+        $("#GRNItemName").closest('div').hide();
+        $('#ddlItemtype').closest('div').hide();
+        $("#ItemNameStock").closest('div').hide();
+        $("#ItemIdStock").closest('div').hide();
+        $("#SupplierNameBill").closest('div').hide();
+        $("#SupplierIDBill").closest('div').hide();
     }
 
     function ResetForm() {
@@ -463,195 +574,122 @@
         ClearForm();
 
         if ($("#ddlReport").val() == "101") {
-            $("#IndentNo").prop('disabled', false);
-            //$('#FromDate').data("DateTimePicker").enable();
-            //$('#ToDate').data("DateTimePicker").enable();
-            $('#FromDate').prop('disabled', false);
-            $('#ToDate').prop('disabled', false);
-            $('#ddlStore').prop('disabled', false);
+            $('#ddlStoreLabel').closest('div').show();
+            $('#IndentNo').closest('div').show();
         }
         else if ($("#ddlReport").val() == "102") {
-            //$('#FromDate').data("DateTimePicker").enable();
-            //$('#ToDate').data("DateTimePicker").enable();
-            $('#FromDate').prop('disabled', false);
-            $('#ToDate').prop('disabled', false);
-            $('#ddlStore').prop('disabled', false);
+            $('#ddlStoreLabel').closest('div').show();
         }
         else if ($("#ddlReport").val() == "103") {
-            //$('#FromDate').data("DateTimePicker").enable();
-            //$('#ToDate').data("DateTimePicker").enable();
             $('#FromDate').prop('disabled', false);
             $('#ToDate').prop('disabled', false);
             $('#ddlStore').prop('disabled', false);
+            $('#ddlStoreLabel').prop('disabled', false);
         }
         else if ($("#ddlReport").val() == "111") {
-            //$('#FromDate').data("DateTimePicker").enable();
-            //$('#ToDate').data("DateTimePicker").enable();
-            $('#FromDate').prop('disabled', false);
-            $('#ToDate').prop('disabled', false);
-            $("#IssueNo").prop('disabled', false);
-            $("#ddlStore").prop('disabled', false);
-            $("#ItemNameMat").prop('disabled', true);
-            /* $('input:radio[name="Options"][value="MaterialIssue"]').prop('checked', true);*/
+            $('#ddlStoreLabel').closest('div').show();
+            $('#IssueNo').closest('div').show();
+
         }
         else if ($("#ddlReport").val() == "112") {
-            $("input[type=radio]").attr('disabled', true);
-            //$('#FromDate').data("DateTimePicker").enable();
-            //$('#ToDate').data("DateTimePicker").enable();
-            $('#FromDate').prop('disabled', false);
-            $('#ToDate').prop('disabled', false);
-            $("#IssueNo").prop('disabled', true);
-            $("#ddlStore").prop('disabled', false);
-            $("#ItemNameMat").prop('disabled', true);
-            //if ($("[name='AuthCancel']:checked").val() == "FromStore" || $("[name='AuthCancel']:checked").val() == "ToStore") {
-            //    $("#ddlStore").prop('disabled', false);
-            //}
+            $('#ddlStoreLabel').closest('div').show();
         }
         else if ($("#ddlReport").val() == "113") {
             $("#ItemNameMat").prop('disabled', true);
         }
         else if ($("#ddlReport").val() == "114") {
-            /*$('input:radio[name="Options"][value="Item"]').prop('checked', true);*/
-            $("#ItemNameMat").prop('disabled', false);
-            //$('#FromDate').data("DateTimePicker").enable();
-            //$('#ToDate').data("DateTimePicker").enable();
-            $('#FromDate').prop('disabled', false);
-            $('#ToDate').prop('disabled', false);
+            $('#ItemNameMat').closest('div').show();
         }
         else if ($("#ddlReport").val() == "115") {
             /*$("input[type=radio]").attr('disabled', true);*/
             $("#ItemNameMat").prop('disabled', true);
             $("#IssueNo").prop('disabled', true);
-            //$('#FromDate').data("DateTimePicker").enable();
-            //$('#ToDate').data("DateTimePicker").enable();
             $('#FromDate').prop('disabled', false);
             $('#ToDate').prop('disabled', false);
             $("#ddlStore").prop('disabled', false);
+            $('#ddlStoreLabel').prop('disabled', false);
         }
         else if ($("#ddlReport").val() == "206") {
             /* $("input[type=radio]").attr('disabled', true);*/
             $("#ItemNameMat").prop('disabled', true);
             $("#IssueNo").prop('disabled', true);
-            //$('#FromDate').data("DateTimePicker").enable();
-            //$('#ToDate').data("DateTimePicker").enable();
             $('#FromDate').prop('disabled', false);
             $('#ToDate').prop('disabled', false);
             $("#ddlStore").prop('disabled', true);
+            $('#ddlStoreLabel').prop('disabled', false);
         }
         else if ($("#ddlReport").val() == "121") {
-            //$('#FromDate').data("DateTimePicker").enable();
-            //$('#ToDate').data("DateTimePicker").enable();
-            $('#FromDate').prop('disabled', false);
-            $('#ToDate').prop('disabled', false);
-            $('#ddlStore').prop('disabled', false);
+            $('#ddlStoreLabel').closest('div').show();
         }
         else if ($("#ddlReport").val() == "141") {
-            //$('#FromDate').data("DateTimePicker").enable();
-            //$('#ToDate').data("DateTimePicker").enable();
-            $('#FromDate').prop('disabled', false);
-            $('#ToDate').prop('disabled', false);
-            $("#ddlStore").prop('disabled', false);
-            $("#ddlSupplierGRN").prop('disabled', false);
+            $('#ddlStoreLabel').closest('div').show();
+            $('#ddlSupplierGRN').closest('div').show();
+
         }
         else if ($("#ddlReport").val() == "142") {
-            //$('#FromDate').data("DateTimePicker").enable();
-            //$('#ToDate').data("DateTimePicker").enable();
-            $('#FromDate').prop('disabled', false);
-            $('#ToDate').prop('disabled', false);
-            $("#ddlStore").prop('disabled', false);
-            $("#ddlSupplierGRN").prop('disabled', false);
+            $('#ddlStoreLabel').closest('div').show();
+            $('#ddlSupplierGRN').closest('div').show();
         }
         else if ($("#ddlReport").val() == "143") {
-            //$('#FromDate').data("DateTimePicker").enable();
-            //$('#ToDate').data("DateTimePicker").enable();
             $('#FromDate').prop('disabled', false);
             $('#ToDate').prop('disabled', false);
         }
         else if ($("#ddlReport").val() == "144") {
-            //$('#FromDate').data("DateTimePicker").enable();
-            //$('#ToDate').data("DateTimePicker").enable();
-            $('#FromDate').prop('disabled', false);
-            $('#ToDate').prop('disabled', false);
-            $("#GRNItemName").prop('disabled', false);
+            $('#GRNItemName').closest('div').show();
         }
         else if ($("#ddlReport").val() == "232") {
-            $("#ddlStore").prop('disabled', false);
+            $('#ddlStoreLabel').closest('div').show();
         }
         else if ($("#ddlReport").val() == "151") {
-            //$('#FromDate').data("DateTimePicker").enable();
-            //$('#ToDate').data("DateTimePicker").enable();
-            $('#FromDate').prop('disabled', false);
-            $('#ToDate').prop('disabled', false);
-            $("#ddlStore").prop('disabled', false);
+            $('#ddlStoreLabel').closest('div').show();
         }
         else if ($("#ddlReport").val() == "240") {
-            //$('#FromDate').data("DateTimePicker").enable();
-            //$('#ToDate').data("DateTimePicker").enable();
-            $('#FromDate').prop('disabled', false);
-            $('#ToDate').prop('disabled', false);
-            $("#ddlStore").prop('disabled', false);
+            $('#ddlStoreLabel').closest('div').show();
+            $('#PackingListNo').closest('div').show();
         }
         else if ($("#ddlReport").val() == "161") {
-            $('#ddlStore').prop('disabled', false);
-            $('#ddlItemtype').prop('disabled', false);
+            $('#ddlStoreLabel').closest('div').show();
+            $('#ddlItemtype').closest('div').show();
         }
         else if ($("#ddlReport").val() == "162") {
-            $('#ddlStore').prop('disabled', false);
-            $('#ddlItemtype').prop('disabled', false);
+            $('#ddlStoreLabel').closest('div').show();
+            $('#ddlItemtype').closest('div').show();
         }
         else if ($("#ddlReport").val() == "163") {
-            //$('#FromDate').data("DateTimePicker").enable();
-            //$('#ToDate').data("DateTimePicker").enable();
             $('#FromDate').prop('disabled', false);
             $('#ToDate').prop('disabled', false);
             $('#ddlStore').prop('disabled', false);
+            $('#ddlStoreLabel').prop('disabled', false);
             $('#ddlItemtype').prop('disabled', false);
             $("#ItemNameStock").prop('disabled', false);
         }
         else if ($("#ddlReport").val() == "164") {
             $('#ToDate').data("DateTimePicker").enable();
             $('#ddlStore').prop('disabled', false);
+            $('#ddlStoreLabel').prop('disabled', false);
             $('#ddlItemtype').prop('disabled', false);
         }
         else if ($("#ddlReport").val() == "165") {
-            //$('#FromDate').data("DateTimePicker").enable();
-            //$('#ToDate').data("DateTimePicker").enable();
-            $('#FromDate').prop('disabled', false);
-            $('#ToDate').prop('disabled', false);
-            $('#ddlStore').prop('disabled', false);
-            $('#ddlItemtype').prop('disabled', false);
+            $('#ddlStoreLabel').closest('div').show();
+            $('#ddlItemtype').closest('div').show();
         }
         else if ($("#ddlReport").val() == "166") {
-            /*$('#FromDate').data("DateTimePicker").enable();*/
             $('#FromDate').prop('disabled', false);
             $("#MaxDays").prop('disabled', false);
         }
         else if ($("#ddlReport").val() == "185") {
-            //$('#FromDate').data("DateTimePicker").enable();
-            //$('#ToDate').data("DateTimePicker").enable();
             $('#FromDate').prop('disabled', false);
             $('#ToDate').prop('disabled', false);
             $('#SupplierNameBill').prop('disabled', false);
         }
         else if ($("#ddlReport").val() == "228") {
-            $("#ddlStore").closest('div').hide();
-            $('#PurchaseIndentNo').closest('div').hide()
-            $('#PurchaseIndentNo').prop('disabled', true);
-            $('#PONo').prop('disabled', false);
             $('#PONo').closest('div').show();
         }
         else if ($("#ddlReport").val() == "237") {
-            $("#ddlStore").closest('div').hide();
-            $('#PurchaseIndentNo').prop('disabled', false);
             $('#PurchaseIndentNo').closest('div').show();
-            $('#PONo').prop('disabled', true);
-            $('#PONo').closest('div').hide();
         }
         else if ($("#ddlReport").val() == "152") {
-            $('#FromDate').prop('disabled', false);
-            $('#ToDate').prop('disabled', false);
-            $('#ddlStore').prop('disabled', false);
-
+            $('#ddlStoreLabel').closest('div').show();
         }
     });
 
@@ -660,7 +698,7 @@
         if ($("#ddlReport").val() == "" || $("#ddlReport").val() == 0) {
             ShowAlert("error", "Please Select Report");
             return;
-        }       
+        }
         else if (string === "MaterialIndentRpt") {
             if ($("#ddlReport").val() == "101") {
                 if ($("#IndentId").val() == "") {
@@ -760,13 +798,13 @@
 
         }
         else if (string === 'PurchaseRpt') {
-            if ($("#ddlReport").val() == "228") {
-                if ($("#PurchaseRequestNo").val() == "") {
+            if ($("#ddlReport").val() == "237") {
+                if ($("#PurchaseIndentNo").val() == "") {
                     ShowAlert("error", "Please Select Purchase Request No.");
                     return;
                 }
             }
-            else if ($("#ddlReport").val() == "237") {
+            if ($("#ddlReport").val() == "228") {
                 if ($("#PONo").val() == "") {
                     ShowAlert("error", "Please Select Purchase Order No.");
                     return;
@@ -781,7 +819,6 @@
             url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&indentid=" + $("#IndentId").val();
         }
         else if ($("#ddlReport").val() == "102" || $("#ddlReport").val() == "103") {
-            // console.log($("#ddlStore").val());
             url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&fromdate=" + $("#FromDate").val() + "&todate=" + $("#ToDate").val() + "&storeid=" + $("#ddlStore").val();
         }
         else if ($("#ddlReport").val() == "111") {
@@ -842,7 +879,6 @@
             url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&fromdate=" + $("#FromDate").val() + "&todate=" + $("#ToDate").val() + "&storeid=" + storeid;
         }
         else if ($("#ddlReport").val() == "121") {
-            console.log($("#ddlStore").val());
             url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&fromdate=" + $("#FromDate").val() + "&todate=" + $("#ToDate").val() + "&storeid=" + $("#ddlStore").val();
         }
         else if ($("#ddlReport").val() == "141") {
@@ -962,7 +998,6 @@
         else {
             url = "";
         }
-        //console.log(url);
         var myframe = document.getElementById("iframeReportViewer");
         if (myframe != null) {
             if (myframe.src) {
@@ -1064,6 +1099,10 @@
     });
     //*************Material Issue Rpt ***/////////
     $('#IssueNo').on('click', function () {
+        if ($("#ddlStore").val() == "" || $("#ddlStore").val() == "Select Store" || $("#ddlStore").val() == undefined) {
+            ShowAlert("error", "Please Select Project ");
+            return;
+        }
         LoadIssueGrid();
     });
     function LoadIssueGrid() {
@@ -1219,16 +1258,33 @@
 
     /*************GRN Rpt ****************************************************/
     function loadGrnStore() {
+        $("#ddlStoreLabel").autocomplete({
+            source: [],
+            minLength: 0,
+            select: handleStoreSelection,
+            change: handleStoreSelection,
+        });
+
         $.ajax({
             type: "GET",
-            url: "/Master/MainStores",
+            url: "/Master/GetStoreFinancialYearWise",
             datatype: "Json",
             async: true,
             success: function (data) {
-                $('#ddlStore').empty();
-                $.each(data, function (index, value) {
-                    $('#ddlStore').append('<option value="' + value.ID + '">' + value.Name + '</option>');
-                });
+                if (data && data.length > 0) {
+                    const suggestions = data.map(function (store) {
+                        return {
+                            label: store.Name,
+                            value: store.ID
+                        };
+                    });
+                    $("#ddlStoreLabel").autocomplete("option", "source", suggestions);
+                } else {
+                    $("#ddlStoreLabel").autocomplete("option", "source", [{ label: "--No Stores Found--", value: "" }]);
+                }
+            },
+            error: function () {
+                $("#ddlStoreLabel").autocomplete("option", "source", [{ label: "--Error loading stores--", value: "" }]);
             }
         });
     }

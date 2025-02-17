@@ -84,6 +84,22 @@ namespace BISERPService.Controllers
             return storemasters;
         }
 
+        [System.Web.Http.Route("getStoreFinancialYearWise/{FinancialYear}")]
+        [System.Web.Http.AcceptVerbs("GET", "POST")]
+        public IEnumerable<StoreMasterEntities> GetStoreFinancialYearWise(string FinancialYear)
+        {
+            List<StoreMasterEntities> storemasters = new List<StoreMasterEntities>();
+            TryCatch.Run(() =>
+            {
+                storemasters = _storeMaster.GetStoreFinancialYearWise(FinancialYear).ToList();
+            }).IfNotNull(ex =>
+            {
+                _loggger.LogError("Error in GetStoreFinancialYearWise method of StoreMasterController :" + Environment.NewLine + ex.StackTrace);
+                return InternalServerError();
+            });
+            return storemasters;
+        }
+
         [System.Web.Http.Route("getindenttostores/{StoreId}/{UserId}")]
         [System.Web.Http.AcceptVerbs("GET", "POST")]
         public IEnumerable<StoreMasterEntities> GetIndentToStores(int StoreId, int UserId)
@@ -379,7 +395,6 @@ namespace BISERPService.Controllers
                 return BadRequest();
         }
 
-
         [System.Web.Http.Route("GetMasterCode/{masterId}")]
         [System.Web.Http.AcceptVerbs("GET", "POST")]
         public IHttpActionResult GetMasterCode(int masterId)
@@ -401,7 +416,6 @@ namespace BISERPService.Controllers
             else
                 return BadRequest();
         }
-
 
         [System.Web.Http.Route("getStorewiseProjectTC/{id}")]
         [System.Web.Http.AcceptVerbs("GET", "POST")]
@@ -512,7 +526,6 @@ namespace BISERPService.Controllers
             return InternalServerError();
         }
 
-
         [System.Web.Http.Route("getBudgetStatus")]
         [System.Web.Http.AcceptVerbs("GET", "POST")]
         public IHttpActionResult GetBudgetStatus()
@@ -559,7 +572,7 @@ namespace BISERPService.Controllers
         [System.Web.Http.Route("getPRDashboardCount/{financialYear}")]
         [System.Web.Http.Route("getPRDashboardCount/{financialYear}/{StoreID}")]
         [System.Web.Http.HttpGet]
-        public IHttpActionResult GetPRDashboardCount(string financialYear = null ,int? StoreID = null)
+        public IHttpActionResult GetPRDashboardCount(string financialYear = null, int? StoreID = null)
         {
             try
             {

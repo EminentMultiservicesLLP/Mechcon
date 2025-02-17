@@ -2061,3 +2061,40 @@ function groupBy(array, key) {
         return acc;
     }, {});
 }
+
+function getCurrentFinancialYear() {
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth() + 1; // Months are 0-based
+    const currentYear = currentDate.getFullYear();
+
+    let startYear, endYear;
+
+    // Financial year in most countries starts in April
+    if (currentMonth >= 4) {
+        startYear = currentYear;
+        endYear = currentYear + 1;
+    } else {
+        startYear = currentYear - 1;
+        endYear = currentYear;
+    }
+
+    return `${startYear}-${endYear.toString().slice(-2)}`;
+}
+
+function getFinancialYearDates(financialYear) {
+    if (!/^\d{4}-\d{2}$/.test(financialYear)) {
+        throw new Error('Invalid format. Expected "YYYY-YY".');
+    }
+
+    const [startYear, endYearSuffix] = financialYear.split('-').map(Number);
+    const endYear = startYear + 1;
+
+    if (parseInt(endYearSuffix, 10) !== endYear % 100) {
+        throw new Error('Invalid financial year range.');
+    }
+
+    return {
+        startDate: new Date(startYear, 3, 1),  // April 1st
+        endDate: new Date(endYear, 2, 31)     // March 31st
+    };
+}

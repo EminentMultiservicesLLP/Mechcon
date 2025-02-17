@@ -13,6 +13,7 @@ namespace BISERPBusinessLayer.Repositories.Master.Interfaces
         StoreMasterEntities GetStoreById(int Id);
         IEnumerable<StoreMasterEntities> GetAllStores();
         IEnumerable<StoreMasterEntities> GetAllMainStores();
+        IEnumerable<StoreMasterEntities> GetStoreFinancialYearWise(string FinancialYear);
         IEnumerable<StoreMasterEntities> GetUnitStores();
         IEnumerable<StoreMasterEntities> GetSubStores();
         IEnumerable<StoreMasterEntities> GetIndentToStores(int StoreId, int UserId);

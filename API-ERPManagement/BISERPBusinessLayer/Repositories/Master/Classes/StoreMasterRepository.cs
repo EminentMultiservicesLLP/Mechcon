@@ -126,6 +126,24 @@ namespace BISERPBusinessLayer.Repositories.Master.Classes
             }
             return stores;
         }
+        public IEnumerable<StoreMasterEntities> GetStoreFinancialYearWise(string FinancialYear)
+        {
+            List<StoreMasterEntities> stores = null;
+            using (DBHelper dbHelper = new DBHelper())
+            {
+                DBParameterCollection paramCollection = new DBParameterCollection();
+                paramCollection.Add(new DBParameter("FinancialYear", FinancialYear, DbType.String));
+                DataTable dtStores = dbHelper.ExecuteDataTable(MasterQueries.GetStoreFinancialYearWise, paramCollection, CommandType.StoredProcedure);
+                stores = dtStores.AsEnumerable()
+                            .Select(row => new StoreMasterEntities
+                            {
+                                ID = row.Field<int>("ID"),
+                                Code = row.Field<string>("Code"),
+                                Name = row.Field<string>("Name")
+                            }).ToList();
+            }
+            return stores;
+        }
         public IEnumerable<StoreMasterEntities> GetUnitStores()
         {
             List<StoreMasterEntities> stores = null;

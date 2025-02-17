@@ -76,6 +76,7 @@ namespace BISERPBusinessLayer.QueryCollection.Masters
         public const string GetAllMainStore = "sp_INV_MST_GetTypeWiseStores";
         public const string GetUnitStore = "sp_INV_MST_GetTypeWiseStores";
         public const string GetTypeWiseStores = "sp_INV_MST_GetTypeWiseStores";
+        public const string GetStoreFinancialYearWise = "sp_INV_GetStoreFinancialYearWise"; 
         public const string GetIndentToStores = "sp_GetIndentToStores";
         public const string GetStoreMasterById = "sp_INV_MST_GetStoreId";
         public const string UpdateStoreMasterById = "sp_InsUpd_StoreMaster";
