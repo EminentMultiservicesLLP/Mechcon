@@ -1,0 +1,186 @@
+﻿@model BISERP.Areas.Masters.Models.ScopeOfSupplyMasterModel
+
+@{
+    ViewBag.Title = "ScopeOfSupply  Master";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <h5 class="page-header orangeDottedBottomBorder"> ScopeOfSupply Master</h5>
+    <fieldset>
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-groupingBoder">
+                    <div class="panel-heading">
+                        <div class="panel-title">
+                            <label id="EntryHeader"> ScopeOfSupply Entry Form</label>
+                        </div>
+                    </div>
+                    <div id="collapse2" class="panel-collapse collapse in" aria-expanded="true">
+                        <div class="panel-body">
+                            <div class="fill">
+                                <div class="submit-row">
+                                    <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                                    <button type="button" class="btn btn-primary" id="btnReset">Reset</button>
+                                    <button type="button" class="btn btn-info" id="btnSearch">Find</button>
+                                </div>
+                                <fieldset class="fieldsetCustom">
+                                    <legend class="legendCustom">Create ScopeOfSupply</legend>
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            @Html.LabelFor(model => model.ScopeOfSupplyName, new { @class = "required" })
+                                            @Html.TextBoxFor(model => model.ScopeOfSupplyName, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.ScopeOfSupplyName)
+                                        </div>
+                                        <div class="col-sm-6">
+                                            @Html.LabelFor(model => model.ScopeOfSupplyDesc, new { @class = "required" })
+                                            @Html.TextAreaFor(model => model.ScopeOfSupplyDesc, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.ScopeOfSupplyDesc)
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <br />
+                                            @Html.CheckBoxFor(model => model.Deactive)
+                                            @Html.LabelFor(model => model.Deactive)
+                                            @Html.ValidationMessageFor(model => model.Deactive)
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+
+    <div id="SearchGridModal" class="modal fade" role="dialog" data-backdrop="false">
+        <div class="modal-dialog find-search-grid-modal">
+            <div class="modal-content gridmodal-content">
+                <div class="modal-header gridmodal-header">
+                    <button type="button" class="close" onclick="closeModal()">&times;</button>
+                    <h4 class="modal-title">ScopeOfSupply Details</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="fill">
+                        <div id="grid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<script type="text/javascript">
+    var grid;
+    var tempScopeOfSupplyID = 0;
+
+    function loadGridData() {
+        grid = $("#grid").jsGrid({
+            width: "100%",
+            height: "500px",
+            filtering: true, //will display top 1st row as filter
+            selecting: true,
+            inserting: false, // false will not allow inserting new entry
+            editing: false,// false will not allow exisiting data entry
+            sorting: true,
+            autoload: false, // this statement require to load data using ajax call
+            paging: true,
+            pageSize: 20,
+
+            controller: {
+                loadData: function (filter) {
+                    var d = $.Deferred();
+                    $.ajax({
+                        type: 'GET',
+                        url: "/ScopeOfSupplyMaster/AllScopeOfSupply",
+                        dataType: "json",
+                        data: { searchScopeOfSupply: filter.ScopeOfSupplyDesc, searchName: filter.ScopeOfSupplyName },
+                        success: function (data) {
+                            if (data.success)
+                                d.resolve(data.records);
+                            else {
+                                ShowAlert("error", data.Messsage);
+                                $(".jsgrid-load-panel").hide();
+                            }
+                        },
+                        error: function (e) {
+                            ShowAlert("error", "No Record Found");
+                        }
+                    });
+                    return d.promise();
+                }
+            },
+            fields: [
+                { name: "ScopeOfSupplyID", visible: false, width: 0 },
+                { name: "ScopeOfSupplyName", title: "Name", type: "text", validate: { validator: "required", message: "name is missing! Please enter the name " }, width: 20 },
+                { name: "ScopeOfSupplyDesc", title: "Description", type: "textarea", validate: { validator: "required", message: "Description is missing! Please enter the Description " } },
+                { name: "Deactive", title: "Deactive", type: "checkbox", filtering: false, width: 10, inserting: false },
+            ],
+            rowClick: function (args) {
+                var data = args.item;
+                tempScopeOfSupplyID = data.ScopeOfSupplyID;
+                $("#ScopeOfSupplyName").val(data.ScopeOfSupplyName);
+                $("#ScopeOfSupplyDesc").val(data.ScopeOfSupplyDesc);
+                $("#Deactive").prop('checked', data.Deactive);
+                $("#SearchGridModal").modal('hide');
+            }
+        });
+    }
+
+    $("#btnSave").on('click', function () {
+        if ($("#ScopeOfSupplyName").val() == "") {
+            ShowAlert("error", "Name is missing! Please enter the name");
+            return;
+        }
+        if ($("#ScopeOfSupplyDesc").val() == "") {
+            ShowAlert("error", "Description is missing! Please enter the Description");
+            return;
+        }
+        var item = JSON.stringify({ //Passing data
+            ScopeOfSupplyID: tempScopeOfSupplyID, //$("#ScopeOfSupplyID").val(), //Reading text box values using Jquery
+            ScopeOfSupplyName: $("#ScopeOfSupplyName").val(),
+            ScopeOfSupplyDesc: $("#ScopeOfSupplyDesc").val(),
+            Deactive: $("#Deactive").prop('checked')
+        });
+
+        $.ajax(
+            {
+                type: "POST", //HTTP POST Method
+                traditional: true,
+                contentType: 'application/json; charset=utf-8',
+                url: '/ScopeOfSupplyMaster/SaveScopeOfSupply', // Controller/View
+                data: item,
+                success: function (msg) {
+                    if (msg.success) {
+                        tempScopeOfSupplyID == 0 || tempScopeOfSupplyID == "" ? ShowAlert("success", "ScopeOfSupply added successfully.") : ShowAlert("success", "ScopeOfSupply updated successfully.");
+                        $("#grid").jsGrid("loadData");
+                        Clearform();
+                    } else {
+                        ShowAlert("error", msg.Message);
+                    }
+                },
+            })
+    })
+
+    $("#btnSearch").on('click', function () {
+        loadGridData();
+        $("#grid").jsGrid("loadData");
+        $("#SearchGridModal").modal('show');
+    });
+
+    function closeModal() {
+        $("#SearchGridModal").modal('hide');
+    }
+
+    function Clearform() {
+        tempScopeOfSupplyID = 0;
+        $("#ScopeOfSupplyName").val("");
+        $("#ScopeOfSupplyDesc").val("");
+        $("#Deactive").prop('checked', false);
+    }
+
+    $('#btnReset').on('click', function () {
+        Clearform();
+    });
+</script>

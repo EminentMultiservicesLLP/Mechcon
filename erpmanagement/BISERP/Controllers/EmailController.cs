@@ -20,7 +20,7 @@ namespace BISERP.Controllers
             int Result = 0;
             try
             {
-                string fromPassword = EncryptDecryptDES.DecryptString(ConfigurationManager.AppSettings["mailPassword"]);
+                string fromPassword = ConfigurationManager.AppSettings["mailPassword"];
                 string fromAddress = ConfigurationManager.AppSettings["mailID"];
 
                 var smtp = new System.Net.Mail.SmtpClient();

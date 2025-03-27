@@ -728,7 +728,7 @@ namespace BISERP.Content.DataSet {
             
             private global::System.Data.DataColumn columnTechnicalSpecification;
             
-            private global::System.Data.DataColumn columnScopeOfSupply;
+            private global::System.Data.DataColumn columnScopeOfSupplyName;
             
             private global::System.Data.DataColumn columnPackaging;
             
@@ -965,9 +965,9 @@ namespace BISERP.Content.DataSet {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public global::System.Data.DataColumn ScopeOfSupplyColumn {
+            public global::System.Data.DataColumn ScopeOfSupplyNameColumn {
                 get {
-                    return this.columnScopeOfSupply;
+                    return this.columnScopeOfSupplyName;
                 }
             }
             
@@ -1282,7 +1282,7 @@ namespace BISERP.Content.DataSet {
                         string MaterialOfConstruction, 
                         string AreaOfInstallation, 
                         string TechnicalSpecification, 
-                        string ScopeOfSupply, 
+                        string ScopeOfSupplyName, 
                         string Packaging, 
                         string Insurance, 
                         string Supervision, 
@@ -1334,7 +1334,7 @@ namespace BISERP.Content.DataSet {
                         MaterialOfConstruction,
                         AreaOfInstallation,
                         TechnicalSpecification,
-                        ScopeOfSupply,
+                        ScopeOfSupplyName,
                         Packaging,
                         Insurance,
                         Supervision,
@@ -1406,7 +1406,7 @@ namespace BISERP.Content.DataSet {
                 this.columnMaterialOfConstruction = base.Columns["MaterialOfConstruction"];
                 this.columnAreaOfInstallation = base.Columns["AreaOfInstallation"];
                 this.columnTechnicalSpecification = base.Columns["TechnicalSpecification"];
-                this.columnScopeOfSupply = base.Columns["ScopeOfSupply"];
+                this.columnScopeOfSupplyName = base.Columns["ScopeOfSupplyName"];
                 this.columnPackaging = base.Columns["Packaging"];
                 this.columnInsurance = base.Columns["Insurance"];
                 this.columnSupervision = base.Columns["Supervision"];
@@ -1478,8 +1478,8 @@ namespace BISERP.Content.DataSet {
                 base.Columns.Add(this.columnAreaOfInstallation);
                 this.columnTechnicalSpecification = new global::System.Data.DataColumn("TechnicalSpecification", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnTechnicalSpecification);
-                this.columnScopeOfSupply = new global::System.Data.DataColumn("ScopeOfSupply", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnScopeOfSupply);
+                this.columnScopeOfSupplyName = new global::System.Data.DataColumn("ScopeOfSupplyName", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnScopeOfSupplyName);
                 this.columnPackaging = new global::System.Data.DataColumn("Packaging", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnPackaging);
                 this.columnInsurance = new global::System.Data.DataColumn("Insurance", typeof(string), null, global::System.Data.MappingType.Element);
@@ -2890,17 +2890,17 @@ namespace BISERP.Content.DataSet {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public string ScopeOfSupply {
+            public string ScopeOfSupplyName {
                 get {
                     try {
-                        return ((string)(this[this.tabledsWorkOrderRpt.ScopeOfSupplyColumn]));
+                        return ((string)(this[this.tabledsWorkOrderRpt.ScopeOfSupplyNameColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'ScopeOfSupply\' in table \'dsWorkOrderRpt\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'ScopeOfSupplyName\' in table \'dsWorkOrderRpt\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tabledsWorkOrderRpt.ScopeOfSupplyColumn] = value;
+                    this[this.tabledsWorkOrderRpt.ScopeOfSupplyNameColumn] = value;
                 }
             }
             
@@ -3622,14 +3622,14 @@ namespace BISERP.Content.DataSet {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public bool IsScopeOfSupplyNull() {
-                return this.IsNull(this.tabledsWorkOrderRpt.ScopeOfSupplyColumn);
+            public bool IsScopeOfSupplyNameNull() {
+                return this.IsNull(this.tabledsWorkOrderRpt.ScopeOfSupplyNameColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public void SetScopeOfSupplyNull() {
-                this[this.tabledsWorkOrderRpt.ScopeOfSupplyColumn] = global::System.Convert.DBNull;
+            public void SetScopeOfSupplyNameNull() {
+                this[this.tabledsWorkOrderRpt.ScopeOfSupplyNameColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]

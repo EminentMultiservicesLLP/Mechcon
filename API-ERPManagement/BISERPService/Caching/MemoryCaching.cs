@@ -111,7 +111,8 @@ namespace BISERPService.Caching
         AllBudgetHeads = 43,
         AllClient = 44,
         ProjectTC = 45,
-        Product = 46
+        Product = 46,
+        ScopeOfSupply = 47
 
     }
 }

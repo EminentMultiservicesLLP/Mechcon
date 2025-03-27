@@ -116,7 +116,7 @@ namespace BISERPBusinessLayer.Repositories.SM.Classes
                     paramCollection.Add(new DBParameter("AreaOfInstallation", entity.AreaOfInstallation, DbType.String));
                     paramCollection.Add(new DBParameter("ConsigneeID", entity.ConsigneeID, DbType.String));
                     paramCollection.Add(new DBParameter("TechnicalSpecification", entity.TechnicalSpecification, DbType.String));
-                    paramCollection.Add(new DBParameter("ScopeOfSupply", entity.ScopeOfSupply, DbType.String));
+                    paramCollection.Add(new DBParameter("ScopeOfSupplyID", entity.ScopeOfSupplyID, DbType.Int16));
                     paramCollection.Add(new DBParameter("Packaging", entity.Packaging, DbType.String));
                     paramCollection.Add(new DBParameter("Insurance", entity.Insurance, DbType.String));
                     paramCollection.Add(new DBParameter("Supervision", entity.Supervision, DbType.String));
@@ -212,7 +212,8 @@ namespace BISERPBusinessLayer.Repositories.SM.Classes
                                    AreaOfInstallation = row.Field<string>("AreaOfInstallation"),
                                    ConsigneeID = row.Field<int?>("ConsigneeID"),
                                    TechnicalSpecification = row.Field<string>("TechnicalSpecification"),
-                                   ScopeOfSupply = row.Field<string>("ScopeOfSupply"),
+                                   ScopeOfSupplyID = row.Field<int?>("ScopeOfSupplyID"),
+                                   ScopeOfSupplyName = row.Field<string>("ScopeOfSupplyName"),
                                    Packaging = row.Field<string>("Packaging"),
                                    Insurance = row.Field<string>("Insurance"),
                                    Supervision = row.Field<string>("Supervision"),

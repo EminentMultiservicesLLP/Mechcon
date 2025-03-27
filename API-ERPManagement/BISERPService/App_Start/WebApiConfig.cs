@@ -81,6 +81,7 @@ namespace BISERPService
             container.RegisterType<IPaymentTermsMasterRepository, PaymentTermsMasterRepository>();
             container.RegisterType<IProjectTCMasterRepository, ProjectTCMasterRepository>();
             container.RegisterType<IProductMasterRepository, ProductMasterRepository>();
+            container.RegisterType<IScopeOfSupplyMasterRepository, ScopeOfSupplyMasterRepository>();
             container.RegisterType<IOthersTermsMasterRepository, OthersTermsMasterRepository>();
             container.RegisterType<IMaterilaIndentRepository, MaterilaIndentRepository>();
             container.RegisterType<IMaterialIndentDetailsRepository, MaterialIndentDetailsRepository>();

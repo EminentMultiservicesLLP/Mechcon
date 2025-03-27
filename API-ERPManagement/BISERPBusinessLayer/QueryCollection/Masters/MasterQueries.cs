@@ -111,6 +111,10 @@ namespace BISERPBusinessLayer.QueryCollection.Masters
         public const string InsertProductMaster = "sp_InsUpd_INV_MST_Product";
         public const string UpdateProductMaster = "sp_InsUpd_INV_MST_Product";
 
+        public const string GetAllScopeOfSupply = "sp_SM_MST_GetAllScopeOfSupply";
+        public const string InsertScopeOfSupplyMaster = "sp_InsUpd_SM_MST_ScopeOfSupply";
+        public const string UpdateScopeOfSupplyMaster = "sp_InsUpd_SM_MST_ScopeOfSupply";
+
         public const string GetAllOthers = "sp_INV_MST_GetAllOthers";
         public const string GetOthersById = "sp_INV_MST_GetOthersById";
         public const string InsertOthersMaster = "sp_InsUpd_INV_MST_OtherTerms";
