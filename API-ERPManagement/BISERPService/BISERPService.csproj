@@ -228,6 +228,7 @@
     <Compile Include="Controllers\Store\ProjectTCController.cs" />
     <Compile Include="Controllers\Store\PurchaseMaterialIndentController.cs" />
     <Compile Include="Controllers\Store\PurchaseReturnController.cs" />
+    <Compile Include="Controllers\Store\ScopeOfSupplyMasterController.cs" />
     <Compile Include="Controllers\Store\StockDetailsController.cs" />
     <Compile Include="Controllers\Store\StockdisposeController.cs" />
     <Compile Include="Controllers\Store\StockRegisterController.cs" />

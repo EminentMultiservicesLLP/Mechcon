@@ -348,6 +348,7 @@
     <Compile Include="Areas\Masters\Controllers\PaymentTermMasterController.cs" />
     <Compile Include="Areas\Masters\Controllers\ProductMasterController.cs" />
     <Compile Include="Areas\Masters\Controllers\ProjectTCMasterController.cs" />
+    <Compile Include="Areas\Masters\Controllers\ScopeOfSupplyMasterController.cs" />
     <Compile Include="Areas\Masters\Controllers\StoreMasterController.cs" />
     <Compile Include="Areas\Masters\Controllers\VendorMasterController.cs" />
     <Compile Include="Areas\Masters\Controllers\SupplierMasterController.cs" />
@@ -361,6 +362,7 @@
     <Compile Include="Areas\Masters\Models\PackingListModel.cs" />
     <Compile Include="Areas\Masters\Models\ProductMasterModel.cs" />
     <Compile Include="Areas\Masters\Models\ProjectTCMasterModel.cs" />
+    <Compile Include="Areas\Masters\Models\ScopeOfSupplyMasterModel.cs" />
     <Compile Include="Areas\Masters\Models\VendorMasterModel.cs" />
     <Compile Include="Areas\Miscellaneous\Controllers\EMailTabController.cs" />
     <Compile Include="Areas\Miscellaneous\Controllers\MiscellaneousController.cs" />
@@ -1092,6 +1094,7 @@
     <Content Include="Areas\Purchase\Views\Purchase\POStatus.cshtml" />
     <Content Include="Areas\Purchase\Views\Purchase\PRStatus.cshtml" />
     <Content Include="Areas\Purchase\Views\Purchase\SupplierDeliveryReport.cshtml" />
+    <Content Include="Areas\Masters\Views\Masters\ScopeOfSupply.cshtml" />
     <None Include="Content\DataSet\Billing.xsd" />
     <Content Include="Content\DataSet\Billing.xss">
       <DependentUpon>Billing.xsd</DependentUpon>
@@ -1733,6 +1736,11 @@
     <EmbeddedResource Include="Reports\Transport\VehicleInformation.rdlc" />
     <EmbeddedResource Include="Reports\Transport\VehicleList.rdlc" />
     <EmbeddedResource Include="Reports\Transport\VehicleTransfer.rdlc" />
+    <EmbeddedResource Include="Reports\WorkOrder\workOrderBasisTerm.rdlc" />
+    <EmbeddedResource Include="Reports\WorkOrder\workOrderDeliveryTerm.rdlc" />
+    <EmbeddedResource Include="Reports\WorkOrder\workOrderOtherTerm.rdlc" />
+    <EmbeddedResource Include="Reports\WorkOrder\workOrderPaymentTerm.rdlc" />
+    <EmbeddedResource Include="Reports\WorkOrder\workOrderRpt.rdlc" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
