@@ -1458,12 +1458,13 @@
                         fileSaveMsg = "But failed to save attached files.";
                     } finally {
                         const message = tempOrderBookID === 0 ? `Work Order registered successfully!<br> Project Code : <b>${response.Data.ProjectCode}</b>` : `Work Order updated successfully!<br> Project Code : <b>${response.Data.ProjectCode}</b>`;
-                        if (tempOrderBookID === 0) {
-                            GetUserByGroups(response.Data.ProjectCode, message, fileSaveMsg);
-                        } else {
-                            ShowAlert("success", `${message} <br> ${fileSaveMsg}`);
-                            clearFormData();
-                        }
+                        GetUserByGroups(response.Data.ProjectCode, message, fileSaveMsg);
+                        //if (tempOrderBookID === 0) {
+                        //    GetUserByGroups(response.Data.ProjectCode, message, fileSaveMsg);
+                        //} else {
+                        //    ShowAlert("success", `${message} <br> ${fileSaveMsg}`);
+                        //    clearFormData();
+                        //}
                     }
                 } else {
                     ShowAlert("error", response.message || "An error occurred while saving the offer.");

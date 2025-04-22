@@ -13,6 +13,8 @@ namespace BISERPBusinessLayer.Entities.Masters
         public string StoreName { get; set; }
         public int DispatchType { get; set; }
         public string DispatchTypeName { get; set; }
+        public bool FinalDispatch { get; set; }
+        public string LotNo { get; set; }
         public int? InsertedBy { get; set; }
         public string InsertedByName { get; set; }
         public DateTime? InsertedOn { get; set; }

@@ -1,35 +1,5 @@
 ﻿@Scripts.Render("~/bundles/jquerymodels")
-<style>
-    .no-data-message {
-        text-align: center;
-        height: 296px;
-        color: red;
-        font-size: x-large;
-    }
 
-    .apexcharts-inner {
-        padding: 0 !important;
-        margin: 0 !important;
-    }
-
-    .chart-container {
-        width: 100%;
-        height: 100%;
-        min-height: 200px;
-        position: relative;
-    }
-
-    .chartFieldset {
-        padding-bottom: 0px;
-        margin-bottom: 0px;
-    }
-
-    @@media (max-width: 768px) {
-        .chart-container {
-            min-height: 300px; /* Adjust height for smaller screens */
-        }
-    }
-</style>
 <script>
     $(function () {
         $(".datepicker").datepicker({
@@ -51,17 +21,6 @@
         });
     });
 
-    function getFirstDateOfFinancialYear() {
-        const today = new Date();
-        const currentMonth = today.getMonth(); // Months are 0-based
-        const currentYear = today.getFullYear();
-
-        // Assuming financial year starts in April
-        const financialYearStartMonth = 3; // April (0-based index)
-        const financialYearStartYear = currentMonth >= financialYearStartMonth ? currentYear : currentYear - 1;
-
-        return new Date(financialYearStartYear, financialYearStartMonth, 1); // 1st April of the calculated year
-    }
 </script>
 
 <h5 class="page-header orangeDottedBottomBorder">Dashboard</h5>

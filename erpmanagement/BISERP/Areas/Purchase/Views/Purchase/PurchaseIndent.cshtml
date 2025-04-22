@@ -983,13 +983,28 @@
     $('#btnAddItem').on('click', async function () {
         ClosePopupWindow("ItemModal");
         $("#Itemgrid").pqGrid("reset", { filter: true });
-        var getData = $("#Itemgrid").pqGrid("option", "dataModel.data");
-        var selectedItems = jLinq.from(getData).equals("state", true).select();
+
+        let getData = $("#Itemgrid").pqGrid("option", "dataModel.data") || [];
+        let selectedItems = jLinq.from(getData).equals("state", true).select();
+        let getMainGridData = $PurchaseItemDetailsGrid.pqGrid("option", "dataModel.data") || [];
+
+        if (!selectedItems.length) {
+            ShowAlert("warning", "No items selected!");
+            return false;
+        }
+
+        let mainItemIds = new Set(getMainGridData.map(item => item.ItemId));
+
+        let existingItems = selectedItems.filter(selItem => mainItemIds.has(selItem.ID));
+
+        if (existingItems.length) {
+            ShowAlert("error", "Some selected items already exist in the list!");
+            return false;
+        }
 
         const itemDetails = await getSelectedItemDetails(selectedItems, $("#ddlStores").val());
 
         var dataMGrid = [];
-        var getMainGridData = $PurchaseItemDetailsGrid.pqGrid("option", "dataModel.data");
         $.each(getMainGridData, function (key, value) {
             var grdData = {
                 'IndentDetailId': value.IndentDetailId, 'ItemId': value.ItemId,

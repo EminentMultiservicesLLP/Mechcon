@@ -9,18 +9,42 @@ namespace BISERPBusinessLayer
 {
     public class Commons
     {
-        public static string ToXML(Object oObject)
+        //public static string ToXML(Object oObject)
+        //{
+        //    XmlDocument xmlDoc = new XmlDocument();
+        //    XmlSerializer xmlSerializer = new XmlSerializer(oObject.GetType());
+        //    using (MemoryStream xmlStream = new MemoryStream())
+        //    {
+        //        xmlSerializer.Serialize(xmlStream, oObject);
+        //        xmlStream.Position = 0;
+        //        xmlDoc.Load(xmlStream);
+        //        return xmlDoc.InnerXml;
+        //    }
+        //}
+        public static string ToXML(object oObject)
         {
-            XmlDocument xmlDoc = new XmlDocument();
-            XmlSerializer xmlSerializer = new XmlSerializer(oObject.GetType());
-            using (MemoryStream xmlStream = new MemoryStream())
+            if (oObject == null)
+                return string.Empty;
+
+            try
             {
-                xmlSerializer.Serialize(xmlStream, oObject);
-                xmlStream.Position = 0;
-                xmlDoc.Load(xmlStream);
-                return xmlDoc.InnerXml;
+                var xmlDoc = new XmlDocument();
+                var xmlSerializer = new XmlSerializer(oObject.GetType());
+
+                using (var xmlStream = new MemoryStream())
+                {
+                    xmlSerializer.Serialize(xmlStream, oObject);
+                    xmlStream.Position = 0;
+                    xmlDoc.Load(xmlStream);
+                    return xmlDoc.InnerXml;
+                }
+            }
+            catch
+            {
+                return string.Empty;
             }
         }
+
 
         public static T XMLToObject<T>(string XMLString) where T : class
         {

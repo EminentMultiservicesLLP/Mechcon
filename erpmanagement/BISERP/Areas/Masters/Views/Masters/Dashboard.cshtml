@@ -1,0 +1,458 @@
+﻿@Scripts.Render("~/bundles/jquerymodels")
+
+<script>
+    $(function () {
+        $(".datepicker").datepicker({
+            showOn: "button",
+            buttonImage: "/Content/images/calendar.gif",
+            buttonImageOnly: true,
+            buttonText: "Selectdate",
+            'changeMonth': true,
+            'changeYear': true,
+            'yearRange': '2021:2030',
+            "format": "dd-M-yyyy",
+            todayBtn: "linked",
+            pickerPosition: "bottom-left",
+            "todayHighlight": true,
+            autoclose: true,
+        })
+        $("#anim").change(function () {
+            $(".datepicker").datepicker("option", "showAnim", "fadeIn");
+        });
+    });
+
+    $("#FromDate").datepicker("setDate", getFirstDateOfFinancialYear());
+    $("#ToDate").datepicker("setDate", new Date());
+</script>
+
+<h5 class="page-header orangeDottedBottomBorder">Dashboard</h5>
+
+<fieldset class="fieldsetCustom">
+    <legend class="legendCustom">Select Period</legend>
+    <div class="row">
+        <div class="col-lg-2 col-md-4 col-sm-12 mb-3">
+            <label for="FromDate">From Date</label>
+            <input type="text" id="FromDate" class="form-control datepicker" />
+        </div>
+        <div class="col-lg-2 col-md-4 col-sm-12 mb-3">
+            <label for="ToDate">To Date</label>
+            <input type="text" id="ToDate" class="form-control datepicker" />
+        </div>
+        <div class="col-lg-2 col-md-4 col-sm-12 mb-3">
+            <label class="" for="ProjectID">Project</label>
+            <select id="ProjectID" name="ProjectID" class="form-control">
+                <option value=null>--Select Project--</option>
+            </select>
+        </div>
+        <div class="col-lg-2 col-md-4 col-sm-12 mb-3">
+            <br />
+            <button type="button" id="btnGo" class="btn btn-primary" onclick="go()">GO</button>
+            <button type="button" class="btn btn-warning" id="btnResetT" onclick="reset()">Reset</button>
+        </div>
+    </div>
+</fieldset>
+
+<fieldset class="fieldsetCustom">
+    <legend class="legendCustom"> Summury </legend>
+    <div class="dashboard-container">
+        <div class="dashboard-card">
+            <h3>Enquiry</h3>
+            <h2 id="EnquiryCount">0</h2>
+        </div>
+
+        <div class="dashboard-card">
+            <h3>Offer</h3>
+            <h2 id="OfferCount">0</h2>
+        </div>
+
+        <div class="dashboard-card">
+            <h3>Work Order</h3>
+            <h2 id="WOCount">0</h2>
+        </div>
+
+        <div class="dashboard-card">
+            <h3>Project</h3>
+            <h2 id="ProjectCount">0</h2>
+        </div>
+    </div>
+
+    <div class="dashboard-container">
+        <div class="dashboard-card">
+            <h3>MR Count</h3>
+            <h2 id="StatusID_5">0</h2>
+        </div>
+
+        <div class="dashboard-card">
+            <h3>PR Count</h3>
+            <h2 id="PRCount">0</h2>
+        </div>
+
+        <div class="dashboard-card">
+            <h3>PO Count</h3>
+            <h2 id="POCount">0</h2>
+        </div>
+
+        <div class="dashboard-card">
+            <h3>GRN Count</h3>
+            <h2 id="GRNCount">0</h2>
+        </div>
+    </div>
+
+</fieldset>
+
+<div class="row">
+    <div class="col-sm-12 col-md-6">
+        <fieldset class="fieldsetCustom chartFieldset" id="sectorEnquiriesFS">
+            <legend class="legendCustom">Sector Enquiries</legend>
+        </fieldset>
+    </div>
+    <div class="col-sm-12 col-md-6">
+        <fieldset class="fieldsetCustom chartFieldset" id="submittedSectorOffersFS">
+            <legend class="legendCustom">Submitted Sector Offers</legend>
+        </fieldset>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12 col-md-6">
+        <fieldset class="fieldsetCustom chartFieldset" id="receivedSectorOffersFS">
+            <legend class="legendCustom">Received Sector Offers</legend>
+        </fieldset>
+    </div>
+</div>
+<script>
+    function loadProject() {
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("AllStoreMasters", "StoreMaster")',
+            datatype: "Json",
+            success: function (data) {
+                $('#ProjectID').empty();
+                $('#ProjectID').append('<option value="null">' + "All" + '</option>');
+                $.each(data.records, function (index, value) {
+                    $('#ProjectID').append(`<option value="${value.ID}">${value.Code}</option>`);
+                });
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                console.error("Error loading stores:", errorThrown);
+            }
+        });
+    }
+    loadProject();
+
+    function go() {
+        const fromDate = $("#FromDate").val();
+        const toDate = $("#ToDate").val();
+
+        // Check if the From Date is earlier than the To Date
+        if (new Date(fromDate) > new Date(toDate)) {
+            ShowAlert("warning", "From Date cannot be later than To Date.");
+            return;
+        }
+
+        const projectID = $("#ProjectID").val();
+
+        GetDashBoardCountSummury(fromDate, toDate, projectID);
+        loadSectorEnquiries(fromDate, toDate);
+        loadSubmittedSectorOffers(fromDate, toDate);
+        loadReceivedSectorOffers(fromDate, toDate);
+    }
+
+    function GetDashBoardCountSummury(fromDate, toDate, projectID) {
+        const antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+
+        $.ajax({
+            headers: { "__RequestVerificationToken": antiForgeryToken },
+            type: 'GET',
+            url: "/DashBoard/GetDashBoardCountSummury",
+            data: { FromDate: fromDate, ToDate: toDate, ProjectID: projectID },
+            dataType: "json",
+            success(response) {
+                if (response.success && Array.isArray(response.records)) {
+                    response.records.forEach(({ Type, Count }) => {
+                        const element = $(`#${Type}`);
+                        if (element.length) {
+                            element.text(Count);
+                        }
+                    });
+                } else {
+                    alert(response.message || "Unable to load count summury.");
+                }
+            },
+            error() {
+                alert("An error occurred while loading count summury. Please try again later.");
+            }
+        });
+    }
+
+    //-----------------Start Location Wise Chart Rendering Function with Base Configuration --------------------//
+    function renderBarChart({ containerId, data, callFor }) {
+
+        // Remove existing chart and create a new container
+        $(`#${containerId}Chart`).remove();
+        $(`#${containerId}FS`).append(`<div id="${containerId}Chart" class="chart-container"></div>`);
+
+        // Check if data is valid
+        if (!data || data.length === 0 || data.every(item => (item.TotalCount || 0) === 0)) {
+            $(`#${containerId}Chart`).html('<div class="no-data-message" >No data available for the selected period.</div>');
+            return;
+        }
+
+        // Extract data points
+        const chartData = {
+            monthsName: data.map(item => item.MonthName),
+            totalCounts: data.map(item => item.TotalCount),
+            domesticCounts: data.map(item => item.DomesticCount),
+            exportCounts: data.map(item => item.ExportCount),
+            sezCounts: data.map(item => item.SEZCount),
+            totalValues: data.map(item => item.TotalValue),
+            domesticValues: data.map(item => item.DomesticValue),
+            exportValues: data.map(item => item.ExportValue),
+            sezValues: data.map(item => item.SEZValue),
+        };
+
+        // Tooltip formatter helper function
+        const getTooltipContent = (monthName, dataPointIndex) => {
+            if (callFor === "Enquiry") {
+                return `
+                <div style="padding: 10px; font-size: 14px; border: 1px solid #ccc; border-radius: 5px; background: #fff;">
+                    <strong>${monthName}</strong><br>
+                    Domestic Count: ${chartData.domesticCounts[dataPointIndex]}<br>
+                    Export Count: ${chartData.exportCounts[dataPointIndex]}<br>
+                    SEZ Count: ${chartData.sezCounts[dataPointIndex]}<br>
+                    Total Count: ${chartData.totalCounts[dataPointIndex]}
+                </div>`;
+            } else {
+                return `
+                <div style="padding: 10px; font-size: 14px; border: 1px solid #ccc; border-radius: 5px; background: #fff;">
+                    <strong>${monthName}</strong><br>
+                    Domestic Value: ${chartData.domesticValues[dataPointIndex]}<br>
+                    Export Value: ${chartData.exportValues[dataPointIndex]}<br>
+                    SEZ Value: ${chartData.sezValues[dataPointIndex]}<br>
+                    Total Value: ${chartData.totalValues[dataPointIndex]}
+                </div>`;
+            }
+        };
+
+        // Chart options
+        const options = {
+            series: [
+                { name: 'Domestic', data: chartData.domesticCounts },
+                { name: 'Export', data: chartData.exportCounts },
+                { name: 'SEZ', data: chartData.sezCounts }
+            ],
+            chart: {
+                type: 'bar',
+                height: 280,
+                toolbar: { show: false },
+                stacked: true,
+                events: {
+                    resize: (chart, width, height) => {
+                        chart.updateOptions({
+                            chart: { height: height || 280 }
+                        });
+                    }
+                }
+            },
+            plotOptions: {
+                bar: {
+                    horizontal: true,
+                    columnWidth: '50%',
+                    dataLabels: {
+                        total: {
+                            enabled: true,
+                            offsetX: 0,
+                            style: {
+                                fontSize: '13px',
+                                fontWeight: 900
+                            }
+                        }
+                    }
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                style: {
+                    fontFamily: 'Calibri',
+                    fontWeight: 'normal',
+                    colors: ['#000']
+                },
+                dropShadow: {
+                    enabled: false
+                }
+            },
+            xaxis: {
+                categories: chartData.monthsName,
+            },
+            grid: {
+                borderColor: '#e7e7e7',
+                row: {
+                    colors: ['#f3f3f3', 'transparent'],
+                    opacity: 0.5
+                }
+            },
+            tooltip: {
+                shared: true,
+                intersect: false,
+                custom: function ({ series, seriesIndex, dataPointIndex, w }) {
+                    const monthName = w.config.xaxis.categories[dataPointIndex];
+                    return getTooltipContent(monthName, dataPointIndex);
+                }
+            },
+            legend: {
+                position: 'top',
+                horizontalAlign: 'center'
+            },
+            responsive: [{
+                breakpoint: 768,
+                options: {
+                    chart: { height: 300 },
+                    plotOptions: { bar: { horizontal: false } }
+                }
+            }]
+        };
+
+        // Render the chart
+        const chart = new ApexCharts(document.querySelector(`#${containerId}Chart`), options);
+        chart.render();
+    }
+
+    function renderPieChart({ containerId, data, callFor }) {
+        // Remove existing chart and append a new container
+        $(`#${containerId}Chart`).remove();
+        $(`#${containerId}FS`).append(`<div id="${containerId}Chart" class="chart-container"></div>`);
+
+        // Handle no-data scenario
+        if (!data || data.length === 0 || data.every(item => (item.TotalCount || 0) === 0)) {
+            $(`#${containerId}Chart`).html(
+                `<div class="no-data-message" >
+                No data available for the selected period.
+            </div>`
+            );
+            return;
+        }
+
+        // Prepare series and labels for the chart
+        const series = data.map(item => item.TotalCount || 0);
+        const labels = data.map(item => item.Name || "Unknown");
+
+        // Define chart options
+        const options = {
+            series,
+            chart: {
+                height: 250,
+                type: 'pie',
+                toolbar: { show: false }
+            },
+            labels,
+            tooltip: {
+                shared: true,
+                intersect: false,
+                y: {
+                    formatter: function (_, opts) {
+                        const details = data[opts.seriesIndex];
+                        if (callFor === "Enquiry") {
+                            return `${details.TotalCount || 0}`;
+                        } else {
+                            return `${details.TotalValue || 0}`;
+                        }
+                    }
+                }
+            },
+            legend: {
+                position: 'top',
+                horizontalAlign: 'center'
+            },
+            dataLabels: {
+                enabled: true,
+                formatter: (val, opts) => `${val.toFixed(1)}% (${opts.w.globals.series[opts.seriesIndex]})`,
+                style: {
+                    fontFamily: 'Calibri',
+                    fontWeight: 'normal',
+                    colors: ['#000000']
+                },
+                dropShadow: { enabled: false }
+            },
+            responsive: [{
+                breakpoint: 768,
+                options: {
+                    chart: { height: 250 },
+                    legend: { position: 'bottom' }
+                }
+            }]
+        };
+
+        // Render the chart
+        const chart = new ApexCharts(document.querySelector(`#${containerId}Chart`), options);
+        chart.render();
+    }
+    //-----------------End Location Wise Chart Rendering Function with Base Configuration --------------------//
+
+    function loadData({ url, data, containerId, renderChart, callFor }) {
+        const antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+
+        $.ajax({
+            headers: { "__RequestVerificationToken": antiForgeryToken },
+            type: 'GET',
+            url: url,
+            data: data,
+            dataType: "json",
+            success(response) {
+                if (response.success && Array.isArray(response.records)) {
+                    renderChart({
+                        containerId: containerId,
+                        data: response.records,
+                        callFor: callFor
+                    });
+                } else {
+                    alert(response.message || `Unable to load data for ${containerId}.`);
+                    renderChart({
+                        containerId: containerId,
+                        data: [],
+                        callFor: callFor
+                    });
+                }
+            },
+            error() {
+                alert(`An error occurred while loading data for ${containerId}. Please try again later.`);
+            }
+        });
+    }
+
+    //-----------------Functions For Fetching Data--------------------//
+    function loadSectorEnquiries(FromDate, ToDate) {
+        loadData({
+            url: "/SM_DashBoard/SM_DashBoard/GetSectorEnquiries",
+            data: { FromDate, ToDate },
+            containerId: 'sectorEnquiries',
+            renderChart: renderPieChart,
+            callFor: "Enquiry"
+        });
+    }
+
+    function loadSubmittedSectorOffers(FromDate, ToDate) {
+        loadData({
+            url: "/SM_DashBoard/SM_DashBoard/GetSubmittedSectorOffers",
+            data: { FromDate, ToDate },
+            containerId: 'submittedSectorOffers',
+            renderChart: renderPieChart,
+            callFor: "Offer"
+        });
+    }
+
+    function loadReceivedSectorOffers(FromDate, ToDate) {
+        loadData({
+            url: "/SM_DashBoard/SM_DashBoard/GetReceivedSectorOffers",
+            data: { FromDate, ToDate },
+            containerId: 'receivedSectorOffers',
+            renderChart: renderPieChart,
+            callFor: "Offer"
+        });
+    }
+
+    function reset() {
+        $("#FromDate").datepicker("setDate", getFirstDateOfFinancialYear());
+        $("#ToDate").datepicker("setDate", new Date());
+        $('#ProjectID').val("null");
+        $('.dashboard-card h2').text('0');
+    }
+</script>

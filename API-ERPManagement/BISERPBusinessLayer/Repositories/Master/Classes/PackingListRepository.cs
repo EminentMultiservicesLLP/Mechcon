@@ -142,7 +142,6 @@ namespace BISERPBusinessLayer.Repositories.Master.Classes
             return Dtl;
         }
 
-
         public List<PackingListDetailModel> GetPackingListDetail(int PackingListId)
         {
             List<PackingListDetailModel> Dtl = null;
@@ -165,7 +164,6 @@ namespace BISERPBusinessLayer.Repositories.Master.Classes
             }
             return Dtl;
         }
-
 
         public PackingListEntity GetPLByID(int PackingListId)
         {
@@ -206,5 +204,75 @@ namespace BISERPBusinessLayer.Repositories.Master.Classes
             }
             return Dtl;
         }
+
+        #region PrePackingList
+        public PrePackingListEntity SavePrePackingList(PrePackingListEntity entity)
+        {
+            var PrePackingListDetails = Commons.ToXML(entity.PrePackingListDetails);
+
+            using (DBHelper dbHelper = new DBHelper())
+            {
+                IDbTransaction transaction = dbHelper.BeginTransaction();
+                TryCatch.Run(() =>
+                {
+                    DBParameterCollection paramCollection = new DBParameterCollection();
+                    paramCollection.Add(new DBParameter("PrePackingListId", entity.PrePackingListId, DbType.Int32));
+                    paramCollection.Add(new DBParameter("StoreId", entity.StoreId, DbType.Int32));
+                    paramCollection.Add(new DBParameter("PrePackingListDetails", PrePackingListDetails, DbType.Xml));
+                    paramCollection.Add(new DBParameter("InsertedBy", entity.InsertedBy, DbType.Int32));
+                    paramCollection.Add(new DBParameter("InsertedOn", entity.InsertedOn, DbType.DateTime));
+                    var parameterList = dbHelper.ExecuteScalar(MasterQueries.SavePrePackingList, paramCollection, CommandType.StoredProcedure);
+                    entity.PrePackingListId = Convert.ToInt32(parameterList.ToString());
+                    dbHelper.CommitTransaction(transaction);
+                }).IfNotNull(ex =>
+                {
+                    dbHelper.RollbackTransaction(transaction);
+                    Loggger.LogError("Error in StoreMasterRepository method of SavePrePackingList : parameter :" + Environment.NewLine + ex.StackTrace);
+                });
+            }
+            return entity;
+        }
+
+        public List<PrePackingListEntity> GetPrePackingList()
+        {
+            List<PrePackingListEntity> Dtl = null;
+            using (DBHelper dbHelper = new DBHelper())
+            {
+                DataTable dt = dbHelper.ExecuteDataTable(MasterQueries.GetPrePackingList, CommandType.StoredProcedure);
+                Dtl = dt.AsEnumerable()
+                            .Select(row => new PrePackingListEntity
+                            {
+                                PrePackingListId = row.Field<int>("PrePackingListId"),
+                                StoreId = row.Field<int>("StoreId"),
+                                StoreName = row.Field<string>("StoreName"),
+                            }).ToList();
+            }
+            return Dtl;
+        }
+
+        public List<PrePackingListDetailModel> GetPrePackingListDetail(int StoreId)
+        {
+            List<PrePackingListDetailModel> Dtl = null;
+            using (DBHelper dbHelper = new DBHelper())
+            {
+                DBParameterCollection paramCollection = new DBParameterCollection();
+                paramCollection.Add(new DBParameter("StoreId", StoreId, DbType.Int32));
+                DataTable dt = dbHelper.ExecuteDataTable(MasterQueries.GetPrePackingListDetail, paramCollection, CommandType.StoredProcedure);
+                Dtl = dt.AsEnumerable()
+                            .Select(row => new PrePackingListDetailModel
+                            {
+                                PrePackingListDetailId = row.Field<int>("PrePackingListDetailId"),
+                                PrePackingListId = row.Field<int>("PrePackingListId"),
+                                ItemName = row.Field<string>("ItemName"),
+                                ItemDescription = row.Field<string>("ItemDescription"),
+                                Qty = row.Field<double>("Qty"),
+                                Unit = row.Field<string>("Unit"),
+                                Remark = row.Field<string>("Remark")
+                            }).ToList();
+            }
+            return Dtl;
+        }
+
+        #endregion PrePackingList
     }
 }

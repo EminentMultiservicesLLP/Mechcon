@@ -69,7 +69,8 @@ namespace BISERPBusinessLayer.QueryCollection.Store
         public const string GetStoreMaterialIssue = "sp_GetMaterialIssue";
         public const string StoreMaterialIssue = "sp_GetStoreMaterialIssue";
         public const string GetMaterialIssue = "sp_rptMaterialIssue";
-       
+        public const string GetItemListForMI = "sp_GetItemListForMI";
+
         public const string AuthCancelMaterialIssue = "sp_AuthCancelMaterialIssue";
         public const string UpdMaterialIssueAuthQty = "sp_UpdMaterialIssueAuthQty";
         public const string AcceptMaterialIssue = "sp_MaterialIssueAcceptance";
@@ -136,6 +137,9 @@ namespace BISERPBusinessLayer.QueryCollection.Store
         public const string GetPurchaseReturn = "sp_GetPurchaseReturn";
         public const string GetPurchaseReturnDt = "sp_GetPurchaseReturnDt";
         public const string UpdPurchaseReturnAuth = "sp_UpdPurchaseReturnAuth";
+        public const string PurchaseReturnForReport = "sp_PurchaseReturnForRpt";
+        public const string GetPurchaseReturnById = "sp_GetPurchaseReturnById";
+        public const string GetPurchaseReturnDtRpt = "sp_GetPurchaseReturnDtRpt";
 
         public const string UpdateOpeningBalance = "sp_UpdateOpeningBalance";
         public const string Ins_INV_ItemLimits = "sp_Ins_INV_ItemLimits";

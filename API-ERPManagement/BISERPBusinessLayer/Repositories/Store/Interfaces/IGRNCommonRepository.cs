@@ -14,7 +14,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Interfaces
         bool AuthCancelGRN(GRNEntity grnentity);
 
         IEnumerable<GRNEntity> GRNSummaryReport(DateTime fromdate, DateTime todate, int StoreId, int SupplierId);
-        IEnumerable<GRNEntity> GRNDetailReport(DateTime fromdate, DateTime todate, int StoreId, int SupplierId, int GRNId);
+        IEnumerable<GRNEntity> GRNDetailReport(DateTime fromdate, DateTime todate, int StoreId, int SupplierId, int GRNId, string ReportType);
         IEnumerable<GRNEntity> GRNCancelledReport(DateTime fromdate, DateTime todate);
         IEnumerable<GRNEntity> GRNItemWise(DateTime fromdate, DateTime todate, int ItemId);
         IEnumerable<GRNEntity> PendingGrnItemWise(int storeid);

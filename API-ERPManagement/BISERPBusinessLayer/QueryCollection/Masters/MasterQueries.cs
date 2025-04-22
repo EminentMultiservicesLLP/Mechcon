@@ -189,6 +189,9 @@ namespace BISERPBusinessLayer.QueryCollection.Masters
         public const string GetPackingListDetail = "dbsp_GetPackingListDetail";
         public const string GetPackingListForRpt = "dbsp_GetPackingListforRpt";
         public const string GetPLById = "dbsp_GetPLById";
+        public const string SavePrePackingList = "sp_InsUpd_PrePackingList";
+        public const string GetPrePackingList = "dbsp_GetPrePackingList";
+        public const string GetPrePackingListDetail = "dbsp_GetPrePackingListDetail";
 
     }
 }

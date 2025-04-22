@@ -1340,12 +1340,12 @@
                 var data = ui.rowData;
 
 
-                if (dataIndx === 'RecieveQty') {
-                    if (newVal > data.PoPendingQty) {
-                        ShowAlert('info', "Recieve Qty cannot be greater than PoPending Qty");
-                        return false;
-                    }
-                }
+                //if (dataIndx === 'RecieveQty') {
+                //    if (newVal > data.PoPendingQty) {
+                //        ShowAlert('info', "Recieve Qty cannot be greater than PoPending Qty");
+                //        return false;
+                //    }
+                //}
                 if (dataIndx === 'Qty') {
                     if ($("#GrnTypeID").val() == 1) {
                         if (newVal > data.RecieveQty) {
@@ -1514,7 +1514,6 @@
             pageModel: { type: "local", rPP: 20 },
             rowClick: function (evt, ui) {
                 ClearParamGrid("grid");
-
                 if (ui.rowData) {
                     closeModal();
                     var rowIndx = parseInt(ui.rowIndx);
@@ -1535,16 +1534,16 @@
                     $("#OtherCharges").val(record.OtherCharges);
                     $("#GrandTotal").val(record.GrandTotal);
                     ClosePopupWindow("POModal");
-
                     $.ajax({
                         type: "GET",
                         url: "/PurchaseOrder/POdetails/",
                         data: { POId: record.ID },
                         datatype: "Json",
                         success: function (data) {
+                            const filteredData = data.filter(item => item.PoPendingQty > 0);
 
                             var dataMGrid = [];
-                            $.each(data, function (index, value) {
+                            $.each(filteredData, function (index, value) {
                                 var grdData = {
                                     'ItemID': value.ItemID, 'PackSizeId': value.PackSizeId, 'UnitId': value.OrderingUnitId, 'ItemName': value.ItemName, 'CBatch': value.ItemCode, 'BatchName': value.ItemCode, 'UnitName': value.OrderingUnit, 'Make': value.Make,
                                     'MaterialOfConstruct': value.MaterialOfConstruct, 'IndentRemark': value.IndentRemark, 'SizeOrWeight': value.SizeOrWeight, 'POIndentRemark': value.POIndentRemark, 'PackSize': value.PackSize, 'CQty': value.Qty, 'Qty': 0, 'CRate': value.Rate, 'CMrp': value.MRP,
@@ -1856,14 +1855,7 @@
 
     function ReportValidationCheck(grnid) {
         var url = "";
-        url = "../../Reports/ReportViewer.aspx?reportid=" +
-            142 +
-            "&fdate=" +
-            grndate +
-            "&tdate=" +
-            grndate +
-            "&storeid=" +
-            $("#ddlStores").val() + "&suppid=" + 0 + "&GrnId=" + grnid + "&sname=" + storeName;
+        url = "../../Reports/ReportViewer.aspx?reportid=" + 142 + "&fdate=" + grndate + "&tdate=" + grndate + "&storeid=" + $("#ddlStores").val() + "&suppid=" + 0 + "&GrnId=" + grnid + "&sname=" + storeName + "&ReportType=GRNWise";
 
         console.log(url);
         var myframe = document.getElementById("iframeReportViewer");

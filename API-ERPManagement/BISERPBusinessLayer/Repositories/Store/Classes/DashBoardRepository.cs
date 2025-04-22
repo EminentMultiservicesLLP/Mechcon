@@ -1,5 +1,7 @@
-﻿using BISERPBusinessLayer.Entities.Store;
+﻿using BISERPBusinessLayer.Entities.DashBoard;
+using BISERPBusinessLayer.Entities.Store;
 using BISERPBusinessLayer.QueryCollection.Common;
+using BISERPBusinessLayer.QueryCollection.DashBoard;
 using BISERPBusinessLayer.QueryCollection.Store;
 using BISERPBusinessLayer.Repositories.Store.Interfaces;
 using BISERPDataLayer.DataAccess;
@@ -75,6 +77,25 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
             return entity;
         }
 
-    
+        public IEnumerable<DashBoardCountSummuryModel> GetDashBoardCountSummury(string FromDate, string ToDate, int? ProjectID)
+        {
+            List<DashBoardCountSummuryModel> data = null;
+            using (DBHelper dbHelper = new DBHelper())
+            {
+                DBParameterCollection param = new DBParameterCollection();
+                param.Add(new DBParameter("FromDate", FromDate, DbType.String));
+                param.Add(new DBParameter("ToDate", ToDate, DbType.String));
+                param.Add(new DBParameter("ProjectID", ProjectID, DbType.Int32));
+                DataTable dt = dbHelper.ExecuteDataTable(DashBoardQueries.GetDashBoardCountSummury, param, CommandType.StoredProcedure);
+
+                data = dt.AsEnumerable()
+                    .Select(row => new DashBoardCountSummuryModel
+                    {
+                        Type = row.Field<string>("Type"),
+                        Count = row.Field<int>("Count")
+                    }).ToList();
+            }
+            return data;
+        }
     }
 }

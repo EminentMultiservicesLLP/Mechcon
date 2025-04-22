@@ -564,7 +564,7 @@
         var searchStoreId = $("#ddlStores").val();
         $("#ItemModal").dialog({
             height: 500,
-            width: 700,
+            width: 900,
             modal: true,
             open: function (evt, ui) {
                 $.ajax({
@@ -598,7 +598,7 @@
     function LoadSearchDeliveryTermgrid() {
         $("#DeliveryItemModal").dialog({
             height: 500,
-            width: 700,
+            width: 900,
             modal: true,
             open: function (evt, ui) {
                 $.ajax({
@@ -616,7 +616,7 @@
     function LoadSearchPaymentTermgrid() {
         $("#PaymentItemModal").dialog({
             height: 500,
-            width: 700,
+            width: 900,
             modal: true,
             open: function (evt, ui) {
                 $.ajax({
@@ -635,7 +635,7 @@
     function LoadSearchOtherTermgrid() {
         $("#OtherItemModal").dialog({
             height: 500,
-            width: 700,
+            width: 900,
             modal: true,
             open: function (evt, ui) {
                 $.ajax({
@@ -653,7 +653,7 @@
     function LoadSearchBasisTermgrid() {
         $("#BasisItemModal").dialog({
             height: 500,
-            width: 700,
+            width: 900,
             modal: true,
             open: function (evt, ui) {
                 $.ajax({
@@ -671,7 +671,7 @@
     function LoadSearchInspectionTermgrid() {
         $("#InspectionItemModal").dialog({
             height: 500,
-            width: 700,
+            width: 900,
             modal: true,
             open: function (evt, ui) {
                 $.ajax({
@@ -942,7 +942,7 @@
         var dataTaxM = { location: "local", sorting: 'local' }
         var colTaxM = [
             {
-                dataIndx: "state", Width: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                dataIndx: "state", maxWidth: 25, minWidth: 25,  align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
                 editor: false, dataType: 'bool',
                 cb: {
                     select: true,
@@ -1733,7 +1733,12 @@
 
                             dataTerms = [];
                             $.each(data.POPaymenterms, function (index, value) {
-                                var grdData = { 'PayTermID': value.PayTermID, 'PaymentTermCode': value.PaymentTermCode, 'PaymentTermDesc': value.PaymentTermDesc, 'state': true }
+                                var grdData = {
+                                    'PayTermID': value.PayTermID, 'PaymentTermCode': value.PaymentTermCode, 'PaymentTermDesc': value.PaymentTermDesc, 'state': true, pq_cellattr: {
+                                        PaymentTermDesc: {
+                                            title: value.PaymentTermDesc
+                                        }
+                                    } }
                                 dataTerms.push(grdData);
                             });
                             $PaymentTermgrid.pqGrid("option", "dataModel.data", dataTerms);
@@ -1776,7 +1781,7 @@
         var dataTaxM = { location: "local", sorting: 'local' }
         var colTaxM = [
             {
-                dataIndx: "state", Width: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                dataIndx: "state", maxWidth: 25, minWidth: 25,  align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
                 editor: false, dataType: 'bool',
                 title: "<input type='checkbox' />",
                 cb: { select: true, all: false, header: true }
@@ -1821,14 +1826,14 @@
         }
         var colDelM = [
             {
-                dataIndx: "state", Width: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                dataIndx: "state", maxWidth: 25, minWidth: 25,  align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
                 editor: false, dataType: 'bool',
                 title: "<input type='checkbox' />",
                 cb: { select: true, all: false, header: true }
             },
             { title: "", dataIndx: "TermID", dataType: "integer", hidden: true },
             {
-                title: "Code", dataIndx: "DeliveryTermCode", width: 150, editable: false,
+                title: "Code", dataIndx: "DeliveryTermCode", width: '10%', editable: false,
                 filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             },
             {
@@ -1878,13 +1883,13 @@
         var dataDelM = { location: "local", sorting: 'local' }
         var colDelM = [
             {
-                dataIndx: "state", Width: 15, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                dataIndx: "state", maxWidth: 25, minWidth: 25,  align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
                 editor: false, dataType: 'bool',
                 title: "<input type='checkbox' />",
                 cb: { select: true, all: false, header: true }
             },
             { title: "", dataIndx: "DelTermID", dataType: "integer", hidden: true },
-            { title: "Code", dataIndx: "DeliveryTermCode", width: 200, editable: false },
+            { title: "Code", dataIndx: "DeliveryTermCode", width: '10%', editable: false },
             { title: "Name", dataIndx: "DeliveryTermDesc", width: 400, editable: false }
         ];
         var DelM = {
@@ -1911,13 +1916,13 @@
         var dataPayM = { location: "local" }
         var colPayM = [
             {
-                dataIndx: "state", Width: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                dataIndx: "state", maxWidth: 25, minWidth: 25,  align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
                 editor: false, dataType: 'bool',
                 cb: { select: true, all: false, header: true }
             },
             { title: "", dataIndx: "TermID", dataType: "integer", hidden: true },
             {
-                title: "Code", dataIndx: "PaymentTermCode", width: 150, editable: false,
+                title: "Code", dataIndx: "PaymentTermCode", width: '10%', editable: false,
                 filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             },
             {
@@ -1966,14 +1971,14 @@
         var dataDelM = { location: "local", sorting: 'local' }
         var colDelM = [
             {
-                dataIndx: "state", Width: 15, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                dataIndx: "state", maxWidth: 25, minWidth: 25,  align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
                 editor: false, dataType: 'bool',
                 title: "<input type='checkbox' />",
                 cb: { select: true, all: false, header: true }
             },
             { title: "", dataIndx: "PayTermID", dataType: "integer", hidden: true },
             {
-                title: "Code", dataIndx: "PaymentTermCode", width: 200, editable: false
+                title: "Code", dataIndx: "PaymentTermCode", width: '10%', editable: false
 
             },
             {
@@ -2005,13 +2010,13 @@
         var dataDelM = { location: "local", sorting: 'local' }
         var colDelM = [
             {
-                dataIndx: "state", Width: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                dataIndx: "state", maxWidth: 25, minWidth: 25,  align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
                 editor: false, dataType: 'bool',
                 cb: { select: true, all: false, header: true }
             },
             { title: "", dataIndx: "TermID", dataType: "integer", hidden: true },
             {
-                title: "Code", dataIndx: "OthersTermCode", width: 150, editable: false,
+                title: "Code", dataIndx: "OthersTermCode", width: '15%', editable: false,
                 filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             },
             {
@@ -2047,13 +2052,13 @@
         var dataDelM = { location: "local", sorting: 'local' }
         var colDelM = [
             {
-                dataIndx: "state", Width: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                dataIndx: "state", maxWidth: 25, minWidth: 25,  align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
                 editor: false, dataType: 'bool',
                 cb: { select: true, all: false, header: true }
             },
             { title: "", dataIndx: "BasisID", dataType: "integer", hidden: true },
             {
-                title: "Code", dataIndx: "BasisCode", width: 150, editable: false,
+                title: "Code", dataIndx: "BasisCode", width: '10%', editable: false,
                 filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             },
             {
@@ -2087,13 +2092,13 @@
         var dataDelM = { location: "local", sorting: 'local' }
         var colDelM = [
             {
-                dataIndx: "state", Width: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                dataIndx: "state", maxWidth: 25, minWidth: 25,  align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
                 editor: false, dataType: 'bool',
                 cb: { select: true, all: false, header: true }
             },
             { title: "", dataIndx: "InspectionId", dataType: "integer", hidden: true },
             {
-                title: "Code", dataIndx: "InspectionCode", width: 150, editable: false,
+                title: "Code", dataIndx: "InspectionCode", width: '10%', editable: false,
                 filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             },
             {
@@ -2142,13 +2147,13 @@
         var dataOtherM = { location: "local" }
         var colOtherM = [
             {
-                dataIndx: "state", Width: 15, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                dataIndx: "state", maxWidth: 25, minWidth: 25,  align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
                 editor: false, dataType: 'bool',
                 title: "<input type='checkbox' />",
                 cb: { select: true, all: false, header: true }
             },
             { title: "", dataIndx: "InspectionId", dataType: "integer", hidden: true },
-            { title: "Code", dataIndx: "InspectionCode", width: 400, editable: false },
+            { title: "Code", dataIndx: "InspectionCode", width: '10%', editable: false },
             { title: "Description", dataIndx: "InspectionDesc", width: 400, editable: false }
         ];
         var inspection = {
@@ -2191,13 +2196,13 @@
         var basism = { location: "local" }
         var colM = [
             {
-                dataIndx: "state", Width: 15, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                dataIndx: "state", maxWidth: 25, minWidth: 25,  align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
                 editor: false, dataType: 'bool',
                 title: "<input type='checkbox' />",
                 cb: { select: true, all: false, header: true }
             },
             { title: "", dataIndx: "BasisId", dataType: "integer", hidden: true },
-            { title: "Code", dataIndx: "BasisCode", width: 400, editable: false },
+            { title: "Code", dataIndx: "BasisCode", width: '10%', editable: false },
             { title: "Name", dataIndx: "BasisDesc", width: 400, editable: false }
         ];
         var basisgrid = {
@@ -2242,13 +2247,13 @@
         var dataOtherM = { location: "local" }
         var colOtherM = [
             {
-                dataIndx: "state", Width: 15, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                dataIndx: "state", maxWidth: 25, minWidth: 25,  align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
                 editor: false, dataType: 'bool',
                 title: "<input type='checkbox' />",
                 cb: { select: true, all: false, header: true }
             },
             { title: "", dataIndx: "OtherTermID", dataType: "integer", hidden: true },
-            { title: "Code", dataIndx: "OthersTermCode", width: 200, editable: false },
+            { title: "Code", dataIndx: "OthersTermCode", width: '10%', editable: false },
             { title: "Name", dataIndx: "OthersTermDesc", width: 400, editable: false }
         ];
         var DelM = {
@@ -2300,7 +2305,13 @@
             colM[3].editable = true;
             $PaymentTermgrid.pqGrid("option", "colModel", colM);
             $.each(selectedItems, function (key, value) {
-                $PaymentTermgrid.pqGrid("addRow", { newRow: { 'PayTermID': value.TermID, 'PaymentTermCode': value.PaymentTermCode, 'PaymentTermDesc': value.PaymentTermDesc, 'state': true } })
+                $PaymentTermgrid.pqGrid("addRow", {
+                    newRow: {
+                        'PayTermID': value.TermID, 'PaymentTermCode': value.PaymentTermCode, 'PaymentTermDesc': value.PaymentTermDesc, 'state': true, pq_cellattr: {
+                            PaymentTermDesc: {
+                                title: value.PaymentTermDesc
+                            }
+                        }} })
             });
             colM[2].editable = false;
             colM[3].editable = false;
@@ -2507,7 +2518,7 @@
     function LoadVGrid() {
         $("#VendorModal").dialog({
             height: 500,
-            width: 700,
+            width: 900,
             modal: true,
             open: function (evt, ui) {
                 $.ajax({
@@ -2535,7 +2546,7 @@
     var setVcols = [
         { title: "", dataIndx: "VendorId", dataType: "integer", hidden: true },
         {
-            title: "Vendor Name", dataIndx: "Name", width: 200, dataType: "string",
+            title: "Vendor Name", dataIndx: "Name", width: '10%', dataType: "string",
             filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
         }
     ];
@@ -2606,7 +2617,7 @@
     function LoadpoVendorGridGrid() {
         $("#PoVendorgridModal").dialog({
             height: 500,
-            width: 700,
+            width: 900,
             modal: true,
             open: function (evt, ui) {
                 $.ajax({
@@ -2742,7 +2753,12 @@
 
                             dataTerms = [];
                             $.each(data.RFQPaymenterms, function (index, value) {
-                                var grdData = { 'PayTermID': value.PayTermID, 'PaymentTermCode': value.PaymentTermCode, 'PaymentTermDesc': value.PaymentTermDesc, 'state': true }
+                                var grdData = {
+                                    'PayTermID': value.PayTermID, 'PaymentTermCode': value.PaymentTermCode, 'PaymentTermDesc': value.PaymentTermDesc, 'state': true, pq_cellattr: {
+                                        PaymentTermDesc: {
+                                            title: value.PaymentTermDesc
+                                        }
+                                    }}
                                 dataTerms.push(grdData);
                             });
                             $PaymentTermgrid.pqGrid("option", "dataModel.data", dataTerms);

@@ -12,6 +12,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Interfaces
   {
       int CreatePurchaseReturntDetails(PurchaseReturnEntity entity1, PurchaseReturnDetailsEntities entity, DBHelper dbHelper);
       List<PurchaseReturnDetailsEntities> PurchaseReturnDetailsById(int ReturnID);
-    //  bool UpdatePurchaseReturnAuth(PurchaseReturnEntity entity, PurchaseReturnDetailsEntities entity1);
-  }
+      List<PurchaseReturnDetailsRptEntities> PurchaseReturnDetailsRptById(int ReturnID);
+        //  bool UpdatePurchaseReturnAuth(PurchaseReturnEntity entity, PurchaseReturnDetailsEntities entity1);
+    }
 }

@@ -32,13 +32,13 @@ namespace BISERP.Areas.Store.Controllers
         }
 
         [HttpGet]
-        public async Task<JsonResult> AllMaterialIndent(int StoreId, DateTime fromdate, DateTime todate)
+        public async Task<JsonResult> AllMaterialIndent(int StoreId, DateTime fromdate, DateTime todate, string ReportType)
         {
             JsonResult jResult;
             List<MaterialIndentModel> mimodel = new List<MaterialIndentModel>();
             try
             {
-                string _url = url + "/materilaindents/getallmaterilaindents/" + fromdate.ToString("MM-dd-yy") + "/" + todate.ToString("MM-dd-yy") + "/" + StoreId.ToString() + Common.Constants.JsonTypeResult;
+                string _url = url + "/materilaindents/getallmaterilaindents/" + fromdate.ToString("MM-dd-yy") + "/" + todate.ToString("MM-dd-yy") + "/" + StoreId.ToString() + "/" + ReportType + Common.Constants.JsonTypeResult;
                 mimodel = await Common.AsyncWebCalls.GetAsync<List<MaterialIndentModel>>(client, _url, CancellationToken.None);
                 if (mimodel != null)
                 {
@@ -718,5 +718,31 @@ namespace BISERP.Areas.Store.Controllers
             return jResult;
         }
 
+        [HttpGet]
+        public async Task<JsonResult> GetItemListForMI(int? StoreId, int? ItemTypeId)
+        {
+            JsonResult jResult;
+            try
+            {
+                string _url = $"{url}/materilaindents/getItemListForMI" + (StoreId.HasValue ? $"/{StoreId}" : "") + (ItemTypeId.HasValue ? $"/{ItemTypeId}" : "");
+
+                _url += Common.Constants.JsonTypeResult;
+                List<ItemMasterModel> items = await Common.AsyncWebCalls.GetAsync<List<ItemMasterModel>>(client, _url, CancellationToken.None);
+                if (items != null && items.Count > 0)
+                {
+                    items.ForEach(m => m.storeId = StoreId);
+                    jResult = Json(new { success = true, items }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                    jResult = Json(new { success = false, Messsage = "No Items found" }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error in GetItemsByStoreItemType :" + ex.Message + Environment.NewLine + ex.StackTrace.ToString());
+                jResult = Json("Error");
+            }
+            jResult.MaxJsonLength = int.MaxValue;
+            return jResult;
+        }
     }
 }

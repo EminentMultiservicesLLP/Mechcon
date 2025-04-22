@@ -24,6 +24,7 @@ namespace BISERPBusinessLayer.Entities.Masters
         public Nullable<bool> NoMrp { get; set; }
         public bool Service { get; set; }
         public bool PackingList { get; set; }
+        public bool IsGRNItem { get; set; }
         public Nullable<bool> AutoConsumed { get; set; }
         public Nullable<bool> Asset { get; set; }
         public Nullable<double> OPBalance { get; set; }

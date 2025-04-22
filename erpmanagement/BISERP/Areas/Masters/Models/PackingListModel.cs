@@ -17,6 +17,7 @@ namespace BISERP.Areas.Masters.Models
         public DateTime? InvoiceDate { get; set; }
         public string strInvoiceDate { get; set; }
         public string VehicleNo { get; set; }
+        public string ClientName { get; set; }
         public string PONo { get; set; }
         public DateTime? PODate { get; set; }
         public string strPODate { get; set; }
@@ -47,6 +48,30 @@ namespace BISERP.Areas.Masters.Models
         public string ItemName { get; set; }
         public string ItemDescription { get; set; }
         public double Qty { get; set; }
+        public string Unit { get; set; }
+        public string Remark { get; set; }
+    }
+
+    public class PrePackingListModel
+    {
+        public int PrePackingListId { get; set; }
+        public int StoreId { get; set; }
+        public string StoreName { get; set; }
+        public List<PrePackingListDetailModel> PrePackingListDetails { get; set; }
+        public int? InsertedBy { get; set; }
+        public string InsertedByName { get; set; }
+        public DateTime? InsertedOn { get; set; }
+        public int? UpdatedBy { get; set; }
+        public string UpdatedByName { get; set; }
+        public DateTime? UpdatedOn { get; set; }
+    }
+    public class PrePackingListDetailModel
+    {
+        public int PrePackingListDetailId { get; set; }
+        public int PrePackingListId { get; set; }
+        public string ItemName { get; set; }
+        public string ItemDescription { get; set; }
+        public double? Qty { get; set; }
         public string Unit { get; set; }
         public string Remark { get; set; }
     }

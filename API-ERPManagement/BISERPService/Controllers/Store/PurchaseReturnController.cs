@@ -8,6 +8,9 @@ using BISERPBusinessLayer.Repositories.Store;
 using BISERPBusinessLayer.Entities.Store;
 using BISERPCommon.Extensions;
 using BISERPBusinessLayer.Repositories.Store.Interfaces;
+using BISERPBusinessLayer.Entities.Masters;
+using BISERPBusinessLayer.Repositories.Master.Interfaces;
+
 namespace BISERPService.Controllers
 {
     [RoutePrefix("api/purchasereturn")]
@@ -16,22 +19,25 @@ namespace BISERPService.Controllers
         IPurchaseReturnRepository _purchaseReturn;
         IPurchaseReturnDetailsRepository _purchasedtReturn;
         IPurchaseReturnCommonRepository _purchasecommom;
-       
+        IMechconMasterRepository _iGetMechconData;
+
         //IMaterialReturnDetailsRepository _purchasedetailReturn;
         private static readonly ILogger _loggger = Logger.Register(typeof(PurchaseReturnController));
 
-        public PurchaseReturnController(IPurchaseReturnRepository purchaseReturn, IPurchaseReturnDetailsRepository purchasedtReturn, IPurchaseReturnCommonRepository purchasecommom)
+        public PurchaseReturnController(IPurchaseReturnRepository purchaseReturn, IPurchaseReturnDetailsRepository purchasedtReturn, IPurchaseReturnCommonRepository purchasecommom, IMechconMasterRepository iGetMechconData)
         {
             _purchaseReturn = purchaseReturn;
             _purchasedtReturn = purchasedtReturn;
             _purchasecommom = purchasecommom;
+            _iGetMechconData = iGetMechconData;
 
         }
 
+        [Route("getpurchasegrn")]
         [Route("getpurchasegrn/{storeid}")]
         [AcceptVerbs("GET", "POST")]
         // GET api/values/5
-        public IHttpActionResult GetById(int storeid)
+        public IHttpActionResult GetById(int? storeid = null)
         {
             List<PurchaseReturnEntity> pmrt = new List<PurchaseReturnEntity>();
             TryCatch.Run(() =>
@@ -143,9 +149,10 @@ namespace BISERPService.Controllers
             else
                 return BadRequest();
         }
+        [Route("getAllPr")]
         [Route("getAllPr/{storeid}")]
         [AcceptVerbs("GET", "POST")]
-        public IHttpActionResult GetAllPurchaseReturn(int storeid)
+        public IHttpActionResult GetAllPurchaseReturn(int? storeid = null)
         {
             List<PurchaseReturnEntity> purchaseReturn = new List<PurchaseReturnEntity>();
             TryCatch.Run(() =>
@@ -188,5 +195,57 @@ namespace BISERPService.Controllers
             else
                 return BadRequest();
         }
+
+
+        [Route("PurchaseReturnForRpt")]
+        [AcceptVerbs("GET", "POST")]
+        public IHttpActionResult GetPurchaseReturnForReport()
+        {
+            List<PurchaseReturnEntity> PurchaseReturn = new List<PurchaseReturnEntity>();
+            TryCatch.Run(() =>
+            {
+                var list = _purchaseReturn.GetPurchaseReturnForReport();
+                if (list != null && list.Count() > 0)
+                    PurchaseReturn = list.ToList();
+            }).IfNotNull(ex =>
+            {
+                _loggger.LogError("Error in GetPurchaseReturn method of PurchaseReturnController :" + Environment.NewLine + ex.StackTrace);
+                return InternalServerError();
+            });
+            if (PurchaseReturn.Any())
+                return Ok(PurchaseReturn);
+            else
+                return BadRequest();
+        }
+
+
+        [Route("getpurchasereturnbyid/{id}")]
+        [AcceptVerbs("GET", "POST")]
+        public IHttpActionResult GetPurchaseOrderById(int id)
+        {
+            PurchaseReturnRptEntity pr = new PurchaseReturnRptEntity();
+            MechconMasterEntity mechconMaster = new MechconMasterEntity();
+            TryCatch.Run(() =>
+            {
+                pr = _purchaseReturn.GetPurchaseReturnById(id);
+                pr.PurchaseReturnDt = _purchasedtReturn.PurchaseReturnDetailsRptById(id);
+                mechconMaster = _iGetMechconData.GeMechconData();
+                pr.companyName = mechconMaster.Name;
+                pr.companyAddress = mechconMaster.Address;
+                pr.companyGST = mechconMaster.GSTNumber;
+                pr.companyCIN = mechconMaster.CINNumber;
+                pr.companyEmail = mechconMaster.emailID;
+
+            }).IfNotNull(ex =>
+            {
+                _loggger.LogError("Error in GetPurchaseOrderById method of PurchaseOrderController : parameter :" + id.ToString() + Environment.NewLine + ex.StackTrace);
+                return InternalServerError();
+            });
+            if (pr.IsNotNull())
+                return Ok(pr);
+            else
+                return NotFound();
+        }
+
     }
 }

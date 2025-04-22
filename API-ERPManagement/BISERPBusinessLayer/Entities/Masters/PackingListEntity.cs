@@ -51,4 +51,28 @@ namespace BISERPBusinessLayer.Entities.Masters
         public string Unit { get; set; }
         public string Remark { get; set; }
     }
+
+    public class PrePackingListEntity
+    {
+        public int PrePackingListId { get; set; }
+        public int StoreId { get; set; }
+        public string StoreName { get; set; }
+        public List<PrePackingListDetailModel> PrePackingListDetails { get; set; }
+        public int? InsertedBy { get; set; }
+        public string InsertedByName { get; set; }
+        public DateTime? InsertedOn { get; set; }
+        public int? UpdatedBy { get; set; }
+        public string UpdatedByName { get; set; }
+        public DateTime? UpdatedOn { get; set; }
+    }
+    public class PrePackingListDetailModel
+    {
+        public int PrePackingListDetailId { get; set; }
+        public int PrePackingListId { get; set; }
+        public string ItemName { get; set; }
+        public string ItemDescription { get; set; }
+        public double? Qty { get; set; }
+        public string Unit { get; set; }
+        public string Remark { get; set; }
+    }
 }

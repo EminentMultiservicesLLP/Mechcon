@@ -28,6 +28,7 @@ namespace BISERPBusinessLayer.Repositories.Master.Classes
                     paramCollection.Add(new DBParameter("ClearanceNoteId", entity.ClearanceNoteId, DbType.Int32));
                     paramCollection.Add(new DBParameter("StoreId", entity.StoreId, DbType.Int32));
                     paramCollection.Add(new DBParameter("DispatchType", entity.DispatchType, DbType.Int32));
+                    paramCollection.Add(new DBParameter("FinalDispatch", entity.FinalDispatch, DbType.Boolean));
                     paramCollection.Add(new DBParameter("InsertedBy", entity.InsertedBy, DbType.Int32));
                     paramCollection.Add(new DBParameter("InsertedOn", entity.InsertedOn, DbType.DateTime));
                     var parameterList = dbHelper.ExecuteScalar(MasterQueries.SaveClearanceNote, paramCollection, CommandType.StoredProcedure);
@@ -58,6 +59,8 @@ namespace BISERPBusinessLayer.Repositories.Master.Classes
                                 StoreName = row.Field<string>("StoreName"),
                                 DispatchType = row.Field<int>("DispatchType"),
                                 DispatchTypeName = row.Field<string>("DispatchTypeName"),
+                                FinalDispatch = row.Field<bool>("FinalDispatch"),
+                                LotNo = row.Field<string>("LotNo"),
                                 InsertedBy = row.Field<int>("InsertedBy"),
                                 InsertedByName = row.Field<string>("InsertedByName"),
                                 InsertedOn = row.Field<DateTime?>("InsertedOn"),

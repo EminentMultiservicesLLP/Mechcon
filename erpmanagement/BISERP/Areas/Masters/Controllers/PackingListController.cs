@@ -131,5 +131,88 @@ namespace BISERP.Areas.Masters.Controllers
             }
             return jResult;
         }
+
+        #region PrePackingList
+
+        [HttpPost]
+        public ActionResult SavePrePackingList(PrePackingListModel model)
+        {
+            string _url = "";
+            bool _isSuccess = true;
+            model.InsertedBy = Convert.ToInt32(Session["AppUserId"].ToString());
+            model.InsertedOn = System.DateTime.Now;
+
+            _url = url + "/packingList/savePrePackingList" + Common.Constants.JsonTypeResult;
+            var result = client.PostAsync(_url, model, new JsonMediaTypeFormatter()).Result;
+            if (result.StatusCode.ToString() == "BadRequest")
+            {
+                _isSuccess = false;
+                model = JsonConvert.DeserializeObject<PrePackingListModel>(result.Content.ReadAsStringAsync().Result);
+            }
+            else if (result.StatusCode.ToString() == "Created")
+            {
+                _isSuccess = true;
+                model = JsonConvert.DeserializeObject<PrePackingListModel>(result.Content.ReadAsStringAsync().Result);
+            }
+            if (!_isSuccess)
+            {
+                return Json(new { success = false, Message = "Error while save PrePackingList", Data = model });
+            }
+            else
+            {
+                return Json(new { success = true, Message = model.PrePackingListId, Data = model });
+            }
+
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> GetPrePackingList()
+        {
+            List<PrePackingListModel> records = new List<PrePackingListModel>();
+            JsonResult jResult;
+            try
+            {
+                string _url = url + "/packingList/getPrePackingList/" + Common.Constants.JsonTypeResult;
+                records = await Common.AsyncWebCalls.GetAsync<List<PrePackingListModel>>(client, _url, CancellationToken.None);
+                if (records != null && records.Count > 0)
+                {
+                    jResult = Json(new { success = true, records }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                    jResult = Json(new { success = false, Messsage = "No PackingListDetail Found" }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error in GetPrePackingList:" + ex.Message + Environment.NewLine + ex.StackTrace.ToString());
+                jResult = Json("Error");
+            }
+            return jResult;
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> GetPrePackingListDetail(int StoreId)
+        {
+            List<PrePackingListDetailModel> records = new List<PrePackingListDetailModel>();
+            JsonResult jResult;
+            try
+            {
+                string _url = url + "/packingList/getPrePackingListDetail/" + StoreId + Common.Constants.JsonTypeResult;
+                records = await Common.AsyncWebCalls.GetAsync<List<PrePackingListDetailModel>>(client, _url, CancellationToken.None);
+                if (records != null && records.Count > 0)
+                {
+                    jResult = Json(new { success = true, records }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                    jResult = Json(new { success = false, Messsage = "No PackingListDetail Found" }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error in GetPrePackingListDetail:" + ex.Message + Environment.NewLine + ex.StackTrace.ToString());
+                jResult = Json("Error");
+            }
+            return jResult;
+        }
+
+        #endregion PrePackingList
     }
 }

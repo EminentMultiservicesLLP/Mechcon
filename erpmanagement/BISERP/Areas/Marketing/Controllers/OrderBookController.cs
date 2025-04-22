@@ -339,6 +339,31 @@ namespace BISERP.Areas.Marketing.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<JsonResult> GetOrderBookForRpt()
+        {
+            int UserID = Convert.ToInt32(Session["AppUserId"].ToString());
+            string _url = $"{url}/orderBook/getOrderBookForRpt/{UserID}{Common.Constants.JsonTypeResult}";
+
+            try
+            {
+                var records = await Common.AsyncWebCalls.GetAsync<List<OrderBookModel>>(client, _url, CancellationToken.None);
+
+                if (records == null)
+                {
+                    return Json(new { success = false, message = "No records found" }, JsonRequestBehavior.AllowGet);
+                }
+
+                return Json(new { success = true, records }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error in GetOrderBookForRpt: {ex.Message} {Environment.NewLine} {ex.StackTrace}");
+                return Json(new { success = false, message = "An error occurred while retrieving GetOrderBookForRpt" }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+
         #region Send Mail
         [HttpPost]
         public ActionResult SendMail(SendMail model)

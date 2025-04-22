@@ -1,4 +1,5 @@
-﻿using BISERPBusinessLayer.Entities.Store;
+﻿using BISERPBusinessLayer.Entities.Masters;
+using BISERPBusinessLayer.Entities.Store;
 using BISERPBusinessLayer.Repositories.Store;
 using BISERPBusinessLayer.Repositories.Store.Interfaces;
 using BISERPCommon;
@@ -19,10 +20,10 @@ namespace BISERPService.Controllers
         IMaterialIndentDetailsRepository _materialIndentDetails;
         IMaterilaIndentCommonRepository _materialIndCommon;
         IRequestStatusRepository _requestStatus;
-       
+
         private static readonly ILogger _loggger = Logger.Register(typeof(MaterialIndentController));
-        public MaterialIndentController(IMaterilaIndentRepository materilaIndent, IMaterialIndentDetailsRepository materilaIndentDetails, 
-            IMaterilaIndentCommonRepository materialIndCommon,IRequestStatusRepository requestStatus)
+        public MaterialIndentController(IMaterilaIndentRepository materilaIndent, IMaterialIndentDetailsRepository materilaIndentDetails,
+            IMaterilaIndentCommonRepository materialIndCommon, IRequestStatusRepository requestStatus)
         {
             _materilaIndent = materilaIndent;
             _materialIndentDetails = materilaIndentDetails;
@@ -47,20 +48,20 @@ namespace BISERPService.Controllers
             });
             if (materilaIndent.IsNull())
                 return Ok();
-            else if(materilaIndent.Any())
+            else if (materilaIndent.Any())
                 return Ok(materilaIndent);
             else
                 return Ok(materilaIndent);
         }
 
-        [Route("getallmaterilaindents/{Fromdate}/{todate}/{StoreId}")]
+        [Route("getallmaterilaindents/{Fromdate}/{todate}/{StoreId}/{ReportType}")]
         [AcceptVerbs("GET", "POST")]
-        public IHttpActionResult GetAllMaterialIndents(int StoreId, DateTime Fromdate, DateTime todate)
+        public IHttpActionResult GetAllMaterialIndents(int StoreId, DateTime Fromdate, DateTime todate, string ReportType)
         {
             List<MaterialIndentEntities> materilaIndent = new List<MaterialIndentEntities>();
             TryCatch.Run(() =>
             {
-                var list = _materilaIndent.GetAllMaterialIndents(StoreId, Fromdate, todate);
+                var list = _materilaIndent.GetAllMaterialIndents(StoreId, Fromdate, todate, ReportType);
                 if (list != null && list.Count() > 0)
                     materilaIndent = list.ToList();
             }).IfNotNull(ex =>
@@ -200,7 +201,7 @@ namespace BISERPService.Controllers
             {
                 materilaIndent = _materilaIndent.GetMaterialIndentById(id);
                 materilaIndent.Materialindentdt = _materialIndentDetails.GetAllMaterialIndentDetailsByIndentId(id);
-               
+
 
             }).IfNotNull(ex =>
             {
@@ -307,7 +308,7 @@ namespace BISERPService.Controllers
         public IHttpActionResult CreateMaterialIndent(MaterialIndentEntities entity)
         {
             bool isSucecss = true;
-         
+
             string ValidationMsg = "";
             TryCatch.Run(() =>
             {
@@ -340,8 +341,8 @@ namespace BISERPService.Controllers
             bool isSucecss = false;
             TryCatch.Run(() =>
             {
-                isSucecss = _materialIndCommon.UpdateMaterialIndent(entity);   
-                
+                isSucecss = _materialIndCommon.UpdateMaterialIndent(entity);
+
             }).IfNotNull(ex =>
             {
                 _loggger.LogError("Error in UpdateMaterialIndent method of ItemMasterController : parameter :" + Environment.NewLine + ex.StackTrace);
@@ -462,7 +463,7 @@ namespace BISERPService.Controllers
 
         [Route("getallpmi/{StoreId}")]
         [AcceptVerbs("GET", "POST")]
-        public IHttpActionResult GetAllpendingMaterialIndent( int StoreId)
+        public IHttpActionResult GetAllpendingMaterialIndent(int StoreId)
         {
             List<MaterialIndentEntities> materilaIndent = new List<MaterialIndentEntities>();
             TryCatch.Run(() =>
@@ -485,7 +486,7 @@ namespace BISERPService.Controllers
         [AcceptVerbs("POST")]
         public IHttpActionResult UpdatepenMaterialIndent(List<MaterialIndentDetailsEntities> entity)
         {
-            
+
             bool isSucecss = false;
             TryCatch.Run(() =>
             {
@@ -524,6 +525,28 @@ namespace BISERPService.Controllers
                 return Ok(request);
             else
                 return Ok(request);
+        }
+
+        [Route("getItemListForMI")]
+        [Route("getItemListForMI/{StoreId}")]
+        [Route("getItemListForMI/{StoreId}/{CategoryId}")]
+        [AcceptVerbs("GET", "POST")]
+        public IHttpActionResult GetItemListForMI(int? StoreId = null, int? CategoryId = null)
+        {
+            List<ItemMasterEntities> items = new List<ItemMasterEntities>();
+            TryCatch.Run(() =>
+            {
+                var list = _materilaIndent.GetItemListForMI(StoreId, CategoryId);
+                if (list != null && list.Any())
+                    items = list.ToList();
+            }).IfNotNull(ex =>
+            {
+                items = null;
+                _loggger.LogError("Error in GetItemListForMI method of MaterialIndentController :" + Environment.NewLine + ex.StackTrace);
+            });
+            if (items.IsNotNull())
+                return Ok(items);
+            return InternalServerError();
         }
     }
 }

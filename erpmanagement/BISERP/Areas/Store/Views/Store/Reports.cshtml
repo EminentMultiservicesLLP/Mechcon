@@ -68,12 +68,19 @@
                                             </select>
                                         </div>
                                         <div class="col-sm-3">
+                                            <label class="required" for="ReportType">Report Type</label>
+                                            <select id="ReportType" name="ReportType" class="form-control">
+                                                <option value="ProjectWise">Project Wise</option>
+                                                <option value="DateWise">Date Wise</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-3">
                                             <label for="Project" class="required">Project</label>
                                             <input id="ddlStoreLabel" class="form-control" type="text" placeholder="Search by - Project">
                                             <input type="hidden" id="ddlStore">
                                         </div>
                                     </div>
-                                    <div class="row" style="margin-left:2px" hidden>
+                                    <div class="row dateRange" style="margin-left:2px">
                                         <div class="col-sm-3">
                                             @Html.Label("From Date")
                                             <input class="form-control datepicker" id='FromDate' />
@@ -269,6 +276,12 @@
                                             @Html.Hidden("POId")
                                             @Html.Hidden("POStatus")
                                         </div>
+                                        <div class="col-sm-3">
+                                            @Html.Label("Purchase Return No")
+                                            @Html.TextBox("PurchaseReturnNo", "", new { @class = "form-control", placeholder = "click here.." })
+                                            @Html.Hidden("PurchaseReturnId")
+                                            @Html.Hidden("PurchaseReturnStatus")
+                                        </div>
 
                                     </div>
                                     <div class="row">
@@ -281,6 +294,9 @@
                                         </div>
                                         <div title="Select PO No" id="POmodel" style="display: none;">
                                             <div id="POgrid"></div>
+                                        </div>
+                                        <div title="Select Purchase Return No" id="PurchaseReturnmodel" style="display: none;">
+                                            <div id="PurchaseReturngrid"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -381,6 +397,16 @@
         $("#ToDate").datepicker("setDate", endDate);
     });
 
+    $("#ReportType").on("change", function () {
+        const ReportType = $(this).val();
+        if (ReportType === "ProjectWise") {
+            $("#ddlStoreLabel").closest('div').show();
+            $('.dateRange').hide();
+        } else {
+            $("#ddlStoreLabel").closest('div').hide();
+            $('.dateRange').show();
+        }
+    });
 
     $("#ddlStore").on('change', function () {
         const storeId = $("#ddlStore").val(); // Store the value once
@@ -406,7 +432,7 @@
                     },
                     error: function (xhr, status, error) {
                         console.error("Error fetching item types:", error);
-                        alert("An error occurred while loading item types. Please try again.");
+                        //alert("An error occurred while loading item types. Please try again.");
                     }
                 });
             }
@@ -540,11 +566,13 @@
         $("#SupplierNameBill").val("");
         $("#SupplierIDBill").val("");
         $("#PackingListNo").val("");
+        $('#ReportType').val("ProjectWise");
 
         $("#ddlStore").closest('div').hide();
         $("#ddlStoreLabel").closest('div').hide();
         $("#PurchaseIndentNo").closest('div').hide();
         $("#PONo").closest('div').hide();
+        $("#PurchaseReturnNo").closest('div').hide();
         $("#PackingListNo").closest('div').hide();
         $("#IndentId").closest('div').hide();
         $("#IndentNo").closest('div').hide();
@@ -561,6 +589,8 @@
         $("#ItemIdStock").closest('div').hide();
         $("#SupplierNameBill").closest('div').hide();
         $("#SupplierIDBill").closest('div').hide();
+        $('#ReportType').closest('div').hide();
+        $('.dateRange').hide();
     }
 
     function ResetForm() {
@@ -576,6 +606,7 @@
         if ($("#ddlReport").val() == "101") {
             $('#ddlStoreLabel').closest('div').show();
             $('#IndentNo').closest('div').show();
+            $('#ReportType').closest('div').show();
         }
         else if ($("#ddlReport").val() == "102") {
             $('#ddlStoreLabel').closest('div').show();
@@ -624,11 +655,11 @@
         else if ($("#ddlReport").val() == "141") {
             $('#ddlStoreLabel').closest('div').show();
             $('#ddlSupplierGRN').closest('div').show();
-
         }
         else if ($("#ddlReport").val() == "142") {
             $('#ddlStoreLabel').closest('div').show();
             $('#ddlSupplierGRN').closest('div').show();
+            $('#ReportType').closest('div').show();
         }
         else if ($("#ddlReport").val() == "143") {
             $('#FromDate').prop('disabled', false);
@@ -684,6 +715,9 @@
         }
         else if ($("#ddlReport").val() == "228") {
             $('#PONo').closest('div').show();
+        }
+        else if ($("#ddlReport").val() == "242") {
+            $('#PurchaseReturnNo').closest('div').show();
         }
         else if ($("#ddlReport").val() == "237") {
             $('#PurchaseIndentNo').closest('div').show();
@@ -750,7 +784,7 @@
                 }
             }
             else if ($("#ddlReport").val() == "142") {
-                if ($("#ddlStore").val() == "") {
+                if ($("#ReportType").val() == "ProjectWise" && $("#ddlStore").val() == "") {
                     ShowAlert("error", "Please Select Project");
                     return;
                 }
@@ -810,6 +844,12 @@
                     return;
                 }
             }
+            if($("#ddlReport").val() == "242") {
+                if ($("#PurchaseReturnNo").val() == "") {
+                    ShowAlert("error", "Please Select Purchase Return No.");
+                    return;
+                }
+            }
         }
         ReportValidationCheck();
     }
@@ -843,6 +883,9 @@
         }
         else if ($("#ddlReport").val() == "228") {
             url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&poId=" + $("#POId").val() + "&poType=" + $("#POStatus").val();
+        }
+        else if ($("#ddlReport").val() == "242") {
+            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&purchaseReturnId=" + $("#PurchaseReturnId").val();
         }
         else if ($("#ddlReport").val() == "237") {
             url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&indentId=" + $("#PurchaseIndentId").val() + "&pIType=" + $("#PRStatus").val();
@@ -896,6 +939,7 @@
             var StoreId = $('#ddlStore').val();
             var SuppId = $('#ddlSupplierGRN').val();
             var GrnId = $("#GRNId").val();
+            var ReportType = $("#ReportType").val();
 
             if (SuppId == "" || SuppId == undefined)
                 SuppId = 0;
@@ -903,7 +947,7 @@
             if (GrnId == "" || GrnId == undefined)
                 GrnId = 0;
             var StoreName = $("#ddlStore :selected").text();
-            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&fdate=" + $("#FromDate").val() + "&tdate=" + $("#ToDate").val() + "&storeid=" + StoreId + "&suppid=" + SuppId + "&GrnId=" + GrnId + "&sname=" + StoreName;
+            url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&fdate=" + $("#FromDate").val() + "&tdate=" + $("#ToDate").val() + "&storeid=" + StoreId + "&suppid=" + SuppId + "&GrnId=" + GrnId + "&sname=" + StoreName + "&ReportType=" + ReportType;
         }
         else if ($("#ddlReport").val() == "143") {
             url = "../../Reports/ReportViewer.aspx?reportid=" + $("#ddlReport").val() + "&fdate=" + $("#FromDate").val() + "&tdate=" + $("#ToDate").val();
@@ -1015,18 +1059,26 @@
 
     //****** MaterialIndent Report ******************/
     $('#IndentNo').on('click', function () {
-        if ($("#ddlStore").val() == "") {
-            ShowAlert("error", "Please Select Project ");
-            return;
-        }
-        LoadIndentSearchGrid();
-    })
-    //*********************** Indent Grid Section ***************//
-
-    function LoadIndentSearchGrid() {
+        $("#IndentNo").val('')
+        const ReportType = $("#ReportType").val();
         var StoreId = $("#ddlStore").val();
         var fromdt = $("#FromDate").val()
         var todt = $("#ToDate").val()
+
+        if (ReportType === "ProjectWise") {
+            if ($("#ddlStore").val() == "") {
+                ShowAlert("error", "Please Select Project ");
+                return;
+            }
+            LoadIndentSearchGrid(StoreId, fromdt, todt,'ProjectWise');
+        } else {
+            LoadIndentSearchGrid(0, fromdt, todt,'DateWise');
+        }
+    })
+    //*********************** Indent Grid Section ***************//
+
+    function LoadIndentSearchGrid(StoreId, fromdt, todt, ReportType) {
+        
         $("#IndentModal").dialog({
             height: 500,
             width: 700,
@@ -1038,7 +1090,7 @@
                     async: true,
                     method: "GET",
                     dataType: "JSON",
-                    data: { StoreId: StoreId, fromdate: fromdt, todate: todt },
+                    data: { StoreId: StoreId, fromdate: fromdt, todate: todt, ReportType: ReportType},
                     success: function (response) {
                         $("#Indentgrid").pqGrid("option", "dataModel.data", response);
                         $("#Indentgrid").pqGrid("refreshDataAndView");
@@ -1059,11 +1111,16 @@
         var colM = [
             { title: "", dataIndx: "Indent_Id", dataType: "integer", hidden: true },
             {
-                title: "Request No", dataIndx: "IndentNo", width: '50%',
-                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }, width: 200
+                title: "Project", dataIndx: "Indent_FromStore", width: '35%',
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] },
             },
             {
-                title: "Request Date", dataIndx: "strIndentDate", width: '50%', dataType: "date", filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+                title: "Request No", dataIndx: "IndentNo", width: '35%',
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] },
+            },
+            {
+                title: "Request Date", dataIndx: "strIndentDate", width: 200,
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             }
         ];
 
@@ -1084,6 +1141,7 @@
             dataModel: dataM,
             resizable: true,
             virtualX: true,
+            scrollModel: { autoFit: true },
             pageModel: { type: "local", rPP: 20 },
             rowClick: function (evt, ui) {
                 ClosePopupWindow("IndentModal");
@@ -1698,6 +1756,10 @@
         LoadPOGrid()
     })
 
+    $('#PurchaseReturnNo').on('click', function () {
+        LoadPurchaseReturnGrid()
+    })
+
     function LoadPurchaseIndentGrid() {
         $("#PurchaseIndentmodel").dialog({
             height: 500,
@@ -1782,6 +1844,7 @@
         };
         $("#PurchaseIndentgrid").pqGrid(setPR);
     });
+
     function LoadPOGrid() {
         $("#POmodel").dialog({
             height: 500,
@@ -1863,5 +1926,82 @@
             }
         };
         $("#POgrid").pqGrid(setPO);
+    });
+
+    function LoadPurchaseReturnGrid() {
+        $("#PurchaseReturnmodel").dialog({
+            height: 500,
+            width: 700,
+            modal: true,
+            open: function (evt, ui) {
+                $.ajax({
+                    url: "/PurchaseReturn/PurchaseReturnForRpt",
+                    cache: false,
+                    async: true,
+                    method: "GET",
+                    dataType: "JSON",
+                    success: function (response) {
+                        if (response) {
+                            $("#PurchaseReturngrid").pqGrid("option", "dataModel.data", response.records);
+                            $("#PurchaseReturngrid").pqGrid("refreshDataAndView");
+                            PqGridRefreshClick($("#PurchaseReturngrid"));
+                        }
+                        else {
+                            $("#PurchaseReturngrid").pqGrid("option", "dataModel.data", []);
+                            $("#PurchaseReturngrid").pqGrid("refreshDataAndView");
+                            PqGridRefreshClick($("#PurchaseReturngrid"));
+                        }
+                    }
+                });
+            },
+            close: function (event, ui) {
+            },
+            show: {
+                effect: "blind",
+                duration: 500
+            }
+        });
+    }
+    $(document).ready(function () {
+        var dataPurchaseReturn = { location: "local", sorting: 'local' };
+        var colPurchaseReturn = [
+            { title: "", dataIndx: "ID", dataType: "integer", hidden: true },
+            {
+                title: "Purchase Return No", dataIndx: "PRNo", width: "50%",
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            },
+            {
+                title: "Purchase Return Date", dataIndx: "StrPRDate", width: "50%",
+                filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            },
+        ];
+        var setPurchaseReturn = {
+            width: "auto", //auto width
+            height: "100%-30", //height in %age
+            sortable: false,
+            numberCell: { show: false },
+            hoverMode: 'cell',
+            showTop: false,
+            resizable: false,
+            draggable: false,
+            wrap: false,
+            editable: false,
+            columnBorders: true,
+            filterModel: { on: true, mode: "AND", header: true },
+            colModel: colPurchaseReturn,
+            dataModel: dataPurchaseReturn,
+            resizable: true,
+            virtualX: true,
+            pageModel: { type: "local", rPP: 20 },
+            rowClick: function (evt, ui) {
+                ClosePopupWindow("PurchaseReturnmodel");
+                if (ui.rowData) {
+                    var record = ui.rowData;
+                    $("#PurchaseReturnNo").val(record.PRNo);
+                    $("#PurchaseReturnId").val(record.ID);
+                }
+            }
+        };
+        $("#PurchaseReturngrid").pqGrid(setPurchaseReturn);
     });
 </script>

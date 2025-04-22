@@ -7,8 +7,8 @@ by editing this MSBuild file. In order to learn more about this please visit htt
   <PropertyGroup>
     <TimeStampOfAssociatedLegacyPublishXmlFile />
     <EncryptedPassword>AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAsazn7zDGR0qTsc35mpZIHAAAAAACAAAAAAADZgAAwAAAABAAAAA3PsekFgMdem3WCqZVlU7SAAAAAASAAACgAAAAEAAAANaY5jydmVfJJHGTF0ClG0MYAAAAMD32gvrGmSY8YmCmUA+kX6nebiOhrT3VFAAAANAyGhL5uelJiQ6JkTfjoaXaLxRS</EncryptedPassword>
-    <_PublishTargetUrl>D:\ALL_PUBLISHED\Mechcon\01-04-25\UI</_PublishTargetUrl>
-    <History>True|2025-03-27T08:27:50.7006203Z;True|2024-09-13T13:04:40.5420765+05:30;True|2024-09-12T20:28:46.6163637+05:30;True|2024-08-09T18:55:28.0590578+05:30;True|2024-08-02T21:08:00.2878131+05:30;True|2024-08-02T17:03:41.1035445+05:30;True|2024-07-31T14:38:49.2235555+05:30;True|2024-07-18T20:47:48.7253175+05:30;True|2024-07-12T18:54:18.1534548+05:30;True|2024-06-11T17:53:41.9025833+05:30;True|2024-05-16T17:15:45.1643068+05:30;True|2024-05-15T20:02:54.6194929+05:30;True|2024-03-22T18:51:40.7051916+05:30;True|2024-02-26T13:06:57.2857067+05:30;True|2024-02-23T21:24:56.3359181+05:30;False|2024-02-23T21:23:21.9952395+05:30;False|2024-02-23T21:22:09.0586386+05:30;False|2024-02-23T21:20:53.3263685+05:30;False|2024-02-23T21:16:51.6233785+05:30;False|2024-02-23T21:08:19.2804069+05:30;False|2024-02-23T21:06:09.8933913+05:30;False|2024-02-23T21:05:34.8896109+05:30;False|2024-02-23T21:04:54.4458664+05:30;</History>
+    <_PublishTargetUrl>D:\ALL_PUBLISHED\Mechcon\18-04-25\UI</_PublishTargetUrl>
+    <History>True|2025-04-18T15:18:09.5692601Z;True|2025-03-27T13:57:50.7006203+05:30;True|2024-09-13T13:04:40.5420765+05:30;True|2024-09-12T20:28:46.6163637+05:30;True|2024-08-09T18:55:28.0590578+05:30;True|2024-08-02T21:08:00.2878131+05:30;True|2024-08-02T17:03:41.1035445+05:30;True|2024-07-31T14:38:49.2235555+05:30;True|2024-07-18T20:47:48.7253175+05:30;True|2024-07-12T18:54:18.1534548+05:30;True|2024-06-11T17:53:41.9025833+05:30;True|2024-05-16T17:15:45.1643068+05:30;True|2024-05-15T20:02:54.6194929+05:30;True|2024-03-22T18:51:40.7051916+05:30;True|2024-02-26T13:06:57.2857067+05:30;True|2024-02-23T21:24:56.3359181+05:30;False|2024-02-23T21:23:21.9952395+05:30;False|2024-02-23T21:22:09.0586386+05:30;False|2024-02-23T21:20:53.3263685+05:30;False|2024-02-23T21:16:51.6233785+05:30;False|2024-02-23T21:08:19.2804069+05:30;False|2024-02-23T21:06:09.8933913+05:30;False|2024-02-23T21:05:34.8896109+05:30;False|2024-02-23T21:04:54.4458664+05:30;</History>
   </PropertyGroup>
   <ItemGroup>
     <File Include="Areas/Accounts/Views/Accounts/Accounts.cshtml">
@@ -276,7 +276,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>03/25/2025 19:48:23</publishTime>
     </File>
     <File Include="Areas/Marketing/Views/Marketing/OrderBook.cshtml">
-      <publishTime>03/26/2025 13:17:54</publishTime>
+      <publishTime>04/10/2025 14:12:59</publishTime>
     </File>
     <File Include="Areas/Marketing/Views/Marketing/ResourceTarget.cshtml">
       <publishTime>11/15/2024 14:12:23</publishTime>
@@ -297,10 +297,13 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/16/2024 16:51:35</publishTime>
     </File>
     <File Include="Areas/Masters/Views/Masters/ClearanceNote.cshtml">
-      <publishTime>08/30/2024 20:40:43</publishTime>
+      <publishTime>04/15/2025 16:41:14</publishTime>
     </File>
     <File Include="Areas/Masters/Views/Masters/ClientMaster.cshtml">
       <publishTime>01/10/2025 20:02:29</publishTime>
+    </File>
+    <File Include="Areas/Masters/Views/Masters/Dashboard.cshtml">
+      <publishTime>04/14/2025 17:23:50</publishTime>
     </File>
     <File Include="Areas/Masters/Views/Masters/DeliveryTermMaster.cshtml">
       <publishTime>09/20/2024 17:38:34</publishTime>
@@ -336,10 +339,13 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>01/10/2025 20:02:29</publishTime>
     </File>
     <File Include="Areas/Masters/Views/Masters/PackingList.cshtml">
-      <publishTime>08/09/2024 16:21:10</publishTime>
+      <publishTime>04/14/2025 18:05:50</publishTime>
     </File>
     <File Include="Areas/Masters/Views/Masters/PaymentTermMaster.cshtml">
       <publishTime>06/25/2024 16:18:31</publishTime>
+    </File>
+    <File Include="Areas/Masters/Views/Masters/PrePackingList.cshtml">
+      <publishTime>04/14/2025 17:46:09</publishTime>
     </File>
     <File Include="Areas/Masters/Views/Masters/ProductMaster.cshtml">
       <publishTime>01/10/2025 20:02:29</publishTime>
@@ -483,19 +489,19 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>10/10/2019 12:26:22</publishTime>
     </File>
     <File Include="Areas/Purchase/Views/Purchase/PurchaseIndent.cshtml">
-      <publishTime>01/24/2025 13:49:14</publishTime>
+      <publishTime>04/03/2025 14:01:25</publishTime>
     </File>
     <File Include="Areas/Purchase/Views/Purchase/PurchaseOrder.cshtml">
-      <publishTime>02/03/2025 13:53:57</publishTime>
+      <publishTime>04/14/2025 15:47:51</publishTime>
     </File>
     <File Include="Areas/Purchase/Views/Purchase/PurchaseOrderReport.cshtml">
       <publishTime>01/24/2025 13:49:14</publishTime>
     </File>
     <File Include="Areas/Purchase/Views/Purchase/PurchaseReturn.cshtml">
-      <publishTime>01/24/2025 13:49:14</publishTime>
+      <publishTime>04/11/2025 13:19:51</publishTime>
     </File>
     <File Include="Areas/Purchase/Views/Purchase/PurchaseReturnAuthorization.cshtml">
-      <publishTime>01/24/2025 13:49:14</publishTime>
+      <publishTime>04/11/2025 13:40:00</publishTime>
     </File>
     <File Include="Areas/Purchase/Views/Purchase/ReportTemplate.cshtml">
       <publishTime>10/10/2019 12:26:22</publishTime>
@@ -510,7 +516,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>01/24/2025 13:49:14</publishTime>
     </File>
     <File Include="Areas/Purchase/Views/Purchase/SupplierDeliveryReport.cshtml">
-      <publishTime>02/04/2025 13:30:51</publishTime>
+      <publishTime>04/01/2025 17:56:55</publishTime>
     </File>
     <File Include="Areas/Purchase/Views/Purchase/WOAuthorization.cshtml">
       <publishTime>01/24/2025 13:49:14</publishTime>
@@ -558,7 +564,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>10/10/2019 12:26:23</publishTime>
     </File>
     <File Include="Areas/SM_DashBoard/Views/SM_DashBoard/DashBoard.cshtml">
-      <publishTime>01/24/2025 13:14:02</publishTime>
+      <publishTime>04/01/2025 17:56:55</publishTime>
     </File>
     <File Include="Areas/SM_DashBoard/Views/Web.config">
       <publishTime>01/24/2025 13:14:02</publishTime>
@@ -585,7 +591,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>11/15/2024 14:12:24</publishTime>
     </File>
     <File Include="Areas/SM_Reports/Views/SM_Reports/WorkOrderReport.cshtml">
-      <publishTime>01/24/2025 13:14:21</publishTime>
+      <publishTime>04/10/2025 17:49:54</publishTime>
     </File>
     <File Include="Areas/SM_Reports/Views/Web.config">
       <publishTime>11/15/2024 14:12:24</publishTime>
@@ -630,7 +636,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>10/10/2019 12:26:26</publishTime>
     </File>
     <File Include="Areas/Store/Views/Store/GRN.cshtml">
-      <publishTime>01/24/2025 13:49:14</publishTime>
+      <publishTime>04/07/2025 18:13:25</publishTime>
     </File>
     <File Include="Areas/Store/Views/Store/GRNAuthorization.cshtml">
       <publishTime>01/24/2025 13:49:14</publishTime>
@@ -681,7 +687,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>11/15/2024 14:12:24</publishTime>
     </File>
     <File Include="Areas/Store/Views/Store/MaterialIndent.cshtml">
-      <publishTime>01/24/2025 13:49:14</publishTime>
+      <publishTime>04/08/2025 14:47:51</publishTime>
     </File>
     <File Include="Areas/Store/Views/Store/MaterialIssue.cshtml">
       <publishTime>01/24/2025 13:49:14</publishTime>
@@ -729,13 +735,13 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>01/24/2025 13:49:14</publishTime>
     </File>
     <File Include="Areas/Store/Views/Store/PurchaseReturn.cshtml">
-      <publishTime>01/24/2025 13:49:14</publishTime>
+      <publishTime>04/10/2025 19:26:03</publishTime>
     </File>
     <File Include="Areas/Store/Views/Store/PurchaseReturnAuthorization.cshtml">
       <publishTime>01/24/2025 13:49:14</publishTime>
     </File>
     <File Include="Areas/Store/Views/Store/Reports.cshtml">
-      <publishTime>02/14/2025 17:41:21</publishTime>
+      <publishTime>04/18/2025 20:44:56</publishTime>
     </File>
     <File Include="Areas/Store/Views/Store/StockAdjustmentVoucher.cshtml">
       <publishTime>12/20/2016 17:20:45</publishTime>
@@ -807,7 +813,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>10/10/2019 12:26:26</publishTime>
     </File>
     <File Include="Areas/Ticket/Views/Ticket/Dashboard.cshtml">
-      <publishTime>02/11/2025 17:32:41</publishTime>
+      <publishTime>04/01/2025 17:51:27</publishTime>
     </File>
     <File Include="Areas/Ticket/Views/Ticket/TicketActivity.cshtml">
       <publishTime>02/13/2025 13:47:07</publishTime>
@@ -987,16 +993,16 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>09/26/2019 18:33:45</publishTime>
     </File>
     <File Include="bin/BISERP.dll">
-      <publishTime>04/01/2025 14:09:50</publishTime>
+      <publishTime>04/18/2025 20:47:13</publishTime>
     </File>
     <File Include="bin/BISERP.pdb">
-      <publishTime>04/01/2025 14:09:50</publishTime>
+      <publishTime>04/18/2025 20:47:13</publishTime>
     </File>
     <File Include="bin/BISERPCommon.dll">
-      <publishTime>04/01/2025 14:09:47</publishTime>
+      <publishTime>04/18/2025 20:47:09</publishTime>
     </File>
     <File Include="bin/BISERPCommon.pdb">
-      <publishTime>04/01/2025 14:09:47</publishTime>
+      <publishTime>04/18/2025 20:47:09</publishTime>
     </File>
     <File Include="bin/de/Microsoft.Data.Edm.resources.dll">
       <publishTime>10/10/2019 12:27:26</publishTime>
@@ -1811,6 +1817,12 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="Content/DataSet/PackingList.xss">
       <publishTime>07/23/2024 15:01:56</publishTime>
     </File>
+    <File Include="Content/DataSet/PuchaseReturn.xsc">
+      <publishTime>04/18/2025 19:45:27</publishTime>
+    </File>
+    <File Include="Content/DataSet/PuchaseReturn.xss">
+      <publishTime>04/18/2025 19:45:27</publishTime>
+    </File>
     <File Include="Content/DataSet/WorkOrder.xsc">
       <publishTime>03/26/2025 13:47:08</publishTime>
     </File>
@@ -1819,6 +1831,9 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     </File>
     <File Include="Content/dataTables.bootstrap.min.css">
       <publishTime>06/22/2023 20:07:56</publishTime>
+    </File>
+    <File Include="Content/defaultDashboard.css">
+      <publishTime>04/01/2025 17:51:30</publishTime>
     </File>
     <File Include="Content/defaultGridModal.css">
       <publishTime>04/04/2024 15:34:12</publishTime>
@@ -2781,7 +2796,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>06/22/2023 20:07:56</publishTime>
     </File>
     <File Include="Scripts/common.js">
-      <publishTime>02/14/2025 13:24:02</publishTime>
+      <publishTime>04/02/2025 17:39:11</publishTime>
     </File>
     <File Include="Scripts/custom/timeout-dialog.js">
       <publishTime>06/13/2024 19:02:02</publishTime>
@@ -3966,7 +3981,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>10/10/2019 12:26:37</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>03/27/2025 13:56:58</publishTime>
+      <publishTime>04/18/2025 20:47:14</publishTime>
     </File>
   </ItemGroup>
 </Project>

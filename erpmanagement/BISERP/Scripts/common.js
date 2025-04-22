@@ -2098,3 +2098,15 @@ function getFinancialYearDates(financialYear) {
         endDate: new Date(endYear, 2, 31)     // March 31st
     };
 }
+
+function getFirstDateOfFinancialYear() {
+    const today = new Date();
+    const currentMonth = today.getMonth(); // Months are 0-based
+    const currentYear = today.getFullYear();
+
+    // Assuming financial year starts in April
+    const financialYearStartMonth = 3; // April (0-based index)
+    const financialYearStartYear = currentMonth >= financialYearStartMonth ? currentYear : currentYear - 1;
+
+    return new Date(financialYearStartYear, financialYearStartMonth, 1); // 1st April of the calculated year
+}

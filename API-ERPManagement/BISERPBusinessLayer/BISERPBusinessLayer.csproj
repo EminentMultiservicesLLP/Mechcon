@@ -125,6 +125,7 @@
     <Compile Include="Entities\Configuration\SeriesLogicEntity.cs" />
     <Compile Include="Entities\Configuration\StockViewEntity.cs" />
     <Compile Include="Entities\DashBoard\ChartEntity.cs" />
+    <Compile Include="Entities\DashBoard\DashBoardModel.cs" />
     <Compile Include="Entities\Masters\BasisMasterEntity.cs" />
     <Compile Include="Entities\Masters\BranchMasterEntities.cs" />
     <Compile Include="Entities\Masters\CityMasterEntities.cs" />

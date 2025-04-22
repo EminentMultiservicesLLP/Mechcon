@@ -21,5 +21,6 @@ namespace BISERPBusinessLayer.Repositories.SM.Interfaces
         IEnumerable<OtherTermDetails> GetOrderBookOtherTerms(int orderBookID);
         IEnumerable<BasisTermDetails> GetOrderBookBasisTerms(int orderBookID);
         IEnumerable<IncoTermEntities> GetIncoTerm();
+        IEnumerable<OrderBookEntities> GetOrderBookForRpt(int UserID);
     }
 }

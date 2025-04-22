@@ -141,6 +141,71 @@ namespace BISERPService.Controllers.Store
                 return NotFound();
         }
 
+        #region PrePackingList
 
+        [System.Web.Http.Route("savePrePackingList")]
+        [System.Web.Http.AcceptVerbs("GET", "POST")]
+        public IHttpActionResult SavePrePackingList(PrePackingListEntity model)
+        {
+            bool isSucecss = false;
+            TryCatch.Run(() =>
+            {
+                var newID = _clearance.SavePrePackingList(model);
+                model.PrePackingListId = newID.PrePackingListId;
+                isSucecss = true;
+            }).IfNotNull(ex =>
+            {
+                _loggger.LogError("Error in Save Pre PackingList method of Packing List Controller : parameter :" + Environment.NewLine + ex.StackTrace);
+                return InternalServerError();
+            });
+            if (isSucecss)
+                return Created<PrePackingListEntity>(Request.RequestUri + model.PrePackingListId.ToString(), model);
+            else
+                return BadRequest();
+        }
+
+        [Route("getPrePackingList")]
+        [AcceptVerbs("GET", "POST")]
+        public IHttpActionResult GetPrePackingList()
+        {
+            List<PrePackingListEntity> Dtl = new List<PrePackingListEntity>();
+            TryCatch.Run(() =>
+            {
+                var list = _clearance.GetPrePackingList();
+                if (list.IsNotNull() && list.Any())
+                    Dtl = list.ToList();
+            }).IfNotNull(ex =>
+            {
+                Dtl = null;
+                _loggger.LogError("Error in GetPrePackingList method of Packing List Controller :" + Environment.NewLine + ex.StackTrace);
+
+            });
+            if (Dtl.IsNotNull())
+                return Ok(Dtl);
+            return InternalServerError();
+        }
+
+        [Route("getPrePackingListDetail/{StoreId}")]
+        [AcceptVerbs("GET", "POST")]
+        public IHttpActionResult GetPrePackingListDetail(int StoreId)
+        {
+            List<PrePackingListDetailModel> Dtl = new List<PrePackingListDetailModel>();
+            TryCatch.Run(() =>
+            {
+                var list = _clearance.GetPrePackingListDetail(StoreId);
+                if (list.IsNotNull() && list.Any())
+                    Dtl = list.ToList();
+            }).IfNotNull(ex =>
+            {
+                Dtl = null;
+                _loggger.LogError("Error in GetPrePackingListDetail method of Packing List Controller :" + Environment.NewLine + ex.StackTrace);
+
+            });
+            if (Dtl.IsNotNull())
+                return Ok(Dtl);
+            return InternalServerError();
+        }
+
+        #endregion PrePackingList
     }
 }

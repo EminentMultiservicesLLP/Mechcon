@@ -387,5 +387,72 @@ namespace BISERPBusinessLayer.Repositories.SM.Classes
             }
             return incoTerms;
         }
+
+        public IEnumerable<OrderBookEntities> GetOrderBookForRpt(int UserID)
+        {
+            List<OrderBookEntities> orderBooks = null;
+            using (DBHelper dbHelper = new DBHelper())
+            {
+                DBParameter param = new DBParameter("UserID", UserID, DbType.Int32);
+                DataTable dt = dbHelper.ExecuteDataTable(MarketingQueries.GetOrderBookForRpt, param, CommandType.StoredProcedure);
+
+
+                orderBooks = dt.AsEnumerable()
+                               .Select(row => new OrderBookEntities
+                               {
+                                   EnquiryID = row.Field<int?>("EnquiryID"),
+                                   EnquiryNo = row.Field<string>("EnquiryNo"),
+                                   strEnquiryDate = Convert.ToDateTime(row.Field<DateTime>("EnquiryDate")).ToString("dd-MMM-yyyy"),
+                                   ClientName = row.Field<string>("ClientName"),
+                                   OrderBookID = row.Field<int>("OrderBookID"),
+                                   OrderBookNo = row.Field<string>("OrderBookNo"),
+                                   OfferID = row.Field<int?>("OfferID"),
+                                   PONo = row.Field<string>("PONo"),
+                                   strPODate = row.Field<string>("strPODate"),
+                                   POBaseValue = row.Field<double?>("POBaseValue"),
+                                   BudgetValue = row.Field<decimal?>("BudgetValue"),
+                                   MaterialValue = row.Field<decimal?>("MaterialValue"),
+                                   ConversionValue = row.Field<decimal?>("ConversionValue"),
+                                   TransValue = row.Field<decimal?>("TransValue"),
+                                   ECValue = row.Field<decimal?>("ECValue"),
+                                   strPIAdvSubmitDate = row.Field<string>("strPIAdvSubmitDate"),
+                                   strABGSubmitDate = row.Field<string>("strABGSubmitDate"),
+                                   strPIABGAdvSubmitDate = row.Field<string>("strPIABGAdvSubmitDate"),
+                                   ProjectID = row.Field<int>("ProjectID"),
+                                   ProjectCode = row.Field<string>("ProjectCode"),
+                                   ProjectDescription = row.Field<string>("ProjectDescription"),
+                                   MaterialOfConstruction = row.Field<string>("MaterialOfConstruction"),
+                                   AreaOfInstallation = row.Field<string>("AreaOfInstallation"),
+                                   ConsigneeID = row.Field<int?>("ConsigneeID"),
+                                   TechnicalSpecification = row.Field<string>("TechnicalSpecification"),
+                                   ScopeOfSupplyID = row.Field<int?>("ScopeOfSupplyID"),
+                                   ScopeOfSupplyName = row.Field<string>("ScopeOfSupplyName"),
+                                   Packaging = row.Field<string>("Packaging"),
+                                   Insurance = row.Field<string>("Insurance"),
+                                   Supervision = row.Field<string>("Supervision"),
+                                   LDCharges = row.Field<double?>("LDCharges"),
+                                   ContactAtSite = row.Field<string>("ContactAtSite"),
+                                   ContactAtPurchase = row.Field<string>("ContactAtPurchase"),
+                                   strDeliveryDate = row.Field<string>("strDeliveryDate"),
+                                   Transport = row.Field<string>("Transport"),
+                                   strDispatchDate1 = row.Field<string>("strDispatchDate1"),
+                                   strDispatchDate2 = row.Field<string>("strDispatchDate2"),
+                                   strDispatchDate3 = row.Field<string>("strDispatchDate3"),
+                                   strDispatchDate4 = row.Field<string>("strDispatchDate4"),
+                                   strDispatchDate5 = row.Field<string>("strDispatchDate5"),
+                                   BriefTechnicalSpecification = row.Field<string>("BriefTechnicalSpecification"),
+                                   Quantity = row.Field<int?>("Quantity"),
+                                   InstAndComm = row.Field<string>("InstAndComm"),
+                                   GuaranteeType = row.Field<string>("GuaranteeType"),
+                                   SBG = row.Field<decimal?>("SBG"),
+                                   ABG = row.Field<decimal?>("ABG"),
+                                   PBG = row.Field<decimal?>("PBG"),
+                                   AdditionalContact = row.Field<string>("AdditionalContact"),
+                                   Deactive = row.Field<bool>("Deactive"),
+                               }).ToList();
+            }
+            return orderBooks;
+        }
+
     }
 }

@@ -52,7 +52,25 @@ namespace BISERPBusinessLayer.Entities.Store
         public List<PurchaseReturnDetailsEntities> PurchaseReturnDt { get; set; }
         public string Remark { get; set; }
         public string StrPRDate { get; set; }
-       
-       
+    }
+    public class PurchaseReturnRptEntity
+    {
+        public string PRNo { get; set; }
+        public string StrPRDate { get; set; }
+        public string Store { get; set; }
+        public string Grnno { get; set; }
+        public string StrGrndate { get; set; }
+        public string Supplier { get; set; }
+        public string SupAdd { get; set; }
+        public string InsertedByName { get; set; }
+        public string strInsertedOn { get; set; }
+        public string AuthorisedByName { get; set; }
+        public string strAuthDate { get; set; }
+        public string companyName { get; set; }
+        public string companyAddress { get; set; }
+        public string companyGST { get; set; }
+        public string companyCIN { get; set; }
+        public string companyEmail { get; set; }
+        public List<PurchaseReturnDetailsRptEntities> PurchaseReturnDt { get; set; }
     }
 }
