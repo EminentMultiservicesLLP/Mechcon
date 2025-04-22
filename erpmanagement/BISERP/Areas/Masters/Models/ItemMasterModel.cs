@@ -91,6 +91,7 @@ namespace BISERP.Areas.Masters.Models
         [Display(Name = "Service")]
         public bool Service { get; set; }
         public bool PackingList { get; set; }
+        public bool IsGRNItem { get; set; }
         public Nullable<double> SalesTax { get; set; }
         public Nullable<double> SalesPrice { get; set; }
 

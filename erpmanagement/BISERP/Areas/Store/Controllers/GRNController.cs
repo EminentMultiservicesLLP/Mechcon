@@ -228,7 +228,7 @@ namespace BISERP.Areas.Store.Controllers
         public async Task<JsonResult> ExportGrn(int grnId, DateTime grnDate,string storename)
         {
             BISERP.Views.Shared.ReportViewer rptViewr = new BISERP.Views.Shared.ReportViewer();
-            rptViewr.GRNDetailsReport(grnDate, grnDate, 0, 0, grnId, storename, "PDF");
+            rptViewr.GRNDetailsReport(grnDate, grnDate, 0, 0, grnId, storename,"", "PDF");
             return Json(new { success = true });
         }
 

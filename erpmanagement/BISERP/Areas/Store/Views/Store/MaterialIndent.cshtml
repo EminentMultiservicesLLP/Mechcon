@@ -443,7 +443,7 @@ $('#ddlFromStore').change(function () {
         }
         var searchStoreId = $("#ddlFromStore").val();
         var searchItemtype = $("#ddlItemtype").val();
-        ShowItemListPoupByItemtype("Itemgrid", "ItemModal", setItemList, "/ItemMaster/GetItemsByStoreItemType/", searchStoreId, searchItemtype);
+        ShowItemListPoupByItemtype("Itemgrid", "ItemModal", setItemList, "/MaterialIndent/GetItemListForMI/", searchStoreId, searchItemtype);
     });
 
     //Click on Add selected items to main grid
@@ -452,11 +452,26 @@ $('#ddlFromStore').change(function () {
         $("#Itemgrid").pqGrid("reset", { filter: true });
         var getData = $("#Itemgrid").pqGrid("option", "dataModel.data");
         var selectedItems = jLinq.from(getData).equals("state", true).select();
+        var getMainGridData = $IndentItemDetailsGrid.pqGrid("option", "dataModel.data");
+
+        if (!selectedItems.length) {
+            ShowAlert("warning", "No items selected!");
+            return false;
+        }
+
+        let mainItemIds = new Set(getMainGridData.map(item => item.Item_Id));
+
+        let existingItems = selectedItems.filter(selItem => mainItemIds.has(selItem.ID));
+
+        if (existingItems.length) {
+            ShowAlert("error", "Some selected items already exist in the list!");
+            return false;
+        }
+
         let storeId = $("#ddlFromStore").val();
         const itemDetails = await getSelectedItemDetails(selectedItems, storeId);
 
         var dataMGrid = [];
-        var getMainGridData = $IndentItemDetailsGrid.pqGrid("option", "dataModel.data");
         $.each(getMainGridData, function (key, value) {
             var grdData = {
                 'IndentDetails_Id': value.IndentDetails_Id, 'Item_Id': value.Item_Id, 'ItemName': value.ItemName, 'DispensingUnit': value.DispensingUnit, 'Make': value.Make, 'MaterialOfConstruct': value.MaterialOfConstruct,

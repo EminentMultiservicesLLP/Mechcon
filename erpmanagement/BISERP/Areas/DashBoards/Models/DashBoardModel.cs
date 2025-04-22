@@ -35,4 +35,10 @@ namespace BISERP.Areas.DashBoards.Models
         public double DiscountGiven { get; set; }
         public double GrossAmount { get; set; }
     }
+    public class DashBoardCountSummuryModel
+    {
+        public string Type { get; set; }
+        public int? Count { get; set; }
+        public decimal? Value { get; set; }
+    }
 }

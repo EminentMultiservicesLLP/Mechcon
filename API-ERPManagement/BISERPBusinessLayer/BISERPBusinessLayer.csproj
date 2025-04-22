@@ -125,6 +125,7 @@
     <Compile Include="Entities\Configuration\SeriesLogicEntity.cs" />
     <Compile Include="Entities\Configuration\StockViewEntity.cs" />
     <Compile Include="Entities\DashBoard\ChartEntity.cs" />
+    <Compile Include="Entities\DashBoard\DashBoardModel.cs" />
     <Compile Include="Entities\Masters\BasisMasterEntity.cs" />
     <Compile Include="Entities\Masters\BranchMasterEntities.cs" />
     <Compile Include="Entities\Masters\CityMasterEntities.cs" />
@@ -144,6 +145,7 @@
     <Compile Include="Entities\Masters\PaymentTermsMasterEntities.cs" />
     <Compile Include="Entities\Masters\ProductMasterEntities.cs" />
     <Compile Include="Entities\Masters\ProjectTCMasterEntities.cs" />
+    <Compile Include="Entities\Masters\ScopeOfSupplyMasterEntities.cs" />
     <Compile Include="Entities\Masters\StateMasterEntities.cs" />
     <Compile Include="Entities\Masters\StoreItemTypeMappingMasterEntities.cs" />
     <Compile Include="Entities\Masters\StoreMasterEntities.cs" />
@@ -396,6 +398,7 @@
     <Compile Include="Repositories\Master\Classes\PaymentTermsMasterRepository.cs" />
     <Compile Include="Repositories\Master\Classes\ProductMasterRepository.cs" />
     <Compile Include="Repositories\Master\Classes\ProjectTCMasterRepository.cs" />
+    <Compile Include="Repositories\Master\Classes\ScopeOfSupplyMasterRepository.cs" />
     <Compile Include="Repositories\Master\Classes\StateMasterRepository.cs" />
     <Compile Include="Repositories\Master\Classes\StoreItemTypeMappingRepository.cs" />
     <Compile Include="Repositories\Master\Classes\StoreMasterRepository.cs" />
@@ -423,6 +426,7 @@
     <Compile Include="Repositories\Master\Interfaces\IPaymentTermsMasterRepository.cs" />
     <Compile Include="Repositories\Master\Interfaces\IProductMasterRepository.cs" />
     <Compile Include="Repositories\Master\Interfaces\IProjectTCMasterRepository.cs" />
+    <Compile Include="Repositories\Master\Interfaces\IScopeOfSupplyMasterRepository.cs" />
     <Compile Include="Repositories\Master\Interfaces\IStateMasterRepository.cs" />
     <Compile Include="Repositories\Master\Interfaces\IStoreItemTypeMappingRepository.cs" />
     <Compile Include="Repositories\Master\Interfaces\IStoreMasterRepository.cs" />

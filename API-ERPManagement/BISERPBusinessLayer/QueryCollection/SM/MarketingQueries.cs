@@ -54,6 +54,7 @@ namespace BISERPBusinessLayer.QueryCollection.SM
         public const string GetOrderBookBasisTerms = "sp_SM_GetOrderBookBasisTerms";
         public const string GetIncoTerm = "sp_SM_GetIncoTerms";
         public const string GetOBOtherDetails = "sp_SM_GetOBOtherDetails";
+        public const string GetOrderBookForRpt = "sp_SM_GetOrderBookForRpt";
 
         //WorkOrder
         public const string GetEnqForWorkOrder = "sp_SM_GetEnqForWorkOrder";

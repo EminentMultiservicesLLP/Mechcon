@@ -1,0 +1,400 @@
+﻿@model BISERP.Areas.Masters.Models.PackingListModel
+@Scripts.Render("~/bundles/jquerymodels")
+
+<h5 class="page-header orangeDottedBottomBorder">Pre Packing List</h5>
+<div id="SearchGridModal" class="modal fade" role="dialog" data-backdrop="false">
+    <div class="modal-dialog find-search-grid-modal">
+        <div class="modal-content gridmodal-content">
+            <div class="modal-header gridmodal-header">
+                <button type="button" class="close" onclick="closeModal()">&times;</button>
+                <h4 class="modal-title">Pre Packing List.</h4>
+            </div>
+            <div class="modal-body">
+                <div class="fill">
+                    <div id="PrePackingListGrid"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="panel-group">
+    <div class="panel panel-default">
+        <div class="panel-groupingBoder">
+            <div class="panel-heading">
+                <div class="panel-title">
+                    <a class="collapsediv" data-toggle="collapse" href="#SearchDetails">
+                        Pre Packing List
+                    </a>
+                </div>
+            </div>
+            <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                <div class="panel-body">
+                    <div class="fill">
+                        <div class="submit-row">
+                            <div class="col-sm-6" style="text-align:start">
+                                <button type="button" id="btnSave" class="btn btn-success" onclick="SavePrePackingList()">Save</button>
+                                <button type="button" class="btn btn-warning" id="btnResetT" onclick="clearFormData()">Clear</button>
+                                <button type="button" id="btnFind" class="btn btn-primary" onclick="showModal()">Find</button>
+                            </div>
+                        </div>
+                        <fieldset class="fieldsetCustom">
+                            <legend class="legendCustom">Create Primary Packing List</legend>
+
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    @Html.LabelFor(model => model.StoreId, new { @class = "required" })
+                                    @Html.DropDownList("StoreId", new SelectList(string.Empty, "Value", "Text"), "--Select Project--", new { @class = "wrapperdropdown-content form-control" })
+                                </div>
+                            </div>
+
+                        </fieldset>
+                        <div class="submit-row">
+                            <button type="button" class="btn btn-primary" id="btnAddRow">Add Row</button>
+                            <button type="button" class="btn btn-danger" id="btnRemoveRow">Remove Row</button>
+                        </div>
+                        <fieldset class="fieldsetCustom">
+                            <legend class="legendCustom">Items</legend>
+                            <div id="ItemGrid"></div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var tempPrePackingListId = 0;
+    var savedStoreIds = new Set();
+    var selectedRowIndx = null;
+
+    function loadStores() {
+        $.ajax({
+            type: "GET",
+            url: "/Master/MainStores",
+            dataType: "json",
+            success: function (data) {
+                const storesToAppend = data.filter(store => !savedStoreIds.has(store.ID));
+
+                $('#StoreId').empty();
+                $('#StoreId').append(`<option value="">--Select Project--</option>`)
+                $.each(storesToAppend, function (index, value) {
+                    $('#StoreId').append(`<option value="${value.ID}">${value.Code}</option>`);
+                });
+
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                console.error("Error loading stores:", errorThrown);
+            }
+        });
+    }
+
+    //--------------------------------------------- ItemGrid (Starts Here) ----------------------------------------------------//
+    var ItemGrid_GDM = { location: "local" };
+    var ItemGrid_GCM = [
+        {
+            title: "Item Name & Description", dataIndx: "ItemName", width: '50%',
+        },
+        {
+            title: "Qty", dataIndx: "Qty", width: '12%',
+        },
+        {
+            title: "Unit", dataIndx: "Unit", width: '12%',
+        },
+        {
+            title: "Remark", dataIndx: "Remark", width: '25%',
+        }
+    ];
+    var setItemGrid = {
+        height: 500,
+        width: 'auto',
+        maxWidth: '100%',
+        minWidth: 800,
+        sortable: true,
+        autofill: true,
+        numberCell: { show: true },
+        hoverMode: 'row',
+        showTop: true,
+        showTitle: true,
+        showBottom: true,
+        resizable: true,
+        scrollModel: { autoFit: true },
+        //filterModel: { on: true, mode: "AND", header: true },
+        draggable: false,
+        hwrap: false,
+        wrap: false,
+        editable: true,
+        columnBorders: true,
+        menuIcon: true,
+        selectionModel: { type: 'row', mode: 'single', cbHeader: false },
+        colModel: ItemGrid_GCM,
+        dataModel: ItemGrid_GDM,
+        pageModel: { type: "local" },
+        rowClick: function (evt, ui) {
+            if (ui.rowData) {
+                selectedRowIndx = ui.rowIndx;
+            }
+        }
+    }
+
+    var $ItemGrid = $("#ItemGrid").pqGrid(setItemGrid);
+    //--------------------------------------------- ItemGrid (Ends Here) ----------------------------------------------------//
+
+    $('#btnAddRow').on('click', async function () {
+        const storeId = $("#StoreId").val();
+
+        if (!storeId || storeId === "0") {
+            ShowAlert("error", "Select Project First!");
+            return false;
+        }
+
+        const itemGridData = $ItemGrid.pqGrid("option", "dataModel.data");
+
+        const newRow = {
+            ItemName: '',
+            ItemDescription: '',
+            Qty: 0,
+            Unit: '',
+            Remark: ''
+        };
+
+        itemGridData.push(newRow);
+
+        $ItemGrid.pqGrid("option", "dataModel.data", itemGridData);
+        $ItemGrid.pqGrid("refreshDataAndView");
+    });
+
+    $('#btnRemoveRow').on('click', function () {
+        if (selectedRowIndx == null) {
+            return;
+        }
+        $("#ItemGrid").pqGrid("deleteRow", { rowIndx: selectedRowIndx });
+        selectedRowIndx = null;
+    });
+
+    function validateFormData() {
+        const requiredFields = ["#StoreId"];
+
+        for (let field of requiredFields) {
+            const fieldValue = $(field).val();
+            const fieldName = $(field).attr("id");
+
+            if (!fieldValue) {
+                ShowAlert("error", fieldName + " is required!");
+                return false;
+            }
+        }
+
+        const ItemsGridData = $ItemGrid.pqGrid("option", "dataModel.data");
+
+        if (ItemsGridData.some(item => item.ItemName == "")) {
+            ShowAlert("error", "Please enter Item Name!");
+            return false;
+        }
+
+        if (ItemsGridData.some(item => item.Qty <= 0)) {
+            ShowAlert("error", "Item quantity cannot be zero!");
+            return false;
+        }
+
+        if (ItemsGridData.length === 0) {
+            ShowAlert("error", "Please add least one item!");
+            return false;
+        }
+
+        return true;
+    }
+
+    function SavePrePackingList() {
+
+        if (!validateFormData()) {
+            return false;
+        }
+
+        const prePackingListDetails = [];
+        const ItemsGridData = $ItemGrid.pqGrid("option", "dataModel.data");
+
+        // Prepare packing list details
+        ItemsGridData.forEach(function (value) {
+            if (value.ItemName != "" && value.Qty > 0) {
+                prePackingListDetails.push({
+                    ItemName: value.ItemName,
+                    ItemDescription: value.ItemDescription,
+                    Qty: value.Qty,
+                    Unit: value.Unit,
+                    Remark: value.Remark
+                });
+            }
+        });
+
+        const Details = {
+            PrePackingListId: tempPrePackingListId,
+            StoreId: $("#StoreId").val(),
+            PrePackingListDetails: prePackingListDetails
+        };
+
+        const antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: "POST",
+            contentType: 'application/json; charset=utf-8',
+            url: "/PackingList/SavePrePackingList",
+            data: JSON.stringify(Details),
+            success: function (msg) {
+                if (msg.success === true) {
+                    const message = tempPrePackingListId === 0 ? "PrePacking List saved successfully!" : "PrePacking List updated successfully!";
+                    ShowAlert("success", message);
+                    clearFormData();
+                } else {
+                    ShowAlert("error", msg.message);
+                }
+            }
+        });
+    }
+
+    function GetPrePackingListDetail(StoreId) {
+        var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            url: "/PackingList/GetPrePackingListDetail",
+            data: { StoreId: StoreId },
+            dataType: "json",
+            beforeSend: function () {
+                $ItemGrid.pqGrid("showLoading");
+            },
+            complete: function () {
+                $ItemGrid.pqGrid("hideLoading");
+            },
+            success: function (response) {
+                if (response.records) {
+                    $ItemGrid.pqGrid("option", "dataModel.data", response.records);
+                    tempPrePackingListId = response.records[0].PrePackingListId;
+                } else {
+                    $ItemGrid.pqGrid("option", "dataModel.data", []);
+                    tempPrePackingListId = 0;
+                }
+                $ItemGrid.pqGrid("refreshDataAndView");
+                PqGridRefreshClick($ItemGrid);
+            },
+            error: function (xhr, status, error) {
+                console.error("Error: " + status + " " + error);
+            }
+        });
+    }
+
+    function clearFormData() {
+        tempPrePackingListId = 0;
+        $("#StoreId").val('');
+        ClearParamGrid('ItemGrid');
+        savedStoreIds.clear();
+        loadPrePackingListGrid();
+        $("#StoreId").prop('disabled', false);
+    }
+    //-----------------------------------PrePackingListGrid (Starts here)-----------------------------------//
+    var PrePackingListGrid_GDM = { location: "local" };
+    var PrePackingListGrid_GCM = [
+        {
+            title: "Store", dataIndx: "StoreName", width: '100%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        }
+    ];
+    var setPrePackingListGrid = {
+        height: 300,
+        width: 'auto',
+        maxWidth: '100%',
+        minWidth: 800,
+        sortable: true,
+        autofill: true,
+        numberCell: { show: true },
+        hoverMode: 'row',
+        showTop: true,
+        showTitle: true,
+        showBottom: true,
+        resizable: true,
+        scrollModel: { autoFit: true },
+        filterModel: { on: true, mode: "AND", header: true },
+        draggable: false,
+        hwrap: false,
+        wrap: false,
+        editable: false,
+        columnBorders: true,
+        menuIcon: true,
+        selectionModel: { type: 'row', mode: 'single', cbHeader: false },
+        colModel: PrePackingListGrid_GCM,
+        dataModel: PrePackingListGrid_GDM,
+        pageModel: { type: "local" },
+        rowClick: function (evt, ui) {
+            if (ui.rowData) {
+                var data = ui.rowData;
+                tempPrePackingListId = data.PrePackingListId;
+                $('#StoreId').append(`<option value="${data.StoreId}">${data.StoreName}</option>`);
+                $("#StoreId").val(data.StoreId);
+                $("#StoreId").prop('disabled', true);
+                GetPrePackingListDetail(data.StoreId);
+                closeModal();
+            }
+        }
+    }
+
+    var $PrePackingListGrid = $("#PrePackingListGrid").pqGrid(setPrePackingListGrid);
+
+    function loadPrePackingListGrid() {
+        var antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            url: "/PackingList/GetPrePackingList",
+            dataType: "json",
+
+            beforeSend: function () {
+                $("#PrePackingListGrid").pqGrid("showLoading");
+            },
+
+            complete: function () {
+                $("#PrePackingListGrid").pqGrid("hideLoading");
+            },
+
+            success: function (response) {
+                if (response.success === true) {
+                    response.records.forEach(store => {
+                        savedStoreIds.add(store.StoreId);
+                    });
+                    $("#PrePackingListGrid").pqGrid("option", "dataModel.data", response.records);
+                    $("#PrePackingListGrid").pqGrid("refreshDataAndView");
+                    PqGridRefreshClick($("#PrePackingListGrid"));
+                } else {
+                    $("#PrePackingListGrid").pqGrid("option", "dataModel.data", []);
+                    $("#PrePackingListGrid").pqGrid("refreshDataAndView");
+                    PqGridRefreshClick($("#PrePackingListGrid"));
+                }
+                loadStores();
+            },
+
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Error loading packing list grid: " + textStatus, errorThrown);
+                $("#PrePackingListGrid").pqGrid("hideLoading");
+            }
+        });
+    }
+    loadPrePackingListGrid();
+    //-----------------------------------PrePackingListGrid (Ends here)-----------------------------------//
+
+
+    function showModal() {
+        $("#SearchGridModal").modal('show');
+        $("#PrePackingListGrid").pqGrid("refreshDataAndView");
+    }
+
+    function closeModal() {
+        $("#SearchGridModal").modal('hide');
+    }
+
+</script>

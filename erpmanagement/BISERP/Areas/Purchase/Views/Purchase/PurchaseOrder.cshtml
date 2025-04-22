@@ -305,11 +305,6 @@
         </div>
     </div>
 
-    <div id="popup-dialog-crud" style="display:none;">
-        <form id="crud-form">
-            <div id="Taxgrid"></div>
-        </form>
-    </div>
     <div id="IndentModal" title="Select Request No" style="display: none;">
         <div id="Indentgrid"></div>
     </div>
@@ -339,23 +334,27 @@
             </div>
         </div>*@
 
-
+    <div id="TaxModal" title="Select Tax" style="display: none;">
+        <div id="Taxgrid"></div>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" id="btnUpdateTax">Update</button>
+        <button type="button" class="btn btn-danger closeJQModel" data-dismiss="modal">Close</button>
+    </div>
 
     <div id="ItemModal" title="Select Item" style="display: none;">
         <div id="Itemgrid"></div>
         <button type="button" class="btn btn-primary" data-dismiss="modal" id="btnAddItems">Add</button>
-        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-danger closeJQModel" data-dismiss="modal">Close</button>
     </div>
 
     <div id="DeliveryItemModal" title="Select Delivery Terms" style="display: none;">
         <div id="SearchDeliveryTermgrid"></div>
         <button type="button" class="btn btn-primary" data-dismiss="modal" id="btnAddDeliveryTerm">Add</button>
-        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-danger closeJQModel" data-dismiss="modal">Close</button>
     </div>
     <div id="PaymentItemModal" title="Select Payment Terms" style="display: none;">
         <div id="SearchPaymentTermgrid"></div>
         <button type="button" class="btn btn-primary" data-dismiss="modal" id="btnAddPaymentTerm">Add</button>
-        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-danger closeJQModel" data-dismiss="modal">Close</button>
     </div>
 
     <div id="OtherItemModal" title="Select Freight" style="display: none;">
@@ -439,6 +438,7 @@
     var $Basis; var $SearchBasisTermgrid;
     var tempcategoryId = 0, budgetbalanc = 0, selectedPORowIndx = null;
     var deliveryAddress = "";
+    var rowIndxForTax;
     loadMechconData();
     function loadMechconData() {
         $.ajax({
@@ -530,7 +530,24 @@
             }
         });
     }
-
+    function editRow(rowIndx) {
+        rowIndxForTax = rowIndx;
+        $("#TaxModal").dialog({
+            width: 883,
+            modal: true,
+            open: function (evt, ui) {
+                $.ajax({
+                    type: "GET",
+                    url: "/Master/TaxMaster",
+                    datatype: "Json",
+                    success: function (data) {
+                        $Taxgrid.pqGrid("option", "dataModel.data", data);
+                        $Taxgrid.pqGrid("refreshDataAndView");
+                    }
+                });
+            }
+        });
+    }
     function LoadTaxgrid() {
         $.ajax({
             type: "GET",
@@ -547,7 +564,7 @@
         var searchStoreId = $("#ddlStores").val();
         $("#ItemModal").dialog({
             height: 500,
-            width: 700,
+            width: 900,
             modal: true,
             open: function (evt, ui) {
                 $.ajax({
@@ -581,7 +598,7 @@
     function LoadSearchDeliveryTermgrid() {
         $("#DeliveryItemModal").dialog({
             height: 500,
-            width: 700,
+            width: 900,
             modal: true,
             open: function (evt, ui) {
                 $.ajax({
@@ -599,7 +616,7 @@
     function LoadSearchPaymentTermgrid() {
         $("#PaymentItemModal").dialog({
             height: 500,
-            width: 700,
+            width: 900,
             modal: true,
             open: function (evt, ui) {
                 $.ajax({
@@ -618,7 +635,7 @@
     function LoadSearchOtherTermgrid() {
         $("#OtherItemModal").dialog({
             height: 500,
-            width: 700,
+            width: 900,
             modal: true,
             open: function (evt, ui) {
                 $.ajax({
@@ -636,7 +653,7 @@
     function LoadSearchBasisTermgrid() {
         $("#BasisItemModal").dialog({
             height: 500,
-            width: 700,
+            width: 900,
             modal: true,
             open: function (evt, ui) {
                 $.ajax({
@@ -654,7 +671,7 @@
     function LoadSearchInspectionTermgrid() {
         $("#InspectionItemModal").dialog({
             height: 500,
-            width: 700,
+            width: 900,
             modal: true,
             open: function (evt, ui) {
                 $.ajax({
@@ -925,7 +942,7 @@
         var dataTaxM = { location: "local", sorting: 'local' }
         var colTaxM = [
             {
-                dataIndx: "state", Width: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                dataIndx: "state", maxWidth: 25, minWidth: 25,  align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
                 editor: false, dataType: 'bool',
                 cb: {
                     select: true,
@@ -1103,65 +1120,51 @@
 
     }
     //********* PO Grid Functions *********/
-    function editRow(rowIndx) {
-        if (rowIndx != null) {
-            var row = $pogrid.pqGrid('getRowData', { rowIndx: rowIndx });
-            LoadTaxgrid();
+    $('#btnUpdateTax').on('click', function () {
+        ClosePopupWindow("TaxModal");
+        let rowIndx = rowIndxForTax;
+        var getData = $("#Taxgrid").pqGrid("option", "dataModel.data");
+        var selectedItems = jLinq.from(getData).equals("state", true).select();
 
-            $("#popup-dialog-crud").dialog({
-                title: "Edit Record (" + (rowIndx + 1) + ")",
-                buttons: {
-                    Update: function () {
-                        var getData = $("#Taxgrid").pqGrid("option", "dataModel.data");
-                        var selectedItems = jLinq.from(getData).equals("state", true).select();
+        var totalTax = 0;
+        var TaxIds = [];
+        var sgst = 0, cgst = 0, igst = 0, ugst = 0;
 
-                        var totalTax = 0;
-                        var TaxIds = [];
-                        var sgst = 0, cgst = 0, igst = 0, ugst = 0;
+        $.each(selectedItems, function (key, value) {
+            totalTax += parseFloat(value.Tax_percentage);
+            TaxIds.push(value.Taxid);
 
-                        $.each(selectedItems, function (key, value) {
-                            totalTax += parseFloat(value.Tax_percentage);
-                            TaxIds.push(value.Taxid);
+            switch (value.Tax_name) {
+                case 'SGST':
+                    sgst += parseFloat(value.Tax_percentage);
+                    break;
+                case 'CGST':
+                    cgst += parseFloat(value.Tax_percentage);
+                    break;
+                case 'IGST':
+                    igst += parseFloat(value.Tax_percentage);
+                    break;
+                case 'UGST':
+                    ugst += parseFloat(value.Tax_percentage);
+                    break;
+            }
+        });
 
-                            switch (value.Tax_name) {
-                                case 'SGST':
-                                    sgst += parseFloat(value.Tax_percentage);
-                                    break;
-                                case 'CGST':
-                                    cgst += parseFloat(value.Tax_percentage);
-                                    break;
-                                case 'IGST':
-                                    igst += parseFloat(value.Tax_percentage);
-                                    break;
-                                case 'UGST':
-                                    ugst += parseFloat(value.Tax_percentage);
-                                    break;
-                            }
-                        });
+        $("#pogrid").pqGrid('updateRow', {
+            rowIndx: rowIndx,
+            newRow: {
+                'Tax': totalTax,
+                'TaxIds': TaxIds,
+                'SGST': sgst,
+                'CGST': cgst,
+                'IGST': igst,
+                'UGST': ugst
+            }
+        });
 
-                        $("#pogrid").pqGrid('updateRow', {
-                            rowIndx: rowIndx,
-                            newRow: {
-                                'Tax': totalTax,
-                                'TaxIds': TaxIds,
-                                'SGST': sgst,
-                                'CGST': cgst,
-                                'IGST': igst,
-                                'UGST': ugst
-                            }
-                        });
-
-                        $("#pogrid").pqGrid("refreshRow", { rowIndx: rowIndx });
-                        CalculateTotalAmount();
-                        $(this).dialog("close");
-                    },
-                    Close: function () {
-                        $(this).dialog("close");
-                    }
-                }
-            }).dialog("open");
-        }
-    }
+        $("#pogrid").pqGrid("refreshRow", { rowIndx: rowIndx });
+        CalculateTotalAmount();
+    });
 
     $(document).ready(function () {
         $("#BED").keyup(function () {
@@ -1442,20 +1445,7 @@
 
                 { title: "TaxIds", dataIndx: "TaxIds", width: 90, dataType: "string", editable: true, hidden: true },
                 {
-                    title: "", editable: false, minWidth: 30, sortable: false, listeners: [{ click: editRow }], render: function (ui) {
-                        return "<button type='button' class='edit_btn'></button>";
-                    },
-                    postRender: function (ui) {
-                        var rowIndx = ui.rowIndx,
-                            grid = this,
-                            $cell = grid.getCell(ui);
-
-                        //edit button
-                        $cell.find(".edit_btn").button({ icons: { primary: 'ui-icon-pencil' } })
-                            .bind("click", function (evt) {
-                                editRow(rowIndx, grid, true);
-                            });
-                    }
+                    title: "", editable: false, minWidth: 30, sortable: false, align: 'center', render: function (ui) { return '<button type="button" onclick="editRow(' + ui.rowIndx + ');"></button>'; }
                 },
                 { title: "Tax", dataIndx: "Tax", width: 90, dataType: "float", editable: true, hidden: true },
                 {
@@ -1571,7 +1561,7 @@
             open: function () { $(".ui-dialog").position({ of: "#pogrid" }); },
             autoOpen: false
         });
-        
+
     });
     function addRequiredDate(rowIndex) {
         selectedRequiredDate_RowIndx = rowIndex;
@@ -1690,7 +1680,6 @@
                     $("#GrandTotal").val(record.GrandTotal);
                     $("#Details").val(record.Details);
                     $prePOGrandtotal = record.GrandTotal;
-                    console.log(record.Details);
                     $.ajax({
                         type: "GET",
                         url: "/StoreMaster/GetProjectBudget",
@@ -1744,7 +1733,12 @@
 
                             dataTerms = [];
                             $.each(data.POPaymenterms, function (index, value) {
-                                var grdData = { 'PayTermID': value.PayTermID, 'PaymentTermCode': value.PaymentTermCode, 'PaymentTermDesc': value.PaymentTermDesc, 'state': true }
+                                var grdData = {
+                                    'PayTermID': value.PayTermID, 'PaymentTermCode': value.PaymentTermCode, 'PaymentTermDesc': value.PaymentTermDesc, 'state': true, pq_cellattr: {
+                                        PaymentTermDesc: {
+                                            title: value.PaymentTermDesc
+                                        }
+                                    } }
                                 dataTerms.push(grdData);
                             });
                             $PaymentTermgrid.pqGrid("option", "dataModel.data", dataTerms);
@@ -1787,7 +1781,7 @@
         var dataTaxM = { location: "local", sorting: 'local' }
         var colTaxM = [
             {
-                dataIndx: "state", Width: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                dataIndx: "state", maxWidth: 25, minWidth: 25,  align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
                 editor: false, dataType: 'bool',
                 title: "<input type='checkbox' />",
                 cb: { select: true, all: false, header: true }
@@ -1832,14 +1826,14 @@
         }
         var colDelM = [
             {
-                dataIndx: "state", Width: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                dataIndx: "state", maxWidth: 25, minWidth: 25,  align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
                 editor: false, dataType: 'bool',
                 title: "<input type='checkbox' />",
                 cb: { select: true, all: false, header: true }
             },
             { title: "", dataIndx: "TermID", dataType: "integer", hidden: true },
             {
-                title: "Code", dataIndx: "DeliveryTermCode", width: 150, editable: false,
+                title: "Code", dataIndx: "DeliveryTermCode", width: '10%', editable: false,
                 filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             },
             {
@@ -1889,13 +1883,13 @@
         var dataDelM = { location: "local", sorting: 'local' }
         var colDelM = [
             {
-                dataIndx: "state", Width: 15, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                dataIndx: "state", maxWidth: 25, minWidth: 25,  align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
                 editor: false, dataType: 'bool',
                 title: "<input type='checkbox' />",
                 cb: { select: true, all: false, header: true }
             },
             { title: "", dataIndx: "DelTermID", dataType: "integer", hidden: true },
-            { title: "Code", dataIndx: "DeliveryTermCode", width: 200, editable: false },
+            { title: "Code", dataIndx: "DeliveryTermCode", width: '10%', editable: false },
             { title: "Name", dataIndx: "DeliveryTermDesc", width: 400, editable: false }
         ];
         var DelM = {
@@ -1922,13 +1916,13 @@
         var dataPayM = { location: "local" }
         var colPayM = [
             {
-                dataIndx: "state", Width: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                dataIndx: "state", maxWidth: 25, minWidth: 25,  align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
                 editor: false, dataType: 'bool',
                 cb: { select: true, all: false, header: true }
             },
             { title: "", dataIndx: "TermID", dataType: "integer", hidden: true },
             {
-                title: "Code", dataIndx: "PaymentTermCode", width: 150, editable: false,
+                title: "Code", dataIndx: "PaymentTermCode", width: '10%', editable: false,
                 filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             },
             {
@@ -1977,14 +1971,14 @@
         var dataDelM = { location: "local", sorting: 'local' }
         var colDelM = [
             {
-                dataIndx: "state", Width: 15, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                dataIndx: "state", maxWidth: 25, minWidth: 25,  align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
                 editor: false, dataType: 'bool',
                 title: "<input type='checkbox' />",
                 cb: { select: true, all: false, header: true }
             },
             { title: "", dataIndx: "PayTermID", dataType: "integer", hidden: true },
             {
-                title: "Code", dataIndx: "PaymentTermCode", width: 200, editable: false
+                title: "Code", dataIndx: "PaymentTermCode", width: '10%', editable: false
 
             },
             {
@@ -2016,13 +2010,13 @@
         var dataDelM = { location: "local", sorting: 'local' }
         var colDelM = [
             {
-                dataIndx: "state", Width: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                dataIndx: "state", maxWidth: 25, minWidth: 25,  align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
                 editor: false, dataType: 'bool',
                 cb: { select: true, all: false, header: true }
             },
             { title: "", dataIndx: "TermID", dataType: "integer", hidden: true },
             {
-                title: "Code", dataIndx: "OthersTermCode", width: 150, editable: false,
+                title: "Code", dataIndx: "OthersTermCode", width: '15%', editable: false,
                 filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             },
             {
@@ -2058,13 +2052,13 @@
         var dataDelM = { location: "local", sorting: 'local' }
         var colDelM = [
             {
-                dataIndx: "state", Width: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                dataIndx: "state", maxWidth: 25, minWidth: 25,  align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
                 editor: false, dataType: 'bool',
                 cb: { select: true, all: false, header: true }
             },
             { title: "", dataIndx: "BasisID", dataType: "integer", hidden: true },
             {
-                title: "Code", dataIndx: "BasisCode", width: 150, editable: false,
+                title: "Code", dataIndx: "BasisCode", width: '10%', editable: false,
                 filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             },
             {
@@ -2098,13 +2092,13 @@
         var dataDelM = { location: "local", sorting: 'local' }
         var colDelM = [
             {
-                dataIndx: "state", Width: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                dataIndx: "state", maxWidth: 25, minWidth: 25,  align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
                 editor: false, dataType: 'bool',
                 cb: { select: true, all: false, header: true }
             },
             { title: "", dataIndx: "InspectionId", dataType: "integer", hidden: true },
             {
-                title: "Code", dataIndx: "InspectionCode", width: 150, editable: false,
+                title: "Code", dataIndx: "InspectionCode", width: '10%', editable: false,
                 filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
             },
             {
@@ -2153,13 +2147,13 @@
         var dataOtherM = { location: "local" }
         var colOtherM = [
             {
-                dataIndx: "state", Width: 15, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                dataIndx: "state", maxWidth: 25, minWidth: 25,  align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
                 editor: false, dataType: 'bool',
                 title: "<input type='checkbox' />",
                 cb: { select: true, all: false, header: true }
             },
             { title: "", dataIndx: "InspectionId", dataType: "integer", hidden: true },
-            { title: "Code", dataIndx: "InspectionCode", width: 400, editable: false },
+            { title: "Code", dataIndx: "InspectionCode", width: '10%', editable: false },
             { title: "Description", dataIndx: "InspectionDesc", width: 400, editable: false }
         ];
         var inspection = {
@@ -2202,13 +2196,13 @@
         var basism = { location: "local" }
         var colM = [
             {
-                dataIndx: "state", Width: 15, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                dataIndx: "state", maxWidth: 25, minWidth: 25,  align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
                 editor: false, dataType: 'bool',
                 title: "<input type='checkbox' />",
                 cb: { select: true, all: false, header: true }
             },
             { title: "", dataIndx: "BasisId", dataType: "integer", hidden: true },
-            { title: "Code", dataIndx: "BasisCode", width: 400, editable: false },
+            { title: "Code", dataIndx: "BasisCode", width: '10%', editable: false },
             { title: "Name", dataIndx: "BasisDesc", width: 400, editable: false }
         ];
         var basisgrid = {
@@ -2253,13 +2247,13 @@
         var dataOtherM = { location: "local" }
         var colOtherM = [
             {
-                dataIndx: "state", Width: 15, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+                dataIndx: "state", maxWidth: 25, minWidth: 25,  align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
                 editor: false, dataType: 'bool',
                 title: "<input type='checkbox' />",
                 cb: { select: true, all: false, header: true }
             },
             { title: "", dataIndx: "OtherTermID", dataType: "integer", hidden: true },
-            { title: "Code", dataIndx: "OthersTermCode", width: 200, editable: false },
+            { title: "Code", dataIndx: "OthersTermCode", width: '10%', editable: false },
             { title: "Name", dataIndx: "OthersTermDesc", width: 400, editable: false }
         ];
         var DelM = {
@@ -2311,7 +2305,13 @@
             colM[3].editable = true;
             $PaymentTermgrid.pqGrid("option", "colModel", colM);
             $.each(selectedItems, function (key, value) {
-                $PaymentTermgrid.pqGrid("addRow", { newRow: { 'PayTermID': value.TermID, 'PaymentTermCode': value.PaymentTermCode, 'PaymentTermDesc': value.PaymentTermDesc, 'state': true } })
+                $PaymentTermgrid.pqGrid("addRow", {
+                    newRow: {
+                        'PayTermID': value.TermID, 'PaymentTermCode': value.PaymentTermCode, 'PaymentTermDesc': value.PaymentTermDesc, 'state': true, pq_cellattr: {
+                            PaymentTermDesc: {
+                                title: value.PaymentTermDesc
+                            }
+                        }} })
             });
             colM[2].editable = false;
             colM[3].editable = false;
@@ -2518,7 +2518,7 @@
     function LoadVGrid() {
         $("#VendorModal").dialog({
             height: 500,
-            width: 700,
+            width: 900,
             modal: true,
             open: function (evt, ui) {
                 $.ajax({
@@ -2546,7 +2546,7 @@
     var setVcols = [
         { title: "", dataIndx: "VendorId", dataType: "integer", hidden: true },
         {
-            title: "Vendor Name", dataIndx: "Name", width: 200, dataType: "string",
+            title: "Vendor Name", dataIndx: "Name", width: '10%', dataType: "string",
             filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
         }
     ];
@@ -2617,7 +2617,7 @@
     function LoadpoVendorGridGrid() {
         $("#PoVendorgridModal").dialog({
             height: 500,
-            width: 700,
+            width: 900,
             modal: true,
             open: function (evt, ui) {
                 $.ajax({
@@ -2753,7 +2753,12 @@
 
                             dataTerms = [];
                             $.each(data.RFQPaymenterms, function (index, value) {
-                                var grdData = { 'PayTermID': value.PayTermID, 'PaymentTermCode': value.PaymentTermCode, 'PaymentTermDesc': value.PaymentTermDesc, 'state': true }
+                                var grdData = {
+                                    'PayTermID': value.PayTermID, 'PaymentTermCode': value.PaymentTermCode, 'PaymentTermDesc': value.PaymentTermDesc, 'state': true, pq_cellattr: {
+                                        PaymentTermDesc: {
+                                            title: value.PaymentTermDesc
+                                        }
+                                    }}
                                 dataTerms.push(grdData);
                             });
                             $PaymentTermgrid.pqGrid("option", "dataModel.data", dataTerms);
@@ -2782,6 +2787,10 @@
         $("#SearchGridModal").modal('hide');
         $("#ReportModal").modal('hide');
     }
+
+    $(".closeJQModel").click(() => {
+        $(".ui-dialog-titlebar-close").click();
+    });
 
     $("#content-tab").tabs({  //Refreshing grids on tab change
         activate: function (event, ui) {

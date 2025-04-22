@@ -76,6 +76,7 @@ namespace BISERPBusinessLayer.QueryCollection.Masters
         public const string GetAllMainStore = "sp_INV_MST_GetTypeWiseStores";
         public const string GetUnitStore = "sp_INV_MST_GetTypeWiseStores";
         public const string GetTypeWiseStores = "sp_INV_MST_GetTypeWiseStores";
+        public const string GetStoreFinancialYearWise = "sp_INV_GetStoreFinancialYearWise"; 
         public const string GetIndentToStores = "sp_GetIndentToStores";
         public const string GetStoreMasterById = "sp_INV_MST_GetStoreId";
         public const string UpdateStoreMasterById = "sp_InsUpd_StoreMaster";
@@ -109,6 +110,10 @@ namespace BISERPBusinessLayer.QueryCollection.Masters
         public const string GetAllProduct = "sp_INV_MST_GetAllProduct";
         public const string InsertProductMaster = "sp_InsUpd_INV_MST_Product";
         public const string UpdateProductMaster = "sp_InsUpd_INV_MST_Product";
+
+        public const string GetAllScopeOfSupply = "sp_SM_MST_GetAllScopeOfSupply";
+        public const string InsertScopeOfSupplyMaster = "sp_InsUpd_SM_MST_ScopeOfSupply";
+        public const string UpdateScopeOfSupplyMaster = "sp_InsUpd_SM_MST_ScopeOfSupply";
 
         public const string GetAllOthers = "sp_INV_MST_GetAllOthers";
         public const string GetOthersById = "sp_INV_MST_GetOthersById";
@@ -171,6 +176,10 @@ namespace BISERPBusinessLayer.QueryCollection.Masters
         public const string GetDeliverablesDetail = "dbsp_GetDeliverablesDetail";
         public const string GetBudgetStatus = "dbsp_GetBudgetStatus";
         public const string GetEnqForProjectMaster = "sp_SM_GetEnqForProjectMaster";
+        public const string GetPRDashboardCount = "sp_INV_GetPRDashboardCount";
+        public const string GetPODashboardCount = "sp_INV_GetPODashboardCount";
+        public const string GetGRNDashboardCount = "sp_INV_GetGRNDashboardCount";
+        public const string GetMRDashboardCount = "sp_INV_GetMRDashboardCount";
 
         public const string SaveClearanceNote = "sp_InsUpd_SaveClearanceNote";
         public const string GetClearanceNote = "dbsp_GetClearanceNote";
@@ -180,6 +189,9 @@ namespace BISERPBusinessLayer.QueryCollection.Masters
         public const string GetPackingListDetail = "dbsp_GetPackingListDetail";
         public const string GetPackingListForRpt = "dbsp_GetPackingListforRpt";
         public const string GetPLById = "dbsp_GetPLById";
+        public const string SavePrePackingList = "sp_InsUpd_PrePackingList";
+        public const string GetPrePackingList = "dbsp_GetPrePackingList";
+        public const string GetPrePackingListDetail = "dbsp_GetPrePackingListDetail";
 
     }
 }

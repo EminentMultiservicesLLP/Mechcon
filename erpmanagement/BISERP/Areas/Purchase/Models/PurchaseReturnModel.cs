@@ -5,7 +5,4 @@ using System.Web;
 
 namespace BISERP.Areas.Purchase.Models
 {
-    public class PurchaseReturnModel
-    {
-    }
 }

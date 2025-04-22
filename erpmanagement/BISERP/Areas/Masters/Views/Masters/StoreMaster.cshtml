@@ -47,7 +47,7 @@
             <div class="panel-body">
                 <div class="fill">
                     <div class="submit-row">
-                        <button type="button" class="btn btn-warning" id="btnAdd">Add Project</button>
+                        @*<button type="button" class="btn btn-warning" id="btnAdd">Add Project</button>*@
                         <button type="button" class="btn btn-success" id="btnSave">Save</button>
                         <button type="button" class="btn btn-primary" id="btnreset">Reset</button>
                         <button type="button" class="btn btn-info" id="btnSearch">Find</button>
@@ -55,15 +55,15 @@
                     <fieldset class="fieldsetCustom">
                         <legend class="legendCustom">Project Master</legend>
                         <div class="row">
-                            <div class="col-sm-2">
+                            <!--<div class="col-sm-2">
                                 <label for="Nature" class="required">Nature</label>
-                                <select id="Nature" class="form-control">
-                                    <option value="0" selected>Direct</option>
-                                    <option value="1">Against Enquiry</option>
+                                <select id="Nature" class="form-control">-->
+                            @*<option value="0" selected>Direct</option>*@
+                            <!--<option value="1">Against Enquiry</option>
                                 </select>
-                            </div>
+                            </div>-->
 
-                            <div class="col-sm-4" id="Enquiry" hidden>
+                            <div class="col-sm-4" id="Enquiry">
                                 <label for="EnquiryID">Enquiry</label>
                                 <input id="EnquiryLabel" class="form-control" type="text" placeholder="Search by - (EnquiryNo) | (ClientName) | (EnquiryDate) | (ProjectCode)">
                                 <input type="hidden" id="WorkOrderID">
@@ -178,12 +178,12 @@
     var grid;
     var $Serviceitemgrid;
     var Branchlist = [];
-    $("#btnAdd").click(function () {
-        getMasterCode();
-        ClearForm();
-        //desableFields(false);
-        $("#btnAdd").prop('disabled', true);
-    });
+    //$("#btnAdd").click(function () {
+    //    getMasterCode();
+    //    ClearForm();
+    //    //desableFields(false);
+    //    $("#btnAdd").prop('disabled', true);
+    //});
     function getMasterCode() {
         $('#Code').empty().html("");
         $.ajax({
@@ -413,6 +413,7 @@
                         viewAttachments(data.ID);
                         closeModal();
                         //desableFields(false);
+                        $("#Enquiry").hide();
                     }
                 });
             });
@@ -877,14 +878,15 @@
         $("#btnAdd").prop('disabled', false);
         $("#preApproveImg").empty(); $("#appendImg").empty(); $("#files").val(null);
         $("#btnAdd").show();
-        $("#Enquiry").hide();
+        $("#Enquiry").show();
     }
     $('#btnreset').on('click', function () {
         ClearForm();
-        $("#Nature").val(0);
+        //$("#Nature").val(1);
         $("#EnquiryLabel").val("");
         $("#WorkOrderID").val("");
-        $("#Nature").prop("disabled", false);
+        //$("#Nature").prop("disabled", false);
+        getEnquiry();
     });
     $("#Code").keyup(function () {
         $("#Name").val($("#Code").val());
@@ -1049,6 +1051,7 @@
         const workOrderID = $("#WorkOrderID").val();
 
         if (workOrderID && workOrderID != 0) {
+            ClearForm();
             const details = Enquiries.find(enq => enq.WorkOrderID == workOrderID);
             if (details) {
                 $("#ID").val(details.ProjectID || '');
@@ -1057,7 +1060,7 @@
                 $("#ddlClient").val(details.ClientID || '');
                 $("#ClientPoNo").val(details.PONo || '');
                 $("#ProjectBudget").val(details.BudgetValue || '');
-                $("#Nature").prop("disabled", true);
+                //$("#Nature").prop("disabled", true);
             } else {
                 ShowAlert("error", "No matching enquiry found for the selected Work Order.");
             }
@@ -1065,17 +1068,17 @@
             $('#btnreset').trigger('click');
         }
     });
+    getEnquiry();
 
-    $("#Nature").change(() => {
-        ClearForm();
-        const nature = $("#Nature").val();
-        if (nature == 0) {
-            $("#Enquiry").hide();
-            $("#btnAdd").show();
-        } else {
-            getEnquiry();
-            $("#btnAdd").hide();
-            $("#Enquiry").show();
-        }
-    });
+    //$("#Nature").change(() => {
+    //    ClearForm();
+    //    const nature = $("#Nature").val();
+    //    if (nature == 0) {
+    //        $("#Enquiry").hide();
+    //        $("#btnAdd").show();
+    //    } else {
+    //        $("#btnAdd").hide();
+    //        $("#Enquiry").show();
+    //    }
+    //});
 </script>

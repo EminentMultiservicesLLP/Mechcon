@@ -13,6 +13,7 @@ namespace BISERPBusinessLayer.Repositories.Master.Interfaces
         StoreMasterEntities GetStoreById(int Id);
         IEnumerable<StoreMasterEntities> GetAllStores();
         IEnumerable<StoreMasterEntities> GetAllMainStores();
+        IEnumerable<StoreMasterEntities> GetStoreFinancialYearWise(string FinancialYear);
         IEnumerable<StoreMasterEntities> GetUnitStores();
         IEnumerable<StoreMasterEntities> GetSubStores();
         IEnumerable<StoreMasterEntities> GetIndentToStores(int StoreId, int UserId);
@@ -37,6 +38,10 @@ namespace BISERPBusinessLayer.Repositories.Master.Interfaces
         List<DeliverablesDetailEntities> GetDeliverablesDetail(int StoreId);
         List<BudgetStatusEntities> GetBudgetStatus();
         IEnumerable<WorkOrderEntities> GetEnqForProjectMaster(int UserID);
+        IEnumerable<DashboardCount> GetPRDashboardCount(string financialYear , int? StoreID);
+        IEnumerable<DashboardCount> GetPODashboardCount(string financialYear , int? StoreID);
+        IEnumerable<DashboardCount> GetGRNDashboardCount(string financialYear , int? StoreID);
+        IEnumerable<DashboardCount> GetMRDashboardCount(string financialYear , int? StoreID);
 
     }
 }

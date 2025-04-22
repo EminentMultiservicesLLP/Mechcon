@@ -34,22 +34,15 @@ namespace BISERP.Area.Purchase.Controllers
             client.DefaultRequestHeaders.Accept.Clear();
         }
         [HttpGet]
-        public async Task<JsonResult> PurchaseGrn(int storeID, string searchGRNNumber)
-          {
+        public async Task<JsonResult> PurchaseGrn(int? storeID, string searchGRNNumber)
+        {
             JsonResult jResult;
             List<PurchaseReturnModel> mimodel = new List<PurchaseReturnModel>();
             try
             {
-                string _url = url + "/purchasereturn/getpurchasegrn/" + storeID.ToString() + Common.Constants.JsonTypeResult;
-                mimodel = await Common.AsyncWebCalls.GetAsync<List<PurchaseReturnModel>>(client, _url, CancellationToken.None);
-               // List<PurchaseReturnModel> records  = await Common.AsyncWebCalls.GetAsync<List<PurchaseReturnModel>>(client, _url, CancellationToken.None);
+                string _url = $"{url}/purchasereturn/getpurchasegrn" + (storeID.HasValue ? $"/{storeID.Value}" : "") + Common.Constants.JsonTypeResult;
 
-                // if (records != null && records.Count > 0)
-                //{
-                //    jResult = Json(new { records }, JsonRequestBehavior.AllowGet);
-                //}
-                //else
-                //    jResult = Json("Error");
+                mimodel = await Common.AsyncWebCalls.GetAsync<List<PurchaseReturnModel>>(client, _url, CancellationToken.None);
                 if (mimodel != null & mimodel.Count > 0)
                 {
                     if (!string.IsNullOrWhiteSpace(searchGRNNumber))
@@ -57,11 +50,9 @@ namespace BISERP.Area.Purchase.Controllers
                         mimodel = mimodel.Where(p => p.Grnno.ToUpper().Contains(searchGRNNumber.ToUpper())).ToList();
                     }
                     mimodel = mimodel.OrderByDescending(m => m.ID).ToList();
-                    //jResult = Json(new { mimodel }, JsonRequestBehavior.AllowGet);
                     jResult = Json(new { success = true, mimodel }, JsonRequestBehavior.AllowGet);
                 }
                 else
-                    //jResult = Json(new { mimodel }, JsonRequestBehavior.AllowGet);
                     jResult = Json(new { success = false, Messsage = "No Grn found" }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
@@ -95,22 +86,14 @@ namespace BISERP.Area.Purchase.Controllers
             return jResult;
         }
         [HttpGet]
-        public async Task<JsonResult> AllPurchaseReturn(int storeID, string searchPurchaseNumber)
+        public async Task<JsonResult> AllPurchaseReturn(int? storeID, string searchPurchaseNumber)
         {
             JsonResult jResult;
             List<PurchaseReturnModel> mimodel = new List<PurchaseReturnModel>();
             try
             {
-                string _url = url + "/PurchaseReturn/getAllPr/" + storeID.ToString() + Common.Constants.JsonTypeResult;
+                string _url = $"{url}/PurchaseReturn/getAllPr" + (storeID.HasValue ? $"/{storeID.Value}" : "") + Common.Constants.JsonTypeResult;
                 mimodel = await Common.AsyncWebCalls.GetAsync<List<PurchaseReturnModel>>(client, _url, CancellationToken.None);
-                //List<PurchaseReturnModel> records = await Common.AsyncWebCalls.GetAsync<List<PurchaseReturnModel>>(client, _url, CancellationToken.None);
-
-                //if (records != null && records.Count > 0)
-                //{
-                //    jResult = Json(new { records }, JsonRequestBehavior.AllowGet);
-                //}
-                //else
-                //    jResult = Json("Error");
                 if (mimodel != null & mimodel.Count > 0)
                 {
                     if (!string.IsNullOrWhiteSpace(searchPurchaseNumber))
@@ -118,11 +101,9 @@ namespace BISERP.Area.Purchase.Controllers
                         mimodel = mimodel.Where(p => p.PRNo.ToUpper().Contains(searchPurchaseNumber.ToUpper())).ToList();
                     }
                     mimodel = mimodel.OrderByDescending(m => m.ID).ToList();
-                    //jResult = Json(new { mimodel }, JsonRequestBehavior.AllowGet);
                     jResult = Json(new { success = true, mimodel }, JsonRequestBehavior.AllowGet);
                 }
                 else
-                    //jResult = Json(new { mimodel }, JsonRequestBehavior.AllowGet);
                     jResult = Json(new { success = false, Messsage = "Purchase Return No. not found" }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
@@ -172,42 +153,42 @@ namespace BISERP.Area.Purchase.Controllers
                 {
                     //if (IndentDt.state == true)
                     //{
-                        if (IndentDt.Qty == 0)
-                        {
-                            strErrorMsg = "Please Enter Return Quantity for  Item.";
-                            break;
-                        }
-                        if (IndentDt.Qty == null)
-                        {
-                            strErrorMsg = "Please Enter Return Quantity for Item.";
-                            break;
-                        }
-                        if (IndentDt.Reason == null)
-                        {
-                            strErrorMsg = "Please Enter Reason  for  Item.";
-                            break;
-                        }
-                        if ((IndentDt.Qty > IndentDt.GrnQty))
-                        {
-                            strErrorMsg = "Return Quantity CanNot be Greater Than GRN Quantity.";
-                            break;
-                        }
-                        if ((IndentDt.FreeQty > IndentDt.GrnFreeQty))
-                        {
-                            strErrorMsg = "ReturnFree Quantity CanNot be Greater Than GRNFree Quantity.";
-                            break;
-                        }
-                        
+                    if (IndentDt.Qty == 0)
+                    {
+                        strErrorMsg = "Please Enter Return Quantity for  Item.";
+                        break;
+                    }
+                    if (IndentDt.Qty == null)
+                    {
+                        strErrorMsg = "Please Enter Return Quantity for Item.";
+                        break;
+                    }
+                    if (IndentDt.Reason == null)
+                    {
+                        strErrorMsg = "Please Enter Reason  for  Item.";
+                        break;
+                    }
+                    if ((IndentDt.Qty > IndentDt.GrnQty))
+                    {
+                        strErrorMsg = "Return Quantity CanNot be Greater Than GRN Quantity.";
+                        break;
+                    }
+                    if ((IndentDt.FreeQty > IndentDt.GrnFreeQty))
+                    {
+                        strErrorMsg = "ReturnFree Quantity CanNot be Greater Than GRNFree Quantity.";
+                        break;
+                    }
+
                     if (IndentDt.Qty > IndentDt.StockQty)
-                        {
-                            strErrorMsg = "Return Quantity CanNot be Greater Than Stock Quantity ";
-                        }
-                        else 
-                        {
-                            mdt = new PurchaseReturnDtModel();
-                            mdt = IndentDt;
-                            _indentDetails.Add(mdt);
-                        }
+                    {
+                        strErrorMsg = "Return Quantity CanNot be Greater Than Stock Quantity ";
+                    }
+                    else
+                    {
+                        mdt = new PurchaseReturnDtModel();
+                        mdt = IndentDt;
+                        _indentDetails.Add(mdt);
+                    }
                     //    _rowSelected++;
                     //}
                 }
@@ -238,7 +219,7 @@ namespace BISERP.Area.Purchase.Controllers
             {
                 _isSuccess = true;
                 _url = url + "/purchasereturn/createPurchaseReturn" + Common.Constants.JsonTypeResult;
-               // var result = client.PostAsync(_url, pindent, new JsonMediaTypeFormatter()).Result.Content.ReadAsAsync<PurchaseReturnModel>().Id;
+                // var result = client.PostAsync(_url, pindent, new JsonMediaTypeFormatter()).Result.Content.ReadAsAsync<PurchaseReturnModel>().Id;
                 var result = client.PostAsync(_url, pindent, new JsonMediaTypeFormatter()).Result;
                 if (result.StatusCode.ToString() == "BadRequest")
                 {
@@ -255,7 +236,7 @@ namespace BISERP.Area.Purchase.Controllers
             if (_isSuccess)
             {
                 UtilitiesCls.SendEmailTask(EmailProcessFor.PurchaseReturn, this, pindent);
-                
+
             }
             if (!_isSuccess)
                 return Json(new { success = false, Message = items.Message });
@@ -283,5 +264,29 @@ namespace BISERP.Area.Purchase.Controllers
             return Json(new { success = true });
 
         }
+
+        [HttpGet]
+        public async Task<JsonResult> PurchaseReturnForRpt()
+        {
+            JsonResult jResult;
+            try
+            {
+                string _url = url + "/purchasereturn/PurchaseReturnForRpt" + Common.Constants.JsonTypeResult;
+                var records = await Common.AsyncWebCalls.GetAsync<List<PurchaseReturnModel>>(client, _url, CancellationToken.None);
+                if (records != null)
+                {
+                    jResult = Json(new { records }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                    jResult = Json("Error");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error in PurchaseReturnForRpt :" + ex.Message + Environment.NewLine + ex.StackTrace.ToString());
+                jResult = Json("Error");
+            }
+            return jResult;
+        }
+
     }
 }

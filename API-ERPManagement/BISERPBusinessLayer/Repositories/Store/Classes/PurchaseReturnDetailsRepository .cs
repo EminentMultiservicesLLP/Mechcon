@@ -31,9 +31,11 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                                 StrExpiryDate = row.Field<string>("StrExpiryDate"),
                                 Qty = row.Field<double?>("Qty"),
                                 FreeQty = row.Field<double?>("FreeQty"),
-                                Amount = row.Field<double?>("Amount"),
+                                Rate = row.Field<double?>("Rate"),
                                 LandingRate = row.Field<double?>("LandingRate"),
                                 ActualLandingRate = row.Field<double?>("ActualLandingRate"),
+                                Discount = row.Field<double?>("Discount"),
+                                Amount = row.Field<double?>("Amount"),
                                 Reason = row.Field<string>("Reason"),
                             }).ToList();
                 return PurchaseReturnDetails;
@@ -81,7 +83,28 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
           
             return iResult;
         }
-      
-      
+
+        public List<PurchaseReturnDetailsRptEntities> PurchaseReturnDetailsRptById(int ReturnID)
+        {
+            List<PurchaseReturnDetailsRptEntities> PurchaseReturnDetails = null;
+            using (DBHelper dbHelper = new DBHelper())
+            {
+                DBParameter param = new DBParameter("Id", ReturnID, DbType.Int32);
+                DataTable dtPIndent = dbHelper.ExecuteDataTable(StoreQuery.GetPurchaseReturnDtRpt, param, CommandType.StoredProcedure);
+
+                PurchaseReturnDetails = dtPIndent.AsEnumerable()
+                            .Select(row => new PurchaseReturnDetailsRptEntities
+                            {
+                                ItemName = row.Field<string>("ItemName"),
+                                Qty = row.Field<double?>("Qty"),
+                                Rate = row.Field<double?>("Rate"),
+                                Discount = row.Field<double?>("Discount"),
+                                Amount = row.Field<double?>("Amount"),
+                                Reason = row.Field<string>("Reason"),
+                            }).ToList();
+                return PurchaseReturnDetails;
+            }
+        }
+
     }
 }

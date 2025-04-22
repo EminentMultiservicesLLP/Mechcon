@@ -151,5 +151,17 @@ namespace BISERP.Areas.Masters.ControllerS
         {
             return PartialView();
         }
+        public ActionResult ScopeOfSupply()
+        {
+            return PartialView();
+        }
+        public ActionResult Dashboard()
+        {
+            return PartialView();
+        }
+        public ActionResult PrePackingList()
+        {
+            return PartialView();
+        }
     }
 }

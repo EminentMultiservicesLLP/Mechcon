@@ -2,56 +2,6 @@
 
 <h5 class="page-header orangeDottedBottomBorder">Ticket Dashboard</h5>
 
-<style>
-    .dashboard-container {
-        display: flex;
-        justify-content: space-between;
-        gap: 10px;
-        flex-wrap: wrap;
-        padding: 10px;
-        background-color: #dae6f0;
-        border-radius: 10px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        margin-bottom: 8px;
-        border: #a8c4dc 1px solid;
-    }
-
-    .dashboard-card {
-        background-color: #fff;
-        padding: 5px 10px;
-        border-radius: 8px;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-        flex: 1; /* Makes all cards evenly distribute across the container */
-        text-align: center;
-        transition: transform 0.2s, box-shadow 0.2s;
-        min-width: 10%;
-        margin: 5px;
-        cursor: pointer;
-    }
-
-        .dashboard-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        .dashboard-card h3 {
-            margin: 3px 0;
-            font-size: 12px;
-            font-weight: bold;
-            color: #444;
-            text-transform: uppercase;
-            letter-spacing: 0.4px;
-        }
-
-        .dashboard-card h2 {
-            font-size: 16px;
-            margin: 2px 0;
-            color: #007bff;
-            font-family: "Arial", sans-serif;
-            font-weight: bold;
-        }
-</style>
-
 <div class="submit-row">
     <div class="col-lg-2 col-md-4 col-sm-12 mb-3">
         <label class="required" for="financialYear">Financial Year</label>
@@ -138,6 +88,21 @@
     <div id="TicketStatusRptGrid"></div>
 </fieldset>
 
+<div id="SearchGridModal" class="modal fade" role="dialog" data-backdrop="false">
+    <div class="modal-dialog find-search-grid-modal">
+        <div class="modal-content gridmodal-content">
+            <div class="modal-header gridmodal-header">
+                <button type="button" class="close" onclick="closeModal()">&times;</button>
+                <h4 class="modal-title">Activity Details</h4>
+            </div>
+            <div class="modal-body">
+                <div class="fill">
+                    <div id="ActivityGrid"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <script>
     var ticketStatusRpt = [];
 
@@ -248,7 +213,12 @@
             dataIndx: "AllocatedToName",  // AllocatedToName instead of AllocatedTo
             width: 150,
             filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
-        }
+        },
+        {
+            title: "Activity Details", editable: false, minWidth: 30, width: 50, sortable: false, align: 'center', render: function (ui) {
+                return '<button type="button" class="btn btn-primary" onclick="viewTicketActivities(' + ui.rowData.TicketID + ');">Activities</button>';
+            }
+        },
     ];
     var setTicketStatusRptGrid = {
         height: 530,
@@ -338,7 +308,7 @@
                     ticketStatusRpt = response.records;
                 } else {
                     console.warn("No data found or an issue occurred: ", response.message);
-                    ticketStatusRpt = []; 
+                    ticketStatusRpt = [];
                 }
                 filterTickets();
             },
@@ -360,6 +330,119 @@
         grid.pqGrid("option", "dataModel.data", filteredData);
         grid.pqGrid("refreshDataAndView");
         PqGridRefreshClick(grid);
+    }
+
+    //-----------------------------------ActivityGrid (Starts here)-----------------------------------//
+    var ActivityGrid_GDM = { location: "local" };
+    var ActivityGrid_GCM = [
+        {
+            title: "Activity Date", dataIndx: "strActivityDate", width: '15%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Activity", dataIndx: "Activity", width: '30%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Response Date", dataIndx: "strResponseDate", width: '15%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Response", dataIndx: "Response", width: 150,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+    ];
+    var setActivityGrid = {
+        height: 300,
+        width: 'auto',
+        maxWidth: '100%',
+        minWidth: 800,
+        sortable: true,
+        autofill: true,
+        numberCell: { show: true },
+        hoverMode: 'row',
+        showTop: false,
+        showTitle: true,
+        showBottom: true,
+        resizable: true,
+        scrollModel: { autoFit: true },
+        filterModel: { on: true, mode: "AND", header: true },
+        draggable: false,
+        hwrap: false,
+        wrap: false,
+        editable: false,
+        columnBorders: true,
+        menuIcon: true,
+        selectionModel: { type: 'row', mode: 'single', cbHeader: false },
+        colModel: ActivityGrid_GCM,
+        dataModel: ActivityGrid_GDM,
+        pageModel: { type: "local" },
+        rowClick: function (evt, ui) {
+            if (ui.rowData) {
+                var data = ui.rowData;
+                closeModal();
+                clearFormData();
+                tempTicketID = data.TicketID;
+                $("#Subject").val(data.Subject);
+                $("#Description").val(data.Description);
+                $("#Priority").val(data.Priority);
+                $("#AllocatedToName").val(data.AllocatedToName);
+                GetActivity(data.TicketID);
+            }
+        }
+
+    }
+    var $ActivityGrid = $("#ActivityGrid").pqGrid(setActivityGrid);
+
+    function viewTicketActivities(ticketID) {
+        const antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            url: "/TicketActivity/GetActivity",
+            data: { TicketID: ticketID },
+            dataType: "json",
+
+            beforeSend: function () {
+                $("#ActivityGrid").pqGrid("showLoading");
+            },
+
+            complete: function () {
+                $("#ActivityGrid").pqGrid("hideLoading");
+            },
+
+            success: function (response) {
+                if (response.success && response.records?.length > 0) {
+                    $("#SearchGridModal").modal("show");
+                    const grid = $("#ActivityGrid").pqGrid();
+                    grid.pqGrid("option", "dataModel.data", response.records);
+                    grid.pqGrid("refreshDataAndView");
+                    PqGridRefreshClick(grid);
+                } else {
+                    $("#SearchGridModal").modal("hide");
+                    ShowAlert("warning", "No Activity Found");
+                }
+            },
+
+            error: function (jqXHR, textStatus, errorThrown) {
+                $("#SearchGridModal").modal("hide");
+                console.error("Error loading Activity Details grid:", textStatus, errorThrown);
+                console.error("Response text:", jqXHR.responseText || "No response text");
+            }
+        });
+    }
+
+    //-----------------------------------ActivityGrid (Ends here)-----------------------------------//
+
+    function showModal() {
+        $("#SearchGridModal").modal('show');
+    }
+
+    function closeModal() {
+        $("#SearchGridModal").modal('hide');
     }
 
     function clearFormData() {

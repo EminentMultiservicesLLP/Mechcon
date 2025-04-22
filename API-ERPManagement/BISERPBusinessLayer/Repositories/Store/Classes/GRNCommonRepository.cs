@@ -169,7 +169,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
             }
             return grn;
         }
-        public IEnumerable<GRNEntity> GRNDetailReport(DateTime fromdate, DateTime todate, int StoreId, int SupplierId, int GRNId)
+        public IEnumerable<GRNEntity> GRNDetailReport(DateTime fromdate, DateTime todate, int StoreId, int SupplierId, int GRNId , string ReportType)
         {
             List<GRNEntity> grn = new List<GRNEntity>();
             using (DBHelper dbHelper = new DBHelper())
@@ -180,6 +180,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                 paramCollection.Add(new DBParameter("GRNId", GRNId, DbType.Int32));
                 paramCollection.Add(new DBParameter("Fromdate", fromdate, DbType.DateTime));
                 paramCollection.Add(new DBParameter("todate", todate, DbType.DateTime));
+                paramCollection.Add(new DBParameter("ReportType", ReportType, DbType.String));
                 DataTable dtgrn = dbHelper.ExecuteDataTable(StoreQuery.GRNDetailReport, paramCollection, CommandType.StoredProcedure);
                 grn = dtgrn.AsEnumerable()
                             .Select(row => new GRNEntity

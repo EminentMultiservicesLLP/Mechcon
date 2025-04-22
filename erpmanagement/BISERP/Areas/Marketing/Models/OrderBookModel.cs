@@ -37,7 +37,8 @@ namespace BISERP.Areas.Marketing.Models
         public string AreaOfInstallation { get; set; }
         public int? ConsigneeID { get; set; }
         public string TechnicalSpecification { get; set; }
-        public string ScopeOfSupply { get; set; }
+        public int? ScopeOfSupplyID { get; set; }
+        public string ScopeOfSupplyName { get; set; }
         public string Packaging { get; set; }
         public string Insurance { get; set; }
         public string Supervision { get; set; }

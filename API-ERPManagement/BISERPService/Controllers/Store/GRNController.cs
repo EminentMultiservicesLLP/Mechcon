@@ -166,16 +166,16 @@ namespace BISERPService.Controllers
                 return Ok(grn);
         }
 
-        [Route("grndetails/{fromdate}/{todate}/{StoreId}/{SupplierId}/{GrnId}")]
+        [Route("grndetails/{fromdate}/{todate}/{StoreId}/{SupplierId}/{GrnId}/{ReportType}")]
         [AcceptVerbs("GET", "POST")]
-        public IHttpActionResult GRNDetailReport(DateTime fromdate, DateTime todate, int StoreId, int SupplierId, int GrnId)
+        public IHttpActionResult GRNDetailReport(DateTime fromdate, DateTime todate, int StoreId, int SupplierId, int GrnId, string ReportType)
         {
             List<GRNEntity> grn = new List<GRNEntity>();
             MechconMasterEntity mechconMaster = new MechconMasterEntity();
 
             TryCatch.Run(() =>
             {
-                var list = _igrncommon.GRNDetailReport(fromdate, todate, StoreId, SupplierId, GrnId);
+                var list = _igrncommon.GRNDetailReport(fromdate, todate, StoreId, SupplierId, GrnId, ReportType);
                  mechconMaster = _iGetMechconData.GeMechconData();    
 
                 if (list != null && list.Count() > 0)

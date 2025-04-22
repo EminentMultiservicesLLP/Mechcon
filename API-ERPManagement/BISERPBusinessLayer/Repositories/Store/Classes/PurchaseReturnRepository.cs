@@ -13,7 +13,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
 {
     public class PurchaseReturnRepository : IPurchaseReturnRepository
     {
-        public IEnumerable<PurchaseReturnEntity> GetDetailByID(int StoreId )
+        public IEnumerable<PurchaseReturnEntity> GetDetailByID(int? StoreId )
         {
             List<PurchaseReturnEntity> PurchaseReturn = null;
             using (DBHelper dbHelper = new DBHelper())
@@ -30,7 +30,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                                 Grnno = row.Field<string>("GRNNo"),
                                 //IndentNo = row.Field<string>("IndentNo"),
                                 //Grndate = row.Field<DateTime?>("GRNDate"),
-                                StrGrndate = row.Field<string>("GRNDate"),
+                                StrGrndate = Convert.ToDateTime(row.Field<DateTime?>("GRNDate")).ToString("dd-MMM-yyyy"),
                                 supplierid = row.Field<int?>("supplierid"),
                                 Supplier = row.Field<string>("Supplier"),
                                 Store = row.Field<string>("Store"),
@@ -77,7 +77,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
             return PurchaseReturn;
 
         }
-        public IEnumerable<PurchaseReturnEntity> GetAllPurchaseReturn(int storeId)
+        public IEnumerable<PurchaseReturnEntity> GetAllPurchaseReturn(int? storeId)
         {
             List<PurchaseReturnEntity> purchaseReturn = null;
             using (DBHelper dbHelper = new DBHelper())
@@ -92,9 +92,9 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                                 PRNo = row.Field<string>("PRNo"),
                                 Grnno = row.Field<string>("GRNNo"),
                                 PRDate = row.Field<DateTime?>("PRDate"),
-                                StrPRDate = row.Field<string>("StrPRDate"),
+                                StrPRDate = Convert.ToDateTime(row.Field<DateTime?>("PRDate")).ToString("dd-MMM-yyyy"),
                                 Supplier = row.Field<string>("Supplier"),
-                           
+                                StoreId = row.Field<int>("StoreId"),
                             }).ToList();
             }
             return purchaseReturn;
@@ -173,5 +173,54 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
             else
                 return false;
         }
+        public IEnumerable<PurchaseReturnEntity> GetPurchaseReturnForReport()
+        {
+            List<PurchaseReturnEntity> po = null;
+            using (DBHelper dbHelper = new DBHelper())
+            {
+                DataTable dtpo = dbHelper.ExecuteDataTable(StoreQuery.PurchaseReturnForReport, CommandType.StoredProcedure);
+                po = dtpo.AsEnumerable()
+                            .Select(row => new PurchaseReturnEntity
+                            {
+                                ID = row.Field<int>("ID"),
+                                PRNo = row.Field<string>("PRNo"),
+                                StrPRDate = Convert.ToDateTime(row.Field<DateTime>("PRDate")).ToString("dd-MMM-yyyy"),
+                                StoreId = row.Field<int>("StoreId"),
+                                Store = row.Field<string>("Store"),
+                                GrnID = row.Field<int>("GrnID"),
+                                Grnno = row.Field<string>("Grnno"),
+                                StrGrndate = Convert.ToDateTime(row.Field<DateTime>("Grndate")).ToString("dd-MMM-yyyy"),
+                                supplierid = row.Field<int>("supplierid"),
+                                Supplier = row.Field<string>("Supplier"),
+                            }).ToList();
+            }
+            return po;
+        }
+        public PurchaseReturnRptEntity GetPurchaseReturnById(int Id)
+        {
+            PurchaseReturnRptEntity pr = null;
+            using (DBHelper dbHelper = new DBHelper())
+            {
+                DBParameter param = new DBParameter("Id", Id, DbType.Int32);
+                DataTable dtpo = dbHelper.ExecuteDataTable(StoreQuery.GetPurchaseReturnById, param, CommandType.StoredProcedure);
+                pr = dtpo.AsEnumerable()
+                            .Select(row => new PurchaseReturnRptEntity
+                            {
+                                PRNo = row.Field<string>("PRNo"),
+                                StrPRDate = Convert.ToDateTime(row.Field<DateTime>("PRDate")).ToString("dd-MMM-yyyy"),
+                                Store = row.Field<string>("Store"),
+                                Grnno = row.Field<string>("Grnno"),
+                                StrGrndate = Convert.ToDateTime(row.Field<DateTime>("Grndate")).ToString("dd-MMM-yyyy"),
+                                Supplier = row.Field<string>("Supplier"),
+                                SupAdd = row.Field<string>("SupAdd"),
+                                InsertedByName = row.Field<string>("InsertedByName"),
+                                strInsertedOn = row.Field<DateTime?>("InsertedOn") != null ? Convert.ToDateTime(row.Field<DateTime?>("InsertedOn")).ToString("dd-MMM-yyyy") : string.Empty,
+                                AuthorisedByName = row.Field<string>("AuthorisedByName"),
+                                strAuthDate = row.Field<DateTime?>("AuthDate") != null ? Convert.ToDateTime(row.Field<DateTime?>("AuthDate")).ToString("dd-MMM-yyyy") : string.Empty,
+                            }).FirstOrDefault();
+            }
+            return pr;
+        }
+
     }
 }

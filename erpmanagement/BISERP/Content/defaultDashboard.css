@@ -1,0 +1,77 @@
+﻿.dashboard-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 10px;
+    background-color: #dae6f0;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 8px;
+    border: #a8c4dc 1px solid;
+}
+
+.dashboard-card {
+    background-color: #fff;
+    padding: 5px 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    flex: 1; /* Makes all cards evenly distribute across the container */
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+    min-width: 10%;
+    margin: 5px;
+    cursor: pointer;
+}
+
+    .dashboard-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .dashboard-card h3 {
+        margin: 3px 0;
+        font-size: 12px;
+        font-weight: bold;
+        color: #444;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+    }
+
+    .dashboard-card h2 {
+        font-size: 16px;
+        margin: 2px 0;
+        color: #007bff;
+        font-family: "Arial", sans-serif;
+        font-weight: bold;
+    }
+
+.no-data-message {
+    text-align: center;
+    height: 296px;
+    color: red;
+    font-size: x-large;
+}
+
+.apexcharts-inner {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.chart-container {
+    width: 100%;
+    height: 100%;
+    min-height: 200px;
+    position: relative;
+}
+
+.chartFieldset {
+    padding-bottom: 0px;
+    margin-bottom: 0px;
+}
+
+@media (max-width: 768px) {
+    .chart-container {
+        min-height: 300px; /* Adjust height for smaller screens */
+    }
+}

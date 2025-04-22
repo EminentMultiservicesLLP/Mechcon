@@ -39,28 +39,29 @@
                         <div class="panel-body">
                             <div class="submit-row">
                                 @*<a data-toggle="collapse" class="btn btn-success" href="#collapse1">Show/Hide top Search Panel</a>*@
-                                <button type="button" class="btn btn-primary" id="btnReset">Reset</button>
                                 <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                                <button type="button" class="btn btn-primary" id="btnReset">Reset</button>
+                                <button type="button" class="btn btn-danger" id="btnUnAuthorized">Un-Authorized</button>
                             </div>
                             <fieldset class="fieldsetCustom">
                                 <legend class="legendCustom"> PR Authorization Form</legend>
                                 <div class="row">
                                     <div class="col-sm-2">
                                         @Html.Label("Project")
-                                        @Html.DropDownList("ddlStores", new SelectList(string.Empty, "Value", "Text"), "Select Project", new { @class = "wrapperdropdown-content form-control" })
+                                        @Html.DropDownList("ddlStores", new SelectList(string.Empty, "Value", "Text"), "Project", new { @disabled = "disabled", @class = "wrapperdropdown-content form-control" })
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.Label("Purchase Return No")
+                                        @Html.TextBoxFor(model => model.PRNo, "", new Dictionary<string, object> { { "class", "form-control" }, { "disabled", "disabled" } })
+                                        @Html.HiddenFor(m => m.ID)
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.Label("Return Date")
+                                        @Html.TextBoxFor(model => model.StrPRDate, new { @disabled = "disabled", @class = "form-control datepicker" })
                                     </div>
                                     <div class="col-sm-2">
                                         @Html.Label("Grn No")
                                         @Html.TextBoxFor(model => model.Grnno, new { @disabled = "disabled" , @class = "form-control" })
-                                    </div>
-                                    <div class="col-sm-2">
-                                        @Html.Label("Return Date")
-                                        @Html.TextBoxFor(model => model.StrPRDate, new { @class = "form-control datepicker" })
-                                    </div>
-                                    <div class="col-sm-2">
-                                        @Html.Label("Purchase Return No")
-                                        @Html.TextBoxFor(model => model.PRNo, "", new Dictionary<string, object> { { "class", "form-control" } })
-                                        @Html.HiddenFor(m => m.ID)
                                     </div>
                                     <div class="col-sm-2">
                                         @Html.Label("Supplier")
@@ -108,7 +109,7 @@
             type: "GET",
             url: "/PurchaseReturn/AllPurchaseReturn",
             datatype: "Json",
-            data: { StoreID: $("#ddlStores").val() },
+            data: { StoreID: null },
             beforeSend: function () {
                 // $SearchGrid = $("#Indentgrid").pqGrid(setM);
                 $SearchGrid.pqGrid("showLoading");
@@ -150,11 +151,11 @@
     });
     $(document).ready(function () {
 
-        $('#PRNo').on('click', function () {
-            if ($("#ddlStores").val() == "") {
-                ShowAlert("error", "Please Select Store");
-                return;
-            }
+        $('#btnUnAuthorized').on('click', function () {
+            //if ($("#ddlStores").val() == "") {
+            //    ShowAlert("error", "Please Select Store");
+            //    return;
+            //}
             LoadPRNgrid();
         });
     });
@@ -298,6 +299,7 @@
                     $("#StrPRDate").val(record.StrPRDate);
                     $("#Grnno").val(record.Grnno);
                     $("#Supplier").val(record.Supplier);
+                    $("#ddlStores").val(record.StoreId);
                     // $("#supplierid").val(record.supplierid);
                     //$("#IndentType").val(data.Indent_Type);
                     $.ajax({

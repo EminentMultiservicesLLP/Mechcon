@@ -21,7 +21,7 @@
     @Html.AntiForgeryToken()
     @Html.ValidationSummary(true)
 
-    <h5 class="page-header orangeDottedBottomBorder">Clearance Notes</h5>
+    <h5 class="page-header orangeDottedBottomBorder">Dispatch</h5>
 
     <div id="SearchGridModal" class="modal fade" role="dialog" data-backdrop="false">
         <div class="modal-dialog find-search-grid-modal">
@@ -62,6 +62,11 @@
                                 <option value="0">Normal Dispatch</option>
                                 <option value="1">SEZ-Zone Dispatch</option>
                             </select>
+                        </div>
+                        <div class="col-sm-2" style="text-align: center;">
+                            <br />
+                            @Html.LabelFor(model => model.FinalDispatch)
+                            @Html.CheckBoxFor(model => model.FinalDispatch)
                         </div>
                     </div>
 
@@ -162,20 +167,29 @@
         {
             title: "Project",
             dataIndx: "StoreName",
-            width: '35%',
+            width: '25%',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Lot No",
+            dataIndx: "LotNo",
+            width: '25%',
             filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
         },
         {
             title: "Dispatch Type",
             dataIndx: "DispatchTypeName",
-            width: '35%',
+            width: '25%',
             filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
         },
         {
-            title: "Created-By",
-            dataIndx: "InsertedByName",
-            width: '30%',
+            title: "Final Dispatch",
+            dataIndx: "FinalDispatch",
+            width: 200,
             filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+            //render: function (ui) {
+            //    return ui.rowData.FinalDispatch === true ? 'Yes' : 'No';
+            //}
         }
     ];
 
@@ -209,6 +223,7 @@
                 tempClearanceNoteId = ui.rowData.ClearanceNoteId;
                 $("#ddlStores").val(ui.rowData.StoreId);
                 $("#ddlDispatchType").val(ui.rowData.DispatchType);
+                $("#FinalDispatch").prop('checked', ui.rowData.FinalDispatch);
                 closeModal();
             }
         }
@@ -278,7 +293,8 @@
         const details = JSON.stringify({
             ClearanceNoteId: tempClearanceNoteId,
             StoreId: $("#ddlStores").val(),
-            DispatchType: dispatchType
+            DispatchType: dispatchType,
+            FinalDispatch: $("#FinalDispatch").prop('checked'),
         });
 
         $.ajax({
@@ -334,6 +350,7 @@
     function ClearForm() {
         $("#ddlStores").val('');
         $("#ddlDispatchType").val(0);
+        $("#FinalDispatch").prop('checked', false);
         $('input[type="file"]').val(null);
         tempClearanceNoteId = 0;
     }

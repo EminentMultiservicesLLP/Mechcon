@@ -108,7 +108,7 @@ namespace BISERP.Areas.SM_Reports.Models
         public string MaterialOfConstruction { get; set; }
         public string AreaOfInstallation { get; set; }
         public string TechnicalSpecification { get; set; }
-        public string ScopeOfSupply { get; set; }
+        public string ScopeOfSupplyName { get; set; }
         public string Transport { get; set; }
         public string Packaging { get; set; }
         public string Insurance { get; set; }

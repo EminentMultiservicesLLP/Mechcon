@@ -1,4 +1,57 @@
 ﻿@model BISERP.Areas.Masters.Models.StoreMasterModel
+<style>
+    .dashboard-container {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+        padding: 10px;
+        background-color: #dae6f0;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 8px;
+        border: #a8c4dc 1px solid;
+    }
+
+    .dashboard-card {
+        background-color: #fff;
+        padding: 5px 10px;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        flex: 1; /* Makes all cards evenly distribute across the container */
+        text-align: center;
+        transition: transform 0.2s, box-shadow 0.2s;
+        min-width: 10%;
+        margin: 5px;
+        cursor: pointer;
+    }
+
+        .dashboard-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .dashboard-card h3 {
+            margin: 3px 0;
+            font-size: 12px;
+            font-weight: bold;
+            color: #444;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .dashboard-card h2 {
+            font-size: 16px;
+            margin: 2px 0;
+            color: #007bff;
+            font-family: "Arial", sans-serif;
+            font-weight: bold;
+        }
+
+    .nav-tabs li {
+        background: darkgrey;
+    }
+</style>
 
 @using (Html.BeginForm())
 {
@@ -9,9 +62,10 @@
 
     <div id="content">
         <div id="content-tab">
-            <ul id="tabs" class="nav nav-tabs" data-tabs="tabs" style="padding: 1px; background: silver;">
+            <ul id="tabs" class="nav nav-tabs" data-tabs="tabs" style="padding: 1px; background: lightgray;">
                 <li class="active tab"><a href="#tab1" data-toggle="tab" style="margin: 0;">Budget Status</a></li>
                 <li><a href="#tab2" data-toggle="tab" style="margin: 0;">Project Status</a></li>
+                <li><a href="#tab3" data-toggle="tab" style="margin: 0;">Dashboard</a></li>
             </ul>
             <fieldset class="fieldsetCustom">
                 <div id="my-tab-content" class="tab-content" style="border:none">
@@ -145,11 +199,194 @@
                             </div>
                         </div>
                     </div>
+                    <div class="tab-pane" id="tab3">
+                        <br>
+                        <div class="submit-row">
+                            <div class="col-lg-2 col-md-4 col-sm-12 mb-3">
+                                <label class="required" for="financialYear">Financial Year</label>
+                                <select id="financialYear" name="financialYear" class="form-control">
+                                    <option value="">--Select Financial Year--</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-2 col-md-4 col-sm-12 mb-3">
+                                @Html.Label("Select Project", new { @class = "required" })
+                                @Html.DropDownList("DashboardStoreID", new SelectList(string.Empty, "Value", "Text"), "", new { @class = "form-control wrapperdropdown-content" })
+                            </div>
+                            <div class="col-lg-2 col-md-4 col-sm-12 mb-3">
+                                <br />
+                                <button type="button" id="btnGo" class="btn btn-primary" onclick="go()">GO</button>
+                                <button type="button" class="btn btn-warning" id="btnResetT" onclick="clearFormData()">Clear</button>
+                            </div>
+                        </div>
+                        <br />
+                        <fieldset class="fieldsetCustom dashboard-container">
+                            <legend class="legendCustom"> Purchase Request </legend>
+                            <div class="dashboard-card">
+                                <h3>Waiting For Verification</h3>
+                                <h2 id="PRStatusID_0">0</h2>
+                            </div>
+
+                            <div class="dashboard-card">
+                                <h3>Waiting For Authorization</h3>
+                                <h2 id="PRStatusID_1">0</h2>
+                            </div>
+
+                            <div class="dashboard-card">
+                                <h3>Total</h3>
+                                <h2 id="PRStatusID_Total">0</h2>
+                            </div>
+                        </fieldset>
+
+                        <fieldset class="fieldsetCustom dashboard-container">
+                            <legend class="legendCustom"> Purchase Order </legend>
+                            <div class="dashboard-card">
+                                <h3>Waiting For Verification</h3>
+                                <h2 id="POStatusID_0">0</h2>
+                            </div>
+
+                            <div class="dashboard-card">
+                                <h3>Waiting For Authorization</h3>
+                                <h2 id="POStatusID_1">0</h2>
+                            </div>
+
+                            <div class="dashboard-card">
+                                <h3>Total</h3>
+                                <h2 id="POStatusID_Total">0</h2>
+                            </div>
+                        </fieldset>
+
+                        <fieldset class="fieldsetCustom dashboard-container">
+                            <legend class="legendCustom"> GRN </legend>
+
+                            <div class="dashboard-card">
+                                <h3>Waiting For Authorization</h3>
+                                <h2 id="GRNStatusID_0">0</h2>
+                            </div>
+
+                        </fieldset>
+
+                        <fieldset class="fieldsetCustom dashboard-container">
+                            <legend class="legendCustom"> Material Request </legend>
+                            <div class="dashboard-card">
+                                <h3>Waiting For Verification</h3>
+                                <h2 id="MRStatusID_0">0</h2>
+                            </div>
+
+                            <div class="dashboard-card">
+                                <h3>Waiting For Authorization</h3>
+                                <h2 id="MRStatusID_1">0</h2>
+                            </div>
+
+                            <div class="dashboard-card">
+                                <h3>Total</h3>
+                                <h2 id="MRStatusID_Total">0</h2>
+                            </div>
+                        </fieldset>
+                    </div>
                 </div>
             </fieldset>
         </div>
     </div>
 }
+<script>
+    function loadFinancialYear() {
+        $.ajax({
+            type: "GET",
+            url: "/ResourceTarget/GetFinancialYear",
+            dataType: "json",
+            success: function (data) {
+                const $financialYear = $('#financialYear');
+                $financialYear.empty();
+
+                if (data.error) {
+                    $financialYear.append('<option value="">--Error loading financial years--</option>');
+                    console.error("Error loading financial years:", data.error);
+                    return;
+                }
+
+                data.forEach(function (financialYear) {
+                    $financialYear.append(`<option value="${financialYear.FinancialYear}">${financialYear.FinancialYear}</option>`);
+                });
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                $('#financialYear').empty();
+                $('#financialYear').append('<option value="">--Error loading sources--</option>');
+                console.error("Error loading sources:", errorThrown);
+            }
+        });
+    }
+    loadFinancialYear();
+
+    function loadDashBoardStores() {
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("AllStoreMasters", "StoreMaster")',
+            datatype: "Json",
+            success: function (data) {
+                storeDetails = data.records;
+                $('#DashboardStoreID').empty();
+                $('#DashboardStoreID').append('<option value="null">' + "All" + '</option>');
+                $.each(data.records, function (index, value) {
+                    $('#DashboardStoreID').append(`<option value="${value.ID}">${value.Code}</option>`);
+                });
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                console.error("Error loading stores:", errorThrown);
+            }
+        });
+    }
+    loadDashBoardStores();
+    function go() {
+        const financialYear = $("#financialYear").val();
+        const storeID = $("#DashboardStoreID").val();
+        // Define dashboard types with their respective API endpoints
+        const dashboardTypes = [
+            { key: "PR", url: "/StoreMaster/GetPRDashboardCount" },
+            { key: "PO", url: "/StoreMaster/GetPODashboardCount" },
+            { key: "GRN", url: "/StoreMaster/GetGRNDashboardCount" },
+            { key: "MR", url: "/StoreMaster/GetMRDashboardCount" }
+        ];
+
+        // Load dashboard counts dynamically
+        dashboardTypes.forEach(({ key, url }) => {
+            loadDashboardCount(key, url, financialYear, storeID);
+        });
+    }
+
+    function loadDashboardCount(type, url, financialYear, storeID) {
+        const antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+
+        $.ajax({
+            headers: { "__RequestVerificationToken": antiForgeryToken },
+            type: 'GET',
+            url: url,
+            data: { financialYear: financialYear, StoreID : storeID },
+            dataType: "json",
+            success(response) {
+                if (!response?.success || !Array.isArray(response.records)) {
+                    console.error(`Invalid response for ${type}:`, response);
+                    alert(response?.message || `Unable to load ${type} status summary.`);
+                    return;
+                }
+
+                let totalCount = 0;
+                response.records.forEach(({ AuthorizationStatusID, RequestCount }) => {
+                    if (AuthorizationStatusID < 2) {
+                        $(`#${type}StatusID_${AuthorizationStatusID}`).text(RequestCount);
+                        totalCount += RequestCount;
+                    }
+                });
+
+                $(`#${type}StatusID_Total`).text(totalCount);
+            },
+            error(xhr, status, error) {
+                console.error(`AJAX Error for ${type}:`, status, error);
+                alert(`An error occurred while loading ${type} status summary. Please try again later.`);
+            }
+        });
+    }
+
+</script>
 <script>
     //---------------------------------------------------------------------------------- Budget Status ------------------------------------------------------------------------------------------//
 
@@ -245,7 +482,6 @@
             }
         });
     }
-
 
     //---------------------------------------------------------------------------------- Project Status ------------------------------------------------------------------------------------------//
     var storeDetails = [];
@@ -636,5 +872,9 @@
         ClearParamGrid('CategoryWiseBudgetGrid');
         ClearParamGrid('TransactionRecordsGrid');
         ClearParamGrid('DeliverablesGrid');
+
+        $("#financialYear").prop('selectedIndex', 0);
+        $("#DashboardStoreID").val('null');
+        $("h2[id*='StatusID_']").text("0");
     }
 </script>

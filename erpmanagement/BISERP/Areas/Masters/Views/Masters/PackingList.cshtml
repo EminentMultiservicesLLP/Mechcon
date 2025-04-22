@@ -92,6 +92,10 @@
                                     @Html.TextBoxFor(model => model.PackingListDate, new { @class = "form-control datepicker", @disabled = "disabled" })
                                 </div>
                                 <div class="col-sm-2">
+                                    @Html.LabelFor(model => model.ClientName, new { @class = "" })
+                                    @Html.TextBoxFor(model => model.ClientName, new { @class = "form-control", placeholder = "Client Name", @disabled = "disabled" })
+                                </div>
+                                <div class="col-sm-2">
                                     @Html.LabelFor(model => model.StoreId, new { @class = "required" })
                                     @Html.DropDownList("StoreId", new SelectList(string.Empty, "Value", "Text"), "--Select Project--", new { @class = "wrapperdropdown-content form-control" })
                                 </div>
@@ -103,12 +107,12 @@
                                     @Html.LabelFor(model => model.InvoiceDate, new { @class = "required" })
                                     @Html.TextBoxFor(model => model.InvoiceDate, new { @class = "form-control datepicker" })
                                 </div>
+                            </div>
+                            <div class="row">
                                 <div class="col-sm-2">
                                     @Html.LabelFor(model => model.VehicleNo, new { @class = "required" })
                                     @Html.TextBoxFor(model => model.VehicleNo, new { @class = "form-control", placeholder = "Enter Vehicle No." })
                                 </div>
-                            </div>
-                            <div class="row">
                                 <div class="col-sm-2">
                                     @Html.LabelFor(model => model.PONo, new { @class = "required" })
                                     @Html.TextBoxFor(model => model.PONo, new { @class = "form-control", placeholder = "Enter PO No." })
@@ -144,7 +148,9 @@
 
                         </fieldset>
                         <div class="submit-row">
-                            <button type="button" class="btn btn-primary" data-target="#ItemModal" id="btnViewItem">Add Item</button>
+                            <button type="button" class="btn btn-primary" data-target="#ItemModal" id="btnViewItem">Add GRN Item</button>
+                            <button type="button" class="btn btn-primary" data-target="#PreItemModal" id="btnViewPreItem">Add Primary Item</button>
+                            <button type="button" class="btn btn-primary" id="btnAddRow">Add Manual Item</button>
                             <button type="button" class="btn btn-danger" id="btnRemoveItem">Remove Item</button>
                         </div>
                         <fieldset class="fieldsetCustom">
@@ -162,11 +168,19 @@
     <div id="Suppliergrid"></div>
 </div>
 
-<div title="Select Items" id="ItemModal" style="display: none;">
+<div title="Select GRN Items" id="ItemModal" style="display: none;">
     <div id="ItemListGrid"></div>
     <div style="margin-top:5px;">
         <button type="button" class="btn btn-primary" id="btnAddItem">Add</button>
         <button type="button" class="btn btn-primary" id="btnCloseItem">Close</button>
+    </div>
+</div>
+
+<div title="Select Primary Items" id="PreItemModal" style="display: none;">
+    <div id="PreItemListGrid"></div>
+    <div style="margin-top:5px;">
+        <button type="button" class="btn btn-primary" id="btnAddPreItem">Add</button>
+        <button type="button" class="btn btn-primary" id="btnClosePreItem">Close</button>
     </div>
 </div>
 
@@ -196,6 +210,7 @@
         const filteredObjects = storeDetails.filter(obj => obj.ID == selectedID);
         const firstFilteredObject = filteredObjects[0];
 
+        $('#ClientName').val(firstFilteredObject?.ClientName || '');
         $('#PONo').val(firstFilteredObject?.ClientPoNo || '');
     });
 
@@ -251,7 +266,7 @@
                 tempPackingListId = data.PackingListId;
                 $("#PackingListNo").val(data.PackingListNo);
                 $('#PackingListDate').datepicker('setDate', data.strPackingListDate);
-                $("#StoreId").val(data.StoreId);
+                $("#StoreId").val(data.StoreId).trigger("change");
                 $("#InvoiceNo").val(data.InvoiceNo);
                 $('#InvoiceDate').datepicker('setDate', data.strInvoiceDate);
                 $("#VehicleNo").val(data.VehicleNo);
@@ -379,6 +394,7 @@
         });
     }
 
+    //====================================================== GRN Item Part (Starts here) ======================================================//
     //-----------------Item List Grid (Starts here)------------------------//
     var ItemListGrid_GDM = { location: "local" };
     var ItemListGrid_GCM = [
@@ -438,33 +454,40 @@
     var $ItemListGrid = $("#ItemListGrid").pqGrid(setItemListGrid);
 
     function loadItemList() {
-        // Prepare antiForgeryToken
-        var antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+        let StoreId = $("#StoreId").val()
 
-        // AJAX call to fetch data
         $.ajax({
-            type: 'GET',
-            url: "/ItemMaster/GetPackingListItemMaster/",
-            dataType: "json",
-            headers: {
-                "__RequestVerificationToken": antiForgeryToken
-            },
+            type: "GET",
+            url: "/MaterialIndent/GetItemListForMI/",
+            data: { StoreId: StoreId, ItemTypeId: null },
+            datatype: "Json",
             beforeSend: function () {
-                $ItemListGrid.pqGrid("showLoading"); // Assuming $ItemListGrid is defined elsewhere
-            },
-            success: function (response) {
-                // Update grid data and refresh
-                $("#ItemListGrid").pqGrid("option", "dataModel.data", response.items);
-                $("#ItemListGrid").pqGrid("refreshDataAndView");
-                PqGridRefreshClick($ItemListGrid); // Assuming PqGridRefreshClick is defined elsewhere
+                $ItemListGrid.pqGrid("showLoading");
             },
             complete: function () {
                 $ItemListGrid.pqGrid("hideLoading");
+            },
+            success: function (data) {
+                if (data.success) {
+                    let filteredData= data.items.filter(item => item.IsGRNItem === true);
+                    $ItemListGrid.pqGrid("hideLoading");
+                    $ItemListGrid.pqGrid("option", "dataModel.data", filteredData);
+                    $ItemListGrid.pqGrid("refreshDataAndView");
+                    return;
+                } else {
+                    ClearParamGrid('ItemListGrid');
+                    ShowAlert("error", data.Messsage);
+                    return;
+                }
+            },
+            error: function (request, status, error) {
+                $ItemListGrid.pqGrid("hideLoading");
+                $ItemListGrid.pqGrid("refreshDataAndView");
+                ShowAlert("error", "Server error! Please Contact Administrator");
+                return;
             }
         });
     }
-    loadItemList();
-
     //-----------------Item List Grid (Ends here)------------------------//
     $('#btnViewItem').on('click', function () {
         // Validate OutletID
@@ -498,6 +521,20 @@
     $('#btnAddItem').on('click', async function () {
         $("#ItemModal").dialog("destroy");
         var dataMGrid = [];
+       
+        // Iterate through the item details grid and add existing items
+        var itemDetailsGridData = $ItemDetailGrid.pqGrid("option", "dataModel.data");
+        $.each(itemDetailsGridData, function (key, value) {
+            var grdData2 = {
+                'ItemId': value.ItemId,
+                'ItemName': value.ItemName,
+                'ItemDescription': value.ItemDescription,
+                'Qty': value.Qty,
+                'Unit': value.Unit
+            };
+            dataMGrid.push(grdData2);
+        });
+
         // Iterate through the main item list grid
         var getData = $("#ItemListGrid").pqGrid("option", "dataModel.data");
         var selectedItems = jLinq.from(getData).equals("State", true).select();
@@ -515,6 +552,129 @@
             dataMGrid.push(grdData1);
         });
 
+        // Update the item details grid with combined data
+        $ItemDetailGrid.pqGrid("option", "dataModel.data", dataMGrid);
+        $ItemDetailGrid.pqGrid("refreshDataAndView");
+    });
+
+    $("#btnCloseItem").on("click", function () {
+        $("#ItemModal").dialog("destroy");
+    })
+    //====================================================== GRN Item Part (Ends here) ======================================================//
+
+
+    //====================================================== Pre Item Part (Starts here) ======================================================//
+    //-----------------Pre Item List Grid (Starts here)------------------------//
+    var PreItemListGrid_GDM = { location: "local" };
+    var PreItemListGrid_GCM = [
+        {
+            //custom title.
+            title: "",
+            dataIndx: "State",
+            maxWidth: 25,
+            minWidth: 25,
+            menuIcon: false,
+            type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false, editor: true,
+            dataType: 'bool',
+            cb: {
+                all: false, //header checkbox to affect checkboxes on all pages.
+                header: true //for header checkbox.
+            },
+        },
+        {
+            title: "Item Name & Description", dataIndx: "ItemName", width: '95%', editable: false,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        }];
+    var setPreItemListGrid = {
+        height: 300,
+        width: 'auto',
+        maxWidth: '100%',
+        minWidth: 800,
+        sortable: true,
+        autofill: true,
+        numberCell: { show: true },
+        hoverMode: 'row',
+        showTop: true,
+        showTitle: true,
+        showBottom: true,
+        resizable: true,
+        scrollModel: { autoFit: true },
+        filterModel: { on: true, mode: "AND", header: true },
+        draggable: false,
+        hwrap: false,
+        wrap: false,
+        editable: true,
+        columnBorders: true,
+        menuIcon: true,
+        selectionModel: { type: 'row', mode: 'single', cbHeader: false },
+        colModel: PreItemListGrid_GCM,
+        dataModel: PreItemListGrid_GDM,
+        pageModel: { type: "local", rPP: 100 }
+    }
+
+    var $PreItemListGrid = $("#PreItemListGrid").pqGrid(setPreItemListGrid);
+
+    function GetPrePackingListDetail(StoreId) {
+        var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            url: "/PackingList/GetPrePackingListDetail",
+            data: { StoreId: StoreId },
+            dataType: "json",
+            beforeSend: function () {
+                $PreItemListGrid.pqGrid("showLoading");
+            },
+            complete: function () {
+                $PreItemListGrid.pqGrid("hideLoading");
+            },
+            success: function (response) {
+                if (response.records) {
+                    $PreItemListGrid.pqGrid("option", "dataModel.data", response.records);
+                } else {
+                    $PreItemListGrid.pqGrid("option", "dataModel.data", []);
+                }
+                $PreItemListGrid.pqGrid("refreshDataAndView");
+                PqGridRefreshClick($PreItemListGrid);
+            },
+            error: function (xhr, status, error) {
+                console.error("Error: " + status + " " + error);
+            }
+        });
+    }
+    //----------------- Pre Item List Grid (Ends here)------------------------//
+    $('#btnViewPreItem').on('click', function () {
+
+        if ($("#StoreId").val() == 0) {
+            ShowAlert("error", "Please Select Project");
+            return false;
+        }
+
+        // Open ItemModal dialog
+        $("#PreItemModal").dialog({
+            height: 400,
+            width: 900,
+            modal: true,
+            show: {
+                effect: "blind",
+                duration: 500
+            },
+            open: function () {
+                GetPrePackingListDetail($("#StoreId").val());
+            },
+            close: function () {
+                $(this).dialog("destroy");
+            }
+        });
+    });
+
+    $('#btnAddPreItem').on('click', async function () {
+        $("#PreItemModal").dialog("destroy");
+        var dataMGrid = [];
+
         // Iterate through the item details grid and add existing items
         var itemDetailsGridData = $ItemDetailGrid.pqGrid("option", "dataModel.data");
         $.each(itemDetailsGridData, function (key, value) {
@@ -528,15 +688,56 @@
             dataMGrid.push(grdData2);
         });
 
+        // Iterate through the main item list grid
+        var getData = $("#PreItemListGrid").pqGrid("option", "dataModel.data");
+        var selectedItems = jLinq.from(getData).equals("State", true).select();
+        $.each(selectedItems, function (key, value) {
+            var grdData1 = {
+                'ItemName': value.ItemName,
+                'ItemDescription': value.ItemDescription,
+                'Qty': value.Qty,
+                'Unit': value.Unit,
+                'Remark': value.Remark,
+            };
+            dataMGrid.push(grdData1);
+        });
+
         // Update the item details grid with combined data
         $ItemDetailGrid.pqGrid("option", "dataModel.data", dataMGrid);
         $ItemDetailGrid.pqGrid("refreshDataAndView");
     });
 
-
-    $("#btnCloseItem").on("click", function () {
-        $("#ItemModal").dialog("destroy");
+    $("#btnClosePreItem").on("click", function () {
+        $("#PreItemModal").dialog("destroy");
     })
+    //====================================================== Pre Item Part (Ends here) ======================================================//
+
+
+    //====================================================== Manual Item Part (Starts here) ======================================================//
+    $('#btnAddRow').on('click', async function () {
+        const storeId = $("#StoreId").val();
+
+        if (!storeId || storeId === "0") {
+            ShowAlert("error", "Select Project First!");
+            return false;
+        }
+
+        const itemGridData = $ItemDetailGrid.pqGrid("option", "dataModel.data");
+
+        const newRow = {
+            ItemName: '',
+            ItemDescription: '',
+            Qty: 0,
+            Unit: '',
+            Remark: '',
+        };
+
+        itemGridData.push(newRow);
+
+        $ItemDetailGrid.pqGrid("option", "dataModel.data", itemGridData);
+        $ItemDetailGrid.pqGrid("refreshDataAndView");
+    });
+    //====================================================== Manual Item Part (Ends here) ======================================================//
 
     $('#btnRemoveItem').on('click', function () {
         if (selectedRowIndx == null) {
@@ -547,11 +748,10 @@
     });
 
     //--------------------------------------------- ItemDetailGrid (Starts Here) ----------------------------------------------------//
-
     var ItemDetailGrid_GDM = { location: "local" };
     var ItemDetailGrid_GCM = [
         {
-            title: "Item Name & Description", dataIndx: "ItemName", width: '60%', editable: false,
+            title: "Item Name & Description", dataIndx: "ItemName", width: '60%', editable: true,
         },
         {
             title: "Description", dataIndx: "ItemDescription", width: '35%', hidden: true
@@ -560,7 +760,7 @@
             title: "Qty", dataIndx: "Qty", width: '12%',
         },
         {
-            title: "Unit", dataIndx: "Unit", width: '12%', editable: false,
+            title: "Unit", dataIndx: "Unit", width: '12%', editable: true,
         },
         {
             title: "Remark", dataIndx: "Remark", width: '15%', editable: true,
@@ -615,8 +815,15 @@
             }
         }
 
-        // Check if any item's quantity is zero
         const itemDetailsGridData = $ItemDetailGrid.pqGrid("option", "dataModel.data");
+
+        // Check if any item's Name is not provide
+        if (itemDetailsGridData.some(item => item.ItemName == "")) {
+            ShowAlert("error", "Please enter Item Name!");
+            return false;
+        }
+
+        // Check if any item's quantity is zero
         if (itemDetailsGridData.some(item => item.Qty <= 0)) {
             ShowAlert("error", "Item quantity cannot be zero!");
             return false;
@@ -703,6 +910,7 @@
         $("#StoreId").val('');
         $("#InvoiceNo").val('');
         $("#VehicleNo").val('');
+        $("#ClientName").val('');
         $("#PONo").val('');
         $("#LRNo").val('');
         $("#SupplierID").val('');
@@ -753,5 +961,7 @@
             return false;
         }
     }
+
+    //------------------------------------------------------------------------------------------------------------------------------------------------------------\\
 
 </script>

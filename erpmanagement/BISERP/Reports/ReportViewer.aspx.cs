@@ -14,7 +14,6 @@ using BISERP.Areas.Miscellaneous.Models;
 using BISERP.Areas.Store.Models.Store.Reports;
 using BISERP.Areas.Transport.Models;
 using BISERPCommon.Extensions;
-
 using BISERP.Areas.Purchase.Models;
 using BISERP.Area.Purchase.Models;
 using BISERP.Areas.Masters.Models;
@@ -33,7 +32,7 @@ namespace BISERP.Views.Shared
 
         public ReportViewer()
         {
-            _client = new HttpClient {BaseAddress = new Uri(url)};
+            _client = new HttpClient { BaseAddress = new Uri(url) };
             _client.DefaultRequestHeaders.Accept.Clear();
         }
 
@@ -175,6 +174,7 @@ namespace BISERP.Views.Shared
                     {
                         DateTime fromdate = Convert.ToDateTime(Request.QueryString["fdate"]);
                         DateTime todate = Convert.ToDateTime(Request.QueryString["tdate"]);
+                        string ReportType = Request.QueryString["ReportType"];
                         int storeid, suppid, grnid;
                         string storeName = Request.QueryString["sname"];
                         if (Request.QueryString["storeid"] != null)
@@ -205,7 +205,7 @@ namespace BISERP.Views.Shared
                         else
                             grnid = 0;
 
-                        GRNDetailsReport(fromdate, todate, storeid, suppid, grnid, storeName);
+                        GRNDetailsReport(fromdate, todate, storeid, suppid, grnid, storeName, ReportType);
                     }
                     if (Request.QueryString["reportid"] == "113")
                     {
@@ -788,10 +788,27 @@ namespace BISERP.Views.Shared
                         PurchaseRpt(poId, poType, rpttype);
                     }
 
+                    if (Request.QueryString["reportid"].ToString() == "242")
+                    {
+                        int purchaseReturnId = 0;
+                        string rpttype = "";
+                        if (Request.QueryString["purchaseReturnId"] != null)
+                        {
+                            if (Request.QueryString["purchaseReturnId"].ToString() != "")
+                                purchaseReturnId = Convert.ToInt32(Request.QueryString["purchaseReturnId"].ToString());
+                            else
+                                purchaseReturnId = 0;
+                        }
+                        else
+                            purchaseReturnId = 0;
+
+                        PurchaseReturnRpt(purchaseReturnId, rpttype);
+                    }
+
                     if (Request.QueryString["reportid"].ToString() == "231")
                     {
 
-                        int clientBillid = 0, ReportFor=0;
+                        int clientBillid = 0, ReportFor = 0;
 
                         if (Request.QueryString["clientBillid"] != null)
                         {
@@ -986,7 +1003,7 @@ namespace BISERP.Views.Shared
                         }
                         else
                             RFQType = "";
-                        
+
                         RFQById(IndentId, RFQType);
                     }
                     if (Request.QueryString["reportid"].ToString() == "239")
@@ -1020,7 +1037,7 @@ namespace BISERP.Views.Shared
                     if (Request.QueryString["reportid"].ToString() == "240")
                     {
 
-                        int PLId = 0;                      
+                        int PLId = 0;
                         if (Request.QueryString["packingListId"] != null)
                         {
                             if (Request.QueryString["packingListId"].ToString() != "")
@@ -1031,11 +1048,11 @@ namespace BISERP.Views.Shared
                         else
                             PLId = 0;
                         PackingListById(PLId);
-                    }  
-                    
+                    }
+
                     if (Request.QueryString["reportid"].ToString() == "241")
-                    {                                        
-                        int orderBookId = 0;      
+                    {
+                        int orderBookId = 0;
                         if (Request.QueryString["orderBookId"] != null)
                         {
                             if (Request.QueryString["orderBookId"].ToString() != "")
@@ -1043,7 +1060,7 @@ namespace BISERP.Views.Shared
                             else
                                 orderBookId = 0;
                         }
-                        else                           
+                        else
                             orderBookId = 0;
                         WorkOrderRptById(orderBookId);
                     }
@@ -2007,8 +2024,7 @@ namespace BISERP.Views.Shared
 
         private List<GRNModel> grn = null;
 
-        public async void GRNDetailsReport(DateTime fromdate, DateTime todate, int storeid, int suppid, int grnid,
-            string StoreName, string strOption = "Preview")
+        public async void GRNDetailsReport(DateTime fromdate, DateTime todate, int storeid, int suppid, int grnid, string StoreName, string ReportType, string strOption = "Preview")
         {
 
             GetReportReady();
@@ -2019,8 +2035,7 @@ namespace BISERP.Views.Shared
             string strfromdate = Convert.ToDateTime(fromdate).ToString("MM-dd-yy");
             string strtodate = Convert.ToDateTime(todate).ToString("MM-dd-yy");
 
-            string _url = url + "/grn/grndetails/" + strfromdate + "/" + strtodate + "/" + storeid + "/" + suppid + "/" +
-                          grnid + Common.Constants.JsonTypeResult;
+            string _url = url + "/grn/grndetails/" + strfromdate + "/" + strtodate + "/" + storeid + "/" + suppid + "/" + grnid + "/" + ReportType + Common.Constants.JsonTypeResult;
             var response = await Common.AsyncWebCalls.GetAsync<List<GRNModel>>(_client, _url, CancellationToken.None);
             if (response != null)
             {
@@ -2034,68 +2049,68 @@ namespace BISERP.Views.Shared
                 //    grn = response.Content.ReadAsAsync<List<GRNModel>>().Result;
                 //}
                 var result = from m in grn
-                    from mdt in m.GRNDetails
-                    select new
-                    {
-                        Id = m.ID,
-                        m.GrnTypeID,
-                        m.StoreId,
-                        m.SupplierID,
-                        m.DCNo,
-                        m.DCDate,
-                        m.GRNNo,
-                        m.GRNDate,
-                        m.InvoiceNo,
-                        m.InvoiceDate,
-                        m.TotalAmount,
-                        m.AuthorisedAmt,
-                        m.Transporter,
-                        m.VehicleNo,
-                        m.TotalTaxamt,
-                        m.TotalFORE,
-                        m.TotalExciseAmt,
-                        m.TotalDisc,
-                        m.InwardNo,
-                        m.InwardDate,
-                        m.GRNType,
-                        m.StoreName,
-                        m.SupplierName,
-                        m.GrnPaymentType,
-                        m.PONo,
-                        m.PODate,
-                        m.Authorized,
-                        m.Service,
-                        m.Warranty,
-                        m.Preparedby,
-                        m.AuthorizedByName,
-                        m.companyName,
-                        m.companyAddress,
-                        m.companyEmail,
-                        m.companyCIN,
-                        m.companyGST,
-                        m.SupplierCode,
-                        mdt.ItemName,
-                        mdt.BatchName,
-                        mdt.Qty,
-                        mdt.FreeQty,
-                        mdt.Rate,
-                        mdt.Discount,
-                        mdt.MRP,
-                        mdt.TaxAmount,
-                        mdt.Amount,
-                        mdt.DescriptiveName,
-                        mdt.RejectedQty,
-                        mdt.RecieveQty,
-                        mdt.RejectionReason,
-                        mdt.PopendingQty,
-                        mdt.UnitName,
-                        mdt.CQty,
-                        mdt.ItemCode,
-                        mdt.Make,
-                        mdt.MaterialOfConstruct,
-                        mdt.IndentRemark,
-                        mdt.POIndentRemark,
-                    };
+                             from mdt in m.GRNDetails
+                             select new
+                             {
+                                 Id = m.ID,
+                                 m.GrnTypeID,
+                                 m.StoreId,
+                                 m.SupplierID,
+                                 m.DCNo,
+                                 m.DCDate,
+                                 m.GRNNo,
+                                 m.GRNDate,
+                                 m.InvoiceNo,
+                                 m.InvoiceDate,
+                                 m.TotalAmount,
+                                 m.AuthorisedAmt,
+                                 m.Transporter,
+                                 m.VehicleNo,
+                                 m.TotalTaxamt,
+                                 m.TotalFORE,
+                                 m.TotalExciseAmt,
+                                 m.TotalDisc,
+                                 m.InwardNo,
+                                 m.InwardDate,
+                                 m.GRNType,
+                                 m.StoreName,
+                                 m.SupplierName,
+                                 m.GrnPaymentType,
+                                 m.PONo,
+                                 m.PODate,
+                                 m.Authorized,
+                                 m.Service,
+                                 m.Warranty,
+                                 m.Preparedby,
+                                 m.AuthorizedByName,
+                                 m.companyName,
+                                 m.companyAddress,
+                                 m.companyEmail,
+                                 m.companyCIN,
+                                 m.companyGST,
+                                 m.SupplierCode,
+                                 mdt.ItemName,
+                                 mdt.BatchName,
+                                 mdt.Qty,
+                                 mdt.FreeQty,
+                                 mdt.Rate,
+                                 mdt.Discount,
+                                 mdt.MRP,
+                                 mdt.TaxAmount,
+                                 mdt.Amount,
+                                 mdt.DescriptiveName,
+                                 mdt.RejectedQty,
+                                 mdt.RecieveQty,
+                                 mdt.RejectionReason,
+                                 mdt.PopendingQty,
+                                 mdt.UnitName,
+                                 mdt.CQty,
+                                 mdt.ItemCode,
+                                 mdt.Make,
+                                 mdt.MaterialOfConstruct,
+                                 mdt.IndentRemark,
+                                 mdt.POIndentRemark,
+                             };
                 //var result = model.ListToModel(grn);
 
                 _rparams = new ReportParameter[3];
@@ -2132,7 +2147,7 @@ namespace BISERP.Views.Shared
 
         private List<ClientBillingModel> billList;
 
-        public async void ClientBillid(int clientBillid,int ReportFor)
+        public async void ClientBillid(int clientBillid, int ReportFor)
         {
             string ReportPath = Server.MapPath("../Reports/Billing/ClientBillingRpt.rdlc");
             ReportViewer1.LocalReport.ReportPath = ReportPath;
@@ -2169,7 +2184,7 @@ namespace BISERP.Views.Shared
         public async void PurchaseRpt(int poId, string poType, string rptype, string strOption = "Preview")
         {
             GetReportReady();
-            string ReportPath ="";
+            string ReportPath = "";
             if (rptype == "Horizontal")
             {
                 ReportPath = Server.MapPath("../Reports/Purchase/PurchaseHorizontal/PurchaseReport.rdlc");
@@ -2178,7 +2193,7 @@ namespace BISERP.Views.Shared
             {
                 ReportPath = Server.MapPath("../Reports/Purchase/PurchaseVerticle/PurchaseReportVert.rdlc");
             }
-            
+
             ReportViewer1.LocalReport.ReportPath = ReportPath;
             string _url = url + "/purchaseorder/getbypoid/" + poId.ToString() + Common.Constants.JsonTypeResult;
             var response =
@@ -2198,8 +2213,7 @@ namespace BISERP.Views.Shared
                 prepareReport(ReportViewer1.LocalReport, ReportPath, _rds);
 
                 ReportViewer1.LocalReport.SubreportProcessing += new SubreportProcessingEventHandler(POdetail);
-                ReportViewer1.LocalReport.SubreportProcessing +=
-                    new SubreportProcessingEventHandler(SubreportProcessingEventHandler);
+                ReportViewer1.LocalReport.SubreportProcessing += new SubreportProcessingEventHandler(SubreportProcessingEventHandler);
                 ReportViewer1.LocalReport.SubreportProcessing += new SubreportProcessingEventHandler(Deliveryterm);
                 ReportViewer1.LocalReport.SubreportProcessing += new SubreportProcessingEventHandler(PaymentTerm);
                 ReportViewer1.LocalReport.SubreportProcessing += new SubreportProcessingEventHandler(PoTax);
@@ -2255,6 +2269,45 @@ namespace BISERP.Views.Shared
         void Inspection(object sender, SubreportProcessingEventArgs e)
         {
             e.DataSources.Add(new ReportDataSource("DataSetIspection", podetailList[0].POInspectio));
+        }
+
+        private List<PurchaseReturnRptModel> pr;
+        public async void PurchaseReturnRpt(int purchaseReturnId, string prType)
+        {
+            try
+            {
+                string reportPath = Server.MapPath("../Reports/Purchase/PurchaseReturn/PurchaseReturnReport.rdlc");
+                ReportViewer1.LocalReport.ReportPath = reportPath;
+
+                string requestUrl = $"{url}/purchasereturn/getpurchasereturnbyid/{purchaseReturnId}{Common.Constants.JsonTypeResult}";
+                var response = await Common.AsyncWebCalls.GetAsync<PurchaseReturnRptModel>(_client, requestUrl, CancellationToken.None);
+
+                if (response != null)
+                {
+                    pr = new List<PurchaseReturnRptModel> { response };
+
+                    _rds = new ReportDataSource
+                    {
+                        Name = "DataSetPurchaseReturn",
+                        Value = pr
+                    };
+
+                    var report = ReportViewer1.LocalReport;
+                    report.DataSources.Clear();
+                    report.DataSources.Add(_rds);
+                    report.SubreportProcessing += new SubreportProcessingEventHandler(PurchaseReturndetail);
+                    report.Refresh();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        void PurchaseReturndetail(object sender, SubreportProcessingEventArgs e)
+        {
+            e.DataSources.Add(new ReportDataSource("DataSetPurchaseReturnDetail", pr[0].PurchaseReturnDt));
         }
 
         private void GetReportReady()
@@ -2327,36 +2380,36 @@ namespace BISERP.Views.Shared
             {
                 grn = new List<GRNModel>();
                 grn.AddRange(response.ToList());
-            
-            var abc = from m in grn
-                from mdt in m.GRNDetails
-                select new
-                {
-                    Id = m.ID,
-                    m.StoreId,
-                    m.PoID,
-                    m.SupplierID,
-                    m.GRNNo,
-                    m.StoreName,
-                    m.SupplierName,
-                    m.PONo,
-                    m.strPODate,
-                    mdt.ItemName,
-                    mdt.ItemID,
-                    mdt.ItemCode,
-                    mdt.Qty,
-                    mdt.Rate,
-                    mdt.DescriptiveName,
-                    mdt.PopendingQty
-                };
-            //var result = model.ListToModel(driver);
-            _rds = new ReportDataSource();
-            _rds.Name = "dsGRNDetails";
-            _rds.Value = abc.ToList();
-            ReportViewer1.LocalReport.DataSources.Add(_rds);
 
-            ReportViewer1.LocalReport.Refresh();
-        }
+                var abc = from m in grn
+                          from mdt in m.GRNDetails
+                          select new
+                          {
+                              Id = m.ID,
+                              m.StoreId,
+                              m.PoID,
+                              m.SupplierID,
+                              m.GRNNo,
+                              m.StoreName,
+                              m.SupplierName,
+                              m.PONo,
+                              m.strPODate,
+                              mdt.ItemName,
+                              mdt.ItemID,
+                              mdt.ItemCode,
+                              mdt.Qty,
+                              mdt.Rate,
+                              mdt.DescriptiveName,
+                              mdt.PopendingQty
+                          };
+                //var result = model.ListToModel(driver);
+                _rds = new ReportDataSource();
+                _rds.Name = "dsGRNDetails";
+                _rds.Value = abc.ToList();
+                ReportViewer1.LocalReport.DataSources.Add(_rds);
+
+                ReportViewer1.LocalReport.Refresh();
+            }
         }
         private List<PurchaseIndentModel> _purchaseIndentList;
         public async void PurchaseIndentById(int indentId, string pIType)
@@ -2417,7 +2470,7 @@ namespace BISERP.Views.Shared
             ReportViewer1.LocalReport.SubreportProcessing += new SubreportProcessingEventHandler(RFQPaymentterm);
             ReportViewer1.LocalReport.Refresh();
         }
-        
+
         void RFQDetail(object sender, SubreportProcessingEventArgs e)
         {
             e.DataSources.Add(new ReportDataSource("dsRFQDt", _RFQList[0].IndentDetails));
@@ -2502,7 +2555,7 @@ namespace BISERP.Views.Shared
             //AddReportParameter(0, "PLType", PLType);
             //ReportViewer1.LocalReport.SetParameters(_rparams);
             ReportViewer1.LocalReport.DataSources.Add(_rds);
-            ReportViewer1.LocalReport.SubreportProcessing += new SubreportProcessingEventHandler(PackingListDetails);           
+            ReportViewer1.LocalReport.SubreportProcessing += new SubreportProcessingEventHandler(PackingListDetails);
             ReportViewer1.LocalReport.Refresh();
         }
 
@@ -2510,7 +2563,7 @@ namespace BISERP.Views.Shared
         {
             e.DataSources.Add(new ReportDataSource("dsPackingListDetails", _PKList[0].PackingListDetails));
         }
-        
+
         private List<WorkOrderRptModel> _workOrderRpt;
         public async void WorkOrderRptById(int orderBookId)
         {
@@ -2528,15 +2581,15 @@ namespace BISERP.Views.Shared
             _rds = new ReportDataSource();
             _rds.Name = "dsWorkOrderRpt";
             _rds.Value = _workOrderRpt;
-           
-            ReportViewer1.LocalReport.DataSources.Add(_rds);          
+
+            ReportViewer1.LocalReport.DataSources.Add(_rds);
             ReportViewer1.LocalReport.SubreportProcessing += new SubreportProcessingEventHandler(WORptPaymentTerm);
             ReportViewer1.LocalReport.SubreportProcessing += new SubreportProcessingEventHandler(WORptDeliveryTerm);
             ReportViewer1.LocalReport.SubreportProcessing += new SubreportProcessingEventHandler(WORptOtherTerm);
             ReportViewer1.LocalReport.SubreportProcessing += new SubreportProcessingEventHandler(WORptBasisTerm);
             ReportViewer1.LocalReport.Refresh();
         }
-               
+
         void WORptPaymentTerm(object sender, SubreportProcessingEventArgs e)
         {
             e.DataSources.Add(new ReportDataSource("dsPaymentTerm", _workOrderRpt[0].PaymentTermList));

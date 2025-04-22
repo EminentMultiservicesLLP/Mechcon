@@ -134,4 +134,10 @@ namespace BISERPBusinessLayer.Entities.Masters
         public string StartDate { get; set; }
         public string DueDate { get; set; }
     }
+    public class DashboardCount
+    {
+        public int AuthorizationStatusID { get; set; }
+        public string AuthorizationStatus { get; set; }
+        public int RequestCount { get; set; }
+    }
 }

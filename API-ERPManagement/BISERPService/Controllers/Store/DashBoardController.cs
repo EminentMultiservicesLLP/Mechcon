@@ -80,5 +80,30 @@ namespace BISERPService.Controllers.Store
             else
                 return BadRequest();
         }
+
+
+        [Route("GetDashBoardCountSummury/{FromDate}/{ToDate}")]
+        [Route("GetDashBoardCountSummury/{FromDate}/{ToDate}/{ProjectID}")]
+        [HttpGet]
+        public IHttpActionResult GetDashBoardCountSummury(string FromDate = null, string ToDate = null, int ? ProjectID = null)
+        {
+            try
+            {
+                var data = _dashBoard.GetDashBoardCountSummury(FromDate, ToDate, ProjectID);
+
+                if (data == null)
+                {
+                    return NotFound(); // or return BadRequest("No data found for the specified enquiry ID.");
+                }
+
+                return Ok(data.ToList());
+            }
+            catch (Exception ex)
+            {
+                _loggger.LogError("Error in GetDashBoardCountSummury of DashBoardController : parameter :" + Environment.NewLine + ex.StackTrace);
+                return InternalServerError(ex);
+            }
+        }
+
     }
 }

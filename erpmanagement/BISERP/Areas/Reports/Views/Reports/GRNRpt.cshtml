@@ -30,7 +30,7 @@
                         <div class="col-sm-12">
                             <button type="button" class="btn btn-info" id="btnSearch">FIND</button>
                             <button type="button" class="btn btn-primary" id="btnReset">RESET</button>
-                          
+
                         </div>
                     </div>
                     <fieldset class="fieldsetCustom">
@@ -38,12 +38,12 @@
                         <div class="row">
                             <div class="col-sm-5 col-lg-3">
                                 @Html.Label("GRN No")
-                                @Html.TextBoxFor(m => m.GRNNo, "", new { @disabled = "disabled" , @class = "form-control" })
+                                @Html.TextBoxFor(m => m.GRNNo, "", new { @disabled = "disabled", @class = "form-control" })
                                 @Html.HiddenFor(m => m.ID)
                             </div>
                             <div class="col-sm-5 col-lg-3">
                                 @Html.LabelFor(model => model.GRNDate)
-                                @Html.TextBoxFor(model => model.GRNDate, new { @disabled = "disabled" , @class = "IndentDate form-control" })
+                                @Html.TextBoxFor(model => model.GRNDate, new { @disabled = "disabled", @class = "IndentDate form-control" })
                             </div>
                         </div>
                     </fieldset>
@@ -67,7 +67,7 @@
         LoadSearchgrid();
     });
 
-    function LoadSearchgrid() {        
+    function LoadSearchgrid() {
         $.ajax({
             url: "/GRN/GRNForReport",
             cache: false,
@@ -165,13 +165,13 @@
             rowClick: function (evt, ui) {
                 if (ui.rowData) {
                     var record = ui.rowData;
-                 $("#ID").val(record.ID);
+                    $("#ID").val(record.ID);
                     $("#GRNNo").val(record.GRNNo);
                     $("#GRNDate").val(record.strGRNDate);
                     storeName = record.StoreName;
-                    storeId= record.StoreId;
+                    storeId = record.StoreId;
                     closeModal();
-                  
+
                     ReportValidationCheck(record.ID, record.strGRNDate);
                 }
             }
@@ -193,14 +193,7 @@
     //});
     function ReportValidationCheck(Id, grndate) {
         var url = "";
-        url = "../../Reports/ReportViewer.aspx?reportid=" +
-            142 +
-            "&fdate=" +
-            grndate +
-            "&tdate=" +
-            grndate +
-            "&storeid=" +
-            storeId + "&suppid=" + 0 + "&GrnId=" + Id + "&sname=" + storeName;
+        url = "../../Reports/ReportViewer.aspx?reportid=" + 142 + "&fdate=" + grndate + "&tdate=" + grndate + "&storeid=" + storeId + "&suppid=" + 0 + "&GrnId=" + Id + "&sname=" + storeName + "&ReportType=GRNWise";
 
 
         var myframe = document.getElementById("iframeReportViewer");

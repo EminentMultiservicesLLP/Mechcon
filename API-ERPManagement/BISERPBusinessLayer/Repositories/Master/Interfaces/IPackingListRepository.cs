@@ -13,7 +13,9 @@ namespace BISERPBusinessLayer.Repositories.Master.Interfaces
         List<PackingListEntity> GetPackingList(int StoreId);
         List<PackingListEntity> GetPackingListforRpt(DateTime fromdate, DateTime todate, int StoreId);
         List<PackingListDetailModel> GetPackingListDetail(int PackingListId);
-       
         PackingListEntity GetPLByID(int id);
+        PrePackingListEntity SavePrePackingList(PrePackingListEntity model);
+        List<PrePackingListEntity> GetPrePackingList();
+        List<PrePackingListDetailModel> GetPrePackingListDetail(int StoreId);
     }
 }

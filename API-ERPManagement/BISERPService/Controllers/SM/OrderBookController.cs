@@ -267,7 +267,6 @@ namespace BISERPService.Controllers.SM
             }
         }
 
-
         [Route("getIncoTerm")]
         [AcceptVerbs("GET", "POST")]
         public IHttpActionResult GetIncoTerm()
@@ -286,6 +285,28 @@ namespace BISERPService.Controllers.SM
             catch (Exception ex)
             {
                 _loggger.LogError("Error in GetIncoTerm method of OrderBookController:" + Environment.NewLine + ex.ToString());
+                return InternalServerError(ex);
+            }
+        }
+
+        [Route("getOrderBookForRpt/{UserID}")]
+        [HttpGet]
+        public IHttpActionResult GetOrderBookForRpt(int UserID)
+        {
+            try
+            {
+                var details = _orderBook.GetOrderBookForRpt(UserID);
+
+                if (details == null)
+                {
+                    return NotFound(); // or return BadRequest("No details found for the specified enquiry ID.");
+                }
+
+                return Ok(details.ToList());
+            }
+            catch (Exception ex)
+            {
+                _loggger.LogError("Error in GetEnqForOrderBook of OrderBookController : parameter :" + Environment.NewLine + ex.StackTrace);
                 return InternalServerError(ex);
             }
         }

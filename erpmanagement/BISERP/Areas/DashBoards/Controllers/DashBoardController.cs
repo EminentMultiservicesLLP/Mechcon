@@ -51,5 +51,28 @@ namespace BISERP.Areas.DashBoard.Controllers
             }
             return jResult;
         }
+
+        [HttpGet]
+        public async Task<JsonResult> GetDashBoardCountSummury(string FromDate = null, string ToDate = null, int? ProjectID = null)
+        {
+            string _url = $"{url}/dashboard/GetDashBoardCountSummury/{FromDate}/{ToDate}" + (ProjectID != null ? $"/{ProjectID}" : "") + Common.Constants.JsonTypeResult;
+            try
+            {
+                var records = await Common.AsyncWebCalls.GetAsync<List<DashBoardCountSummuryModel>>(client, _url, CancellationToken.None);
+
+                if (records == null)
+                {
+                    return Json(new { success = false, message = "No records found" }, JsonRequestBehavior.AllowGet);
+                }
+
+                return Json(new { success = true, records }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error in GetDashBoardCountSummury: {ex.Message} {Environment.NewLine} {ex.StackTrace}");
+                return Json(new { success = false, message = "An error occurred while retrieving Details" }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
     }
 }

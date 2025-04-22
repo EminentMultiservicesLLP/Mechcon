@@ -64,6 +64,7 @@ namespace BISERP
                       "~/Content/NewCSS.css",
                       "~/Content/scrolltabs.css",
                       "~/Content/defaultGridModal.css",
+                      "~/Content/defaultDashboard.css",
                       "~/Content/MessageBox/lobibox.min.css"));
 
             bundles.Add(new StyleBundle("~/Content/GridChart").Include(

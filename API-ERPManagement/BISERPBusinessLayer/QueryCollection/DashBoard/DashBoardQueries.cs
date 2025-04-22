@@ -12,5 +12,7 @@ namespace BISERPBusinessLayer.QueryCollection.DashBoard
         public const string GetPurchaseDashboardRequestCountsQuaterly = "dbsp_DSBD_GetPurchaseRequestCounts_Quaterly";
         public const string GetDashboardPurchaseIndentRequestCount = "dbsp_DSBD_GetPurchaseIndentRequestCount";
         public const string GetDashboardPurchaseOrderRequestCount = "dbsp_DSBD_GetPurchaseOrderRequestCount";
+
+        public const string GetDashBoardCountSummury = "dbsp_DSBD_GetDashBoardCountSummury";
     }
 }

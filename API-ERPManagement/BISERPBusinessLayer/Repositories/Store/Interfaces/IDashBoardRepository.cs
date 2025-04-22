@@ -1,4 +1,5 @@
-﻿using BISERPBusinessLayer.Entities.Store;
+﻿using BISERPBusinessLayer.Entities.DashBoard;
+using BISERPBusinessLayer.Entities.Store;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,5 +13,6 @@ namespace BISERPBusinessLayer.Repositories.Store.Interfaces
         StoreDashBoardEntity GetItemSummary();
 		IEnumerable<StoreDSBDStockSummaryEntity> GetStoreDSBDStockSummary(int byValue = 1);
         IEnumerable<StoreDSBDGuardIssueSummaryEntity> GetStoreDSBDGuardIssueSummary();
+        IEnumerable<DashBoardCountSummuryModel> GetDashBoardCountSummury(string FromDate, string ToDate, int? ProjectID);
     }
 }

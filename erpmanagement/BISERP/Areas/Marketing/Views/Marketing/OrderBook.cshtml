@@ -344,7 +344,9 @@
                                             <div class="row">
                                                 <div class="col-sm-4">Scope Of Supply</div>
                                                 <div class="col-sm-8">
-                                                    <input type="text" class="form-control" id="ScopeOfSupply" placeholder="Define the scope of supply">
+                                                    <select id="ScopeOfSupplyID" name="ScopeOfSupplyID" class="form-control">
+                                                        <option value="">--Select Scope Of Supply--</option>
+                                                    </select>
                                                 </div>
                                             </div>
                                         </th>
@@ -891,6 +893,35 @@
         });
     }
 
+    function loadScopeOfSupply() {
+        $.ajax({
+            type: "GET",
+            url: "/ScopeOfSupplyMaster/AllScopeOfSupply",
+            dataType: "json",
+            success: function (data) {
+                const $scopeOfSupplyDropdown = $('#ScopeOfSupplyID');
+                $scopeOfSupplyDropdown.empty();
+
+                if (data.error) {
+                    $scopeOfSupplyDropdown.append('<option value="">--Error loading scopeOfSupply--</option>');
+                    console.error("Error loading scopeOfSupply:", data.error);
+                    return;
+                }
+
+                $scopeOfSupplyDropdown.append('<option value="">--Select ScopeOfSupply--</option>');
+
+                data.records.forEach(function (scopeOfSupply) {
+                    $scopeOfSupplyDropdown.append(`<option value="${scopeOfSupply.ScopeOfSupplyID}">${scopeOfSupply.ScopeOfSupplyName}</option>`);
+                });
+            },
+            error: function (xhr, textScopeOfSupply, errorThrown) {
+                $('#ScopeOfSupplyID').empty();
+                $('#ScopeOfSupplyID').append('<option value="">--Error loading scopeOfSupply--</option>');
+                console.error("Error loading scopeOfSupply:", errorThrown);
+            }
+        });
+    }
+    loadScopeOfSupply();
     //-----------------------------------OrderBookGrid (Starts here)-----------------------------------//
     var OrderBookGrid_GDM = { location: "local" };
 
@@ -978,7 +1009,7 @@
                 $("#MaterialOfConstruction").val(data.MaterialOfConstruction);
                 $("#AreaOfInstallation").val(data.AreaOfInstallation);
                 $("#TechnicalSpecification").val(data.TechnicalSpecification);
-                $("#ScopeOfSupply").val(data.ScopeOfSupply);
+                $("#ScopeOfSupplyID").val(data.ScopeOfSupplyID);
                 $("#Packaging").val(data.Packaging);
                 $("#Insurance").val(data.Insurance);
                 $("#Supervision").val(data.Supervision);
@@ -1378,7 +1409,7 @@
             AreaOfInstallation: $("#AreaOfInstallation").val(),
             ConsigneeID: $("#ConsigneeID").val(),
             TechnicalSpecification: $("#TechnicalSpecification").val(),
-            ScopeOfSupply: $("#ScopeOfSupply").val(),
+            ScopeOfSupplyID: $("#ScopeOfSupplyID").val(),
             Packaging: $("#Packaging").val(),
             Insurance: $("#Insurance").val(),
             Supervision: $("#Supervision").val(),
@@ -1427,12 +1458,13 @@
                         fileSaveMsg = "But failed to save attached files.";
                     } finally {
                         const message = tempOrderBookID === 0 ? `Work Order registered successfully!<br> Project Code : <b>${response.Data.ProjectCode}</b>` : `Work Order updated successfully!<br> Project Code : <b>${response.Data.ProjectCode}</b>`;
-                        if (tempOrderBookID === 0) {
-                            GetUserByGroups(response.Data.ProjectCode, message, fileSaveMsg);
-                        } else {
-                            ShowAlert("success", `${message} <br> ${fileSaveMsg}`);
-                            clearFormData();
-                        }
+                        GetUserByGroups(response.Data.ProjectCode, message, fileSaveMsg);
+                        //if (tempOrderBookID === 0) {
+                        //    GetUserByGroups(response.Data.ProjectCode, message, fileSaveMsg);
+                        //} else {
+                        //    ShowAlert("success", `${message} <br> ${fileSaveMsg}`);
+                        //    clearFormData();
+                        //}
                     }
                 } else {
                     ShowAlert("error", response.message || "An error occurred while saving the offer.");
@@ -1458,7 +1490,7 @@
         $("#AreaOfInstallation").val('');
         $("#ConsigneeID").empty();
         $("#TechnicalSpecification").val('');
-        $("#ScopeOfSupply").val('');
+        $("#ScopeOfSupplyID").val('');
         $("#Packaging").val('');
         $("#Insurance").val('');
         $("#Supervision").val('');

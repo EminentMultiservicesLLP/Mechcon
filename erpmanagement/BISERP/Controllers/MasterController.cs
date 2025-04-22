@@ -298,5 +298,15 @@ namespace BISERP.Controllers
             }
             return jResult;
         }
+
+        [HttpGet]
+        public async Task<JsonResult> GetStoreFinancialYearWise(string FinancialYear)
+        {
+            JsonResult jResult;
+            string _url = url + "/stores/getStoreFinancialYearWise/"+ FinancialYear + Common.Constants.JsonTypeResult;
+            List<StoreMasterModel> _store = await Common.AsyncWebCalls.GetAsync<List<StoreMasterModel>>(client, _url, CancellationToken.None);
+
+            return jResult = Json(_store, JsonRequestBehavior.AllowGet);
+        }
     }
 }

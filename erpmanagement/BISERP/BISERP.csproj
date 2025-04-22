@@ -348,6 +348,7 @@
     <Compile Include="Areas\Masters\Controllers\PaymentTermMasterController.cs" />
     <Compile Include="Areas\Masters\Controllers\ProductMasterController.cs" />
     <Compile Include="Areas\Masters\Controllers\ProjectTCMasterController.cs" />
+    <Compile Include="Areas\Masters\Controllers\ScopeOfSupplyMasterController.cs" />
     <Compile Include="Areas\Masters\Controllers\StoreMasterController.cs" />
     <Compile Include="Areas\Masters\Controllers\VendorMasterController.cs" />
     <Compile Include="Areas\Masters\Controllers\SupplierMasterController.cs" />
@@ -361,6 +362,7 @@
     <Compile Include="Areas\Masters\Models\PackingListModel.cs" />
     <Compile Include="Areas\Masters\Models\ProductMasterModel.cs" />
     <Compile Include="Areas\Masters\Models\ProjectTCMasterModel.cs" />
+    <Compile Include="Areas\Masters\Models\ScopeOfSupplyMasterModel.cs" />
     <Compile Include="Areas\Masters\Models\VendorMasterModel.cs" />
     <Compile Include="Areas\Miscellaneous\Controllers\EMailTabController.cs" />
     <Compile Include="Areas\Miscellaneous\Controllers\MiscellaneousController.cs" />
@@ -492,6 +494,11 @@
     <Compile Include="Content\DataSet\dsStore.Designer.cs" />
     <Compile Include="Content\DataSet\dsTransport.Designer.cs" />
     <Compile Include="Content\DataSet\PackingList.Designer.cs" />
+    <Compile Include="Content\DataSet\PuchaseReturn.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PuchaseReturn.xsd</DependentUpon>
+    </Compile>
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BranchController.cs" />
     <Compile Include="Areas\Store\Controllers\BranchMasterController.cs" />
@@ -676,6 +683,7 @@
     <Content Include="Content\d3-mitch-tree-theme-default.min.css" />
     <Content Include="Content\d3-mitch-tree.min.css" />
     <Content Include="Content\dataTables.bootstrap.min.css" />
+    <Content Include="Content\defaultDashboard.css" />
     <Content Include="Content\defaultGridModal.css" />
     <Content Include="Content\font-awesome.min.css" />
     <Content Include="Content\Font.css" />
@@ -1089,6 +1097,12 @@
     <Content Include="Areas\Ticket\Views\Ticket\TicketActivity.cshtml" />
     <Content Include="Areas\Ticket\Views\Ticket\TicketRegister.cshtml" />
     <Content Include="Areas\Ticket\Views\Web.config" />
+    <Content Include="Areas\Purchase\Views\Purchase\POStatus.cshtml" />
+    <Content Include="Areas\Purchase\Views\Purchase\PRStatus.cshtml" />
+    <Content Include="Areas\Purchase\Views\Purchase\SupplierDeliveryReport.cshtml" />
+    <Content Include="Areas\Masters\Views\Masters\ScopeOfSupply.cshtml" />
+    <Content Include="Areas\Masters\Views\Masters\Dashboard.cshtml" />
+    <Content Include="Areas\Masters\Views\Masters\PrePackingList.cshtml" />
     <None Include="Content\DataSet\Billing.xsd" />
     <Content Include="Content\DataSet\Billing.xss">
       <DependentUpon>Billing.xsd</DependentUpon>
@@ -1171,6 +1185,17 @@
     </None>
     <Content Include="Content\DataSet\PackingList.xss">
       <DependentUpon>PackingList.xsd</DependentUpon>
+    </Content>
+    <Content Include="Content\DataSet\PuchaseReturn.xsc">
+      <DependentUpon>PuchaseReturn.xsd</DependentUpon>
+    </Content>
+    <None Include="Content\DataSet\PuchaseReturn.xsd">
+      <SubType>Designer</SubType>
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>PuchaseReturn.Designer.cs</LastGenOutput>
+    </None>
+    <Content Include="Content\DataSet\PuchaseReturn.xss">
+      <DependentUpon>PuchaseReturn.xsd</DependentUpon>
     </Content>
     <None Include="Properties\PublishProfiles\BISERP.pubxml" />
     <Content Include="Images\BISLogo.jpg" />
@@ -1648,6 +1673,7 @@
     <EmbeddedResource Include="Reports\Billing\ClientPaymentTerm.rdlc" />
     <EmbeddedResource Include="Reports\PackingList\PackingListReport.rdlc" />
     <EmbeddedResource Include="Reports\PackingList\PackingListReport_OLd.rdlc" />
+    <EmbeddedResource Include="Reports\PackingList\PLDetailsReport - Copy.rdlc" />
     <EmbeddedResource Include="Reports\PackingList\PLDetailsReport.rdlc" />
     <EmbeddedResource Include="Reports\Purchase\PurchaseHorizontal\POBasis.rdlc" />
     <EmbeddedResource Include="Reports\Purchase\PurchaseHorizontal\PODeliveryTerm.rdlc" />
@@ -1662,6 +1688,8 @@
     <EmbeddedResource Include="Reports\Purchase\PurchaseIndentDtRpt.rdlc" />
     <EmbeddedResource Include="Reports\Purchase\PurchaseIndentRpt.rdlc" />
     <EmbeddedResource Include="Reports\Purchase\PurchaseReport.rdlc" />
+    <EmbeddedResource Include="Reports\Purchase\PurchaseReturn\PurchaseReturnDetailReport.rdlc" />
+    <EmbeddedResource Include="Reports\Purchase\PurchaseReturn\PurchaseReturnReport.rdlc" />
     <EmbeddedResource Include="Reports\Purchase\PurchaseVerticle\POBasisVert.rdlc" />
     <EmbeddedResource Include="Reports\Purchase\PurchaseVerticle\PODeliveryTermVert.rdlc" />
     <EmbeddedResource Include="Reports\Purchase\PurchaseVerticle\PODetailsVert.rdlc" />
@@ -1730,6 +1758,11 @@
     <EmbeddedResource Include="Reports\Transport\VehicleInformation.rdlc" />
     <EmbeddedResource Include="Reports\Transport\VehicleList.rdlc" />
     <EmbeddedResource Include="Reports\Transport\VehicleTransfer.rdlc" />
+    <EmbeddedResource Include="Reports\WorkOrder\workOrderBasisTerm.rdlc" />
+    <EmbeddedResource Include="Reports\WorkOrder\workOrderDeliveryTerm.rdlc" />
+    <EmbeddedResource Include="Reports\WorkOrder\workOrderOtherTerm.rdlc" />
+    <EmbeddedResource Include="Reports\WorkOrder\workOrderPaymentTerm.rdlc" />
+    <EmbeddedResource Include="Reports\WorkOrder\workOrderRpt.rdlc" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

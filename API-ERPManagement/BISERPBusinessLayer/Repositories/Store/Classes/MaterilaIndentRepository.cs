@@ -10,13 +10,13 @@ using BISERPBusinessLayer.QueryCollection.Purchase;
 using BISERPBusinessLayer.QueryCollection.Store;
 using BISERPDataLayer.DataAccess;
 using BISERPBusinessLayer.Entities.Store;
-
+using BISERPBusinessLayer.Entities.Masters;
 
 namespace BISERPBusinessLayer.Repositories.Store.Classes
 {
     public class MaterilaIndentRepository : IMaterilaIndentRepository
     {
-       
+
         public MaterialIndentEntities GetMaterialIndentById(int Id)
         {
             MaterialIndentEntities MaterialIndent = null;
@@ -57,7 +57,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                             }).FirstOrDefault();
             }
             return MaterialIndent;
-           
+
         }
 
         public IEnumerable<MaterialIndentEntities> GetAllAuthMaterialIndents(int Id, int UserId)
@@ -243,7 +243,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
             return MaterialIndent;
         }
 
-        public IEnumerable<MaterialIndentEntities> GetAllMaterialIndents(int StoreId, DateTime Fromdate, DateTime todate)
+        public IEnumerable<MaterialIndentEntities> GetAllMaterialIndents(int StoreId, DateTime Fromdate, DateTime todate , string ReportType)
         {
             List<MaterialIndentEntities> MaterialIndent = null;
             using (DBHelper dbHelper = new DBHelper())
@@ -252,6 +252,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                 paramCollection.Add(new DBParameter("StoreId", StoreId, DbType.Int32));
                 paramCollection.Add(new DBParameter("Fromdate", Fromdate, DbType.DateTime));
                 paramCollection.Add(new DBParameter("todate", todate, DbType.DateTime));
+                paramCollection.Add(new DBParameter("ReportType", ReportType, DbType.String));
                 DataTable dtMaterialIndent = dbHelper.ExecuteDataTable(StoreQuery.GetStoreMaterialIndents, paramCollection, CommandType.StoredProcedure);
 
                 MaterialIndent = dtMaterialIndent.AsEnumerable()
@@ -339,7 +340,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
             paramCollection.Add(new DBParameter("Indent_Date", entity.Indent_Date, DbType.DateTime));
             paramCollection.Add(new DBParameter("Indent_Type", entity.Indent_Type, DbType.String));
             paramCollection.Add(new DBParameter("Type", entity.Type, DbType.String));
-           // paramCollection.Add(new DBParameter("AuthorizedBy", entity.AuthorizedBy, DbType.String));
+            // paramCollection.Add(new DBParameter("AuthorizedBy", entity.AuthorizedBy, DbType.String));
             paramCollection.Add(new DBParameter("Remarks", entity.Remarks, DbType.String));
             paramCollection.Add(new DBParameter("BranchID", entity.BranchID, DbType.Int32));
             paramCollection.Add(new DBParameter("InsertedBy", entity.InsertedBy, DbType.Int32));
@@ -362,7 +363,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
             int iResult = 0;
             DBParameterCollection paramCollection = new DBParameterCollection();
             paramCollection.Add(new DBParameter("Indent_Id", entity.Indent_Id, DbType.Int32));
-            paramCollection.Add(new DBParameter("Remarks", entity.Remarks, DbType.String));        
+            paramCollection.Add(new DBParameter("Remarks", entity.Remarks, DbType.String));
             paramCollection.Add(new DBParameter("UpdatedBy", entity.UpdatedBy, DbType.Int32));
             paramCollection.Add(new DBParameter("UpdatedOn", entity.InsertedON, DbType.DateTime));
             paramCollection.Add(new DBParameter("UpdatedIPAddress", entity.InsertedIPAddress, DbType.String));
@@ -384,7 +385,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
             paramCollection.Add(new DBParameter("AuthorizedBy", entity.InsertedBy, DbType.Int32));
             paramCollection.Add(new DBParameter("AuthorizedOn", entity.InsertedON, DbType.DateTime));
             paramCollection.Add(new DBParameter("StatusId", entity.StatusId, DbType.Int32));
-            
+
             iResult = dbHelper.ExecuteNonQuery(StoreQuery.AuthCancelPMaterialIndent, paramCollection, CommandType.StoredProcedure);
             if (iResult > 0)
                 return true;
@@ -400,7 +401,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
             paramCollection.Add(new DBParameter("Verifiedby", entity.InsertedBy, DbType.Int32));
             paramCollection.Add(new DBParameter("VerifiedOn", entity.InsertedON, DbType.DateTime));
             paramCollection.Add(new DBParameter("StatusId", entity.StatusId, DbType.Int32));
-           
+
             iResult = dbHelper.ExecuteNonQuery(StoreQuery.VerifyCancelMaterialIndent, paramCollection, CommandType.StoredProcedure);
             if (iResult > 0)
                 return true;
@@ -420,11 +421,41 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                 DBParameterCollection paramCollection = new DBParameterCollection();
                 paramCollection.Add(new DBParameter("Indent_FromStoreID", entity.Indent_FromStoreID, DbType.Int32));
                 paramCollection.Add(new DBParameter("Indent_ToStoreID", entity.Indent_ToStoreID, DbType.Int32));
-                paramCollection.Add(new DBParameter("ErrorMessage", "", DbType.String,100, ParameterDirection.Output));
+                paramCollection.Add(new DBParameter("ErrorMessage", "", DbType.String, 100, ParameterDirection.Output));
 
                 Message = dbHelper.ExecuteNonQueryForOutParameter<string>(StoreQuery.CheckForValidation, paramCollection, CommandType.StoredProcedure, "ErrorMessage");
             }
             return Message;
         }
+
+        public IEnumerable<ItemMasterEntities> GetItemListForMI(int? StoreId, int? CategoryId)
+        {
+            List<ItemMasterEntities> item = null;
+            using (DBHelper dbHelper = new DBHelper())
+            {
+                DBParameterCollection paramCollection = new DBParameterCollection();
+                paramCollection.Add(new DBParameter("StoreId", StoreId, DbType.Int32));
+                paramCollection.Add(new DBParameter("CategoryId", CategoryId, DbType.Int32));
+                DataTable dtManufacturer = dbHelper.ExecuteDataTable(StoreQuery.GetItemListForMI, paramCollection, CommandType.StoredProcedure);
+                item = dtManufacturer.AsEnumerable()
+                            .Select(row => new ItemMasterEntities
+                            {
+                                ID = row.Field<int>("ID"),
+                                Code = row.Field<string>("Code"),
+                                Name = row.Field<string>("Name"),
+                                Make = row.Field<string>("Make"),
+                                MaterialOfConstruct = row.Field<string>("MaterialOfConstruct"),
+                                ItemTypeID = row.Field<int>("ItemTypeID"),
+                                itemtypename = row.Field<string>("itemtypename"),
+                                Asset = row.Field<bool>("Asset"),
+                                Service = row.Field<bool>("IsService"),
+                                PackingList = row.Field<bool>("PackingList"),
+                                IsGRNItem = row.Field<bool>("IsGRNItem"),
+                                Deactive = row.Field<bool>("Deactive")
+                            }).ToList();
+            }
+            return item;
+        }
+
     }
 }

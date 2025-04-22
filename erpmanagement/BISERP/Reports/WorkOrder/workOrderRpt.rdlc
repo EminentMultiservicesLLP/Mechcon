@@ -245,7 +245,8 @@
                 </Style>
               </TextRun>
               <TextRun>
-                <Value>=First(Fields!OrderBookNo.Value, "dsWorkOrderRpt")</Value>
+                <Value>=IIf(IsNothing(First(Fields!OrderBookNo.Value, "dsWorkOrderRpt")), "", First(Fields!OrderBookNo.Value, "dsWorkOrderRpt")) &amp; 
+ " (" &amp; IIf(IsNothing(Fields!ProjectCode.Value) OR Fields!ProjectCode.Value = "", "N/A", Fields!ProjectCode.Value) &amp; ")"</Value>
                 <Style>
                   <FontFamily>Calibri</FontFamily>
                   <FontSize>12pt</FontSize>
@@ -903,7 +904,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Billed to</Value>
+                              <Value>Billed To (Client)</Value>
                               <Style>
                                 <FontFamily>Calibri</FontFamily>
                                 <FontSize>9pt</FontSize>
@@ -1047,7 +1048,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!ScopeOfSupply.Value</Value>
+                              <Value>=Fields!ScopeOfSupplyName.Value</Value>
                               <Style>
                                 <FontFamily>Calibri</FontFamily>
                                 <FontSize>9pt</FontSize>
@@ -3898,9 +3899,9 @@ IIf(Fields!GuaranteeType.Value = "Yes",
         </Paragraphs>
         <rd:DefaultName>Textbox84</rd:DefaultName>
         <Top>9.30452in</Top>
-        <Left>4.40552in</Left>
+        <Left>0.11042in</Left>
         <Height>0.25in</Height>
-        <Width>3.56255in</Width>
+        <Width>2.51495in</Width>
         <ZIndex>9</ZIndex>
         <Style>
           <Border>
@@ -3931,10 +3932,10 @@ IIf(Fields!GuaranteeType.Value = "Yes",
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox84</rd:DefaultName>
-        <Top>9.73647in</Top>
-        <Left>4.39967in</Left>
+        <Top>9.30452in</Top>
+        <Left>2.78085in</Left>
         <Height>0.25in</Height>
-        <Width>3.56255in</Width>
+        <Width>2.4688in</Width>
         <ZIndex>10</ZIndex>
         <Style>
           <Border>
@@ -3965,10 +3966,10 @@ IIf(Fields!GuaranteeType.Value = "Yes",
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox84</rd:DefaultName>
-        <Top>10.15314in</Top>
-        <Left>4.39579in</Left>
+        <Top>9.30452in</Top>
+        <Left>5.40551in</Left>
         <Height>0.25in</Height>
-        <Width>3.56255in</Width>
+        <Width>2.56255in</Width>
         <ZIndex>11</ZIndex>
         <Style>
           <Border>
@@ -3981,7 +3982,7 @@ IIf(Fields!GuaranteeType.Value = "Yes",
         </Style>
       </Textbox>
     </ReportItems>
-    <Height>10.60661in</Height>
+    <Height>9.64828in</Height>
     <Style />
   </Body>
   <Width>8.06499in</Width>
@@ -4078,8 +4079,8 @@ IIf(Fields!GuaranteeType.Value = "Yes",
           <DataField>TechnicalSpecification</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="ScopeOfSupply">
-          <DataField>ScopeOfSupply</DataField>
+        <Field Name="ScopeOfSupplyName">
+          <DataField>ScopeOfSupplyName</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Packaging">

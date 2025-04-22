@@ -194,7 +194,7 @@ namespace BISERPBusinessLayer.Repositories.SM.Classes
                                 MaterialOfConstruction = row.Field<string>("MaterialOfConstruction"),
                                 AreaOfInstallation = row.Field<string>("AreaOfInstallation"),
                                 TechnicalSpecification = row.Field<string>("TechnicalSpecification"),
-                                ScopeOfSupply = row.Field<string>("ScopeOfSupply"),
+                                ScopeOfSupplyName = row.Field<string>("ScopeOfSupplyName"),
                                 Packaging = row.Field<string>("Packaging"),
                                 Insurance = row.Field<string>("Insurance"),
                                 Supervision = row.Field<string>("Supervision"),
