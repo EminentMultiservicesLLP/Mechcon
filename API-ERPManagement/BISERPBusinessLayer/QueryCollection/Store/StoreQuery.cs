@@ -92,9 +92,11 @@ namespace BISERPBusinessLayer.QueryCollection.Store
 
         public const string GetAllGRN = "sp_GetGRNMaster";
         public const string GetAllGRNDetails = "sp_GetGRNDetails"; 
+        public const string GetOtherTaxDetails = "sp_GetOtherTaxDetails";
         public const string InsertGRN = "sp_InsGRNMaster";
         public const string UpdateGRN = "sp_UpdGRNMaster";
         public const string InsertGRNDetail = "sp_InsGRNDetails";
+        public const string InsertOtherTaxDetails = "sp_InsertOtherTaxDetails";
         public const string InsertGRNTaxDetail = "sp_Ins_INVGRNTaxDetail";
         public const string GetAllGrnNo = "sp_GetAllGrnNo";
 

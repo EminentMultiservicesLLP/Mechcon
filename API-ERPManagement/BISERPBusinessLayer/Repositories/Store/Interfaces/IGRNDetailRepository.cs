@@ -1,4 +1,5 @@
-﻿using BISERPBusinessLayer.Entities.Store;
+﻿using BISERPBusinessLayer.Entities.Masters;
+using BISERPBusinessLayer.Entities.Store;
 using BISERPDataLayer.DataAccess;
 using System;
 using System.Collections.Generic;
@@ -12,8 +13,10 @@ namespace BISERPBusinessLayer.Repositories.Store.Interfaces
     {
         GRNDetailEntity GetByID(int Id);
         IEnumerable<GRNDetailEntity> GetDetailByGRNId(int GRNId);
+        IEnumerable<TaxMasterEntity> GetOtherTaxDetails(int GRNId);
         IEnumerable<GRNDetailEntity> GetAllList();
         int CreateNewEntry(GRNEntity grnentity, GRNDetailEntity entity, DBHelper dbHelper);
+        int CreateOtherTaxEntry(GRNEntity grnentity, TaxMasterEntity entity, DBHelper dbHelper);
 
         bool UpdateGRNDetailEntry(GRNEntity grnentity, GRNDetailEntity entity, DBHelper dbHelper);
         bool UpdateEntry(GRNDetailEntity entity, DBHelper dbHelper);

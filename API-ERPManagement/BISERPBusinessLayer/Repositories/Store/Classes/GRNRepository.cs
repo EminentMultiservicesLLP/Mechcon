@@ -78,6 +78,9 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                                 strPODate = row.Field<DateTime?>("PODate").DateTimeFormat1(),
                                 Amount = row.Field<double?>("Amount"),
                                 Transporter = row.Field<string>("Transporter"),
+                                OtherName = row.Field<string>("OtherName"),
+                                OtherAmount = row.Field<decimal?>("OtherAmount"),
+                                OtherTaxAmount = row.Field<decimal?>("OtherTaxAmount"),
                                 VehicleNo = row.Field<string>("VehicleNo"),
                                 GrnPaymentType = row.Field<string>("GrnPaymentType"), 
                                 TotalTaxamt = row.Field<double?>("TotalTaxamt"),
@@ -123,6 +126,9 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
             paramCollection.Add(new DBParameter("Invoicedate", entity.InvoiceDate, DbType.DateTime));
             paramCollection.Add(new DBParameter("Amount", entity.Amount, DbType.Double));
             paramCollection.Add(new DBParameter("Transporter", entity.Transporter, DbType.String));
+            paramCollection.Add(new DBParameter("OtherName", entity.OtherName, DbType.String));
+            paramCollection.Add(new DBParameter("OtherAmount", entity.OtherAmount, DbType.Decimal));
+            paramCollection.Add(new DBParameter("OtherTaxAmount", entity.OtherTaxAmount, DbType.Decimal));
             paramCollection.Add(new DBParameter("Vehicleno", entity.VehicleNo, DbType.String));
             paramCollection.Add(new DBParameter("Preparedby", entity.InsertedBy, DbType.String));
             paramCollection.Add(new DBParameter("Notes", entity.Notes, DbType.String));
@@ -176,6 +182,9 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
             paramCollection.Add(new DBParameter("Invoicedate", entity.InvoiceDate, DbType.DateTime));
             paramCollection.Add(new DBParameter("Amount", entity.Amount, DbType.Double));
             paramCollection.Add(new DBParameter("Transporter", entity.Transporter, DbType.String));
+            paramCollection.Add(new DBParameter("OtherName", entity.OtherName, DbType.String));
+            paramCollection.Add(new DBParameter("OtherAmount", entity.OtherAmount, DbType.Decimal));
+            paramCollection.Add(new DBParameter("OtherTaxAmount", entity.OtherTaxAmount, DbType.Decimal));
             paramCollection.Add(new DBParameter("Vehicleno", entity.VehicleNo, DbType.String));
             paramCollection.Add(new DBParameter("Preparedby", entity.InsertedBy, DbType.String));
             paramCollection.Add(new DBParameter("Notes", entity.Notes, DbType.String));
@@ -271,6 +280,9 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                                 strPODate = row.Field<DateTime?>("PODate").DateTimeFormat1(),
                                 Amount = row.Field<double?>("Amount"),
                                 Transporter = row.Field<string>("Transporter"),
+                                OtherName = row.Field<string>("OtherName"),
+                                OtherAmount = row.Field<decimal?>("OtherAmount"),
+                                OtherTaxAmount = row.Field<decimal?>("OtherTaxAmount"),
                                 VehicleNo = row.Field<string>("VehicleNo"),
                                 GrnPaymentType = row.Field<string>("GrnPaymentType"),
                                 TotalTaxamt = row.Field<double?>("TotalTaxamt"),

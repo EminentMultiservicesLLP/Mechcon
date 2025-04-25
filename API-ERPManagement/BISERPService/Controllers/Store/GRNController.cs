@@ -123,6 +123,28 @@ namespace BISERPService.Controllers
             return InternalServerError();
         }
 
+        [Route("getOtherTaxDetails/{id}")]
+        [AcceptVerbs("GET", "POST")]
+        public IHttpActionResult GetOtherTaxDetails(int id)
+        {
+            List<TaxMasterEntity> otherTaxDetail = null;
+            TryCatch.Run(() =>
+            {
+                var list = _igrndetails.GetOtherTaxDetails(id);
+                if (list != null && list.Any())
+                    otherTaxDetail = list.ToList();
+
+            }).IfNotNull(ex =>
+            {
+                otherTaxDetail = null;
+                _loggger.LogError("Error in GetOtherTaxDetails method of GRNController : parameter :" + id.ToString() + Environment.NewLine + ex.StackTrace);
+
+            });
+            if (otherTaxDetail.IsNotNull())
+                return Ok(otherTaxDetail);
+            return InternalServerError();
+        }
+
         [Route("authcancelgrn")]
         [AcceptVerbs("POST")]
         public IHttpActionResult AuthCancelGRN(GRNEntity entity)
