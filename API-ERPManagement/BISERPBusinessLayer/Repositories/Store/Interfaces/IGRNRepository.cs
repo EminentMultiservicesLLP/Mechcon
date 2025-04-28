@@ -18,5 +18,6 @@ namespace BISERPBusinessLayer.Repositories.Store.Interfaces
         bool UpdateEntry(GRNEntity entity, DBHelper dbHelper);
         bool AuthCancelGRN(GRNEntity entity, DBHelper dbHelper);
         IEnumerable<GRNEntity> GRNforReport();
+        IEnumerable<GRNSummarizedDetailRptModel> GetGRNSummarizedDetailsRpt(DateTime Fromdate, DateTime todate);
     }
 }

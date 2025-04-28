@@ -288,5 +288,31 @@ namespace BISERP.Areas.Store.Controllers
             }
             return jResult;
         }
+
+
+        [HttpGet]
+        public async Task<JsonResult> GetGRNSummarizedDetailsRpt(DateTime fromdate, DateTime todate)
+        {
+            JsonResult jResult;
+            List<GRNSummarizedDetailRptModel> model = new List<GRNSummarizedDetailRptModel>();
+            try
+            {
+                string _url = url + "/grn/GetGRNSummarizedDetailsRpt/" + fromdate.ToString("MM-dd-yy") + "/" + todate.ToString("MM-dd-yy") + Common.Constants.JsonTypeResult;
+                model = await Common.AsyncWebCalls.GetAsync<List<GRNSummarizedDetailRptModel>>(client, _url, CancellationToken.None);
+                if (model != null)
+                {
+                    jResult = Json(model, JsonRequestBehavior.AllowGet);
+                }
+                else
+                    jResult = Json(model, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error in GetGRNSummarizedDetailsRpt :" + ex.Message + Environment.NewLine + ex.StackTrace.ToString());
+                jResult = Json("Error");
+            }
+            return jResult;
+        }
+
     }
 }

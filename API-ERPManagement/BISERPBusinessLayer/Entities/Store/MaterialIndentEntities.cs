@@ -26,7 +26,9 @@ namespace BISERPBusinessLayer.Entities.Store
         public string Type { get; set; }
         public Nullable<int> AuthorizedBy { get; set; }
         public DateTime? AuthorisedOn { get; set; }
+        public string strAuthorisedOn { get; set; }
         public bool Authorized { get; set; }
+
         public string Remarks { get; set; }
         public Nullable<int> Cancelledby { get; set; }
         public Nullable<System.DateTime> CancelledOn { get; set; }
@@ -43,6 +45,7 @@ namespace BISERPBusinessLayer.Entities.Store
         public Nullable<System.DateTime> UpdatedOn { get; set; }
         public Nullable<int> InsertedBy { get; set; }
         public Nullable<System.DateTime> InsertedON { get; set; }
+        public string strInsertedON { get; set; }
         public string InsertedMacName { get; set; }
         public string InsertedMacID { get; set; }
         public string InsertedIPAddress { get; set; }
@@ -56,6 +59,8 @@ namespace BISERPBusinessLayer.Entities.Store
         public string InsertedByName { get; set; }
         public string UpdatedByName { get; set; }
         public string VerifiedByName { get; set; }
+        public Nullable<System.DateTime> VerifiedOn { get; set; }
+        public string strVerifiedOn { get; set; }
         public string AuthorizedByName { get; set; }
         public string CancelledByName { get; set; }
     }

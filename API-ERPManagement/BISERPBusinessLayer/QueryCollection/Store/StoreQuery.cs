@@ -70,6 +70,7 @@ namespace BISERPBusinessLayer.QueryCollection.Store
         public const string StoreMaterialIssue = "sp_GetStoreMaterialIssue";
         public const string GetMaterialIssue = "sp_rptMaterialIssue";
         public const string GetItemListForMI = "sp_GetItemListForMI";
+        public const string GetMRSummuryRpt = "sp_GetMRSummuryRpt";
 
         public const string AuthCancelMaterialIssue = "sp_AuthCancelMaterialIssue";
         public const string UpdMaterialIssueAuthQty = "sp_UpdMaterialIssueAuthQty";
@@ -105,6 +106,7 @@ namespace BISERPBusinessLayer.QueryCollection.Store
         public const string rptGRNCancelled = "sp_rptGRNCancelled";
         public const string rptGRNItemWise = "sp_rptGRNItemWise";
         public const string GRNforReport = "sp_GRNforRpt";
+        public const string GetGRNSummarizedDetailsRpt = "sp_GetGRNSummarizedDetailsRpt";
 
         public const string GetGRNVendor = "sp_GetGRNVendor";
         public const string GetGRNVendorDetails = "sp_GetGRNVendorDetails";

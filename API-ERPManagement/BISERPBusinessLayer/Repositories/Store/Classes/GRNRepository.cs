@@ -245,7 +245,6 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
             throw new NotImplementedException();
         }
 
-
         public IEnumerable<GRNEntity> GRNforReport()
         {
             List<GRNEntity> grn = null;
@@ -306,6 +305,35 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                             }).ToList();
             }
             return grn;
+        }
+
+        public IEnumerable<GRNSummarizedDetailRptModel> GetGRNSummarizedDetailsRpt(DateTime Fromdate, DateTime todate)
+        {
+            List<GRNSummarizedDetailRptModel> model = null;
+            using (DBHelper dbHelper = new DBHelper())
+            {
+                DBParameterCollection paramCollection = new DBParameterCollection();
+                paramCollection.Add(new DBParameter("Fromdate", Fromdate, DbType.DateTime));
+                paramCollection.Add(new DBParameter("todate", todate, DbType.DateTime));
+                DataTable dtmodel = dbHelper.ExecuteDataTable(StoreQuery.GetGRNSummarizedDetailsRpt, paramCollection, CommandType.StoredProcedure);
+
+                model = dtmodel.AsEnumerable()
+                            .Select(row => new GRNSummarizedDetailRptModel
+                            {
+                                CurrentStatus = row.Field<string>("CurrentStatus"),
+                                GRNID = row.Field<int>("GRNID"),
+                                GRNNo = row.Field<string>("GRNNo"),
+                                strGRNDate = row.Field<DateTime?>("GRNDate") != null ? Convert.ToDateTime(row.Field<DateTime?>("GRNDate")).ToString("dd-MMM-yyyy") : string.Empty,
+                                SupplierName = row.Field<string>("SupplierName"),
+                                ItemName = row.Field<string>("ItemName"),
+                                Qty = row.Field<decimal>("Qty"),
+                                Rate = row.Field<decimal>("Rate"),
+                                Discount = row.Field<decimal>("Discount"),
+                                TaxAmount = row.Field<decimal>("TaxAmount"),
+                                Amount = row.Field<decimal>("Amount"),
+                            }).ToList();
+            }
+            return model;
         }
 
     }

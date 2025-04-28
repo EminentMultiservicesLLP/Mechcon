@@ -243,7 +243,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
             return MaterialIndent;
         }
 
-        public IEnumerable<MaterialIndentEntities> GetAllMaterialIndents(int StoreId, DateTime Fromdate, DateTime todate , string ReportType)
+        public IEnumerable<MaterialIndentEntities> GetAllMaterialIndents(int StoreId, DateTime Fromdate, DateTime todate, string ReportType)
         {
             List<MaterialIndentEntities> MaterialIndent = null;
             using (DBHelper dbHelper = new DBHelper())
@@ -455,6 +455,36 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                             }).ToList();
             }
             return item;
+        }
+
+        public IEnumerable<MaterialIndentEntities> GetMRSummuryRpt(DateTime Fromdate, DateTime todate)
+        {
+            List<MaterialIndentEntities> MaterialIndent = null;
+            using (DBHelper dbHelper = new DBHelper())
+            {
+                DBParameterCollection paramCollection = new DBParameterCollection();
+                paramCollection.Add(new DBParameter("Fromdate", Fromdate, DbType.DateTime));
+                paramCollection.Add(new DBParameter("todate", todate, DbType.DateTime));
+                DataTable dtMaterialIndent = dbHelper.ExecuteDataTable(StoreQuery.GetMRSummuryRpt, paramCollection, CommandType.StoredProcedure);
+
+                MaterialIndent = dtMaterialIndent.AsEnumerable()
+                            .Select(row => new MaterialIndentEntities
+                            {
+                                Indent_FromStoreID = row.Field<int>("Indent_FromStoreID"),
+                                Indent_FromStore = row.Field<string>("Indent_FromStore"),
+                                Indent_Id = row.Field<int>("Indent_Id"),
+                                IndentNo = row.Field<string>("IndentNo"),
+                                strIndentDate = row.Field<DateTime?>("Indent_Date") != null ? Convert.ToDateTime(row.Field<DateTime?>("Indent_Date")).ToString("dd-MMM-yyyy") : string.Empty,
+                                InsertedByName = row.Field<string>("InsertedByName"),
+                                strInsertedON = row.Field<DateTime?>("InsertedON") != null ? Convert.ToDateTime(row.Field<DateTime?>("InsertedON")).ToString("dd-MMM-yyyy") : string.Empty,
+                                VerifiedByName = row.Field<string>("VerifiedByName"),
+                                strVerifiedOn = row.Field<DateTime?>("VerifiedOn") != null ? Convert.ToDateTime(row.Field<DateTime?>("VerifiedOn")).ToString("dd-MMM-yyyy") : string.Empty,
+                                AuthorizedByName = row.Field<string>("AuthorizedByName"),
+                                strAuthorisedOn = row.Field<DateTime?>("AuthorisedOn") != null ? Convert.ToDateTime(row.Field<DateTime?>("AuthorisedOn")).ToString("dd-MMM-yyyy") : string.Empty,
+                                Status = row.Field<string>("Status"),
+                            }).ToList();
+            }
+            return MaterialIndent;
         }
 
     }

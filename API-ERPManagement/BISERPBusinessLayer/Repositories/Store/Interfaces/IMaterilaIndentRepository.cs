@@ -28,6 +28,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Interfaces
         bool DeleteUnit(MaterialIndentEntities entity);
         string CheckForValidation(MaterialIndentEntities entity);
         IEnumerable<ItemMasterEntities> GetItemListForMI(int? StoreId, int? CategoryId);
+        IEnumerable<MaterialIndentEntities> GetMRSummuryRpt(DateTime Fromdate, DateTime todate);
 
     }
 }

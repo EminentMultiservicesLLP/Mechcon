@@ -102,4 +102,19 @@ namespace BISERPBusinessLayer.Entities.Store
         public string AuthorizedByName { get; set; }
         public string CancelledByName { get; set; }
     }
+
+    public class GRNSummarizedDetailRptModel
+    {
+        public int GRNID { get; set; }
+        public string GRNNo { get; set; }
+        public string strGRNDate { get; set; }
+        public string SupplierName { get; set; }
+        public string ItemName { get; set; }
+        public decimal Qty { get; set; }
+        public decimal Rate { get; set; }
+        public decimal Discount { get; set; }
+        public decimal TaxAmount { get; set; }
+        public decimal Amount { get; set; }
+        public string CurrentStatus { get; set; }
+    }
 }
