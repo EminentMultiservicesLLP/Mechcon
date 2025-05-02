@@ -548,5 +548,30 @@ namespace BISERPService.Controllers
                 return Ok(items);
             return InternalServerError();
         }
+
+
+        [Route("GetMRSummuryRpt/{Fromdate}/{todate}")]
+        [AcceptVerbs("GET", "POST")]
+        public IHttpActionResult GetMRSummuryRpt(DateTime Fromdate, DateTime todate)
+        {
+            List<MaterialIndentEntities> materilaIndent = new List<MaterialIndentEntities>();
+            TryCatch.Run(() =>
+            {
+                var list = _materilaIndent.GetMRSummuryRpt(Fromdate, todate);
+                if (list != null && list.Count() > 0)
+                    materilaIndent = list.ToList();
+            }).IfNotNull(ex =>
+            {
+                _loggger.LogError("Error in GetMRSummuryRpt method of MaterialIndentController :" + Environment.NewLine + ex.StackTrace);
+                return InternalServerError();
+            });
+            if (materilaIndent.IsNull())
+                return Ok();
+            else if (materilaIndent.Any())
+                return Ok(materilaIndent);
+            else
+                return Ok(materilaIndent);
+        }
+
     }
 }

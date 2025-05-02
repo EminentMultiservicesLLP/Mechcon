@@ -327,6 +327,8 @@
                                     <div class="row">
                                         <div class="col-sm-12">
                                             <iframe id="iframeReportViewer" style="width: 100%; height: 800px"></iframe>
+                                            <div id="MRSummuryRptGrid"></div>
+                                            <div id="GRNSummarizedDetailsRptGrid"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -591,6 +593,10 @@
         $("#SupplierIDBill").closest('div').hide();
         $('#ReportType').closest('div').hide();
         $('.dateRange').hide();
+        $('#MRSummuryRptGrid').hide();
+        $('#GRNSummarizedDetailsRptGrid').hide();
+        $('#iframeReportViewer').show();
+        $('#financialYear').closest('div').show();
     }
 
     function ResetForm() {
@@ -610,6 +616,24 @@
         }
         else if ($("#ddlReport").val() == "102") {
             $('#ddlStoreLabel').closest('div').show();
+        }
+        else if ($("#ddlReport").val() == "243") {
+            $('#iframeReportViewer').hide();
+            $('#MRSummuryRptGrid').show();
+            $('#financialYear').closest('div').hide();
+            $('.dateRange').closest('div').show();
+            const grid = $("#MRSummuryRptGrid").pqGrid();
+            grid.pqGrid("option", "dataModel.data", []);
+            grid.pqGrid("refreshDataAndView");
+        }
+        else if ($("#ddlReport").val() == "244") {
+            $('#iframeReportViewer').hide();
+            $('#GRNSummarizedDetailsRptGrid').show();
+            $('#financialYear').closest('div').hide();
+            $('.dateRange').closest('div').show();
+            const grid = $("#GRNSummarizedDetailsRptGrid").pqGrid();
+            grid.pqGrid("option", "dataModel.data", []);
+            grid.pqGrid("refreshDataAndView");
         }
         else if ($("#ddlReport").val() == "103") {
             $('#FromDate').prop('disabled', false);
@@ -844,14 +868,23 @@
                     return;
                 }
             }
-            if($("#ddlReport").val() == "242") {
+            if ($("#ddlReport").val() == "242") {
                 if ($("#PurchaseReturnNo").val() == "") {
                     ShowAlert("error", "Please Select Purchase Return No.");
                     return;
                 }
             }
         }
-        ReportValidationCheck();
+
+        if ($("#ddlReport").val() == "243") {
+            loadMRSummuryRptGrid($("#FromDate").val(), $("#ToDate").val());
+        }
+        else if ($("#ddlReport").val() == "244") {
+            loadGRNSummarizedDetailsRptGrid($("#FromDate").val(), $("#ToDate").val());
+        }
+        else {
+            ReportValidationCheck();
+        }
     }
 
     function ReportValidationCheck() {
@@ -1070,15 +1103,15 @@
                 ShowAlert("error", "Please Select Project ");
                 return;
             }
-            LoadIndentSearchGrid(StoreId, fromdt, todt,'ProjectWise');
+            LoadIndentSearchGrid(StoreId, fromdt, todt, 'ProjectWise');
         } else {
-            LoadIndentSearchGrid(0, fromdt, todt,'DateWise');
+            LoadIndentSearchGrid(0, fromdt, todt, 'DateWise');
         }
     })
     //*********************** Indent Grid Section ***************//
 
     function LoadIndentSearchGrid(StoreId, fromdt, todt, ReportType) {
-        
+
         $("#IndentModal").dialog({
             height: 500,
             width: 700,
@@ -1090,7 +1123,7 @@
                     async: true,
                     method: "GET",
                     dataType: "JSON",
-                    data: { StoreId: StoreId, fromdate: fromdt, todate: todt, ReportType: ReportType},
+                    data: { StoreId: StoreId, fromdate: fromdt, todate: todt, ReportType: ReportType },
                     success: function (response) {
                         $("#Indentgrid").pqGrid("option", "dataModel.data", response);
                         $("#Indentgrid").pqGrid("refreshDataAndView");
@@ -2004,4 +2037,326 @@
         };
         $("#PurchaseReturngrid").pqGrid(setPurchaseReturn);
     });
+    //================================================================================================================
+    //-----------------------------------MRSummuryRptGrid (Starts here)-----------------------------------//
+    var MRSummuryRptGrid_GDM = { location: "local" };
+    var MRSummuryRptGrid_GCM = [
+        {
+            title: "Status",
+            dataIndx: "Status",
+            width: 150,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Project",
+            dataIndx: "Indent_FromStore",
+            width: 150,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Indent No",
+            dataIndx: "IndentNo",
+            width: 150,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Indent Date",
+            dataIndx: "strIndentDate",
+            width: 150,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Created-By",
+            dataIndx: "InsertedByName",
+            width: 150,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Created-ON",
+            dataIndx: "strInsertedON",
+            width: 150,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Verified-By",
+            dataIndx: "VerifiedByName",
+            width: 150,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Verified-On",
+            dataIndx: "strVerifiedOn",
+            width: 150,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Authorized-By",
+            dataIndx: "AuthorizedByName",
+            width: 150,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Authorised-On",
+            dataIndx: "strAuthorisedOn",
+            width: 150,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+    ];
+    var setMRSummuryRptGrid = {
+        height: 530,
+        width: 'auto',
+        maxWidth: '100%',
+        minWidth: 800,
+        sortable: true,
+        autofill: true,
+        numberCell: { show: false },
+        hoverMode: 'row',
+        showTop: true,
+        showTitle: true,
+        showBottom: true,
+        resizable: true,
+        scrollModel: { autoFit: true },
+        filterModel: { on: true, mode: "AND", header: true },
+        draggable: false,
+        hwrap: false,
+        wrap: false,
+        editable: false,
+        columnBorders: true,
+        menuIcon: true,
+        selectionModel: { type: 'row', mode: 'single', cbHeader: false },
+        colModel: MRSummuryRptGrid_GCM,
+        dataModel: MRSummuryRptGrid_GDM,
+        pageModel: { type: "local", rPP: 50 },
+        toolbar: {
+            items: [
+                {
+                    type: "<label><b>Export data to Excel : </b> | </label>"
+                },
+                {
+                    type: 'button',
+                    label: "Export",
+                    icon: 'ui-icon-arrowthickstop-1-s',
+                    listener: function () {
+                        var format = 'xlsx',
+                            blob = workbook = this.exportData({
+                                format: format,
+                                workbook: true,
+                                render: true
+                            });
+
+                        blob = pq.excel.exportWb({ workbook: workbook })
+                        if (typeof blob === "string") {
+                            blob = new Blob([blob]);
+                        }
+
+                        var fileName = "MRSummuryRpt_" + formatDateTime(new Date()) + "." + format;
+
+                        saveAs(blob, fileName);
+                    }
+                }
+            ]
+        }
+    }
+    var $MRSummuryRptGrid = $("#MRSummuryRptGrid").pqGrid(setMRSummuryRptGrid);
+    function loadMRSummuryRptGrid(fromdate, todate) {
+        const antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            url: "/MaterialIndent/GetMRSummuryRpt",
+            data: { fromdate: fromdate, todate: todate },
+            dataType: "json",
+
+            beforeSend: function () {
+                $("#MRSummuryRptGrid").pqGrid("showLoading");
+            },
+
+            complete: function () {
+                $("#MRSummuryRptGrid").pqGrid("hideLoading");
+            },
+
+            success: function (response) {
+                if (response) {
+                    const grid = $("#MRSummuryRptGrid").pqGrid();
+                    grid.pqGrid("option", "dataModel.data", response);
+                    grid.pqGrid("refreshDataAndView");
+                    PqGridRefreshClick(grid);
+                } else {
+                    console.warn("MR Summary Report: No records found or an issue occurred. Details:", response.message || "No additional details.");
+                }
+            },
+
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Failed to load MR Summary Report. Status:", textStatus, "| Error:", errorThrown);
+                console.error("Server response:", jqXHR.responseText);
+                $("#MRSummuryRptGrid").pqGrid("hideLoading");
+            }
+        });
+    }
+
+    //-----------------------------------MRSummuryRptGrid (Ends here)-----------------------------------//
+
+    //-----------------------------------GRNSummarizedDetailsRptGrid (Starts here)-----------------------------------//
+    var GRNSummarizedDetailsRptGrid_GDM = { location: "local" };
+    var GRNSummarizedDetailsRptGrid_GCM = [
+        {
+            title: "Current Status",
+            dataIndx: "CurrentStatus",
+            width: 150,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "GRNNo",
+            dataIndx: "GRNNo",
+            width: 150,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "GRNDate",
+            dataIndx: "strGRNDate",
+            width: 150,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Supplier",
+            dataIndx: "SupplierName",
+            width: 150,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Item Name",
+            dataIndx: "ItemName",
+            width: 150,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Qty",
+            dataIndx: "Qty",
+            width: 150,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Rate",
+            dataIndx: "Rate",
+            width: 150,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Discount",
+            dataIndx: "Discount",
+            width: 150,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Tax",
+            dataIndx: "TaxAmount",
+            width: 150,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Total",
+            dataIndx: "Amount",
+            width: 150,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        }
+    ];
+    var setGRNSummarizedDetailsRptGrid = {
+        height: 530,
+        width: 'auto',
+        maxWidth: '100%',
+        minWidth: 800,
+        sortable: true,
+        autofill: true,
+        numberCell: { show: false },
+        hoverMode: 'row',
+        showTop: true,
+        showTitle: true,
+        showBottom: true,
+        resizable: true,
+        scrollModel: { autoFit: true },
+        filterModel: { on: true, mode: "AND", header: true },
+        draggable: false,
+        hwrap: false,
+        wrap: false,
+        editable: false,
+        columnBorders: true,
+        menuIcon: true,
+        selectionModel: { type: 'row', mode: 'single', cbHeader: false },
+        colModel: GRNSummarizedDetailsRptGrid_GCM,
+        dataModel: GRNSummarizedDetailsRptGrid_GDM,
+        pageModel: { type: "local", rPP: 50 },
+        toolbar: {
+            items: [
+                {
+                    type: "<label><b>Export data to Excel : </b> | </label>"
+                },
+                {
+                    type: 'button',
+                    label: "Export",
+                    icon: 'ui-icon-arrowthickstop-1-s',
+                    listener: function () {
+                        var format = 'xlsx',
+                            blob = workbook = this.exportData({
+                                format: format,
+                                workbook: true,
+                                render: true
+                            });
+
+                        blob = pq.excel.exportWb({ workbook: workbook })
+                        if (typeof blob === "string") {
+                            blob = new Blob([blob]);
+                        }
+
+                        var fileName = "GRNSummarizedDetailsRpt_" + formatDateTime(new Date()) + "." + format;
+
+                        saveAs(blob, fileName);
+                    }
+                }
+            ]
+        }
+    }
+    var $GRNSummarizedDetailsRptGrid = $("#GRNSummarizedDetailsRptGrid").pqGrid(setGRNSummarizedDetailsRptGrid);
+    function loadGRNSummarizedDetailsRptGrid(fromdate, todate) {
+        const antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            url: "/GRN/GetGRNSummarizedDetailsRpt",
+            data: { fromdate: fromdate, todate: todate },
+            dataType: "json",
+
+            beforeSend: function () {
+                $("#GRNSummarizedDetailsRptGrid").pqGrid("showLoading");
+            },
+
+            complete: function () {
+                $("#GRNSummarizedDetailsRptGrid").pqGrid("hideLoading");
+            },
+
+            success: function (response) {
+                if (response) {
+                    const grid = $("#GRNSummarizedDetailsRptGrid").pqGrid();
+                    grid.pqGrid("option", "dataModel.data", response);
+                    grid.pqGrid("refreshDataAndView");
+                    PqGridRefreshClick(grid);
+                } else {
+                    console.warn("MR Summary Report: No records found or an issue occurred. Details:", response.message || "No additional details.");
+                }
+            },
+
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Failed to load MR Summary Report. Status:", textStatus, "| Error:", errorThrown);
+                console.error("Server response:", jqXHR.responseText);
+                $("#GRNSummarizedDetailsRptGrid").pqGrid("hideLoading");
+            }
+        });
+    }
+
+    //-----------------------------------GRNSummarizedDetailsRptGrid (Ends here)-----------------------------------//
 </script>

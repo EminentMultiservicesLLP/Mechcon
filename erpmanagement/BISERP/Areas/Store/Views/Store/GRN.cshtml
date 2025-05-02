@@ -200,6 +200,19 @@
 
                                 <div class="row">
                                     <div class="col-sm-2">
+                                        @Html.LabelFor(m => m.OtherName)
+                                        @Html.TextBoxFor(m => m.OtherName, new { @class = "form-control" })
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.LabelFor(m => m.OtherAmount)
+                                        @Html.TextBoxFor(m => m.OtherAmount, new { @class = "form-control" })
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.LabelFor(m => m.OtherTaxAmount)
+                                        @Html.TextBoxFor(m => m.OtherTaxAmount, new { @class = "form-control", @readonly = "readonly" })
+                                    </div>
+
+                                    <div class="col-sm-2">
                                         @Html.LabelFor(m => m.PODate)
                                         @Html.TextBoxFor(m => m.PODate, new { @class = "form-control" })
                                     </div>
@@ -379,6 +392,13 @@
         </form>
     </div>
 
+    <div title="Select Other Tax" id="OtherTaxModal" style="display: none;">
+        <div id="OtherTaxgrid"></div>
+        <div style="margin-top:5px;">
+            <button type="button" class="btn btn-primary" id="btnAddOtherTax">Add</button>
+            <button type="button" class="btn btn-primary" id="btnCloseOtherTaxModal">Close</button>
+        </div>
+    </div>
 
     @*The Modal*@
     <div id="ViewModal" class="modal slideModal">
@@ -408,7 +428,7 @@
     $("#GrnTypeID").prop('disabled', true);
     function ClearForm() {
         $("#ID").val(""); $("#GRNNo").val(""); $("#DCNo").val(""); $("#InvoiceNo").val(""); $("#InwardNo").val(""); $("#PoID").val("");
-        $("#GrnTypeID").val(1); $("#ddlStores").val(""); $("#SupplierID").val(""); $("#VehicleNo").val(""); $("#Transporter").val(""); $("#Notes").val("");
+        $("#GrnTypeID").val(1); $("#ddlStores").val(""); $("#SupplierID").val(""); $("#VehicleNo").val(""); $("#Transporter").val(""); $("#OtherName").val(""); $("#OtherAmount").val(""); $("#OtherTaxAmount").val(""); $("#Notes").val("");
         $("#GrossAmount").val(""); $("#TaxAmount").val(""); $("#OtherCharges").val(""); $("#Discount").val("");
         //$("#CR_Note_Amount").val("");
         $("#BED").val("");
@@ -431,6 +451,7 @@
         //childColM[3].editable = false;
         $grid.pqGrid("option", "colModel", colM);
         $("#preApproveImg").empty(); $("#appendImg").empty(); $("#files").val(null);
+        LoadOtherTax();
     }
 
     function LoadTaxgrid() {
@@ -551,7 +572,7 @@
         });
         function ClearformonGrnTypeIDchanged() {
             $("#ID").val(""); $("#GRNNo").val(""); $("#DCNo").val(""); $("#InvoiceNo").val(""); $("#InwardNo").val(""); $("#PoID").val("");
-            $("#ddlStores").val(""); $("#SupplierID").val(""); $("#VehicleNo").val(""); $("#Transporter").val(""); $("#Notes").val("");
+            $("#ddlStores").val(""); $("#SupplierID").val(""); $("#VehicleNo").val(""); $("#Transporter").val(""); $("#OtherName").val(""); $("#OtherAmount").val(""); $("#OtherTaxAmount").val(""); $("#Notes").val("");
             $("#GrossAmount").val(""); $("#TaxAmount").val(""); $("#OtherCharges").val(""); $("#Discount").val("");
             //$("#CR_Note_Amount").val("");
             $("#BED").val("");
@@ -724,6 +745,9 @@
                  ShowAlert("error", "Select Payment Mode");
                  return;Qty
              }*/
+
+            var otherTaxGridData = $("#OtherTaxgrid").pqGrid("option", "dataModel.data");
+            var selectedOtherTax = jLinq.from(otherTaxGridData).equals("state", true).select();
             var grn = JSON.stringify({ //Passing data
                 ID: $("#ID").val(),
                 GRNNo: $("#GRNNo").val(),
@@ -740,6 +764,9 @@
                 SupplierID: $("#SupplierID").val(),
                 VehicleNo: $("#VehicleNo").val(),
                 Transporter: $("#Transporter").val(),
+                OtherName: $("#OtherName").val(),
+                OtherAmount: $("#OtherAmount").val(),
+                OtherTaxAmount: $("#OtherTaxAmount").val(),
                 Notes: $("#Notes").val(),
                 GrnPaymentType: 'N/A',
                 Amount: $("#GrossAmount").val(),
@@ -757,7 +784,8 @@
                 SHECess: $("#SHECess").val(),
                 Service: $("#Service").prop('checked'),
                 Warranty: $("#Warranty").prop('checked'),
-                GRNDetails: items
+                GRNDetails: items,
+                OtherTaxDetails: selectedOtherTax,
             });
             $.ajax({
                 type: "POST", //HTTP POST Method
@@ -914,6 +942,11 @@
         var eduAmount = totalGrossAmt * (eduAmt / 100);
         var sheAmount = totalGrossAmt * (sheAmt / 100);
         var extraAmt = parseFloat(bedAmount) + parseFloat(eduAmount) + parseFloat(sheAmount);
+        var otherAmt = parseFloat($("#OtherAmount").val()) || 0;
+        var otherTaxAmt = parseFloat($("#OtherTaxAmount").val()) || 0;
+
+        totalGrossAmt = totalGrossAmt + otherAmt;
+        totalTaxAmount = totalTaxAmount + otherTaxAmt;
 
         grandTotal = totalGrossAmt + totalTaxAmount + totalOtherCharges - totalDiscount + extraAmt;
 
@@ -1590,6 +1623,9 @@
             { title: "", dataIndx: "PONo", dataType: "integer", editable: false, hidden: true },
             { title: "", dataIndx: "Amount", dataType: "integer", editable: false, hidden: true },
             { title: "", dataIndx: "Transporter", dataType: "integer", editable: false, hidden: true },
+            { title: "", dataIndx: "OtherName", dataType: "integer", editable: false, hidden: true },
+            { title: "", dataIndx: "OtherAmount", dataType: "integer", editable: false, hidden: true },
+            { title: "", dataIndx: "OtherTaxAmount", dataType: "integer", editable: false, hidden: true },
             { title: "", dataIndx: "VehicleNo", dataType: "integer", editable: false, hidden: true },
             { title: "", dataIndx: "TotalTaxamt", dataType: "integer", editable: false, hidden: true },
             { title: "", dataIndx: "TotalFORE", dataType: "integer", editable: false, hidden: true },
@@ -1698,6 +1734,7 @@
                     }
                     $("#ddlStores").val(record.StoreId); $("#Vendor").val(record.Vendor); $("#VendorId").val(record.VendorId);
                     $("#SupplierID").val(record.SupplierID); $("#SupplierName").val(record.SupplierName); $("#VehicleNo").val(record.VehicleNo); $("#Transporter").val(record.Transporter);
+                    $("#OtherName").val(record.OtherName); $("#OtherAmount").val(record.OtherAmount); $("#OtherTaxAmount").val(record.OtherTaxAmount);
                     $("#Notes").val(record.Notes); $('input:radio[name="PaymentMode"][value="' + record.GrnPaymentType + '"]').prop('checked', true); $("[name='']").prop('checked', true);
                     $("#GrossAmount").val(record.Amount); $("#TaxAmount").val(record.TotalTaxamt); $("#OtherCharges").val(record.TotalOtherAmt); $("#Discount").val(record.TotalDisc);
                     //$("#CR_Note_Amount").val(record.CrNoteAmt);
@@ -1730,6 +1767,27 @@
                             $grid.pqGrid("option", "dataModel.data", details);
                             $grid.pqGrid("refreshDataAndView");
                             showperAmount();
+                        }
+                    });
+
+                    $.ajax({
+                        type: "GET",
+                        url: "/GRN/GetOtherTaxDetails/",
+                        data: { GRNId: record.ID },
+                        datatype: "Json",
+                        success: function (data) {
+                            if (data.length > 0) {
+                                var Taxids = data.map(t => t.Taxid);
+
+                                var taxGridData = $OtherTaxgrid.pqGrid("option", "dataModel.data");
+
+                                taxGridData.forEach(e => {
+                                    e.state = Taxids.includes(e.Taxid);
+                                });
+
+                                $OtherTaxgrid.pqGrid("option", "dataModel.data", taxGridData);
+                                $OtherTaxgrid.pqGrid("refreshDataAndView");
+                            }
                         }
                     });
                     closeModal();
@@ -1852,7 +1910,6 @@
         ReportValidationCheck($("#ID").val());
     });
 
-
     function ReportValidationCheck(grnid) {
         var url = "";
         url = "../../Reports/ReportViewer.aspx?reportid=" + 142 + "&fdate=" + grndate + "&tdate=" + grndate + "&storeid=" + $("#ddlStores").val() + "&suppid=" + 0 + "&GrnId=" + grnid + "&sname=" + storeName + "&ReportType=GRNWise";
@@ -1881,7 +1938,6 @@
         $("#SearchGridModal").modal('hide');
         $("#ReportModal").modal('hide');
     }
-
 
     //*******************Image View********************//
     $("#btnShowAttachments").click(function () {
@@ -1969,5 +2025,163 @@
         }
     });
 
+
+    var dataOtherTaxM = { location: "local", sorting: 'local' }
+    var colOtherTaxM = [
+        {
+            dataIndx: "state", maxWidth: 25, minWidth: 25, align: "center", type: 'checkBoxSelection', cls: 'ui-state-default', sortable: false,
+            editor: false, dataType: 'bool',
+            cb: {
+                select: true,
+                all: false, //checkbox selection in the header affect current page only.
+                header: true //show checkbox in header.
+            }
+        },
+        { title: "", dataIndx: "Taxid", dataType: "integer", hidden: true },
+        { title: "Code", dataIndx: "Tax_Code", width: 50, editable: false },
+        { title: "Name", dataIndx: "Tax_name", width: 160, editable: false },
+
+        { title: "Tax Type", dataIndx: "Tax_Type", width: 50, hidden: true },
+        { title: "Percentage", dataIndx: "Tax_percentage", width: 120, editable: false },
+        { title: "Formula", dataIndx: "Formula", width: 350, editable: false },
+        { title: "Tax IncExc", dataIndx: "Tax_EncExc", width: 100, editable: false },
+        { title: "Taxes", dataIndx: "Taxes", hidden: true }
+    ];
+    var OtherTaxM = {
+        height: 300,
+        width: 'auto',
+        maxWidth: '100%',
+        minWidth: 800,
+        sortable: true,
+        autofill: true,
+        numberCell: { show: true },
+        hoverMode: 'row',
+        showTop: true,
+        showTitle: true,
+        showBottom: true,
+        resizable: true,
+        scrollModel: { autoFit: true },
+        filterModel: { on: true, mode: "AND", header: true },
+        draggable: false,
+        hwrap: false,
+        wrap: false,
+        editable: true,
+        columnBorders: true,
+        menuIcon: true,
+        selectionModel: { type: 'row' },
+        colModel: colOtherTaxM,
+        dataModel: dataOtherTaxM,
+        pageModel: { type: "local", rPP: 20 },
+    };
+    var $OtherTaxgrid = $("#OtherTaxgrid").pqGrid(OtherTaxM);
+
+    function LoadOtherTax() {
+        $.ajax({
+            type: "GET",
+            url: "/Master/TaxMaster",
+            datatype: "Json",
+            success: function (data) {
+                $OtherTaxgrid.pqGrid("option", "dataModel.data", data);
+                $OtherTaxgrid.pqGrid("refreshDataAndView");
+            }
+        });
+    }
+    LoadOtherTax();
+
+    $('#OtherTaxAmount').on('click', function () {
+
+        // Open OtherTaxModal dialog
+        $("#OtherTaxModal").dialog({
+            height: 400,
+            width: 900,
+            modal: true,
+            show: {
+                effect: "blind",
+                duration: 500
+            },
+            open: function () {
+                $OtherTaxgrid.pqGrid("refreshDataAndView");
+            },
+            close: function () {
+                $(this).dialog("destroy");
+            }
+        });
+    });
+
+    $('#btnAddOtherTax').on('click', function () {
+        ClosePopupWindow("OtherTaxModal");
+        calculateOtherTax();
+        CalculateTotalAmount();
+    });
+
+    $("#btnCloseOtherTaxModal").on("click", function () {
+        $("#OtherTaxModal").dialog("destroy");
+    })
+
+    $("#OtherAmount").on("change", function () {
+        const otherName = $('#OtherName').val()?.trim();
+
+        if (!otherName) {
+            $('#OtherAmount').val("");
+            ShowAlert("error", "Please enter OtherName first");
+            return;
+        }
+
+        calculateOtherTax();
+        CalculateTotalAmount();
+    });
+
+    function calculateOtherTax() {
+
+        var gridData = $("#OtherTaxgrid").pqGrid("option", "dataModel.data");
+        var selectedItems = jLinq.from(gridData).equals("state", true).select();
+
+        var sgst = 0, cgst = 0, igst = 0, ugst = 0;
+
+        selectedItems.forEach(function (item) {
+            var taxPercent = parseFloat(item.Tax_percentage) || 0;
+
+            switch ((item.Tax_name || '').toUpperCase()) {
+                case 'SGST':
+                    sgst += taxPercent;
+                    break;
+                case 'CGST':
+                    cgst += taxPercent;
+                    break;
+                case 'IGST':
+                    igst += taxPercent;
+                    break;
+                case 'UGST':
+                    ugst += taxPercent;
+                    break;
+            }
+        });
+
+        var otherAmount = parseFloat($("#OtherAmount").val()) || 0;
+
+        var sgstAmt = (otherAmount * sgst / 100);
+        var cgstAmt = (otherAmount * cgst / 100);
+        var igstAmt = (otherAmount * igst / 100);
+        var ugstAmt = (otherAmount * ugst / 100);
+
+        var totalTaxAmt = (sgstAmt + cgstAmt + igstAmt + ugstAmt).toFixed(2);
+
+        $("#OtherTaxAmount").val(totalTaxAmt);
+
+        // Optionally set individual tax amounts to respective fields if needed
+        // $('#SGSTAmt').val(sgstAmt.toFixed(2));
+        // $('#CGSTAmt').val(cgstAmt.toFixed(2));
+        // $('#IGSTAmt').val(igstAmt.toFixed(2));
+        // $('#UGSTAmt').val(ugstAmt.toFixed(2));
+
+        // Optional debug log
+        console.log("Tax Summary:", {
+            sgst: sgstAmt.toFixed(2),
+            cgst: cgstAmt.toFixed(2),
+            igst: igstAmt.toFixed(2),
+            ugst: ugstAmt.toFixed(2),
+            total: totalTaxAmt
+        });
+    }
 </script>
 

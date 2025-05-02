@@ -55,7 +55,7 @@ namespace BISERP.Areas.Store.Models.Store
 
         [Display(Name = "MR Date")]
         [JsonProperty("Indent_Date")]
-        public DateTime Indent_Date { get; set; }
+        public Nullable<System.DateTime> Indent_Date { get; set; }
 
         public string strIndentDate { get; set; }
 
@@ -67,6 +67,8 @@ namespace BISERP.Areas.Store.Models.Store
         [JsonProperty("AuthorizedBy")]
         public Nullable<int> AuthorizedBy { get; set; }
 
+        public DateTime? AuthorisedOn { get; set; }
+        public string strAuthorisedOn { get; set; }
 
         [Display(Name = "Status")]
         [JsonProperty("Authorized")]
@@ -121,6 +123,7 @@ namespace BISERP.Areas.Store.Models.Store
 
         [JsonProperty("InsertedON")]
         public Nullable<System.DateTime> InsertedON { get; set; }
+        public string strInsertedON { get; set; }
 
         [JsonProperty("InsertedMacName")]
         public string InsertedMacName { get; set; }
@@ -151,6 +154,7 @@ namespace BISERP.Areas.Store.Models.Store
         [JsonProperty("VerifiedOn")]
         public Nullable<System.DateTime> VerifiedOn { get; set; }
 
+        public string strVerifiedOn { get; set; }
         [JsonProperty("Verified")]
         public Nullable<bool> Verified { get; set; }
 

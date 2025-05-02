@@ -13,6 +13,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.WebPages;
 using BISERP.Common;
+using BISERP.Areas.Masters.Models;
 
 namespace BISERP.Areas.Store.Controllers
 {
@@ -139,6 +140,32 @@ namespace BISERP.Areas.Store.Controllers
             return jResult;
         }
 
+        [HttpGet]
+        public async Task<JsonResult> GetOtherTaxDetails(int GRNId)
+        {
+            JsonResult jResult;
+            try
+            {
+                string _url = url + "/grn/getOtherTaxDetails/" + GRNId.ToString() + Common.Constants.JsonTypeResult;
+                List<TaxMasterModel> _grndetail = await Common.AsyncWebCalls.GetAsync<List<TaxMasterModel>>(client, _url, CancellationToken.None);
+
+                if (_grndetail != null)
+                {
+                    jResult = Json(_grndetail, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    jResult = Json(_grndetail, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error in GetOtherTaxDetails :" + ex.Message + Environment.NewLine + ex.StackTrace.ToString());
+                jResult = Json("Error");
+            }
+            return jResult;
+        }
+
         [HttpPost]
         public JsonResult AuthCancelGRN(GRNModel grnmodel)
         {
@@ -232,7 +259,6 @@ namespace BISERP.Areas.Store.Controllers
             return Json(new { success = true });
         }
 
-
         [HttpGet]
         public async Task<JsonResult> GRNForReport(int? StoreId, string SearchNumber = null)
         {
@@ -262,5 +288,31 @@ namespace BISERP.Areas.Store.Controllers
             }
             return jResult;
         }
+
+
+        [HttpGet]
+        public async Task<JsonResult> GetGRNSummarizedDetailsRpt(DateTime fromdate, DateTime todate)
+        {
+            JsonResult jResult;
+            List<GRNSummarizedDetailRptModel> model = new List<GRNSummarizedDetailRptModel>();
+            try
+            {
+                string _url = url + "/grn/GetGRNSummarizedDetailsRpt/" + fromdate.ToString("MM-dd-yy") + "/" + todate.ToString("MM-dd-yy") + Common.Constants.JsonTypeResult;
+                model = await Common.AsyncWebCalls.GetAsync<List<GRNSummarizedDetailRptModel>>(client, _url, CancellationToken.None);
+                if (model != null)
+                {
+                    jResult = Json(model, JsonRequestBehavior.AllowGet);
+                }
+                else
+                    jResult = Json(model, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error in GetGRNSummarizedDetailsRpt :" + ex.Message + Environment.NewLine + ex.StackTrace.ToString());
+                jResult = Json("Error");
+            }
+            return jResult;
+        }
+
     }
 }

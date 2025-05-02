@@ -744,5 +744,30 @@ namespace BISERP.Areas.Store.Controllers
             jResult.MaxJsonLength = int.MaxValue;
             return jResult;
         }
+
+        [HttpGet]
+        public async Task<JsonResult> GetMRSummuryRpt(DateTime fromdate, DateTime todate)
+        {
+            JsonResult jResult;
+            List<MaterialIndentModel> mimodel = new List<MaterialIndentModel>();
+            try
+            {
+                string _url = url + "/materilaindents/GetMRSummuryRpt/" + fromdate.ToString("MM-dd-yy") + "/" + todate.ToString("MM-dd-yy") + Common.Constants.JsonTypeResult;
+                mimodel = await Common.AsyncWebCalls.GetAsync<List<MaterialIndentModel>>(client, _url, CancellationToken.None);
+                if (mimodel != null)
+                {
+                    jResult = Json(mimodel, JsonRequestBehavior.AllowGet);
+                }
+                else
+                    jResult = Json(mimodel, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error in GetMRSummuryRpt :" + ex.Message + Environment.NewLine + ex.StackTrace.ToString());
+                jResult = Json("Error");
+            }
+            return jResult;
+        }
+
     }
 }

@@ -22,5 +22,6 @@ namespace BISERPBusinessLayer.Entities.Masters
         public Nullable<bool> IsDependent { get; set; }
         public double? Total_TaxPer { get; set; }
         public Nullable<bool> Deactive { get; set; }
+        public int? OtherTaxID { get; set; }
     }
 }

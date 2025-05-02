@@ -123,6 +123,28 @@ namespace BISERPService.Controllers
             return InternalServerError();
         }
 
+        [Route("getOtherTaxDetails/{id}")]
+        [AcceptVerbs("GET", "POST")]
+        public IHttpActionResult GetOtherTaxDetails(int id)
+        {
+            List<TaxMasterEntity> otherTaxDetail = null;
+            TryCatch.Run(() =>
+            {
+                var list = _igrndetails.GetOtherTaxDetails(id);
+                if (list != null && list.Any())
+                    otherTaxDetail = list.ToList();
+
+            }).IfNotNull(ex =>
+            {
+                otherTaxDetail = null;
+                _loggger.LogError("Error in GetOtherTaxDetails method of GRNController : parameter :" + id.ToString() + Environment.NewLine + ex.StackTrace);
+
+            });
+            if (otherTaxDetail.IsNotNull())
+                return Ok(otherTaxDetail);
+            return InternalServerError();
+        }
+
         [Route("authcancelgrn")]
         [AcceptVerbs("POST")]
         public IHttpActionResult AuthCancelGRN(GRNEntity entity)
@@ -313,5 +335,30 @@ namespace BISERPService.Controllers
             else
                 return Ok(grn);
         }
+
+
+        [Route("GetGRNSummarizedDetailsRpt/{Fromdate}/{todate}")]
+        [AcceptVerbs("GET", "POST")]
+        public IHttpActionResult GetGRNSummarizedDetailsRpt(DateTime Fromdate, DateTime todate)
+        {
+            List<GRNSummarizedDetailRptModel> model = new List<GRNSummarizedDetailRptModel>();
+            TryCatch.Run(() =>
+            {
+                var list = _igrn.GetGRNSummarizedDetailsRpt(Fromdate, todate);
+                if (list != null && list.Count() > 0)
+                    model = list.ToList();
+            }).IfNotNull(ex =>
+            {
+                _loggger.LogError("Error in GetGRNSummarizedDetailsRpt method of GRNController :" + Environment.NewLine + ex.StackTrace);
+                return InternalServerError();
+            });
+            if (model.IsNull())
+                return Ok();
+            else if (model.Any())
+                return Ok(model);
+            else
+                return Ok(model);
+        }
+
     }
 }

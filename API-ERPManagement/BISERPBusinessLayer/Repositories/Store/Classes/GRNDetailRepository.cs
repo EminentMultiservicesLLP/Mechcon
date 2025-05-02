@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BISERPCommon.Extensions;
+using BISERPBusinessLayer.Entities.Masters;
 
 namespace BISERPBusinessLayer.Repositories.Store.Classes
 {
@@ -87,6 +88,22 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
             }
             return podetails;
         }
+        public IEnumerable<TaxMasterEntity> GetOtherTaxDetails(int GRNId)
+        {
+            List<TaxMasterEntity> podetails = null;
+            using (DBHelper dbHelper = new DBHelper())
+            {
+                DBParameter param = new DBParameter("GRNId", GRNId, DbType.Int32);
+                DataTable dtPIndent = dbHelper.ExecuteDataTable(StoreQuery.GetOtherTaxDetails, param, CommandType.StoredProcedure);
+
+                podetails = dtPIndent.AsEnumerable()
+                            .Select(row => new TaxMasterEntity
+                            {
+                                Taxid = row.Field<int>("Taxid"),
+                            }).ToList();
+            }
+            return podetails;
+        }
         public int CreateNewEntry(GRNEntity grnentity, GRNDetailEntity entity, DBHelper dbHelper)
         {
             int iResult = 0;
@@ -153,6 +170,16 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                     dbHelper.ExecuteNonQuery(StoreQuery.InsertGRNTaxDetail, paramCollection, CommandType.StoredProcedure);
                 }
             }
+            return iResult;
+        }
+        public int CreateOtherTaxEntry(GRNEntity grnentity, TaxMasterEntity entity, DBHelper dbHelper)
+        {
+            int iResult = 0;
+            DBParameterCollection paramCollection = new DBParameterCollection();
+            paramCollection.Add(new DBParameter("OtherTaxID", entity.OtherTaxID, DbType.Int32, ParameterDirection.Output));
+            paramCollection.Add(new DBParameter("GrnId", grnentity.ID, DbType.Int32));
+            paramCollection.Add(new DBParameter("TaxId", entity.Taxid, DbType.Int32));
+            iResult = dbHelper.ExecuteNonQueryForOutParameter<int>(StoreQuery.InsertOtherTaxDetails, paramCollection, CommandType.StoredProcedure, "OtherTaxID");
             return iResult;
         }
         public bool UpdateGRNDetailEntry(GRNEntity grnentity, GRNDetailEntity entity, DBHelper dbHelper)

@@ -70,6 +70,7 @@ namespace BISERPBusinessLayer.QueryCollection.Store
         public const string StoreMaterialIssue = "sp_GetStoreMaterialIssue";
         public const string GetMaterialIssue = "sp_rptMaterialIssue";
         public const string GetItemListForMI = "sp_GetItemListForMI";
+        public const string GetMRSummuryRpt = "sp_GetMRSummuryRpt";
 
         public const string AuthCancelMaterialIssue = "sp_AuthCancelMaterialIssue";
         public const string UpdMaterialIssueAuthQty = "sp_UpdMaterialIssueAuthQty";
@@ -92,9 +93,11 @@ namespace BISERPBusinessLayer.QueryCollection.Store
 
         public const string GetAllGRN = "sp_GetGRNMaster";
         public const string GetAllGRNDetails = "sp_GetGRNDetails"; 
+        public const string GetOtherTaxDetails = "sp_GetOtherTaxDetails";
         public const string InsertGRN = "sp_InsGRNMaster";
         public const string UpdateGRN = "sp_UpdGRNMaster";
         public const string InsertGRNDetail = "sp_InsGRNDetails";
+        public const string InsertOtherTaxDetails = "sp_InsertOtherTaxDetails";
         public const string InsertGRNTaxDetail = "sp_Ins_INVGRNTaxDetail";
         public const string GetAllGrnNo = "sp_GetAllGrnNo";
 
@@ -103,6 +106,7 @@ namespace BISERPBusinessLayer.QueryCollection.Store
         public const string rptGRNCancelled = "sp_rptGRNCancelled";
         public const string rptGRNItemWise = "sp_rptGRNItemWise";
         public const string GRNforReport = "sp_GRNforRpt";
+        public const string GetGRNSummarizedDetailsRpt = "sp_GetGRNSummarizedDetailsRpt";
 
         public const string GetGRNVendor = "sp_GetGRNVendor";
         public const string GetGRNVendorDetails = "sp_GetGRNVendorDetails";

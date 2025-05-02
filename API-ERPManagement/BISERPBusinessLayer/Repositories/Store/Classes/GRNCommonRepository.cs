@@ -42,6 +42,14 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                         {
                             grndt.ID = _igrndetails.CreateNewEntry(entity, grndt, dbhelper);
                         }
+
+                        if (entity.OtherTaxDetails != null)
+                        {
+                            foreach (var otherdt in entity.OtherTaxDetails)
+                            {
+                                otherdt.OtherTaxID = _igrndetails.CreateOtherTaxEntry(entity, otherdt, dbhelper);
+                            } 
+                        }
                         var newEntityId = _requestStatus.UpdateGRNRequestStatus(entity.ID, dbhelper);
                         dbhelper.CommitTransaction(transaction);
                     }
@@ -71,6 +79,13 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                         foreach (var grndt in entity.grnDetails)
                         {
                             isSucecss = _igrndetails.UpdateGRNDetailEntry(entity, grndt, dbhelper);
+                        }
+                        if (entity.OtherTaxDetails != null)
+                        {
+                            foreach (var otherdt in entity.OtherTaxDetails)
+                            {
+                                otherdt.OtherTaxID = _igrndetails.CreateOtherTaxEntry(entity, otherdt, dbhelper);
+                            }
                         }
                         dbhelper.CommitTransaction(transaction);
                     }
@@ -154,6 +169,9 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                                 TotalAmount = row.Field<double?>("TotalAmount"),
                                 AuthorisedAmt = row.Field<double?>("AuthorisedAmt"),
                                 Transporter = row.Field<string>("Transporter"),
+                                OtherName = row.Field<string>("OtherName"),
+                                OtherAmount = row.Field<decimal?>("OtherAmount"),
+                                OtherTaxAmount = row.Field<decimal?>("OtherTaxAmount"),
                                 VehicleNo = row.Field<string>("VehicleNo"),
                                 GrnPaymentType = row.Field<string>("GrnPaymentType"),
                                 TotalTaxamt = row.Field<double?>("TotalTaxamt"),
@@ -169,7 +187,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
             }
             return grn;
         }
-        public IEnumerable<GRNEntity> GRNDetailReport(DateTime fromdate, DateTime todate, int StoreId, int SupplierId, int GRNId , string ReportType)
+        public IEnumerable<GRNEntity> GRNDetailReport(DateTime fromdate, DateTime todate, int StoreId, int SupplierId, int GRNId, string ReportType)
         {
             List<GRNEntity> grn = new List<GRNEntity>();
             using (DBHelper dbHelper = new DBHelper())
@@ -211,6 +229,9 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                                 TotalAmount = row.Field<double?>("TotalAmount"),
                                 AuthorisedAmt = row.Field<double?>("AuthorisedAmt"),
                                 Transporter = row.Field<string>("Transporter"),
+                                OtherName = row.Field<string>("OtherName"),
+                                OtherAmount = row.Field<decimal?>("OtherAmount"),
+                                OtherTaxAmount = row.Field<decimal?>("OtherTaxAmount"),
                                 VehicleNo = row.Field<string>("VehicleNo"),
                                 GrnPaymentType = row.Field<string>("GrnPaymentType"),
                                 TotalTaxamt = row.Field<double?>("TotalTaxamt"),
@@ -226,8 +247,8 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                                 Preparedby = row.Field<string>("Preparedby"),
                                 AuthorizedByName = row.Field<string>("AuthorizedByName"),
                                 Notes = row.Field<string>("Notes"),
-                                SupplierCode =row.Field<string>("SupplierCode")
-                            }).GroupBy(test =>test.ID).Select(s => s.FirstOrDefault()).ToList();
+                                SupplierCode = row.Field<string>("SupplierCode")
+                            }).GroupBy(test => test.ID).Select(s => s.FirstOrDefault()).ToList();
                 foreach (var M in grn)
                 {
                     M.grnDetails = dtgrn.AsEnumerable().Select(dtrow => new GRNDetailEntity
@@ -325,6 +346,9 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                                 TotalAmount = row.Field<double?>("TotalAmount"),
                                 AuthorisedAmt = row.Field<double?>("AuthorisedAmt"),
                                 Transporter = row.Field<string>("Transporter"),
+                                OtherName = row.Field<string>("OtherName"),
+                                OtherAmount = row.Field<decimal?>("OtherAmount"),
+                                OtherTaxAmount = row.Field<decimal?>("OtherTaxAmount"),
                                 VehicleNo = row.Field<string>("VehicleNo"),
                                 GrnPaymentType = row.Field<string>("GrnPaymentType"),
                                 TotalTaxamt = row.Field<double?>("TotalTaxamt"),
@@ -335,7 +359,7 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                                 CrNoteAmt = row.Field<double?>("CrNoteAmt"),
                                 TotalOtherAmt = row.Field<double?>("TotalOtherAmt"),
                                 Authorized = row.Field<bool>("Authorized"),
-                            
+
                                 Notes = row.Field<string>("Notes")
                             }).GroupBy(test => test.ID).Select(grp => grp.First()).ToList();
                 foreach (var M in grn)
@@ -420,6 +444,9 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
                                 TotalAmount = row.Field<double?>("TotalAmount"),
                                 AuthorisedAmt = row.Field<double?>("AuthorisedAmt"),
                                 Transporter = row.Field<string>("Transporter"),
+                                OtherName = row.Field<string>("OtherName"),
+                                OtherAmount = row.Field<decimal?>("OtherAmount"),
+                                OtherTaxAmount = row.Field<decimal?>("OtherTaxAmount"),
                                 VehicleNo = row.Field<string>("VehicleNo"),
                                 GrnPaymentType = row.Field<string>("GrnPaymentType"),
                                 TotalTaxamt = row.Field<double?>("TotalTaxamt"),

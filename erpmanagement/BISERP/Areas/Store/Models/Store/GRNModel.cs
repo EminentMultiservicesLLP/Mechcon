@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BISERP.Areas.Masters.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
@@ -44,6 +45,15 @@ namespace BISERP.Areas.Store.Models.Store
         public Nullable<DateTime> InvoiceDate { get; set; }
         public Nullable<double> Amount { get; set; }
         public string Transporter { get; set; }
+
+        [Display(Name = "Other Name")]
+        public string OtherName { get; set; }
+
+        [Display(Name = "Other Amount")]
+        public decimal? OtherAmount { get; set; }
+
+        [Display(Name = "Other Tax Amount")]
+        public decimal? OtherTaxAmount { get; set; }
 
         [Display(Name = "Vehicle No")]
         public string VehicleNo { get; set; }
@@ -113,6 +123,7 @@ namespace BISERP.Areas.Store.Models.Store
         public bool Service { get; set; }
         public bool Warranty { get; set; }
         public List<GRNDetailModel> GRNDetails { get; set; }
+        public List<TaxMasterModel> OtherTaxDetails { get; set; }
         public string companyName { get; set; }
         public string companyAddress { get; set; }
         public string companyGST { get; set; }
@@ -329,4 +340,20 @@ namespace BISERP.Areas.Store.Models.Store
         public string AuthorizedByName { get; set; }
         public string CancelledByName { get; set; }
     }
+
+    public class GRNSummarizedDetailRptModel
+    {
+        public int GRNID { get; set; }
+        public string GRNNo { get; set; }
+        public string strGRNDate { get; set; }
+        public string SupplierName { get; set; }
+        public string ItemName { get; set; }
+        public decimal Qty { get; set; }
+        public decimal Rate { get; set; }
+        public decimal Discount { get; set; }
+        public decimal TaxAmount { get; set; }
+        public decimal Amount { get; set; }
+        public string CurrentStatus { get; set; }
+    }
+
 }

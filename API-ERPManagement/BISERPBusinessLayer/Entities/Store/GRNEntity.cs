@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BISERPBusinessLayer.Entities.Masters;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,6 +26,9 @@ namespace BISERPBusinessLayer.Entities.Store
         public Nullable<DateTime> InvoiceDate { get; set; }
         public Nullable<double> Amount { get; set; }
         public string Transporter { get; set; }
+        public string OtherName { get; set; }
+        public decimal? OtherAmount { get; set; }
+        public decimal? OtherTaxAmount { get; set; }
         public string VehicleNo { get; set; }
         public Nullable<double> OctoriAmount { get; set; }
         public string Preparedby { get; set; }
@@ -76,7 +80,9 @@ namespace BISERPBusinessLayer.Entities.Store
         public string strInwardDate { get; set; }
         public string ErrorMessage { get; set; }
         public List<GRNDetailEntity> grnDetails { get; set; }
+        public List<TaxMasterEntity> OtherTaxDetails { get; set; }
         public int VendorId { get; set; }
+
         public string Vendor { get; set; }
         public double? BED { get; set; }
         public double? Edu { get; set; }
@@ -95,5 +101,20 @@ namespace BISERPBusinessLayer.Entities.Store
         public string UpdatedByName { get; set; }
         public string AuthorizedByName { get; set; }
         public string CancelledByName { get; set; }
+    }
+
+    public class GRNSummarizedDetailRptModel
+    {
+        public int GRNID { get; set; }
+        public string GRNNo { get; set; }
+        public string strGRNDate { get; set; }
+        public string SupplierName { get; set; }
+        public string ItemName { get; set; }
+        public decimal Qty { get; set; }
+        public decimal Rate { get; set; }
+        public decimal Discount { get; set; }
+        public decimal TaxAmount { get; set; }
+        public decimal Amount { get; set; }
+        public string CurrentStatus { get; set; }
     }
 }
