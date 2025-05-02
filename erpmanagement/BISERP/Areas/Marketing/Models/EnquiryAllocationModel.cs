@@ -31,4 +31,9 @@ namespace BISERP.Areas.Marketing.Models
         public string UpdatedIPAddress { get; set; }
         public bool Deactive { get; set; }
     }
+    public class AllocationUserModel
+    {
+        public int UserId { get; set; }
+        public string UserName { get; set; }
+    }
 }

@@ -30,6 +30,7 @@ namespace BISERP.Areas.AdminPanel.Models
         public string InsertedIPAddress { get; set; }
         public string Message { get; set; }
         public int IsDeactive { get; set; }
+        public bool IsTarget { get; set; }
     }
     public class DepartmentModel
     {

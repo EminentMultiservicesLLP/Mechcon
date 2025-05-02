@@ -51,11 +51,11 @@ namespace BISERP.Areas.DashBoard.Controllers
             }
             return jResult;
         }
-
+        #region DASHBOARD
         [HttpGet]
-        public async Task<JsonResult> GetDashBoardCountSummury(string FromDate = null, string ToDate = null, int? ProjectID = null)
+        public async Task<JsonResult> GetDashBoardCountSummury(int? FinancialYearID =null, int? ProjectID = null)
         {
-            string _url = $"{url}/dashboard/GetDashBoardCountSummury/{FromDate}/{ToDate}" + (ProjectID != null ? $"/{ProjectID}" : "") + Common.Constants.JsonTypeResult;
+            string _url = $"{url}/dashboard/GetDashBoardCountSummury/{FinancialYearID}" + (ProjectID != null ? $"/{ProjectID}" : "") + Common.Constants.JsonTypeResult;
             try
             {
                 var records = await Common.AsyncWebCalls.GetAsync<List<DashBoardCountSummuryModel>>(client, _url, CancellationToken.None);
@@ -74,5 +74,137 @@ namespace BISERP.Areas.DashBoard.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<JsonResult> DashboardGetMonthlyPurchase(int? FinancialYearID = null, int? ProjectID = null)
+        {
+            string _url = $"{url}/dashboard/DashboardGetMonthlyPurchase/{FinancialYearID}" + (ProjectID != null ? $"/{ProjectID}" : "") + Common.Constants.JsonTypeResult;
+            try
+            {
+                var records = await Common.AsyncWebCalls.GetAsync<List<Dashboard_BarTrendModel>>(client, _url, CancellationToken.None);
+
+                if (records == null)
+                {
+                    return Json(new { success = false, message = "No records found" }, JsonRequestBehavior.AllowGet);
+                }
+
+                return Json(new { success = true, records }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error in Dashboard GetMonthlyPurchase: {ex.Message} {Environment.NewLine} {ex.StackTrace}");
+                return Json(new { success = false, message = "An error occurred while retrieving Details" }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> DashboardGetMonthlySale(int? FinancialYearID = null, int? ProjectID = null)
+        {
+            string _url = $"{url}/dashboard/DashboardGetMonthlySale/{FinancialYearID}" + (ProjectID != null ? $"/{ProjectID}" : "") + Common.Constants.JsonTypeResult;
+            try
+            {
+                var records = await Common.AsyncWebCalls.GetAsync<List<Dashboard_BarTrendModel>>(client, _url, CancellationToken.None);
+
+                if (records == null)
+                {
+                    return Json(new { success = false, message = "No records found" }, JsonRequestBehavior.AllowGet);
+                }
+
+                return Json(new { success = true, records }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error in Dashboard GetMonthlySale: {ex.Message} {Environment.NewLine} {ex.StackTrace}");
+                return Json(new { success = false, message = "An error occurred while retrieving Details" }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> DashboardGetMonthlySaleVsTarget(int? FinancialYearID = null,  int? ProjectID = null)
+        {
+            string _url = $"{url}/dashboard/DashboardGetMonthlySaleVsTarget/{FinancialYearID}" + (ProjectID != null ? $"/{ProjectID}" : "") + Common.Constants.JsonTypeResult;
+            try
+            {
+                var records = await Common.AsyncWebCalls.GetAsync<List<Dashboard_BarTrendModel>>(client, _url, CancellationToken.None);
+
+                if (records == null)
+                {
+                    return Json(new { success = false, message = "No records found" }, JsonRequestBehavior.AllowGet);
+                }
+
+                return Json(new { success = true, records }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error in Dashboard GetMonthlySaleVsTarget: {ex.Message} {Environment.NewLine} {ex.StackTrace}");
+                return Json(new { success = false, message = "An error occurred while retrieving Details" }, JsonRequestBehavior.AllowGet);
+            }
+        }
+        
+        [HttpGet]
+        public async Task<JsonResult> DashboardGetMonthlySaleVsExpense(int? FinancialYearID = null,  int? ProjectID = null)
+        {
+            string _url = $"{url}/dashboard/DashboardGetMonthlySaleVsExpense/{FinancialYearID}" + (ProjectID != null ? $"/{ProjectID}" : "") + Common.Constants.JsonTypeResult;
+            try
+            {
+                var records = await Common.AsyncWebCalls.GetAsync<List<Dashboard_BarTrendModel>>(client, _url, CancellationToken.None);
+
+                if (records == null)
+                {
+                    return Json(new { success = false, message = "No records found" }, JsonRequestBehavior.AllowGet);
+                }
+
+                return Json(new { success = true, records }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error in Dashboard GetMonthlySaleVsExpense: {ex.Message} {Environment.NewLine} {ex.StackTrace}");
+                return Json(new { success = false, message = "An error occurred while retrieving Details" }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> DashboardGetMonthlyResourcewiseTarget(int? FinancialYearID = null,  int? ProjectID = null)
+        {
+            string _url = $"{url}/dashboard/DashboardGetMonthlyResourcewiseTarget/{FinancialYearID}" + (ProjectID != null ? $"/{ProjectID}" : "") + Common.Constants.JsonTypeResult;
+            try
+            {
+                var records = await Common.AsyncWebCalls.GetAsync<List<Dashboard_MultiChartBarTrendModel>>(client, _url, CancellationToken.None);
+
+                if (records == null)
+                {
+                    return Json(new { success = false, message = "No records found" }, JsonRequestBehavior.AllowGet);
+                }
+
+                return Json(new { success = true, records }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error in Dashboard GetMonthlyResourcewiseTarget: {ex.Message} {Environment.NewLine} {ex.StackTrace}");
+                return Json(new { success = false, message = "An error occurred while retrieving Details" }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> DashboardGetProjectStatusDataYearly(int? FinancialYearID = null, int? ProjectID = null, int? MaxId = null)
+        {
+            string _url = $"{url}/dashboard/DashboardGetProjectStatusDataYearly/{FinancialYearID}" + (ProjectID != null ? $"/{ProjectID}" : "") +  $"/{MaxId}"+ Common.Constants.JsonTypeResult;
+            try
+            {
+                var records = await Common.AsyncWebCalls.GetAsync<List<Dashboard_ColumnChartModel>>(client, _url, CancellationToken.None);
+
+                if (records == null)
+                {
+                    return Json(new { success = false, message = "No records found" }, JsonRequestBehavior.AllowGet);
+                }
+
+                return Json(new { success = true, records }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error in Dashboard GetProjectStatusDataYearly: {ex.Message} {Environment.NewLine} {ex.StackTrace}");
+                return Json(new { success = false, message = "An error occurred while retrieving Details" }, JsonRequestBehavior.AllowGet);
+            }
+        }
+        #endregion DASHBOARD
     }
 }

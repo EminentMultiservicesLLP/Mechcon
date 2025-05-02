@@ -71,6 +71,11 @@
                                                 @Html.Label("EmailId", htmlAttributes: new { @class = "required" })
                                                 @Html.TextBoxFor(M => M.EmailId, new { @class = "form-control required" })
                                             </div>
+                                            <div class="col-sm-12 col-md-4 col-lg-3">
+                                                <br>
+                                                <input type="checkbox" id="IsTarget" name="IsTarget">
+                                                <label for="IsTarget">IsTarget</label>
+                                            </div>
                                         </div>
                                     </div>
                                 </fieldset>
@@ -252,6 +257,7 @@
                 $("#DepartmentID").val(Details.DepartmentID);
                 $("#DesignationID").val(Details.DesignationID);
                 $("#EmailId").val(Details.EmailId);
+                $("#IsTarget").prop('checked', Details.IsTarget);
                 fieldsDisable(false);
                 closeModal();
             }
@@ -312,7 +318,8 @@
             UserID: $("#UserID").val(),
             DepartmentID: $("#DepartmentID").val(),
             DesignationID: $("#DesignationID").val(),
-            EmailId: $("#EmailId").val()
+            EmailId: $("#EmailId").val(),
+            IsTarget: $("#IsTarget").prop('checked')
         });
 
         $.ajax(
@@ -383,6 +390,7 @@
         $("#DepartmentID").val("");
         $("#DesignationID").val("");
         $("#EmailId").val("");
+        $("#IsTarget").prop("checked", false);
         fieldsDisable(true);
     }
     fieldsDisable(true);
@@ -392,6 +400,7 @@
         $("#Password").prop("disabled", state);
         $("#DepartmentID").prop("disabled", state);
         $("#DesignationID").prop("disabled", state);
+        $("#EmailId").prop("disabled", state);
         $("#EmailId").prop("disabled", state);
     }
     $("#btnSearch").on('click', function () {

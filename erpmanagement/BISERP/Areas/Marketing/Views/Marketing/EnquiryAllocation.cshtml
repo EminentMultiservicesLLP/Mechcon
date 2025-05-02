@@ -233,7 +233,7 @@
             headers: {
                 "__RequestVerificationToken": antiForgeryToken
             },
-            url: "/RoleAccess/GetUsers",
+            url: "/EnquiryAllocation/GetUsersForAllocation",
             success: function (data) {
                 data.data.forEach(function (status) {
                     $('#AllocatedTo').append(`<option value="${status.UserId}">${status.UserName}</option>`);

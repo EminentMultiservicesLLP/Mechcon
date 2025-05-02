@@ -33,6 +33,7 @@ namespace BISERPBusinessLayer.QueryCollection.SM
         public const string GetEnqForAllocation = "sp_SM_GetEnqForAllocation";
         public const string SaveAllocation = "sp_SM_SaveEnquiryAllocation";
         public const string GetAllocation = "sp_SM_GetEnquiryAllocation";
+        public const string GetUsersForAllocation = "sp_SM_GetUsersForAllocation";
 
         //OfferRegister
         public const string GetEnqForOffer = "sp_SM_GetEnqForOffer";

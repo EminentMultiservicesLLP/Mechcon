@@ -13,6 +13,12 @@ namespace BISERPBusinessLayer.Repositories.Store.Interfaces
         StoreDashBoardEntity GetItemSummary();
 		IEnumerable<StoreDSBDStockSummaryEntity> GetStoreDSBDStockSummary(int byValue = 1);
         IEnumerable<StoreDSBDGuardIssueSummaryEntity> GetStoreDSBDGuardIssueSummary();
-        IEnumerable<DashBoardCountSummuryModel> GetDashBoardCountSummury(string FromDate, string ToDate, int? ProjectID);
+        IEnumerable<DashBoardCountSummuryModel> GetDashBoardCountSummury(int? FinancialYearID, int? ProjectID);
+        IEnumerable<Dashboard_BarTrendModel> DashboardGetMonthlySale(int? FinancialYearID, int? ProjectID);
+        IEnumerable<Dashboard_BarTrendModel> DashboardGetMonthlyPurchase(int? FinancialYearID, int? ProjectID);
+        IEnumerable<Dashboard_BarTrendModel> DashboardGetMonthlySaleVsExpense(int? FinancialYearID, int? ProjectID);
+        IEnumerable<Dashboard_BarTrendModel> DashboardGetMonthlySaleVsTarget(int? FinancialYearID, int? ProjectID);
+        IEnumerable<Dashboard_MultiChartBarTrendModel> DashboardGetMonthlyResourcewiseTarget(int? FinancialYearID, int? ProjectID);
+        IEnumerable<Dashboard_ColumnChartModel> DashboardGetProjectStatusDataYearly(int? FinancialYearID, int? ProjectID, int? MaxId);
     }
 }
