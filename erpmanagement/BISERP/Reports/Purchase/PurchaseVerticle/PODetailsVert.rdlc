@@ -1478,7 +1478,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Sum(Fields!Amount.Value * (Fields!SGST.Value / 100))</Value>
+                              <Value>=Sum(((Fields!Qty.Value * Fields!Rate.Value) - Fields!Discount.Value) * (Fields!SGST.Value / 100))</Value>
                               <Style>
                                 <FontFamily>Calibri</FontFamily>
                                 <FontSize>9pt</FontSize>
@@ -1757,7 +1757,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Sum(Fields!Amount.Value * (Fields!CGST.Value / 100))</Value>
+                              <Value>=Sum(((Fields!Qty.Value * Fields!Rate.Value) - Fields!Discount.Value) * (Fields!CGST.Value / 100))</Value>
                               <Style>
                                 <FontFamily>Calibri</FontFamily>
                                 <FontSize>9pt</FontSize>
@@ -2044,7 +2044,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Sum(Fields!Amount.Value * (Fields!IGST.Value / 100))</Value>
+                              <Value>=Sum(((Fields!Qty.Value * Fields!Rate.Value) - Fields!Discount.Value) * (Fields!IGST.Value / 100))</Value>
                               <Style>
                                 <FontFamily>Calibri</FontFamily>
                                 <FontSize>9pt</FontSize>
@@ -2331,7 +2331,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Sum(Fields!Amount.Value * (Fields!UGST.Value / 100))</Value>
+                              <Value>=Sum(((Fields!Qty.Value * Fields!Rate.Value) - Fields!Discount.Value) * (Fields!UGST.Value / 100))</Value>
                               <Style>
                                 <FontFamily>Calibri</FontFamily>
                                 <FontSize>9pt</FontSize>
