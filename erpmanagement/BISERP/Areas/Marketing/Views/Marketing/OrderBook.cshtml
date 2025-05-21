@@ -627,7 +627,7 @@
                                 <li class="active tab"><a href="#tab2" data-toggle="tab" style="margin: 0;">Payment Terms</a></li>
                                 @*<li><a href="#tab3" data-toggle="tab" style="margin: 0;">Delivery Terms</a></li>*@
                                 @*<li><a href="#tab4" data-toggle="tab" style="margin: 0;">Freight</a></li>
-                                <li><a href="#tab5" data-toggle="tab" style="margin: 0;">P&F</a></li>*@
+                                    <li><a href="#tab5" data-toggle="tab" style="margin: 0;">P&F</a></li>*@
                             </ul>
                             <fieldset class="fieldsetCustom">
                                 <div id="my-tab-content" class="tab-content" style="border:none;padding:2px;">
@@ -927,11 +927,11 @@
 
     var OrderBookGrid_GCM = [
         {
-            title: "Enquiry No", dataIndx: "EnquiryNo", width: '30%',
+            title: "WorkOrder No", dataIndx: "OrderBookNo", width: '30%',
             filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
         },
         {
-            title: "Enquiry Date", dataIndx: "strEnquiryDate", width: '20%',
+            title: "WO Date", dataIndx: "strWODate", width: '20%',
             filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
         },
         {
@@ -1458,13 +1458,14 @@
                         fileSaveMsg = "But failed to save attached files.";
                     } finally {
                         const message = tempOrderBookID === 0 ? `Work Order registered successfully!<br> Project Code : <b>${response.Data.ProjectCode}</b>` : `Work Order updated successfully!<br> Project Code : <b>${response.Data.ProjectCode}</b>`;
-                        GetUserByGroups(response.Data.ProjectCode, message, fileSaveMsg);
+                        //GetUserByGroups(response.Data.ProjectCode, message, fileSaveMsg);
                         //if (tempOrderBookID === 0) {
                         //    GetUserByGroups(response.Data.ProjectCode, message, fileSaveMsg);
                         //} else {
                         //    ShowAlert("success", `${message} <br> ${fileSaveMsg}`);
                         //    clearFormData();
                         //}
+                        getAttachment(response.Data.ProjectID, response.Data.ProjectCode, message, fileSaveMsg);
                     }
                 } else {
                     ShowAlert("error", response.message || "An error occurred while saving the offer.");
@@ -2324,6 +2325,7 @@
             if (!supportedExtensions.has(extension)) return;
 
             const src = `${appSetting}${filePath}`;
+            console.log(src);
             const deleteItemHtml = `
             <a href="javascript:void(0);" data-id="${image.FileId}" class="deleteItem fa fa-trash" style="font-size: x-large;"
                onclick="Deletefile(${image.FileId}, ${image.ScanDocId}); return false;"></a>`;
@@ -2529,7 +2531,42 @@
     loadGroupGrid(null);
     //-----------------------------------GroupGrid (Ends here)-----------------------------------//
 
-    function GetUserByGroups(projectCode, message, fileSaveMsg) {
+    //Mail Attachment
+    function getAttachment(ProjectID, ProjectCode, message, fileSaveMsg) {
+
+        if (!ProjectID || ProjectID == 0) {
+            ShowAlert("error", "Please select a OrederBook first.");
+            return false;
+        }
+
+        $.ajax({
+            type: "GET",
+            url: "/ScanDoc/ScanDoc/GetScanDocUrl",
+            data: { FileId: ProjectID, ScanDocSubTypeId: 28 },
+            dataType: "json",
+            success: function (data) {
+                if (data && data.length > 0) {
+                    const Attachments = data.map(item => ({
+                        FileId: item.FileId,
+                        FilePath: "Content/UploadFile\\" + item.FilePath
+                    }));
+
+                    GetUserByGroups(ProjectCode, Attachments, message, fileSaveMsg);
+                } else {
+                    GetUserByGroups(ProjectCode, null, message, fileSaveMsg);
+                    console.log("error", "No attachment found.");
+                }
+            },
+            error: function (xhr, status, error) {
+                GetUserByGroups(ProjectCode, null, message, fileSaveMsg);
+                console.log("error", "An error occurred while fetching documents. Please try again later.");
+                console.error("Error fetching attachment:", status, error);
+            }
+        });
+    }
+
+    // Function to Get User of Groups
+    function GetUserByGroups(projectCode, Attachments, message, fileSaveMsg) {
         const loadingDivId = "loadingDiv1";
         $('#ContentViewSection').append(`<div style="position:fixed;" id="${loadingDivId}"><div class="loader1">Loading...</div></div>`);
 
@@ -2551,7 +2588,7 @@
                 success: function (response) {
                     if (response.records.length > 0) {
                         // Send email
-                        sendEmail(projectCode, response.records, message, fileSaveMsg, loadingDivId);
+                        sendEmail(projectCode, Attachments, response.records, message, fileSaveMsg, loadingDivId);
                     } else {
                         showAlertAndCleanup("info", message, fileSaveMsg, loadingDivId);
                     }
@@ -2567,7 +2604,7 @@
     }
 
     // Function to send email
-    function sendEmail(projectCode, selectedUsers, message, fileSaveMsg, loadingDivId) {
+    function sendEmail(projectCode, attachments, selectedUsers, message, fileSaveMsg, loadingDivId) {
         const antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
 
         $.ajax({
@@ -2580,6 +2617,7 @@
             url: "/OrderBook/SendMail",
             data: JSON.stringify({
                 ProjectCode: projectCode,
+                Attachments: attachments,
                 SelectedUser: selectedUsers
             }),
             success: function (response) {
@@ -2605,5 +2643,6 @@
         clearFormData();
         $(`#${loadingDivId}`).remove();
     }
+
 
 </script>

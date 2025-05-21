@@ -193,5 +193,8 @@ namespace BISERPBusinessLayer.QueryCollection.Masters
         public const string GetPrePackingList = "dbsp_GetPrePackingList";
         public const string GetPrePackingListDetail = "dbsp_GetPrePackingListDetail";
 
+        public const string GetMasterListOfProject = "dbsp_GetMasterListOfProject";
+        public const string GetProjectCostingSummary = "dbsp_GetProjectCostingSummary";
+
     }
 }

@@ -568,8 +568,8 @@
                     <input type="text" id="OfferDate${OfferID}" class="form-control datepicker" />
                 </div>
                 <div class="col-12 col-sm-6 col-md-2">
-                    <label for="POBaseValue${OfferID}" class="required">PO Base Value</label>
-                    <input class="form-control POBaseValue" id="POBaseValue${OfferID}" placeholder="Enter PO Base Value" type="number" />
+                    <label for="POBaseValue${OfferID}" class="required">Offer Base Value</label>
+                    <input class="form-control POBaseValue" id="POBaseValue${OfferID}" placeholder="Enter Offer Base Value" type="number" />
                 </div>
                 <div class="col-12 col-sm-6 col-md-2">
                     <label for="GSTAmount${OfferID}">GST Amount</label>
@@ -764,7 +764,7 @@
                 hasValidOfferDetail = true;
             } else {
                 if (!firstErrorMessage) {
-                    firstErrorMessage = `Each offer must either have a PO Base Value greater than 0`;
+                    firstErrorMessage = `Each offer must either have a Offer Base Value greater than 0`;
                 }
             }
         });

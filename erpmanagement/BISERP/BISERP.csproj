@@ -341,6 +341,7 @@
     <Compile Include="Areas\Masters\Controllers\ItemPackSizeMasterController.cs" />
     <Compile Include="Areas\Masters\Controllers\ItemTypeMasterController.cs" />
     <Compile Include="Areas\Masters\Controllers\ManufacturerMasterController.cs" />
+    <Compile Include="Areas\Masters\Controllers\MasterListOfProjectController.cs" />
     <Compile Include="Areas\Masters\Controllers\MastersController.cs" />
     <Compile Include="Areas\Masters\Controllers\MechconMasterController.cs" />
     <Compile Include="Areas\Masters\Controllers\OtherTermMasterController.cs" />
@@ -358,6 +359,7 @@
     <Compile Include="Areas\Masters\Models\ClearanceNoteModel.cs" />
     <Compile Include="Areas\Masters\Models\ClientMasterModel.cs" />
     <Compile Include="Areas\Masters\Models\InspectionMasterModel.cs" />
+    <Compile Include="Areas\Masters\Models\MasterListOfProjectModel.cs" />
     <Compile Include="Areas\Masters\Models\MechconMasterModel.cs" />
     <Compile Include="Areas\Masters\Models\PackingListModel.cs" />
     <Compile Include="Areas\Masters\Models\ProductMasterModel.cs" />
@@ -1103,6 +1105,8 @@
     <Content Include="Areas\Masters\Views\Masters\ScopeOfSupply.cshtml" />
     <Content Include="Areas\Masters\Views\Masters\Dashboard.cshtml" />
     <Content Include="Areas\Masters\Views\Masters\PrePackingList.cshtml" />
+    <Content Include="Areas\Masters\Views\Masters\MasterListOfProject.cshtml" />
+    <Content Include="Areas\Masters\Views\Masters\ProjectCostingSummary.cshtml" />
     <None Include="Content\DataSet\Billing.xsd" />
     <Content Include="Content\DataSet\Billing.xss">
       <DependentUpon>Billing.xsd</DependentUpon>

@@ -163,5 +163,13 @@ namespace BISERP.Areas.Masters.ControllerS
         {
             return PartialView();
         }
+        public ActionResult MasterListOfProject()
+        {
+            return PartialView();
+        }
+        public ActionResult ProjectCostingSummary()
+        {
+            return PartialView();
+        }
     }
 }

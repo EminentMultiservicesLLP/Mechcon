@@ -285,6 +285,10 @@ namespace BISERPService
             container.RegisterType<IDashboardRepository, DashboardRepository>();
 
 
+            container.RegisterType<IMasterListOfProjectRepository, MasterListOfProjectRepository>();
+
+
+
             //This line wil apply below attribute to all controllers at global level
             config.Filters.Add(new GZipCompressionAttribute());
 

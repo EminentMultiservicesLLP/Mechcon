@@ -1,0 +1,252 @@
+﻿<h5 class="page-header orangeDottedBottomBorder">Master List Of Project</h5>
+
+<div class="panel-group">
+    <div class="panel panel-default">
+        <div class="panel-groupingBoder">
+            <div class="panel-heading">
+                <div class="panel-title">
+                    <a class="collapsediv" data-toggle="collapse" href="#SearchDetails">
+                        Master List Of Project
+                    </a>
+                </div>
+            </div>
+            <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                <div class="panel-body">
+                    <div class="fill">
+                        <div class="submit-row">
+                            <div class="col-lg-2 col-md-4 col-sm-12 mb-3">
+                                <label class="required" for="FinancialYearID">Financial Year</label>
+                                <select id="FinancialYearID" name="FinancialYearID" class="form-control">
+                                    <option value="">--Select Financial Year--</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-2 col-md-4 col-sm-12 mb-3" style="text-align:center">
+                                <br />
+                                <div class="form-check mt-4">
+                                    <input class="form-check-input" type="checkbox" id="Pending" name="Pending" />
+                                    <label class="form-check-label" for="Pending">All Pending</label>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-2 col-md-4 col-sm-12 mb-3">
+                                <br />
+                                <button type="button" id="btnGo" class="btn btn-primary" onclick="go()">GO</button>
+                                <button type="button" class="btn btn-warning" id="btnResetT" onclick="clearFormData()">Clear</button>
+                            </div>
+
+                        </div>
+                        <fieldset class="fieldsetCustom">
+                            <legend class="legendCustom">Details</legend>
+                            <div id="MasterListOfProjectGrid"></div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function loadFinancialYear() {
+        $.ajax({
+            type: "GET",
+            url: "/ResourceTarget/GetFinancialYear",
+            dataType: "json",
+            success: function (data) {
+                const $financialYearID = $('#FinancialYearID');
+                $financialYearID.empty();
+
+                if (data.error) {
+                    $financialYearID.append('<option value="">--Error loading financial years--</option>');
+                    console.error("Error loading financial years:", data.error);
+                    return;
+                }
+
+                $financialYearID.append('<option value="">--Select Financial Year--</option>');
+                data.forEach(function (financialYear) {
+                    $financialYearID.append(`<option value="${financialYear.FinancialYearID}">${financialYear.FinancialYear}</option>`);
+                });
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                $('#FinancialYearID').empty();
+                $('#FinancialYearID').append('<option value="">--Error loading sources--</option>');
+                console.error("Error loading sources:", errorThrown);
+            }
+        });
+    }
+    loadFinancialYear();
+
+    function go() {
+        const financialYearID = $("#FinancialYearID").val();
+
+        if (!financialYearID || financialYearID == 0) {
+            ShowAlert("error", "Please select a Financial Year first.");
+            return false;
+        }
+        let pending = $("#Pending").prop("checked") ? 1 : 0;
+        loadMasterListOfProjectGrid(financialYearID, pending);
+    }
+
+    //-----------------------------------MasterListOfProjectGrid (Starts here)-----------------------------------//
+    var MasterListOfProjectGrid_GDM = { location: "local" };
+    var MasterListOfProjectGrid_GCM = [
+        {
+            title: "Project Code",
+            dataIndx: "ProjectCode",
+            width: 120,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Project Description",
+            dataIndx: "ProjectDescription",
+            width: 200,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "PO Base Value",
+            dataIndx: "POBaseValue",
+            width: 120,
+            dataType: 'float',
+            format: '##,###.00',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "PO Value With GST",
+            dataIndx: "POBaseValueWithGST",
+            width: 130,
+            dataType: 'float',
+            format: '##,###.00',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "WO Date",
+            dataIndx: "strWODate",
+            width: 110,
+            dataType: 'date',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Client Name",
+            dataIndx: "ClientName",
+            width: 200,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Allocated To",
+            dataIndx: "AllocatedToName",
+            width: 150,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
+            title: "Dispatch Date",
+            dataIndx: "strDispatchDate",
+            width: 120,
+            dataType: 'date',
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        }
+    ];
+
+    var setMasterListOfProjectGrid = {
+        height: 500,
+        width: 'auto',
+        maxWidth: '100%',
+        minWidth: 800,
+        sortable: true,
+        autofill: true,
+        numberCell: { show: true },
+        hoverMode: 'row',
+        showTop: true,
+        showTitle: true,
+        showBottom: true,
+        resizable: true,
+        scrollModel: { autoFit: true },
+        filterModel: { on: true, mode: "AND", header: true },
+        draggable: false,
+        hwrap: false,
+        wrap: false,
+        editable: false,
+        columnBorders: true,
+        menuIcon: true,
+        selectionModel: { type: 'row', mode: 'single', cbHeader: false },
+        colModel: MasterListOfProjectGrid_GCM,
+        dataModel: MasterListOfProjectGrid_GDM,
+        pageModel: { type: "local", rPP: 50 },
+        toolbar: {
+            items: [
+                {
+                    type: "<label><b>Export data to Excel : </b> | </label>"
+                },
+                {
+                    type: 'button',
+                    label: "Export",
+                    icon: 'ui-icon-arrowthickstop-1-s',
+                    listener: function () {
+                        var format = 'xlsx',
+                            blob = workbook = this.exportData({
+                                format: format,
+                                workbook: true,
+                                render: true
+                            });
+
+                        blob = pq.excel.exportWb({ workbook: workbook })
+                        if (typeof blob === "string") {
+                            blob = new Blob([blob]);
+                        }
+
+                        var fileName = "MasterListOfProject_" + formatDateTime(new Date()) + "." + format;
+
+                        saveAs(blob, fileName);
+                    }
+                }
+            ]
+        }
+    }
+    var $MasterListOfProjectGrid = $("#MasterListOfProjectGrid").pqGrid(setMasterListOfProjectGrid);
+    function loadMasterListOfProjectGrid(financialYearID, pending) {
+        var antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            url: "/Masters/MasterListOfProject/GetMasterListOfProject",
+            data: { financialYearID: financialYearID, pending: pending},
+            dataType: "json",
+
+            beforeSend: function () {
+                $("#MasterListOfProjectGrid").pqGrid("showLoading");
+            },
+
+            complete: function () {
+                $("#MasterListOfProjectGrid").pqGrid("hideLoading");
+            },
+
+            success: function (response) {
+                const grid = $("#MasterListOfProjectGrid").pqGrid();
+
+                if (response.success) {
+                    grid.pqGrid("option", "dataModel.data", response.records);
+                } else {
+                    console.warn("No data found or an issue occurred: ", response.message);
+                    grid.pqGrid("option", "dataModel.data", []);
+                }
+
+                grid.pqGrid("refreshDataAndView");
+                PqGridRefreshClick(grid);
+            },
+
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Error loading Master List Of Project grid:", textStatus, errorThrown);
+                console.error("Response text:", jqXHR.responseText);
+                $("#MasterListOfProjectGrid").pqGrid("hideLoading");
+            }
+        });
+
+    }
+    //-----------------------------------MasterListOfProjectGrid (Ends here)-----------------------------------//
+
+    function clearFormData() {
+        $("#FinancialYearID").val('');
+        $("#Pending").prop("checked", false);
+        ClearParamGrid('MasterListOfProjectGrid');
+    }
+</script>

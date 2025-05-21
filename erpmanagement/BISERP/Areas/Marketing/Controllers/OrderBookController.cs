@@ -8,8 +8,12 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Formatting;
+using System.Net.Mail;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
@@ -374,35 +378,47 @@ namespace BISERP.Areas.Marketing.Controllers
             {
                 try
                 {
-                    if (SendEmail(model.ProjectCode, user.EmailId) == 1)
+                    if (!string.IsNullOrWhiteSpace(user.EmailId))
                     {
-                        mailSentCount++;
+                        if (SendEmail(model.ProjectCode, user.EmailId, model.Attachments) == 1)
+                        {
+                            mailSentCount++;
+                        }
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Error while sending email to {user.EmailId}: {ex}");
+                    _logger.LogError($"Error while sending email to {user.EmailId}: {ex.Message}{Environment.NewLine}{ex.StackTrace}");
                 }
             }
 
-            if (mailSentCount > 0)
+            bool isSuccess = mailSentCount > 0;
+            return Json(new
             {
-                return Json(new { success = true, message = "Mail Sent Successfully!" });
-            }
-            else
-            {
-                return Json(new { success = false, message = "Failed To Send Mail!" });
-            }
+                success = isSuccess,
+                message = isSuccess ? "Mail Sent Successfully!" : "Failed To Send Mail!"
+            });
         }
-
-        public int SendEmail(string projectCode, string emailId)
+        public int SendEmail(string projectCode, string emailId, List<AttachmentModle> attachments = null)
         {
             try
             {
                 string subject = "New Project";
-
                 string notificationPath = ConfigurationManager.AppSettings["Notification"];
+
+                if (string.IsNullOrWhiteSpace(notificationPath))
+                {
+                    _logger.LogError("Notification email template path is not configured.");
+                    return 0;
+                }
+
                 string fullPath = Path.Combine(HttpRuntime.AppDomainAppPath, notificationPath);
+
+                if (!System.IO.File.Exists(fullPath))
+                {
+                    _logger.LogError($"Email template file not found at path: {fullPath}");
+                    return 0;
+                }
 
                 string emailBody;
                 using (var reader = new StreamReader(fullPath))
@@ -410,18 +426,77 @@ namespace BISERP.Areas.Marketing.Controllers
                     emailBody = reader.ReadToEnd();
                 }
 
-                emailBody = emailBody.Replace("[ProjectCode]", projectCode);
+                emailBody = emailBody.Replace("[ProjectCode]", projectCode ?? string.Empty);
 
-                int emailSendStatus = new EmailController().SmtpSettings(emailId, emailBody, subject, "");
-
-                return emailSendStatus == 1 ? 1 : 0;
+                return SmtpSettings1(emailId, emailBody, subject, attachments);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error while preparing or sending email: {ex}");
+                _logger.LogError($"Error in SendEmail: {ex.Message}{Environment.NewLine}{ex.StackTrace}");
                 return 0;
             }
         }
+        public int SmtpSettings1(string toAddress, string body, string subject, List<AttachmentModle> attachments = null)
+        {
+            try
+            {
+                string fromPassword = ConfigurationManager.AppSettings["mailPassword"];
+                string fromAddress = ConfigurationManager.AppSettings["mailID"];
+                string smtpHost = ConfigurationManager.AppSettings["smtpHost"];
+                int smtpPort = Convert.ToInt32(ConfigurationManager.AppSettings["smtpPortNo"]);
+                bool enableSsl = Convert.ToBoolean(ConfigurationManager.AppSettings["sslSecurityStatus"]);
+
+                using (var message = new MailMessage())
+                {
+                    message.From = new MailAddress(fromAddress);
+                    message.To.Add(new MailAddress(toAddress));
+                    message.Subject = subject;
+                    message.Body = body;
+                    message.IsBodyHtml = true;
+
+                    // Add attachments if any
+                    if (attachments != null)
+                    {
+                        foreach (var att in attachments)
+                        {
+                            if (!string.IsNullOrWhiteSpace(att.FilePath))
+                            {
+                                string attachmentPath = Path.Combine(HttpRuntime.AppDomainAppPath, att.FilePath);
+                                if (System.IO.File.Exists(attachmentPath))
+                                {
+                                    message.Attachments.Add(new Attachment(attachmentPath));
+                                }
+                                else
+                                {
+                                    _logger.LogError($"Attachment not found: {attachmentPath}");
+                                }
+                            }
+                        }
+                    }
+
+                    using (var smtp = new SmtpClient(smtpHost, smtpPort))
+                    {
+                        smtp.Credentials = new NetworkCredential(fromAddress, fromPassword);
+                        smtp.EnableSsl = enableSsl;
+                        smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
+                        smtp.Timeout = 120000;
+
+                        // Bypass SSL certificate errors (for testing only)
+                        ServicePointManager.ServerCertificateValidationCallback =
+                            (s, cert, chain, sslPolicyErrors) => true;
+
+                        smtp.Send(message);
+                        return 1;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error in SmtpSettings1 while sending to {toAddress}: {ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                return 0;
+            }
+        }
+
         #endregion Send Mail
 
     }

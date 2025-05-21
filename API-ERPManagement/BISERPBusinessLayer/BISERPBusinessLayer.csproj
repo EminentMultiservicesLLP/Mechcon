@@ -139,6 +139,7 @@
     <Compile Include="Entities\Masters\ItemSupplierMappingEntities.cs" />
     <Compile Include="Entities\Masters\ItemTypeMasterEntities.cs" />
     <Compile Include="Entities\Masters\ManufacturerMasterEntities.cs" />
+    <Compile Include="Entities\Masters\MasterListOfProjectEntity.cs" />
     <Compile Include="Entities\Masters\MechconMasterEntity.cs" />
     <Compile Include="Entities\Masters\OthersTermsMasterEntities.cs" />
     <Compile Include="Entities\Masters\PackingListEntity.cs" />
@@ -392,6 +393,7 @@
     <Compile Include="Repositories\Master\Classes\ItemPackSizeMasterRepository.cs" />
     <Compile Include="Repositories\Master\Classes\ItemTypeMasterRepository.cs" />
     <Compile Include="Repositories\Master\Classes\ManufacturerMasterRepository.cs" />
+    <Compile Include="Repositories\Master\Classes\MasterListOfProjectRepository.cs" />
     <Compile Include="Repositories\Master\Classes\MechconMasterRepository.cs" />
     <Compile Include="Repositories\Master\Classes\OthersTermsMasterRepository.cs" />
     <Compile Include="Repositories\Master\Classes\PackingListRepository.cs" />
@@ -420,6 +422,7 @@
     <Compile Include="Repositories\Master\Interfaces\IItemSupplierMappingRepository.cs" />
     <Compile Include="Repositories\Master\Interfaces\IItemTypeMasterRepository.cs" />
     <Compile Include="Repositories\Master\Interfaces\IManufacturerMasterRepository.cs" />
+    <Compile Include="Repositories\Master\Interfaces\IMasterListOfProjectRepository.cs" />
     <Compile Include="Repositories\Master\Interfaces\IMechconMasterRepository.cs" />
     <Compile Include="Repositories\Master\Interfaces\IOthersTermsMasterRepository.cs" />
     <Compile Include="Repositories\Master\Interfaces\IPackingListRepository.cs" />

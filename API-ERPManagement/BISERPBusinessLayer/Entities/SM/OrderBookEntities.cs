@@ -10,6 +10,7 @@ namespace BISERPBusinessLayer.Entities.SM
     {
         public int OrderBookID { get; set; }
         public string OrderBookNo { get; set; }
+        public string strWODate { get; set; }
         public int? EnquiryID { get; set; }
         public int? OfferID { get; set; }
         public string EnquiryNo { get; set; }

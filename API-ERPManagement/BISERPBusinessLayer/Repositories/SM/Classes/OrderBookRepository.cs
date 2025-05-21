@@ -193,6 +193,7 @@ namespace BISERPBusinessLayer.Repositories.SM.Classes
                                    ClientName = row.Field<string>("ClientName"),
                                    OrderBookID = row.Field<int>("OrderBookID"),
                                    OrderBookNo = row.Field<string>("OrderBookNo"),
+                                   strWODate = row.Field<string>("strWODate"),
                                    OfferID = row.Field<int?>("OfferID"),
                                    PONo = row.Field<string>("PONo"),
                                    strPODate = row.Field<string>("strPODate"),

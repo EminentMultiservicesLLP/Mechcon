@@ -10,6 +10,7 @@ namespace BISERP.Areas.Marketing.Models
     {
         public int OrderBookID { get; set; }
         public string OrderBookNo { get; set; }
+        public string strWODate { get; set; }
         public int? EnquiryID { get; set; }
         public int? OfferID { get; set; }
         public string EnquiryNo { get; set; }
@@ -142,7 +143,12 @@ namespace BISERP.Areas.Marketing.Models
     {
         public string ProjectCode { get; set; }
         public List<EmployeeEnrollmentModel> SelectedUser { get; set; }
+        public List<AttachmentModle> Attachments { get; set; }
 
     }
-
+    public class AttachmentModle
+    {
+        public int FileId { get; set; }
+        public string FilePath { get; set; }
+    }
 }

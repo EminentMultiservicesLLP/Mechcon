@@ -215,6 +215,7 @@
     <Compile Include="Controllers\Store\ItemPackSizeController.cs" />
     <Compile Include="Controllers\Store\ItemTypeController.cs" />
     <Compile Include="Controllers\Store\ManufacturerController.cs" />
+    <Compile Include="Controllers\Store\MasterListOfProjectController.cs" />
     <Compile Include="Controllers\Store\MaterialIndentController.cs" />
     <Compile Include="Controllers\Store\MaterialIssueController.cs" />
     <Compile Include="Controllers\Store\MaterialReturnController.cs" />
