@@ -97,6 +97,21 @@ namespace BISERPBusinessLayer.Repositories.SM.Classes
             }
             return enquires;
         }
+        public IEnumerable<AllocationUserEntities> GetUsersForAllocation()
+        {
+            List<AllocationUserEntities> enquires = null;
+            using (DBHelper dbHelper = new DBHelper())
+            {
+                DataTable dt = dbHelper.ExecuteDataTable(MarketingQueries.GetUsersForAllocation, CommandType.StoredProcedure);
 
+                enquires = dt.AsEnumerable()
+                            .Select(row => new AllocationUserEntities
+                            {
+                                UserId = row.Field<int>("UserId"),
+                                UserName = row.Field<string>("UserName")                              
+                            }).ToList();
+            }
+            return enquires;
+        }
     }
 }

@@ -29,6 +29,7 @@ namespace BISERPBusinessLayer.Entities.AdminPanel
         public string UpdatedMacID { get; set; }
         public string UpdatedIPAddress { get; set; }
         public int IsDeactive { get; set; }
+        public bool IsTarget { get; set; }
     }
     public class DepartmentModel
     {

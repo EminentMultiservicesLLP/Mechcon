@@ -76,15 +76,14 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
             }
             return entity;
         }
-
-        public IEnumerable<DashBoardCountSummuryModel> GetDashBoardCountSummury(string FromDate, string ToDate, int? ProjectID)
+        #region DASHBOARD
+        public IEnumerable<DashBoardCountSummuryModel> GetDashBoardCountSummury(int? FinancialYearID, int? ProjectID)
         {
             List<DashBoardCountSummuryModel> data = null;
             using (DBHelper dbHelper = new DBHelper())
             {
                 DBParameterCollection param = new DBParameterCollection();
-                param.Add(new DBParameter("FromDate", FromDate, DbType.String));
-                param.Add(new DBParameter("ToDate", ToDate, DbType.String));
+                param.Add(new DBParameter("FinancialYearID", FinancialYearID, DbType.Int32));
                 param.Add(new DBParameter("ProjectID", ProjectID, DbType.Int32));
                 DataTable dt = dbHelper.ExecuteDataTable(DashBoardQueries.GetDashBoardCountSummury, param, CommandType.StoredProcedure);
 
@@ -97,5 +96,140 @@ namespace BISERPBusinessLayer.Repositories.Store.Classes
             }
             return data;
         }
+
+        public IEnumerable<Dashboard_BarTrendModel> DashboardGetMonthlySale(int? FinancialYearID, int? ProjectID)
+        {
+            List<Dashboard_BarTrendModel> data = null;
+            using (DBHelper dbHelper = new DBHelper())
+            {
+                DBParameterCollection param = new DBParameterCollection();
+                //param.Add(new DBParameter("FromDate", FromDate, DbType.String));
+                param.Add(new DBParameter("FinancialYearID", FinancialYearID, DbType.Int32));
+                param.Add(new DBParameter("ProjectID", ProjectID, DbType.Int32));
+                DataTable dt = dbHelper.ExecuteDataTable(DashBoardQueries.GetMonthlySale, param, CommandType.StoredProcedure);
+
+                data = dt.AsEnumerable()
+                    .Select(row => new Dashboard_BarTrendModel
+                    {
+                        MonthName = row.Field<string>("MonthName"),
+                        MonthId = row.Field<int>("MonthId"),
+                        TotalSale = row.Field<decimal?>("TotalSale")
+                    }).ToList();
+            }
+            return data;
+        }
+
+        public IEnumerable<Dashboard_BarTrendModel> DashboardGetMonthlyPurchase(int? FinancialYearID, int? ProjectID)
+        {
+            List<Dashboard_BarTrendModel> data = null;
+            using (DBHelper dbHelper = new DBHelper())
+            {
+                DBParameterCollection param = new DBParameterCollection();
+                param.Add(new DBParameter("FinancialYearID", FinancialYearID, DbType.Int32));
+                param.Add(new DBParameter("ProjectID", ProjectID, DbType.Int32));
+                DataTable dt = dbHelper.ExecuteDataTable(DashBoardQueries.GetMonthlyPurchase, param, CommandType.StoredProcedure);
+
+                data = dt.AsEnumerable()
+                    .Select(row => new Dashboard_BarTrendModel
+                    {
+                        MonthName = row.Field<string>("MonthName"),
+                        MonthId = row.Field<int>("MonthId"),
+                        TotalPurchase = row.Field<decimal?>("TotalPurchase")
+                    }).ToList();
+            }
+            return data;
+        }
+
+        public IEnumerable<Dashboard_BarTrendModel> DashboardGetMonthlySaleVsTarget(int? FinancialYearID, int? ProjectID)
+        {
+            List<Dashboard_BarTrendModel> data = null;
+            using (DBHelper dbHelper = new DBHelper())
+            {
+                DBParameterCollection param = new DBParameterCollection();
+                param.Add(new DBParameter("FinancialYearID", FinancialYearID, DbType.Int32));
+                param.Add(new DBParameter("ProjectID", ProjectID, DbType.Int32));
+                DataTable dt = dbHelper.ExecuteDataTable(DashBoardQueries.GetMonthlySaleVsTarget, param, CommandType.StoredProcedure);
+
+                data = dt.AsEnumerable()
+                    .Select(row => new Dashboard_BarTrendModel
+                    {
+                        MonthName = row.Field<string>("MonthName"),
+                        MonthId = row.Field<int>("MonthId"),
+                        TotalSale = row.Field<decimal?>("TotalSale"),
+                        TotalTarget =row.Field<decimal?>("TotalTarget")
+                    }).ToList();
+            }
+            return data;
+        }
+
+        public IEnumerable<Dashboard_BarTrendModel> DashboardGetMonthlySaleVsExpense(int? FinancialYearID, int? ProjectID)
+        {
+            List<Dashboard_BarTrendModel> data = null;
+            using (DBHelper dbHelper = new DBHelper())
+            {
+                DBParameterCollection param = new DBParameterCollection();
+                param.Add(new DBParameter("FinancialYearID", FinancialYearID, DbType.Int32));
+                param.Add(new DBParameter("ProjectID", ProjectID, DbType.Int32));
+                DataTable dt = dbHelper.ExecuteDataTable(DashBoardQueries.GetMonthlySaleVsExpense, param, CommandType.StoredProcedure);
+
+                data = dt.AsEnumerable()
+                    .Select(row => new Dashboard_BarTrendModel
+                    {
+                        MonthName = row.Field<string>("MonthName"),
+                        MonthId = row.Field<int>("MonthId"),
+                        TotalSale = row.Field<decimal?>("TotalSale"),
+                        TotalExpense = row.Field<decimal?>("TotalExpense")
+                    }).ToList();
+            }
+            return data;
+        }
+        public IEnumerable<Dashboard_MultiChartBarTrendModel> DashboardGetMonthlyResourcewiseTarget(int? FinancialYearID, int? ProjectID)
+        {
+            List<Dashboard_MultiChartBarTrendModel> data = null;
+            using (DBHelper dbHelper = new DBHelper())
+            {
+                DBParameterCollection param = new DBParameterCollection();
+                param.Add(new DBParameter("FinancialYearID", FinancialYearID, DbType.Int32));
+                param.Add(new DBParameter("ProjectID", ProjectID, DbType.Int32));
+                DataTable dt = dbHelper.ExecuteDataTable(DashBoardQueries.GetMonthlyResourcewiseTarget, param, CommandType.StoredProcedure);
+
+                data = dt.AsEnumerable()
+                    .Select(row => new Dashboard_MultiChartBarTrendModel
+                    {
+                        MonthName = row.Field<string>("MonthName"),
+                        ResourceName = row.Field<string>("ResourceName"),
+                        TargetValue = row.Field<decimal?>("TargetValue"),
+                        WonValue = row.Field<decimal?>("WonValue")
+                    }).ToList();
+            }
+            return data;
+        }
+
+        public IEnumerable<Dashboard_ColumnChartModel> DashboardGetProjectStatusDataYearly(int? FinancialYearID, int? ProjectID, int? MaxId)
+        {
+            List<Dashboard_ColumnChartModel> data = null;
+            using (DBHelper dbHelper = new DBHelper())
+            {
+                DBParameterCollection param = new DBParameterCollection();
+                param.Add(new DBParameter("FinancialYearID", FinancialYearID, DbType.Int32));
+                param.Add(new DBParameter("MaxId", MaxId, DbType.Int32));
+                param.Add(new DBParameter("ProjectID", ProjectID, DbType.Int32));
+                DataTable dt = dbHelper.ExecuteDataTable(DashBoardQueries.GetProjectStatusDataYearly, param, CommandType.StoredProcedure);
+
+                data = dt.AsEnumerable()
+                    .Select(row => new Dashboard_ColumnChartModel
+                    {
+                        ProjectID = row.Field<int>("ProjectID"),
+                        PorjectName = row.Field<string>("ProjectName"),
+                        ProjectCode = row.Field<string>("Code"),
+                        ProjectBudget = row.Field<double?>("ProjectBudget"),
+                        UtilizedCost = row.Field<double?>("UtilizedCost"),
+                        RowCount = row.Field<int>("Row_Count"),
+
+                    }).ToList();
+            }
+            return data;
+        }
+        #endregion DASHBOARD
     }
 }

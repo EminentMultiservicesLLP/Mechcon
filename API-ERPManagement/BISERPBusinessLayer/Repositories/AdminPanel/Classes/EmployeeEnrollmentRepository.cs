@@ -52,6 +52,7 @@ namespace BISERPBusinessLayer.Repositories.AdminPanel.Classes
                                 DesignationID = row.Field<int>("DesignationID"),
                                 Designation = row.Field<string>("Designation"),
                                 EmailId = row.Field<string>("EmailId"),
+                                IsTarget = row.Field<bool>("IsTarget"),
 
                             }).ToList();
 
@@ -77,6 +78,7 @@ namespace BISERPBusinessLayer.Repositories.AdminPanel.Classes
                 paramCollection.Add(new DBParameter("InsertedIPAddress", Items.InsertedIPAddress, DbType.String));
                 paramCollection.Add(new DBParameter("InsertedMacName", Items.InsertedMacName, DbType.String));
                 paramCollection.Add(new DBParameter("InsertedMacID", Items.InsertedMacID, DbType.String));
+                paramCollection.Add(new DBParameter("IsTarget", Items.IsTarget, DbType.Boolean));
                 iResult = dbHelper.ExecuteNonQuery(AdminPanelQueries.SaveUser, paramCollection, CommandType.StoredProcedure);
 
             }

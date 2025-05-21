@@ -90,5 +90,27 @@ namespace BISERPService.Controllers.SM
             }
         }
 
+        [Route("getUsersForAllocation")]
+        [HttpGet]
+        public IHttpActionResult getUsersForAllocation()
+        {
+            try
+            {
+                var details = _enquiryAllocation.GetUsersForAllocation();
+
+                if (details == null)
+                {
+                    return NotFound(); // or return BadRequest("No details found for the specified enquiry ID.");
+                }
+
+                return Ok(details.ToList());
+            }
+            catch (Exception ex)
+            {
+                _loggger.LogError("Error in Get Users ForAllocation of EnquiryAllocationController : parameter :" + Environment.NewLine + ex.StackTrace);
+                return InternalServerError(ex);
+            }
+        }
+
     }
 }

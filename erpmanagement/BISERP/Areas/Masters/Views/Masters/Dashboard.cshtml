@@ -1,5 +1,20 @@
 ﻿@Scripts.Render("~/bundles/jquerymodels")
 
+
+<style>
+    #btnNext {
+        float: inline-end;
+        margin-right: 35px;
+    }
+    #btnPrevious {
+        margin-left: 35px;
+    }
+    .resourceName{
+        color:darkred;
+        font-size:15px;
+    }
+</style>
+
 <script>
     $(function () {
         $(".datepicker").datepicker({
@@ -30,13 +45,19 @@
 <fieldset class="fieldsetCustom">
     <legend class="legendCustom">Select Period</legend>
     <div class="row">
-        <div class="col-lg-2 col-md-4 col-sm-12 mb-3">
+        @*<div class="col-lg-2 col-md-4 col-sm-12 mb-3">
             <label for="FromDate">From Date</label>
             <input type="text" id="FromDate" class="form-control datepicker" />
         </div>
         <div class="col-lg-2 col-md-4 col-sm-12 mb-3">
             <label for="ToDate">To Date</label>
             <input type="text" id="ToDate" class="form-control datepicker" />
+        </div>*@
+        <div class="col-lg-2 col-md-4 col-sm-12 mb-3">
+            <label class="required" for="FinancialYearID">Financial Year</label>
+            <select id="FinancialYearID" name="FinancialYearID" class="form-control">
+                <option value="">--Select Financial Year--</option>
+            </select>
         </div>
         <div class="col-lg-2 col-md-4 col-sm-12 mb-3">
             <label class="" for="ProjectID">Project</label>
@@ -53,7 +74,7 @@
 </fieldset>
 
 <fieldset class="fieldsetCustom">
-    <legend class="legendCustom"> Summury </legend>
+    <legend class="legendCustom"> Summary </legend>
     <div class="dashboard-container">
         <div class="dashboard-card">
             <h3>Enquiry</h3>
@@ -102,24 +123,91 @@
 
 <div class="row">
     <div class="col-sm-12 col-md-6">
-        <fieldset class="fieldsetCustom chartFieldset" id="sectorEnquiriesFS">
-            <legend class="legendCustom">Sector Enquiries</legend>
+        <fieldset class="fieldsetCustom chartFieldset" id="dashboard_MonthlySaleFS">
+            <legend class="legendCustom">Monthly Sale</legend>
         </fieldset>
     </div>
     <div class="col-sm-12 col-md-6">
-        <fieldset class="fieldsetCustom chartFieldset" id="submittedSectorOffersFS">
-            <legend class="legendCustom">Submitted Sector Offers</legend>
+        <fieldset class="fieldsetCustom chartFieldset" id="dashboard_MonthlyPurchaseFS">
+            <legend class="legendCustom">Monthly Purchase</legend>
         </fieldset>
     </div>
 </div>
 <div class="row">
     <div class="col-sm-12 col-md-6">
-        <fieldset class="fieldsetCustom chartFieldset" id="receivedSectorOffersFS">
-            <legend class="legendCustom">Received Sector Offers</legend>
+        <fieldset class="fieldsetCustom chartFieldset" id="dashboard_MonthlySaleVsTargetFS">
+            <legend class="legendCustom">Monthly Sale Vs Target</legend>
+        </fieldset>
+    </div>
+    <div class="col-sm-12 col-md-6">
+        <fieldset class="fieldsetCustom chartFieldset" id="dashboard_MonthlySaleVsExpenseFS">
+            <legend class="legendCustom">Monthly Sale Vs Expense</legend>
         </fieldset>
     </div>
 </div>
+<div id="Multi_Resources" style="border: 2px solid #7bf1e1;border-radius: 10px;"></div>
+
+<div class="row">
+    <div class="col-sm-12 col-md-6">
+        <fieldset class="fieldsetCustom chartFieldset" id="dashboard_SectorwiseBreakupFS">
+            <legend class="legendCustom">Sectorwise Breakup</legend>
+        </fieldset>
+    </div>
+    <div class="col-sm-12 col-md-6">
+        <fieldset class="fieldsetCustom chartFieldset" id="dashboard_ProductwiseBreakupFS">
+            <legend class="legendCustom">Productwise Breakup</legend>
+        </fieldset>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+        <fieldset class="fieldsetCustom chartFieldset" id="dashboard_ProjectwiseStatusFS">
+            <legend class="legendCustom">Project Status</legend>
+            <button type="button" id="btnPrevious" class="btn btn-danger" disabled> Previous</button>
+            <button type="button" id="btnNext" class="btn btn-danger" disabled> Next</button>
+        </fieldset>
+    </div>    
+</div>
+
 <script>
+    var MaxProjectId = 0;
+    var MinProjectId = 0;
+    function loadFinancialYear() {
+        $.ajax({
+            type: "GET",
+            url: "/ResourceTarget/GetFinancialYear",
+            dataType: "json",
+            success: function (data) {
+                let today = new Date();
+                let month = today.getMonth() + 1;
+                let year = today.getFullYear();
+                year = month < 4 ? year - 1 : year;
+                let currentYear = data.filter(item => (item.FinancialYear).split('-')[0] == year);
+
+                const $financialYearID = $('#FinancialYearID');
+                      $financialYearID.empty();
+                if (data.error) {
+                    $financialYearID.append('<option value="">--Error loading financial years--</option>');
+                    console.error("Error loading financial years:", data.error);
+                    return;
+                }
+                $financialYearID.append('<option value="">--Select Financial Year--</option>');
+                data.forEach(function (financialYear) {
+                    $financialYearID.append(`<option value="${financialYear.FinancialYearID}">${financialYear.FinancialYear}</option>`);
+                });
+                $financialYearID.val(currentYear[0].FinancialYearID);
+                go();
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                $('#FinancialYearID').empty();
+                $('#FinancialYearID').append('<option value="">--Error loading sources--</option>');
+                console.error("Error loading sources:", errorThrown);
+            }
+        });
+    }
+    loadFinancialYear();
+
     function loadProject() {
         $.ajax({
             type: "GET",
@@ -140,31 +228,57 @@
     loadProject();
 
     function go() {
-        const fromDate = $("#FromDate").val();
-        const toDate = $("#ToDate").val();
+        //const fromDate = $("#FromDate").val();
+        //const toDate = $("#ToDate").val();
+        const financialYear= $('#FinancialYearID').val();
+        const projectID = $("#ProjectID").val();
+        MaxProjectId = 0;
 
         // Check if the From Date is earlier than the To Date
-        if (new Date(fromDate) > new Date(toDate)) {
-            ShowAlert("warning", "From Date cannot be later than To Date.");
+        if (financialYear == 0 || financialYear == undefined) {
+            ShowAlert("warning", "Please Select Financial Year First !!");
             return;
         }
+        GetDashBoardCountSummury(financialYear, projectID);
+        loadMonthlySale(financialYear, projectID);
+        loadMonthlyPurchase(financialYear, projectID);
+        loadMonthlySaleVsTarget(financialYear, projectID);
+        loadMonthlySaleVsExpense(financialYear, projectID);
+        loadMonthlyResourcewiseTarget(financialYear, projectID);
+        loadSectorwiseBreakup(financialYear);
+        loadProductwiseBreakup(financialYear);
+        loadProjectStatus(financialYear, projectID, MaxProjectId); // here 0 is parameter for MaxProjectId
+    }
+    // btn Previous and next call
+    $("#btnPrevious").on("click", function () {
+        const financialYear = $('#FinancialYearID').val();
+        const projectID = $("#ProjectID").val();        
 
+        MaxProjectId = MinProjectId - 10;
+        MaxProjectId <= 0 ? 0 : MaxProjectId;
+
+        loadProjectStatus(financialYear, projectID, MaxProjectId);
+        
+    });
+    $("#btnNext").on("click", function () {
+        const financialYear = $('#FinancialYearID').val();
         const projectID = $("#ProjectID").val();
 
-        GetDashBoardCountSummury(fromDate, toDate, projectID);
-        loadSectorEnquiries(fromDate, toDate);
-        loadSubmittedSectorOffers(fromDate, toDate);
-        loadReceivedSectorOffers(fromDate, toDate);
-    }
+        loadProjectStatus(financialYear, projectID, MaxProjectId);
+       
+    });
 
-    function GetDashBoardCountSummury(fromDate, toDate, projectID) {
+    $('#FinancialYearID').on('change', function () {
+        MaxProjectId = 0;
+    })
+    function GetDashBoardCountSummury(FinancialYearID, projectID) {
         const antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
 
         $.ajax({
             headers: { "__RequestVerificationToken": antiForgeryToken },
             type: 'GET',
             url: "/DashBoard/GetDashBoardCountSummury",
-            data: { FromDate: fromDate, ToDate: toDate, ProjectID: projectID },
+            data: { FinancialYearID: FinancialYearID, ProjectID: projectID },
             dataType: "json",
             success(response) {
                 if (response.success && Array.isArray(response.records)) {
@@ -183,68 +297,59 @@
             }
         });
     }
+    // convert number to small
 
-    //-----------------Start Location Wise Chart Rendering Function with Base Configuration --------------------//
-    function renderBarChart({ containerId, data, callFor }) {
-
-        // Remove existing chart and create a new container
-        $(`#${containerId}Chart`).remove();
-        $(`#${containerId}FS`).append(`<div id="${containerId}Chart" class="chart-container"></div>`);
-
-        // Check if data is valid
-        if (!data || data.length === 0 || data.every(item => (item.TotalCount || 0) === 0)) {
-            $(`#${containerId}Chart`).html('<div class="no-data-message" >No data available for the selected period.</div>');
-            return;
+    function formatValue(value) {
+        let val = Math.abs(value);
+        if (val >= 10 ** 3 && val < 10 ** 5) {
+            val = (val / 1000).toFixed(2) + 'K'
+        } else if (val >= 10 ** 5 && val < 10 ** 7) {
+            val = (val / 100000).toFixed(2) + 'L';
+        } else if (val >= 10 ** 7) {
+            val = (val / 10000000).toFixed(2) + 'Cr';
+        }
+        else {
+            val = val;
         }
 
-        // Extract data points
-        const chartData = {
-            monthsName: data.map(item => item.MonthName),
-            totalCounts: data.map(item => item.TotalCount),
-            domesticCounts: data.map(item => item.DomesticCount),
-            exportCounts: data.map(item => item.ExportCount),
-            sezCounts: data.map(item => item.SEZCount),
-            totalValues: data.map(item => item.TotalValue),
-            domesticValues: data.map(item => item.DomesticValue),
-            exportValues: data.map(item => item.ExportValue),
-            sezValues: data.map(item => item.SEZValue),
-        };
+        return val
+    }
 
-        // Tooltip formatter helper function
-        const getTooltipContent = (monthName, dataPointIndex) => {
-            if (callFor === "Enquiry") {
-                return `
-                <div style="padding: 10px; font-size: 14px; border: 1px solid #ccc; border-radius: 5px; background: #fff;">
-                    <strong>${monthName}</strong><br>
-                    Domestic Count: ${chartData.domesticCounts[dataPointIndex]}<br>
-                    Export Count: ${chartData.exportCounts[dataPointIndex]}<br>
-                    SEZ Count: ${chartData.sezCounts[dataPointIndex]}<br>
-                    Total Count: ${chartData.totalCounts[dataPointIndex]}
-                </div>`;
-            } else {
-                return `
-                <div style="padding: 10px; font-size: 14px; border: 1px solid #ccc; border-radius: 5px; background: #fff;">
-                    <strong>${monthName}</strong><br>
-                    Domestic Value: ${chartData.domesticValues[dataPointIndex]}<br>
-                    Export Value: ${chartData.exportValues[dataPointIndex]}<br>
-                    SEZ Value: ${chartData.sezValues[dataPointIndex]}<br>
-                    Total Value: ${chartData.totalValues[dataPointIndex]}
-                </div>`;
-            }
-        };
+    function NumbertoMoney(value) {
+        if (typeof value !== "undefined") {
+            return "Rs." + value.toLocaleString('en-US');
+        }
+        return value
+    }
+    //-----------------Start MutliChart_BarChart --------------------//
+    function renderMutliChart_BarChart({ containerId, data, count }) {
+      
+        let ResourceName = data[0].ResourceName;
+        $("#Multi_Resources").append('<div class="row"><div class="col-sm-12 col-md-12"><fieldset class="fieldsetCustom chartFieldset" id="' + containerId + '_Multi' + count + 'FS"><legend class="legendCustom"><span class="resourceName">' + ResourceName +'</span> Monthwise Target </legend><div id ="' + containerId + count + 'Chart" class="chart-container"></div></fieldset></div></div>');
 
+        // Check if data is valid
+        if (!data || data.length === 0) {
+            $(`#${containerId}${count}Chart`).html('<div class="no-data-message" >No data available for the selected period.</div>');
+            return;
+        }
+        const lableData = data.map(item => item.MonthName);
+        const seriesdata = [{
+            name: 'Target Value',
+            type: 'column',
+            data: data.map(item => item.TargetValue)
+        },
+        {
+            name: 'Won Value',
+            type: 'column',
+            data: data.map(item => item.WonValue)
+        }]
+       
         // Chart options
         const options = {
-            series: [
-                { name: 'Domestic', data: chartData.domesticCounts },
-                { name: 'Export', data: chartData.exportCounts },
-                { name: 'SEZ', data: chartData.sezCounts }
-            ],
+            series: seriesdata,
             chart: {
                 type: 'bar',
                 height: 280,
-                toolbar: { show: false },
-                stacked: true,
                 events: {
                     resize: (chart, width, height) => {
                         chart.updateOptions({
@@ -253,19 +358,18 @@
                     }
                 }
             },
+            stroke: {
+                width: [0, 2.5],
+                curve: 'smooth'
+            },
             plotOptions: {
                 bar: {
-                    horizontal: true,
+                    horizontal: false,
                     columnWidth: '50%',
                     dataLabels: {
-                        total: {
                             enabled: true,
-                            offsetX: 0,
-                            style: {
-                                fontSize: '13px',
-                                fontWeight: 900
-                            }
-                        }
+                            orientation: 'vertical',
+                            position: 'center'
                     }
                 }
             },
@@ -274,14 +378,25 @@
                 style: {
                     fontFamily: 'Calibri',
                     fontWeight: 'normal',
-                    colors: ['#000']
+                    color: 'white'
                 },
+                  formatter: formatValue,
                 dropShadow: {
                     enabled: false
-                }
+                },
+
             },
             xaxis: {
-                categories: chartData.monthsName,
+                categories: lableData,
+            },
+            yaxis: {
+                labels: {
+                    formatter: formatValue,
+                    style: {
+                        fontSize: '9px',
+                        colors: '#000',
+                    }
+                }
             },
             grid: {
                 borderColor: '#e7e7e7',
@@ -293,9 +408,152 @@
             tooltip: {
                 shared: true,
                 intersect: false,
-                custom: function ({ series, seriesIndex, dataPointIndex, w }) {
-                    const monthName = w.config.xaxis.categories[dataPointIndex];
-                    return getTooltipContent(monthName, dataPointIndex);
+
+                y: {
+                    formatter: function (val){
+                        return `${NumbertoMoney(val)}`;
+                    }
+                }
+            },
+            legend: {
+                position: 'top',
+                horizontalAlign: 'center'
+            },
+            responsive: [{
+                breakpoint: 768,
+                options: {
+                    chart: { height: 300 },
+                    plotOptions: { bar: { horizontal: false } }
+                }
+            }]
+        };
+
+        // Render the chart
+        const chart = new ApexCharts(document.querySelector(`#${containerId}${count}Chart`), options);
+        chart.render();
+    }
+    //-----------------Start Location Wise Chart Rendering Function with Base Configuration --------------------//
+    function renderBarChart({ containerId, data, callFor }) {
+        // Remove existing chart and create a new container
+        $(`#${containerId}Chart`).remove();
+        $(`#${containerId}FS`).append(`<div id="${containerId}Chart" class="chart-container"></div>`);
+
+        // Check if data is valid
+        if (!data || data.length === 0) {
+            $(`#${containerId}Chart`).html('<div class="no-data-message" >No data available for the selected period.</div>');
+            return;
+        }
+        const lableData = data.map(item => item.MonthName);
+
+        var chartData = {};
+        let isStack = true;
+        let ishorizontal = true;
+
+        if (callFor.length == 1) {
+
+            chartData = {
+                [`Total${callFor[0]}`]: data.map(item => item[`Total${callFor[0]}`])
+            };
+            isStack = true
+        }
+        else if (callFor.length == 2) {
+            chartData = {
+                [`Total${callFor[0]}`]: data.map(item => item[`Total${callFor[0]}`]),
+                [`Total${callFor[1]}`]: data.map(item => item[`Total${callFor[1]}`])
+            };
+            isStack = false;
+            ishorizontal = false;
+        }
+
+        const seriesdata = Object.keys(chartData).map(key => {
+            return {
+                name: key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1'), // Title case
+                data: chartData[key]
+            };
+        });
+        // Tooltip formatter helper function
+        const getTooltipContent = (monthName, dataPointIndex) => {
+            if (callFor.length == 1) {
+                return `<div style="padding: 10px; font-size: 14px; border: 1px solid #ccc; border-radius: 5px; background: #fff;">
+                    <strong>${monthName}</strong><br>
+                    Total ${callFor[0]}: ${NumbertoMoney(chartData[`Total${callFor[0]}`][dataPointIndex])}
+                </div>`;
+            }
+            else if (callFor.length == 2) {
+                return `<div style="padding: 10px; font-size: 14px; border: 1px solid #ccc; border-radius: 5px; background: #fff;">
+                    <strong>${monthName}</strong><br>
+                    Total ${callFor[0]}: ${NumbertoMoney(chartData[`Total${callFor[0]}`][dataPointIndex])}<br>
+                    Total ${callFor[1]}: ${NumbertoMoney(chartData[`Total${callFor[1]}`][dataPointIndex])}
+                </div>`;
+            }
+
+        };
+
+        // Chart options
+        const options = {
+            series: seriesdata,
+            chart: {
+                type: 'bar',
+                height: 280,
+                toolbar: { show: false },
+                //  stacked: isStack,
+                events: {
+                    resize: (chart, width, height) => {
+                        chart.updateOptions({
+                            chart: { height: height || 280 }
+                        });
+                    }
+                }
+            },
+            plotOptions: {
+                bar: {
+                    horizontal: false,
+                    columnWidth: '50%',
+                    dataLabels: {
+                        enabled: true,
+                        orientation: 'vertical',
+                        position: 'center',
+                    }
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                style: {
+                    fontFamily: 'Calibri',
+                    fontWeight: 'normal',
+                    color: 'white'
+                },
+                dropShadow: {
+                    enabled: false
+                },
+                formatter: formatValue,
+            },
+            xaxis: {
+                categories: lableData,
+            },
+            yaxis: {
+                labels: {
+                    formatter: formatValue,
+                    style: {
+                        fontSize: '9px',
+                        colors: '#000',
+                    }
+                }
+            },
+            grid: {
+                borderColor: '#e7e7e7',
+                row: {
+                    colors: ['#f3f3f3', 'transparent'],
+                    opacity: 0.5
+                }
+            },
+            tooltip: {
+                shared: true,
+                intersect: false,
+                y:{
+                    formatter: function (val) {
+                        return `${NumbertoMoney(val)}`;
+                    }
                 }
             },
             legend: {
@@ -315,14 +573,14 @@
         const chart = new ApexCharts(document.querySelector(`#${containerId}Chart`), options);
         chart.render();
     }
-
+    //-----------------Start Pie Chart Rendering Function with Base Configuration --------------------//
     function renderPieChart({ containerId, data, callFor }) {
         // Remove existing chart and append a new container
         $(`#${containerId}Chart`).remove();
         $(`#${containerId}FS`).append(`<div id="${containerId}Chart" class="chart-container"></div>`);
 
         // Handle no-data scenario
-        if (!data || data.length === 0 || data.every(item => (item.TotalCount || 0) === 0)) {
+        if (!data || data.length === 0 || data.every(item => (item.Percentage || 0) === 0)) {
             $(`#${containerId}Chart`).html(
                 `<div class="no-data-message" >
                 No data available for the selected period.
@@ -330,31 +588,30 @@
             );
             return;
         }
-
+        
         // Prepare series and labels for the chart
-        const series = data.map(item => item.TotalCount || 0);
-        const labels = data.map(item => item.Name || "Unknown");
-
+        var series = data.map(item => item.Percentage || 0);
+        var labels = data.map(item => item[callFor]);
+        var NetAmount = data.map(item => item.WonValue);
+        
         // Define chart options
         const options = {
-            series,
+            series:series,
             chart: {
                 height: 250,
                 type: 'pie',
                 toolbar: { show: false }
             },
-            labels,
+            labels: labels,
+            colors: ['#008FFB', '#00E396', '#FEB019', '#FF4560', '#775DD0', '#c7f464', '#F86624','#2E294E'],
             tooltip: {
                 shared: true,
                 intersect: false,
                 y: {
                     formatter: function (_, opts) {
-                        const details = data[opts.seriesIndex];
-                        if (callFor === "Enquiry") {
-                            return `${details.TotalCount || 0}`;
-                        } else {
-                            return `${details.TotalValue || 0}`;
-                        }
+                        const details = data[opts.seriesIndex];                       
+                        return NumbertoMoney(details.WonValue);
+                        
                     }
                 }
             },
@@ -364,7 +621,7 @@
             },
             dataLabels: {
                 enabled: true,
-                formatter: (val, opts) => `${val.toFixed(1)}% (${opts.w.globals.series[opts.seriesIndex]})`,
+                formatter: (val, opts) => `${val.toFixed(1)}%`,
                 style: {
                     fontFamily: 'Calibri',
                     fontWeight: 'normal',
@@ -385,11 +642,150 @@
         const chart = new ApexCharts(document.querySelector(`#${containerId}Chart`), options);
         chart.render();
     }
-    //-----------------End Location Wise Chart Rendering Function with Base Configuration --------------------//
+     //-----------------Start Column Chart Rendering Function with Base Configuration --------------------//
+    function renderColumnChart({ containerId, data, callFor }) {
+        $(`#${containerId}Chart`).remove();
+        $(`#${containerId}FS`).append(`<div id="${containerId}Chart" class="chart-container"></div>`);
 
+        // Check if data is valid
+        if (!data || data.length === 0) {
+            $(`#${containerId}Chart`).html('<div class="no-data-message" >No data available for the selected period.</div>');
+            return;
+        }
+        const count = data.map(item => item.RowCount);
+        let maxId= Math.max(...data.filter(item => item.ProjectID).map(item => item.ProjectID));
+        MinProjectId = Math.min(...data.filter(item => item.ProjectID).map(item => item.ProjectID));
+
+        if (count[0] == 10 && MaxProjectId > 0) {
+            $("#btnPrevious").prop('disabled', false);
+            $("#btnNext").prop('disabled', false);
+        }
+        else if (count[0] == 10 && MaxProjectId > 10) {
+            $("#btnPrevious").prop('disabled', true);
+            $("#btnNext").prop('disabled', false);
+        }
+        else if (count[0] < 10 && MaxProjectId == 0) {
+            $("#btnPrevious").prop('disabled', true);
+            $("#btnNext").prop('disabled', true);
+        } else if (count[0] < 10) {
+            $("#btnPrevious").prop('disabled', false);
+            $("#btnNext").prop('disabled', true);
+        }
+        else {
+            $("#btnNext").prop('disabled', false);
+        }
+       
+
+        MaxProjectId = maxId; // Set here  MaxProjectId value
+
+        const lableData = data.map(item => item.ProjectCode);
+        const seriesdata = [{
+            name: 'Allocated Budget',
+            type: 'column',
+            data: data.map(item => item.ProjectBudget)
+        },
+        {
+            name: 'Utilized Cost',
+            type: 'line',
+            data: data.map(item => item.UtilizedCost)
+        }]              
+
+       
+        // Chart options
+        const options = {
+            series: seriesdata,
+            chart: {
+                type: 'line',
+                height: 280,
+                zoom: {
+                    enabled: false
+                },
+                toolbar: { show: false }              
+            },
+            plotOptions: {
+                bar: {
+                    horizontal: false,
+                    columnWidth: '50%',
+                    dataLabels: {
+                        enabled: true,
+                        orientation: 'vertical',
+                        position: 'center',
+                    }
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                enabledOnSeries: [0],
+                style: {
+                    fontFamily: 'Arial',
+                    fontSize: '11px',
+                    fontWeight: 'normal',
+                    /* colors: '#000'*/
+                },
+                formatter: formatValue
+                , dropShadow: {
+                    enabled: false,
+                    top: 0,
+                    left: 0,
+                    blur: 3,
+                    opacity: 0.5
+                }
+            },
+            colors: ['#008FFB', '#FF4560', '#FEB019'],
+            xaxis: {
+                categories: lableData,
+            },
+            yaxis: {
+                labels: {
+                    formatter: formatValue,
+                    style: {
+                        fontSize: '9px',
+                        colors: '#000',
+                    }
+                }
+            },
+           
+            stroke: {
+                width: [0, 3.5],
+                curve: 'smooth'
+            },
+            //grid: {
+            //    borderColor: '#e7e7e7',
+            //    row: {
+            //        colors: ['#f3f3f3', 'transparent'],
+            //        opacity: 0.5
+            //    }
+            //},
+            tooltip: {
+                shared: true,
+                intersect: false,
+                y: {
+                    formatter: function (val) {
+                        return `${NumbertoMoney(val)}`;
+                    }
+                }
+            },
+            legend: {
+                position: 'top',
+                horizontalAlign: 'center'
+            },
+            responsive: [{
+                breakpoint: 768,
+                options: {
+                    chart: { height: 300 },
+                    plotOptions: { bar: { horizontal: false } }
+                }
+            }]
+        };
+
+        // Render the chart
+        const chart = new ApexCharts(document.querySelector(`#${containerId}Chart`), options);
+        chart.render();
+    }
+
+    //-----------------End Chart Rendering Function with Base Configuration --------------------//
     function loadData({ url, data, containerId, renderChart, callFor }) {
         const antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
-
         $.ajax({
             headers: { "__RequestVerificationToken": antiForgeryToken },
             type: 'GET',
@@ -398,12 +794,30 @@
             dataType: "json",
             success(response) {
                 if (response.success && Array.isArray(response.records)) {
-                    renderChart({
-                        containerId: containerId,
-                        data: response.records,
-                        callFor: callFor
-                    });
-                } else {
+                    if (renderChart.name != "renderMutliChart_BarChart") {
+                        renderChart({
+                            containerId: containerId,
+                            data: response.records,
+                            callFor: callFor
+                        });
+                    }
+                    else {
+                        let Resource = [...new Set(response.records.map(record => record.ResourceName))];
+                        let count = 1;
+                        // Remove existing chart and create a new container
+                        $("#Multi_Resources").empty();
+
+                        Resource.forEach(resourceName => {
+                            let filteredRecords = response.records.filter(record => record.ResourceName === resourceName);
+                            renderChart({
+                                containerId: containerId,
+                                data: filteredRecords,
+                                count: count++
+                            });
+                        });
+                    }
+                }
+                else {
                     alert(response.message || `Unable to load data for ${containerId}.`);
                     renderChart({
                         containerId: containerId,
@@ -419,40 +833,84 @@
     }
 
     //-----------------Functions For Fetching Data--------------------//
-    function loadSectorEnquiries(FromDate, ToDate) {
+    function loadMonthlySale(FinancialYearID, ProjectID) {
         loadData({
-            url: "/SM_DashBoard/SM_DashBoard/GetSectorEnquiries",
-            data: { FromDate, ToDate },
-            containerId: 'sectorEnquiries',
-            renderChart: renderPieChart,
-            callFor: "Enquiry"
+            url: "/DashBoard/DashboardGetMonthlySale",
+            data: { FinancialYearID, ProjectID},
+            containerId: 'dashboard_MonthlySale',
+            renderChart: renderBarChart,
+            callFor: ['Sale']
+        });
+    }
+    function loadMonthlyPurchase(FinancialYearID, ProjectID) {
+        loadData({
+            url: "/DashBoard/DashboardGetMonthlyPurchase",
+            data: { FinancialYearID, ProjectID },
+            containerId: 'dashboard_MonthlyPurchase',
+            renderChart: renderBarChart,
+            callFor: ['Purchase']
+        });
+    }
+    function loadMonthlySaleVsTarget(FinancialYearID, ProjectID) {
+        loadData({
+            url: "/DashBoard/DashboardGetMonthlySaleVsTarget",
+            data: { FinancialYearID, ProjectID},
+            containerId: 'dashboard_MonthlySaleVsTarget',
+            renderChart: renderBarChart,
+            callFor: ['Sale','Target']
+        });
+    }
+    function loadMonthlySaleVsExpense(FinancialYearID, ProjectID) {
+        loadData({
+            url: "/DashBoard/DashboardGetMonthlySaleVsExpense",
+            data: { FinancialYearID, ProjectID},
+            containerId: 'dashboard_MonthlySaleVsExpense',
+            renderChart: renderBarChart,
+            callFor: ['Sale', 'Expense']
+        });
+    }
+    function loadMonthlyResourcewiseTarget(FinancialYearID, ProjectID) {
+        loadData({
+            url: "/DashBoard/DashboardGetMonthlyResourcewiseTarget",
+            data: { FinancialYearID, ProjectID },
+            containerId: 'dashboard_MonthlyResourcewise',
+            renderChart: renderMutliChart_BarChart,
+            callFor: 0
         });
     }
 
-    function loadSubmittedSectorOffers(FromDate, ToDate) {
+    function loadSectorwiseBreakup(FinancialYearID) {
         loadData({
-            url: "/SM_DashBoard/SM_DashBoard/GetSubmittedSectorOffers",
-            data: { FromDate, ToDate },
-            containerId: 'submittedSectorOffers',
+            url: "/SM_Reports/SM_Reports/GetSectorWiseSalesRpt",
+            data: { FinancialYearID},
+            containerId: 'dashboard_SectorwiseBreakup',
             renderChart: renderPieChart,
-            callFor: "Offer"
+            callFor:'Sector'
         });
     }
-
-    function loadReceivedSectorOffers(FromDate, ToDate) {
+    function loadProductwiseBreakup(FinancialYearID) {
         loadData({
-            url: "/SM_DashBoard/SM_DashBoard/GetReceivedSectorOffers",
-            data: { FromDate, ToDate },
-            containerId: 'receivedSectorOffers',
+            url: "/SM_Reports/SM_Reports/GetProductWiseSalesRpt",
+            data: { FinancialYearID },
+            containerId: 'dashboard_ProductwiseBreakup',
             renderChart: renderPieChart,
-            callFor: "Offer"
+            callFor: 'Product'
+        });
+    }
+    function loadProjectStatus(FinancialYearID, ProjectID, MaxId) {
+        loadData({
+            url: "/DashBoard/DashboardGetProjectStatusDataYearly",
+            data: { FinancialYearID, ProjectID, MaxId },
+            containerId: 'dashboard_ProjectwiseStatus',
+            renderChart: renderColumnChart,
+            callFor: [MaxProjectId]
         });
     }
 
     function reset() {
-        $("#FromDate").datepicker("setDate", getFirstDateOfFinancialYear());
-        $("#ToDate").datepicker("setDate", new Date());
+        loadFinancialYear();
         $('#ProjectID').val("null");
         $('.dashboard-card h2').text('0');
+        go();
     }
 </script>

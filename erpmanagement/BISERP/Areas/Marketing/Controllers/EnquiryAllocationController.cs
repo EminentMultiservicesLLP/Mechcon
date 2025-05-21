@@ -127,6 +127,24 @@ namespace BISERP.Areas.Marketing.Controllers
                 return Json(new { success = false, message = "An error occurred while retrieving enquiry" }, JsonRequestBehavior.AllowGet);
             }
         }
-
+        [HttpGet]
+        public async Task<JsonResult> GetUsersForAllocation()
+        {
+            JsonResult jResult;
+            try
+            {
+                string _url = $"{url}/enquiryAllocation/getUsersForAllocation/{Common.Constants.JsonTypeResult}";
+                var records = await Common.AsyncWebCalls.GetAsync<List<AllocationUserModel>>(client, _url, CancellationToken.None);
+                // Session["usermenusession"] = records;
+                jResult = records != null ? Json(new { data = records }, JsonRequestBehavior.AllowGet) : Json("Error");
+                Session["prefixrecords"] = records;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error in GetUsers :" + ex.Message + Environment.NewLine + ex.StackTrace.ToString());
+                jResult = Json("Error");
+            }
+            return jResult;
+        }
     }
 }

@@ -12,5 +12,6 @@ namespace BISERPBusinessLayer.Repositories.SM.Interfaces
         IEnumerable<EnquiryRegisterEntities> GetEnqForAllocation(int? statusID);
         EnquiryAllocationEntities SaveAllocation(EnquiryAllocationEntities model);
         IEnumerable<EnquiryAllocationEntities> GetAllocation();
+        IEnumerable<AllocationUserEntities> GetUsersForAllocation();
     }
 }

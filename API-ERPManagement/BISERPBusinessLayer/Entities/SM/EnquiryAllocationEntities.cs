@@ -31,4 +31,9 @@ namespace BISERPBusinessLayer.Entities.SM
         public string UpdatedIPAddress { get; set; }
         public bool Deactive { get; set; }
     }
+    public class AllocationUserEntities
+    {
+        public int UserId { get; set; }
+        public string UserName { get; set; }
+    }
 }
