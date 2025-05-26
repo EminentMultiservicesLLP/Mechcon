@@ -16,6 +16,7 @@ namespace BISERPBusinessLayer.Entities.Masters
         public string strWODate { get; set; }
         public string ClientName { get; set; }
         public string AllocatedToName { get; set; }
+        public string ProjectDispatched { get; set; }
         public string strDispatchDate { get; set; }
     }
     public class ProjectCostingSummaryEntity

@@ -329,12 +329,13 @@ namespace BISERPBusinessLayer.Repositories.AdminPanel.Classes
             return _result;
 
         }
-        public List<UserMenuAccess> GetUserAccess(int UserId)
+        public List<UserMenuAccess> GetUserAccess(int LoginId, int UserId)
         {
             List<UserMenuAccess> _result = null;
             TryCatch.Run(() =>
             {
                 DBParameterCollection paramCollection = new DBParameterCollection();
+                paramCollection.Add(new DBParameter("LoginId", LoginId, DbType.Int32));
                 paramCollection.Add(new DBParameter("UserId", UserId, DbType.Int32));
                 using (DBHelper dbHelper = new DBHelper())
                 {

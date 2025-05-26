@@ -42,14 +42,14 @@ namespace BISERPService.Controllers.AdminPanel
             else
                 return BadRequest();
         }
-        [Route("GetUserDetails")]
+        [Route("GetUserDetails/{LoginId}")]
         [AcceptVerbs("GET", "POST")]
-        public IHttpActionResult GetUserDetails()
+        public IHttpActionResult GetUserDetails(int LoginId)
         {
             List<EmployeeEnrollmentEntity> items = new List<EmployeeEnrollmentEntity>();
             TryCatch.Run(() =>
             {
-                var list = _EmployeeEnrollment.GetUserDetails();
+                var list = _EmployeeEnrollment.GetUserDetails(LoginId);
                 if (list != null && list.Count() > 0)
                     items = list.ToList();
             }).IfNotNull(ex =>

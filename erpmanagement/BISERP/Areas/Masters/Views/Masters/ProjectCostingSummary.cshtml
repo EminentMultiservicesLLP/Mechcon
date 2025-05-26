@@ -45,19 +45,25 @@
             url: "/ResourceTarget/GetFinancialYear",
             dataType: "json",
             success: function (data) {
+                let today = new Date();
+                let month = today.getMonth() + 1;
+                let year = today.getFullYear();
+                year = month < 4 ? year - 1 : year;
+                let currentYear = data.filter(item => (item.FinancialYear).split('-')[0] == year);
+                debugger
                 const $financialYearID = $('#FinancialYearID');
                 $financialYearID.empty();
-
                 if (data.error) {
                     $financialYearID.append('<option value="">--Error loading financial years--</option>');
                     console.error("Error loading financial years:", data.error);
                     return;
                 }
-
                 $financialYearID.append('<option value="">--Select Financial Year--</option>');
                 data.forEach(function (financialYear) {
                     $financialYearID.append(`<option value="${financialYear.FinancialYearID}">${financialYear.FinancialYear}</option>`);
                 });
+                $financialYearID.val(currentYear[0].FinancialYearID);
+                go();
             },
             error: function (xhr, textStatus, errorThrown) {
                 $('#FinancialYearID').empty();
@@ -184,7 +190,7 @@
         showTitle: true,
         showBottom: true,
         resizable: true,
-        scrollModel: { autoFit: true },
+        scrollModel: { autoFit: false },
         filterModel: { on: true, mode: "AND", header: true },
         draggable: false,
         hwrap: false,
@@ -196,6 +202,9 @@
         colModel: ProjectCostingSummaryGrid_GCM,
         dataModel: ProjectCostingSummaryGrid_GDM,
         pageModel: { type: "local", rPP: 50 },
+        summaryData: [
+            { ProjectCode: 'Total', summaryRow: true, pq_fn: { Sales: 'sum(D:D)', Purchases: 'sum(E:E)', PercentPurchases: 'sum(F:F)', DirectCost: 'sum(G:G)', PercentDirectCost: 'max(H:H)', GrossMargin: 'sum(I:I)', IndirectCost: 'sum(J:J)', PercentIndirectCost: 'max(K:K)', NetMargin: 'sum(L:L)', PercentNetMargin: 'sum(M:M)' } },
+        ],
         toolbar: {
             items: [
                 {
@@ -224,7 +233,14 @@
                     }
                 }
             ]
-        }
+        },
+        rowInit: function (ui) {
+            if (ui.rowData.ProjectCode == "Total") {
+                return {
+                    style: "background:#1f50a7 !important; color:white; font-weight: bold; font-size: 15px;"
+                };
+            }
+        },
     }
     var $ProjectCostingSummaryGrid = $("#ProjectCostingSummaryGrid").pqGrid(setProjectCostingSummaryGrid);
     function loadProjectCostingSummaryGrid(financialYearID) {
@@ -235,7 +251,7 @@
             },
             type: 'GET',
             url: "/Masters/MasterListOfProject/GetProjectCostingSummary",
-            data: { financialYearID: financialYearID},
+            data: { financialYearID: financialYearID },
             dataType: "json",
 
             beforeSend: function () {
@@ -271,7 +287,7 @@
     //-----------------------------------ProjectCostingSummaryGrid (Ends here)-----------------------------------//
 
     function clearFormData() {
-        $("#FinancialYearID").val('');
+        loadFinancialYear();
         ClearParamGrid('ProjectCostingSummaryGrid');
     }
 </script>

@@ -20,7 +20,7 @@ namespace BISERPBusinessLayer.Repositories.AdminPanel.Interfaces
 
         //---------------------------------new 2024
         List<RoleAccess> GetParentMenu();
-        List<UserMenuAccess> GetUserAccess(int UserId);
+        List<UserMenuAccess> GetUserAccess(int LoginId, int UserId);
         int UserMenuAccess(UserFormAccess Items);
 
     }

@@ -31,13 +31,14 @@ namespace BISERPBusinessLayer.Repositories.AdminPanel.Classes
             }
             return items;
         }
-        public IEnumerable<EmployeeEnrollmentEntity> GetUserDetails()
+        public IEnumerable<EmployeeEnrollmentEntity> GetUserDetails(int LoginId)
         {
             List<EmployeeEnrollmentEntity> items = null;
             using (DBHelper dbHelper = new DBHelper())
             {
-
-                DataTable dtManufacturer = dbHelper.ExecuteDataTable(AdminPanelQueries.GetUserDetails, CommandType.StoredProcedure);
+                DBParameterCollection paramCollection = new DBParameterCollection();
+                paramCollection.Add(new DBParameter("LoginId", LoginId, DbType.Int32));
+                DataTable dtManufacturer = dbHelper.ExecuteDataTable(AdminPanelQueries.GetUserDetails, paramCollection, CommandType.StoredProcedure);
                 items = dtManufacturer.AsEnumerable()
                             .Select(row => new EmployeeEnrollmentEntity
                             {

@@ -63,7 +63,8 @@ namespace BISERP.Areas.AdminPanel.Controllers
             List<EmployeeEnrollmentModel> entity = new List<EmployeeEnrollmentModel>();
             try
             {
-                string _url = url + "/EmployeeEnrollment/GetUserDetails" + Common.Constants.JsonTypeResult;
+                int LoginId = Convert.ToInt32(Session["AppUserId"].ToString());
+                string _url = url + "/EmployeeEnrollment/GetUserDetails/" + LoginId + Common.Constants.JsonTypeResult;
                 entity = await Common.AsyncWebCalls.GetAsync<List<EmployeeEnrollmentModel>>(client, _url, CancellationToken.None);
                 if (entity != null && entity.Count > 0)
                 {

@@ -290,8 +290,9 @@ namespace BISERP.Areas.AdminPanel.Controllers
         [HttpGet]
         public async Task<JsonResult> GetUserAccess(int UserId)
         {
+            int LoginId = Convert.ToInt32(Session["AppUserId"].ToString());
             JsonResult jResult;
-            string _url = url + "/RoleAccess/GetUserAccess/" + UserId + Common.Constants.JsonTypeResult;
+            string _url = url + "/RoleAccess/GetUserAccess/"+ LoginId + "/" + UserId + Common.Constants.JsonTypeResult;
             var records = await Common.AsyncWebCalls.GetAsync<List<UserMenuAccess>>(_client, _url, CancellationToken.None);
 
             jResult = records != null ? Json(new { success = true, message = "", data = records }, JsonRequestBehavior.AllowGet) : Json(new { success = false, message = "Failed to retrieve UserAccess" }, JsonRequestBehavior.AllowGet);

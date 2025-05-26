@@ -52,19 +52,25 @@
             url: "/ResourceTarget/GetFinancialYear",
             dataType: "json",
             success: function (data) {
+                let today = new Date();
+                let month = today.getMonth() + 1;
+                let year = today.getFullYear();
+                year = month < 4 ? year - 1 : year;
+                let currentYear = data.filter(item => (item.FinancialYear).split('-')[0] == year);
+
                 const $financialYearID = $('#FinancialYearID');
                 $financialYearID.empty();
-
                 if (data.error) {
                     $financialYearID.append('<option value="">--Error loading financial years--</option>');
                     console.error("Error loading financial years:", data.error);
                     return;
                 }
-
                 $financialYearID.append('<option value="">--Select Financial Year--</option>');
                 data.forEach(function (financialYear) {
                     $financialYearID.append(`<option value="${financialYear.FinancialYearID}">${financialYear.FinancialYear}</option>`);
                 });
+                $financialYearID.val(currentYear[0].FinancialYearID);
+                go();
             },
             error: function (xhr, textStatus, errorThrown) {
                 $('#FinancialYearID').empty();
@@ -121,7 +127,6 @@
             title: "WO Date",
             dataIndx: "strWODate",
             width: 110,
-            dataType: 'date',
             filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
         },
         {
@@ -137,10 +142,15 @@
             filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
         },
         {
+            title: "Project Dispatched",
+            dataIndx: "ProjectDispatched",
+            width: 120,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        },
+        {
             title: "Dispatch Date",
             dataIndx: "strDispatchDate",
             width: 120,
-            dataType: 'date',
             filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
         }
     ];
@@ -170,6 +180,9 @@
         colModel: MasterListOfProjectGrid_GCM,
         dataModel: MasterListOfProjectGrid_GDM,
         pageModel: { type: "local", rPP: 50 },
+        summaryData: [
+            { ProjectCode: 'Total', summaryRow: true, pq_fn: { POBaseValue: 'sum(C:C)', POBaseValueWithGST: 'sum(D:D)' } },
+        ],
         toolbar: {
             items: [
                 {
@@ -198,7 +211,14 @@
                     }
                 }
             ]
-        }
+        },
+        rowInit: function (ui) {
+            if (ui.rowData.ProjectCode == "Total") {
+                return {
+                    style: "background:#1f50a7 !important; color:white; font-weight: bold; font-size: 15px;"
+                };
+            }
+        },
     }
     var $MasterListOfProjectGrid = $("#MasterListOfProjectGrid").pqGrid(setMasterListOfProjectGrid);
     function loadMasterListOfProjectGrid(financialYearID, pending) {
@@ -209,7 +229,7 @@
             },
             type: 'GET',
             url: "/Masters/MasterListOfProject/GetMasterListOfProject",
-            data: { financialYearID: financialYearID, pending: pending},
+            data: { financialYearID: financialYearID, pending: pending },
             dataType: "json",
 
             beforeSend: function () {
@@ -245,7 +265,7 @@
     //-----------------------------------MasterListOfProjectGrid (Ends here)-----------------------------------//
 
     function clearFormData() {
-        $("#FinancialYearID").val('');
+        loadFinancialYear();
         $("#Pending").prop("checked", false);
         ClearParamGrid('MasterListOfProjectGrid');
     }

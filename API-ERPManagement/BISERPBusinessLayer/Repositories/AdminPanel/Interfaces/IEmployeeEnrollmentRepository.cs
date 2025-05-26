@@ -10,7 +10,7 @@ namespace BISERPBusinessLayer.Repositories.AdminPanel.Interfaces
     public interface IEmployeeEnrollmentRepository
     {
         IEnumerable<EmployeeEnrollmentEntity> GetUserCode();
-        IEnumerable<EmployeeEnrollmentEntity> GetUserDetails();
+        IEnumerable<EmployeeEnrollmentEntity> GetUserDetails(int LoginId);
         int SaveUser(EmployeeEnrollmentEntity Items);
         int DeleteUser(EmployeeEnrollmentEntity Items);
         bool CheckDuplicateItem(string UserCode, int UserID);

@@ -194,14 +194,14 @@ namespace BISERPService.Controllers.AdminPanel
             return Ok(result.ToList());
         }
 
-        [Route("GetUserAccess/{UserId}")]
+        [Route("GetUserAccess/{LoginId}/{UserId}")]
         [AcceptVerbs("GET")]
-        public IHttpActionResult GetUserAccess(int UserId)
+        public IHttpActionResult GetUserAccess(int LoginId, int UserId)
         {
             List<UserMenuAccess> result = new List<UserMenuAccess>();
             TryCatch.Run(() =>
             {
-                var list = _RoleAccess.GetUserAccess(UserId);
+                var list = _RoleAccess.GetUserAccess(LoginId, UserId);
                 if (list != null)
                     result = list.ToList();
             }).IfNotNull(ex =>

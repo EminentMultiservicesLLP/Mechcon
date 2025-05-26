@@ -37,6 +37,7 @@ namespace BISERPBusinessLayer.Repositories.Master.Classes
                                 strWODate = row.Field<DateTime?>("WODate") != null ? Convert.ToDateTime(row.Field<DateTime?>("WODate")).ToString("dd-MMM-yyyy"): string.Empty,
                                 ClientName = row.Field<string>("ClientName"),
                                 AllocatedToName = row.Field<string>("AllocatedToName"),
+                                ProjectDispatched = row.Field<string>("ProjectDispatched"),
                                 strDispatchDate = row.Field<DateTime?>("DispatchDate") != null ? Convert.ToDateTime(row.Field<DateTime?>("DispatchDate")).ToString("dd-MMM-yyyy"): string.Empty,
                             }).ToList();
             }
