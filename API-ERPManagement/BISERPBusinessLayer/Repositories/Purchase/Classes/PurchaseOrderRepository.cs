@@ -581,19 +581,7 @@ namespace BISERPBusinessLayer.Repositories.Purchase.Classes
                                 strPODate = Convert.ToDateTime(row.Field<DateTime>("PODate")).ToString("dd-MMM-yyyy"),
                                 StoreId = row.Field<int>("StoreId"),
                                 StoreName = row.Field<string>("StoreName"),
-                                DeliveryAddress = row.Field<string>("DeliveryAddress"),
                                 Status = row.Field<string>("Status"),
-                                Against = row.Field<string>("Against"),
-                                Againstid = row.Field<int>("Againstid"),
-                                RefNo = row.Field<string>("RefNo"),
-                                RFQId = row.Field<int>("RFQId"),
-                                RFQNo = row.Field<string>("IndentNumber"),
-                                Tax = row.Field<double?>("Tax"),
-                                Amount = row.Field<double?>("Amount"),
-                                Discount = row.Field<double?>("Discount"),
-                                OtherCharges = row.Field<double?>("OtherCharges"),
-                                GrandTotal = row.Field<double?>("GrandTotal"),
-                                VendorId = row.Field<int>("VendorId"),
                             }).ToList();
             }
             return po;

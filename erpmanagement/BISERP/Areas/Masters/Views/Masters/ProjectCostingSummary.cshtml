@@ -50,7 +50,6 @@
                 let year = today.getFullYear();
                 year = month < 4 ? year - 1 : year;
                 let currentYear = data.filter(item => (item.FinancialYear).split('-')[0] == year);
-                debugger
                 const $financialYearID = $('#FinancialYearID');
                 $financialYearID.empty();
                 if (data.error) {

@@ -1,0 +1,182 @@
+﻿<h5 class="page-header orangeDottedBottomBorder">Task Monitor</h5>
+
+<div class="panel-group">
+    <div class="panel panel-default">
+        <div class="panel-groupingBoder">
+            <div class="panel-heading">
+                <div class="panel-title">
+                    <a class="collapsediv" data-toggle="collapse" href="#SearchDetails">
+                        Progress Details
+                    </a>
+                </div>
+            </div>
+            <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                <div class="panel-body">
+                    <div class="fill">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <label class="required" for="ProjectID">Project</label>
+                                <select id="ProjectID" name="ProjectID" class="form-control">
+                                    <option value=0>All</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-2">
+                                <br />
+                                <button type="button" id="btnGo" class="btn btn-primary" onclick="go()">Go</button>
+                            </div>
+                        </div>
+                        <div id="TaskProgressGrid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    function loadProjectList() {
+        $.ajax({
+            type: "GET",
+            url: "/Master/AllStores",
+            dataType: "json",
+            success: data => {
+                data.length > 0 ? projectData = data : projectData = [];
+
+                const $projectSelect = $('#ProjectID');
+                $projectSelect.empty().append('<option value=0>All</option>');
+                data.forEach(item => {
+                    $projectSelect.append(`<option value="${item.ID}">${item.Name}</option>`);
+                });
+            },
+            error: (jqXHR, textStatus, errorThrown) => {
+                console.error("Failed to load project list:", textStatus, errorThrown);
+                ShowAlert("error", "Failed to load projects. Please try again later.");
+            }
+        });
+    }
+    loadProjectList();
+
+    function go() {
+        const projectID = $("#ProjectID").val();
+        loadTaskProgressGrid(projectID);
+    }
+
+    //-----------------------------------TaskProgressGrid (Starts here)-----------------------------------//
+    var TaskProgressGrid_GDM = { location: "local" };
+    var TaskProgressGrid_GCM = [
+        { title: "Project Name", dataIndx: "ProjectName", width: 150, filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] } },
+        { title: "Task Name", dataIndx: "TaskName", width: 200, filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] } },
+        { title: "Task Description", dataIndx: "TaskDescription", width: 250, filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] } },
+        { title: "Assigned To", dataIndx: "AssignedToName", width: 150, filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] } },
+        { title: "Start Date", dataIndx: "strStartDate", width: 120, filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] } },
+        { title: "End Date", dataIndx: "strEndDate", width: 120, filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] } },
+        { title: "Progress (%)", dataIndx: "ProgressPercent", width: 100, dataType: 'float', filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] } },
+        { title: "Status", dataIndx: "Status", width: 100, filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] } },
+        { title: "Delivery Status", dataIndx: "DeliveryStatus", width: 120, filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] } },
+        { title: "Reason", dataIndx: "Reason", width: 200, filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] } },
+        { title: "Action", dataIndx: "Action", width: 200, filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] } },
+        { title: "Last Action By", dataIndx: "LastActionByName", width: 150, filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] } },
+        { title: "Last Action Date", dataIndx: "strLastActionDate", width: 120, filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] } }
+    ];
+
+
+    var setTaskProgressGrid = {
+        height: 500,
+        width: 'auto',
+        maxWidth: '100%',
+        minWidth: 800,
+        sortable: true,
+        autofill: true,
+        numberCell: { show: true },
+        hoverMode: 'row',
+        showTop: true,
+        showTitle: true,
+        showBottom: true,
+        resizable: true,
+        scrollModel: { autoFit: false },
+        filterModel: { on: true, mode: "AND", header: true },
+        draggable: false,
+        hwrap: false,
+        wrap: false,
+        editable: false,
+        columnBorders: true,
+        menuIcon: true,
+        selectionModel: { type: 'row', mode: 'single', cbHeader: false },
+        colModel: TaskProgressGrid_GCM,
+        dataModel: TaskProgressGrid_GDM,
+        pageModel: { type: "local", rPP: 50 },
+        rowInit: function (ui) {
+            const { strEndDate, DeliveryStatus } = ui.rowData;
+
+            // Validate and normalize endDate
+            let isPastDue = false;
+            if (strEndDate) {
+                const endDate = new Date(strEndDate);
+                const today = new Date();
+                endDate.setHours(0, 0, 0, 0);
+                today.setHours(0, 0, 0, 0);
+                isPastDue = endDate < today;
+            }
+
+            // Define color mappings for delivery status
+            const statusStyles = {
+                Delayed: "background-color:#ff938a;",     // Red
+                OnTime: "background-color:#70de70;"        // Green
+            };
+
+            // Apply color based on status or due date
+            if (DeliveryStatus === 'Delayed' || (DeliveryStatus === 'Pending' && isPastDue)) {
+                return { style: statusStyles.Delayed };
+            }
+            if (DeliveryStatus === 'OnTime') {
+                return { style: statusStyles.OnTime };
+            }
+
+            return {}; // Default row style
+        }
+    }
+    var $TaskProgressGrid = $("#TaskProgressGrid").pqGrid(setTaskProgressGrid);
+
+    function loadTaskProgressGrid(projectID) {
+        var antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            url: "/TimingPlan/TimingPlan/GetTaskMonitor",
+            data: { ProjectID: projectID },
+            dataType: "json",
+            beforeSend: function () {
+                $("#TaskProgressGrid").pqGrid("showLoading");
+            },
+
+            complete: function () {
+                $("#TaskProgressGrid").pqGrid("hideLoading");
+            },
+
+            success: function (response) {
+                const grid = $("#TaskProgressGrid").pqGrid();
+
+                if (response.success) {
+                    grid.pqGrid("option", "dataModel.data", response.records);
+                } else {
+                    console.warn("No data found or an issue occurred: ", response.message);
+                    grid.pqGrid("option", "dataModel.data", []);
+                }
+
+                grid.pqGrid("refreshDataAndView");
+                PqGridRefreshClick(grid);
+            },
+
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Error loading Task Monitor grid:", textStatus, errorThrown);
+                console.error("Response text:", jqXHR.responseText);
+                $("#TaskProgressGrid").pqGrid("hideLoading");
+            }
+        });
+
+    }
+    //-----------------------------------TaskProgressGrid (Ends here)-----------------------------------//
+    go();
+</script>

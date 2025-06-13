@@ -1,0 +1,226 @@
+﻿@model BISERP.Areas.TimingPlan.Models.TP_TaskMaster
+@Scripts.Render("~/bundles/jquerymodels")
+<style>
+    .datepicker {
+        font-size: medium;
+        font-weight: bold;
+    }
+</style>
+<script>
+    $(function () {
+        $(".datepicker").datepicker({
+            showOn: "button",
+            buttonImage: "/Content/images/calendar.gif",
+            buttonImageOnly: true,
+            buttonText: "Select date",
+            'changeMonth': true,
+            'changeYear': true,
+            'yearRange': '2021:2030',
+            "format": "dd-M-yyyy",
+            todayBtn: "linked",
+            pickerPosition: "bottom-left",
+            "todayHighlight": true,
+            autoclose: true,
+        })
+        $("#anim").change(function () {
+            $(".datepicker").datepicker("option", "showAnim", "fadeIn");
+        });
+    });
+</script>
+<h5 class="page-header orangeDottedBottomBorder">Task Schedule</h5>
+<div class="panel-group">
+    <div class="panel panel-default">
+        <div class="panel-groupingBoder">
+            <div class="panel-heading">
+                <div class="panel-title">
+                    <a class="collapsediv" data-toggle="collapse" href="#SearchDetails">
+                        Task Schedule
+                    </a>
+                </div>
+            </div>
+            <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                <div class="panel-body">
+                    <div class="fill">
+                        <div class="submit-row">
+                            <div class="col-sm-8">
+                                <div class="col-sm-4">
+                                    <label class="required" for="ProjectID">Project</label>
+                                    <select id="ProjectID" name="ProjectID" class="form-control">
+                                        <option value="">--Select Project--</option>
+                                    </select>
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-12 mb-3">
+                                    <br />
+                                    <button type="button" id="btnGo" class="btn btn-primary" onclick="go()">Go</button>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="col-sm-6">
+                                    <label class="required" for="ProjectStartDate">Project Start Date</label>
+                                    <input type="text" id="ProjectStartDate" class="form-control datepicker" disabled />
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="required" for="ProjectEndDate">Project End Date</label>
+                                    <input type="text" id="ProjectEndDate" class="form-control datepicker" disabled />
+                                </div>
+                            </div>
+
+                        </div>
+                        <fieldset class="fieldsetCustom" id="chartContainer" hidden>
+                            <legend class="legendCustom">Schedule Details</legend>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var projectData = [];
+    $(function () {
+        loadProjectList();
+    });
+
+    function loadProjectList() {
+        $.ajax({
+            type: "GET",
+            url: "/Master/AllStores",
+            dataType: "json",
+            success: data => {
+                data.length > 0 ? projectData = data : projectData = [];
+
+                const $projectSelect = $('#ProjectID');
+                $projectSelect.empty().append('<option value="0">Select Project</option>');
+                data.forEach(item => {
+                    $projectSelect.append(`<option value="${item.ID}">${item.Name}</option>`);
+                });
+            },
+            error: (jqXHR, textStatus, errorThrown) => {
+                console.error("Failed to load project list:", textStatus, errorThrown);
+                ShowAlert("error", "Failed to load projects. Please try again later.");
+            }
+        });
+    }
+
+    $("#ProjectID").change(function () {
+        const selectedProjectId = $("#ProjectID").val();
+        const projectDetail = projectData.find(function (p) {
+            return p.ID == selectedProjectId;
+        });
+
+        if (projectDetail) {
+            $("#ProjectStartDate").datepicker("setDate", projectDetail.strStartDate || '');
+            $("#ProjectEndDate").datepicker("setDate", projectDetail.strDueDate || '');
+        } else {
+            $("#ProjectStartDate").val('');
+            $("#ProjectEndDate").val('');
+        }
+        $('#chartContainer #chart').remove();
+        $('#chartContainer').hide();
+    });
+
+    function go() {
+        const projectID = $("#ProjectID").val();
+        if (!projectID || projectID === "0") {
+            ShowAlert("error", "Please select a Project first.");
+            return false;
+        }
+        getTaskTracking(projectID);
+    }
+
+    function getTaskTracking(projectID) {
+        const antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+
+        $.ajax({
+            url: "/TimingPlan/TimingPlan/GetTaskTracking",
+            type: "GET",
+            data: { ProjectID: projectID },
+            dataType: "json",
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            success: (response) => {
+                if (!response.success) {
+                    console.warn("No data found or an issue occurred: ", response.message);
+                    ShowAlert("info", "No task details found for the selected project.");
+                    return false;
+                }
+                if (response.records.length > 0) {
+                    $('#chartContainer').append('<div id="chart"></div>');
+                    $('#chartContainer').show();
+                    createChart(response.records);
+                }
+            },
+            error: (jqXHR, textStatus, errorThrown) => {
+                console.error("Error loading ProjectTaskSchedule:", textStatus, errorThrown);
+                console.error("Response text:", jqXHR.responseText);
+            }
+        });
+    }
+
+    function createChart(taskData) {
+
+        const categories = taskData.map(task => task.TaskName);
+        const scheduledWeeks = taskData.map(task => task.ScheduledWeeks || 0);
+        const takenWeeks = taskData.map(task => task.TakenWeeks || 0);
+
+        const options = {
+            series: [{
+                name: 'Scheduled Weeks',
+                data: scheduledWeeks
+            }, {
+                name: 'Taken Weeks',
+                data: takenWeeks
+            }],
+            chart: {
+                type: 'bar',
+                height: 430
+            },
+            plotOptions: {
+                bar: {
+                    horizontal: true,
+                    dataLabels: {
+                        position: 'top',
+                    },
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                offsetX: -6,
+                style: {
+                    fontSize: '12px',
+                    colors: ['#fff']
+                }
+            },
+            stroke: {
+                show: true,
+                width: 1,
+                colors: ['#fff']
+            },
+            tooltip: {
+                shared: true,
+                intersect: false,
+                custom: function ({ series, seriesIndex, dataPointIndex, w }) {
+                    const task = taskData[dataPointIndex];
+                    return `
+                <div style="padding:8px;">
+                    <strong>${task.TaskName}</strong><br/>
+                    Scheduled Weeks: ${task.ScheduledWeeks}<br/>
+                    Taken Weeks: ${task.TakenWeeks}<br/>
+                    Status: ${task.Status}<br/>
+                    Assigned To: ${task.AssignedToName}<br/>
+                </div>
+            `;
+                }
+            },
+            xaxis: {
+                categories: categories
+            }
+        };
+
+        const chart = new ApexCharts(document.querySelector("#chart"), options);
+        chart.render();
+
+    }
+</script>

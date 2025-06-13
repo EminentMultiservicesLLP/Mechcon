@@ -219,6 +219,7 @@
     <Compile Include="Entities\Ticket\DashboardEntity.cs" />
     <Compile Include="Entities\Ticket\TicketActivityEntity.cs" />
     <Compile Include="Entities\Ticket\TicketRegisterEntity.cs" />
+    <Compile Include="Entities\TimingPlan\TimingPlan.cs" />
     <Compile Include="Entities\Training\BatchEntity .cs" />
     <Compile Include="Entities\Training\BatchTypeEntity.cs" />
     <Compile Include="Entities\Training\BudgetHeadsEntity.cs" />
@@ -277,6 +278,7 @@
     <Compile Include="QueryCollection\Ticket\DashboardQueries.cs" />
     <Compile Include="QueryCollection\Ticket\TicketActivityQueries.cs" />
     <Compile Include="QueryCollection\Ticket\TicketRegisterQueries.cs" />
+    <Compile Include="QueryCollection\TimingPlan\TimingPlanQueries.cs" />
     <Compile Include="QueryCollection\Training\TrainingQueries.cs" />
     <Compile Include="QueryCollection\Transport\TransportQuery.cs" />
     <Compile Include="QueryCollection\UserManagement\UserAccess.cs" />
@@ -590,6 +592,8 @@
     <Compile Include="Repositories\Ticket\Interfaces\IDashboardRepository.cs" />
     <Compile Include="Repositories\Ticket\Interfaces\ITicketActivityRepository.cs" />
     <Compile Include="Repositories\Ticket\Interfaces\ITicketRegisterRepository.cs" />
+    <Compile Include="Repositories\TimingPlan\Classes\TimingPlanRepository.cs" />
+    <Compile Include="Repositories\TimingPlan\Interfaces\ITimingPlanRepository.cs" />
     <Compile Include="Repositories\Training\Classes\BatchRepository.cs" />
     <Compile Include="Repositories\Training\Classes\BatchTypeRepository.cs" />
     <Compile Include="Repositories\Training\Classes\BudgetHeadsRepository.cs" />

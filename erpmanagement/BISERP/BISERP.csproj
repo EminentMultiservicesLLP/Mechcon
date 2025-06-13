@@ -408,6 +408,9 @@
     <Compile Include="Areas\Ticket\Models\TicketActivity.cs" />
     <Compile Include="Areas\Ticket\Models\TicketRegister.cs" />
     <Compile Include="Areas\Ticket\TicketAreaRegistration.cs" />
+    <Compile Include="Areas\TimingPlan\Controllers\TimingPlanController.cs" />
+    <Compile Include="Areas\TimingPlan\Models\TimingPlan.cs" />
+    <Compile Include="Areas\TimingPlan\TimingPlanAreaRegistration.cs" />
     <Compile Include="Areas\Training\Controllers\BatchMasterController.cs" />
     <Compile Include="Areas\Training\Controllers\BatchMasterModel.cs" />
     <Compile Include="Areas\Training\Controllers\BatchTypeController.cs" />
@@ -1107,6 +1110,11 @@
     <Content Include="Areas\Masters\Views\Masters\PrePackingList.cshtml" />
     <Content Include="Areas\Masters\Views\Masters\MasterListOfProject.cshtml" />
     <Content Include="Areas\Masters\Views\Masters\ProjectCostingSummary.cshtml" />
+    <Content Include="Areas\TimingPlan\Views\Web.config" />
+    <Content Include="Areas\TimingPlan\Views\TimingPlan\CreateProjectTaskSchedule.cshtml" />
+    <Content Include="Areas\TimingPlan\Views\TimingPlan\TaskProgress.cshtml" />
+    <Content Include="Areas\TimingPlan\Views\TimingPlan\TaskMonitor.cshtml" />
+    <Content Include="Areas\TimingPlan\Views\TimingPlan\TaskTracking.cshtml" />
     <None Include="Content\DataSet\Billing.xsd" />
     <Content Include="Content\DataSet\Billing.xss">
       <DependentUpon>Billing.xsd</DependentUpon>
@@ -1649,6 +1657,7 @@
     <Folder Include="Areas\SM_DashBoard\Views\Shared\" />
     <Folder Include="Areas\SM_Reports\Views\Shared\" />
     <Folder Include="Areas\Ticket\Views\Shared\" />
+    <Folder Include="Areas\TimingPlan\Views\Shared\" />
     <Folder Include="Models\Branch\" />
     <Folder Include="Models\Purchase\" />
     <Folder Include="Views\Master\" />

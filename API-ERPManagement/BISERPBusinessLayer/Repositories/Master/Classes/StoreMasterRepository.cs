@@ -453,6 +453,7 @@ namespace BISERPBusinessLayer.Repositories.Master.Classes
                                 ClientPoNo = row.Field<string>("ClientPoNo"),
                                 strStartDate = row.Field<string>("strStartDate"),
                                 strDueDate = row.Field<string>("strDueDate"),
+                                ClientName = row.Field<string>("ClientName"),
                             }).ToList();
             }
             return unit;

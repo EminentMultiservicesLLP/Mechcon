@@ -42,6 +42,8 @@ using BISERPBusinessLayer.Repositories.SM.Interfaces;
 using BISERPBusinessLayer.Repositories.SM.Classes;
 using BISERPBusinessLayer.Repositories.Ticket.Interfaces;
 using BISERPBusinessLayer.Repositories.Ticket.Classes;
+using BISERPBusinessLayer.Repositories.TimingPlan.Interfaces;
+using BISERPBusinessLayer.Repositories.TimingPlan.Classes;
 
 namespace BISERPService
 {
@@ -286,6 +288,7 @@ namespace BISERPService
 
 
             container.RegisterType<IMasterListOfProjectRepository, MasterListOfProjectRepository>();
+            container.RegisterType<ITimingPlanRepository, TimingPlanRepository>();
 
 
 

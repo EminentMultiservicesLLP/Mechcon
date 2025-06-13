@@ -499,15 +499,8 @@ namespace BISERP.Area.Purchase.Controllers
                 var records = await Common.AsyncWebCalls.GetAsync<List<PurchaseOrderModel>>(client, _url, CancellationToken.None);
                 if (records != null)
                 {
-                    //if (!string.IsNullOrWhiteSpace(SearchNumber))
-                    //{
-                    //    records = records.Where(p => p.PONo.ToUpper().StartsWith(SearchNumber.ToUpper())).ToList();
-                    //}
-                    //if (SearchDate != null)
-                    //{
-                    //    records = records.Where(p => p.PODate == SearchDate).ToList();
-                    //}
                     jResult = Json(new { records }, JsonRequestBehavior.AllowGet);
+                    jResult.MaxJsonLength = int.MaxValue;  // Increase max JSON length here
                 }
                 else
                     jResult = Json("Error");
@@ -519,6 +512,7 @@ namespace BISERP.Area.Purchase.Controllers
             }
             return jResult;
         }
+
 
         [HttpGet]
         public async Task<JsonResult> GetPOStateDetails(int? POID)

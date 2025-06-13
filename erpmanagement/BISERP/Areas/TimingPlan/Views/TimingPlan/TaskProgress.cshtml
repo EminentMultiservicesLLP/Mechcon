@@ -1,0 +1,302 @@
+﻿<h5 class="page-header orangeDottedBottomBorder">Task Progress</h5>
+
+<div id="SearchGridModal" class="modal fade" role="dialog" data-backdrop="false">
+    <div class="modal-dialog find-search-grid-modal">
+        <div class="modal-content gridmodal-content">
+            <div class="modal-header gridmodal-header">
+                <button type="button" class="close" onclick="closeModal()">&times;</button>
+                <h4 class="modal-title">Tasks</h4>
+            </div>
+            <div class="modal-body">
+                <div class="fill">
+                    <div id="TaskProgressGrid"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="panel-group">
+    <div class="panel panel-default">
+        <div class="panel-groupingBoder">
+            <div class="panel-heading">
+                <div class="panel-title">
+                    <a class="collapsediv" data-toggle="collapse" href="#SearchDetails">
+                        Task Progress
+                    </a>
+                </div>
+            </div>
+            <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                <div class="panel-body">
+                    <div class="fill">
+                        <div class="submit-row">
+                            <button type="button" id="btnSelect" class="btn btn-danger">Select Task</button>
+                            <button type="button" id="btnSave" class="btn btn-success" onclick="saveTaskProgress()">Save</button>
+                            <button type="button" class="btn btn-warning" id="btnResetT" onclick="clearFormData()">Clear</button>
+                            <button type="button" id="btnFind" class="btn btn-primary">Completed Task</button>
+                        </div>
+                        <fieldset class="fieldsetCustom">
+                            <legend class="legendCustom">Task Details</legend>
+
+                            <div class="row">
+                                <div class="col-lg-2 col-md-4 col-sm-6 col-12 mb-3">
+                                    <label for="ProjectName">Project</label>
+                                    <input type="text" id="ProjectName" class="form-control" placeholder="Project" disabled>
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-6 col-12 mb-3">
+                                    <label for="TaskName">Task</label>
+                                    <input type="text" id="TaskName" class="form-control" placeholder="Task" disabled>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-6 col-12 mb-3">
+                                    <label for="TaskDescription">Task Description</label>
+                                    <input type="text" id="TaskDescription" class="form-control" placeholder="Task Description" disabled>
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-6 col-12 mb-3">
+                                    <label for="strStartDate">Start Date</label>
+                                    <input type="text" id="strStartDate" class="form-control" placeholder="Start Date" disabled>
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-6 col-12 mb-3">
+                                    <label for="strEndDate">End Date</label>
+                                    <input type="text" id="strEndDate" class="form-control" placeholder="End Date" disabled>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-2 col-md-4 col-sm-6 col-12 mb-3">
+                                    <label for="ProgressPercent" class="required">Progress %</label>
+                                    <input type="number" id="ProgressPercent" class="form-control" placeholder="Progress Percent" min="0" max="100">
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-6 col-12 mb-3">
+                                    <label for="Status" class="required">Status</label>
+                                    <select id="Status" name="Status" class="form-control">
+                                        <option value="Not Started">Not Started</option>
+                                        <option value="In Progress">In Progress</option>
+                                        <option value="On Hold">On Hold</option>
+                                        <option value="Waiting for Input">Waiting for Input</option>
+                                        <option value="Completed">Completed</option>
+                                    </select>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-6 col-12 mb-3">
+                                    <label for="Reason">Reason</label>
+                                    <input type="text" id="Reason" class="form-control" placeholder="Reason">
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-6 col-12 mb-3">
+                                    <label for="Action">Action</label>
+                                    <input type="text" id="Action" class="form-control" placeholder="Action">
+                                </div>
+                            </div>
+                        </fieldset>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var tempScheduleID = 0;
+    var tempProgressPercent = 0;
+    //-----------------------------------TaskProgressGrid (Starts here)-----------------------------------//
+    var TaskProgressGrid_GDM = { location: "local" };
+    var TaskProgressGrid_GCM = [
+        { title: "Project Name", dataIndx: "ProjectName", width: 150, filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] } },
+        { title: "Task Name", dataIndx: "TaskName", width: 200, filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] } },
+        { title: "Task Description", dataIndx: "TaskDescription", width: 250, filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] } },
+        { title: "Start Date", dataIndx: "strStartDate", width: 120, filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] } },
+        { title: "End Date", dataIndx: "strEndDate", width: 120, filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] } },
+        { title: "Progress (%)", dataIndx: "ProgressPercent", width: 100, dataType: 'float', filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] } },
+        { title: "Status", dataIndx: "Status", width: 100, filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] } }
+    ];
+
+    var setTaskProgressGrid = {
+        height: 350,
+        width: 'auto',
+        maxWidth: '100%',
+        minWidth: 800,
+        sortable: true,
+        autofill: true,
+        numberCell: { show: true },
+        hoverMode: 'row',
+        showTop: true,
+        showTitle: true,
+        showBottom: true,
+        resizable: true,
+        scrollModel: { autoFit: true },
+        filterModel: { on: true, mode: "AND", header: true },
+        draggable: false,
+        hwrap: false,
+        wrap: false,
+        editable: false,
+        columnBorders: true,
+        menuIcon: true,
+        selectionModel: { type: 'row', mode: 'single', cbHeader: false },
+        colModel: TaskProgressGrid_GCM,
+        dataModel: TaskProgressGrid_GDM,
+        pageModel: { type: "local", rPP: 20 },
+        rowClick: function (evt, ui) {
+            if (ui.rowData) {
+                const data = ui.rowData;
+                clearFormData();
+                tempScheduleID = data.ScheduleID;
+                $("#ProjectName").val(data.ProjectName);
+                $("#TaskName").val(data.TaskName);
+                $("#TaskDescription").val(data.TaskDescription);
+                $("#strStartDate").val(data.strStartDate);
+                $("#strEndDate").val(data.strEndDate);
+                $("#ProgressPercent").val(data.ProgressPercent);
+                tempProgressPercent = data.ProgressPercent;
+                $("#Status").val(data.Status);
+                $("#Reason").val(data.Reason);
+                $("#Action").val(data.Action);
+                $("#btnSave").prop("disabled", data.Status === 'Completed');
+                closeModal();
+            }
+        }
+    }
+    var $TaskProgressGrid = $("#TaskProgressGrid").pqGrid(setTaskProgressGrid);
+
+    function loadTaskProgressGrid(isCompleted) {
+        var antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: 'GET',
+            url: "/TimingPlan/TimingPlan/GetTaskProgress",
+            data: { IsCompleted: isCompleted },
+            dataType: "json",
+
+            beforeSend: function () {
+                $("#TaskProgressGrid").pqGrid("showLoading");
+            },
+
+            complete: function () {
+                $("#TaskProgressGrid").pqGrid("hideLoading");
+            },
+
+            success: function (response) {
+                const grid = $("#TaskProgressGrid").pqGrid();
+
+                if (response.success) {
+                    grid.pqGrid("option", "dataModel.data", response.records);
+                } else {
+                    console.warn("No data found or an issue occurred: ", response.message);
+                    grid.pqGrid("option", "dataModel.data", []);
+                }
+
+                grid.pqGrid("refreshDataAndView");
+                PqGridRefreshClick(grid);
+            },
+
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Error loading Task Progress grid:", textStatus, errorThrown);
+                console.error("Response text:", jqXHR.responseText);
+                $("#TaskProgressGrid").pqGrid("hideLoading");
+            }
+        });
+
+    }
+    //-----------------------------------TaskProgressGrid (Ends here)-----------------------------------//
+    $("#ProgressPercent").on("change", function () {
+        const $this = $(this);
+        const currentValue = parseFloat($this.val());
+
+        if (currentValue < tempProgressPercent) {
+            ShowAlert("error", "You cannot enter a Progress (%) less than the previously saved percent.");
+            $this.val(tempProgressPercent); // Revert to the previous value
+            return;
+        }
+
+        if (currentValue === 100) {
+            $("#Status").val('Completed');
+        }
+    });
+
+    $("#Status").on("change", function () {
+        const status = $(this).val();
+        if (status === 'Completed') {
+            $("#ProgressPercent").val(100);
+        }
+    });
+
+    function saveTaskProgress() {
+        if (tempScheduleID === 0) {
+            ShowAlert("error", "Please select a task first.")
+            return false;
+        }
+
+        const progress = parseFloat($("#ProgressPercent").val());
+        const status = $("#Status").val();
+
+        if (progress === 100 && status !== 'Completed') {
+            ShowAlert("error", "Status must be <b>Completed</b> when Progress (%) is <b>100</b>.");
+            return false;
+        }
+
+        if (status === 'Completed' && progress !== 100) {
+            ShowAlert("error", "Progress (%) must be <b>100</b> when Status is <b>Completed</b>.");
+            return false;
+        }
+
+        const Details = {
+            ScheduleID: tempScheduleID,
+            ProgressPercent: progress,
+            Status: status,
+            Reason: $("#Reason").val(),
+            Action: $("#Action").val(),
+        };
+
+        const antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+
+        $.ajax({
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            type: "POST",
+            contentType: 'application/json; charset=utf-8',
+            url: "/TimingPlan/TimingPlan/SaveTaskProgress",
+            data: JSON.stringify(Details),
+            success: function (response) {
+                if (response.success) {
+                    const message = "Task Progress saved successfully!";
+                    ShowAlert("success", message);
+                    clearFormData();
+                } else {
+                    ShowAlert("error", response.message || "An error occurred while saving the task progress.");
+                }
+            },
+            error: function (xhr, status, error) {
+                const errorMsg = xhr.responseText ? `Server Error: ${xhr.responseText}` : `Error: ${error}`;
+                ShowAlert("error", errorMsg);
+            }
+        });
+    }
+
+    $('#btnSelect, #btnFind').on('click', function () {
+        const isCompleted = $(this).attr('id') === 'btnFind' ? 1 : 0;
+        showModal(isCompleted);
+    });
+
+    function showModal(isCompleted) {
+        $("#SearchGridModal").modal('show');
+        loadTaskProgressGrid(isCompleted);
+    }
+
+    function closeModal() {
+        $("#SearchGridModal").modal('hide');
+    }
+
+    function clearFormData() {
+        tempScheduleID = 0;
+        $("#ProjectName").val('');
+        $("#TaskName").val('');
+        $("#TaskDescription").val('');
+        $("#strStartDate").val('');
+        $("#strEndDate").val('');
+        $("#ProgressPercent").val('');
+        tempProgressPercent = 0;
+        $("#Status").val('Not Started');
+        $("#Reason").val('');
+        $("#Action").val('');
+        $("#btnSave").prop("disabled", false);
+    }
+</script>

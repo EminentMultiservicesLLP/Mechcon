@@ -248,6 +248,7 @@
     <Compile Include="Controllers\Ticket\TicketActivityController.cs" />
     <Compile Include="Controllers\Ticket\TicketRegisterController.cs" />
     <Compile Include="Controllers\Ticket\TKT_DashboardController.cs" />
+    <Compile Include="Controllers\TimingPlan\TimingPlanController.cs" />
     <Compile Include="Controllers\Training\BatchController.cs" />
     <Compile Include="Controllers\Training\BatchTypeController.cs" />
     <Compile Include="Controllers\Training\BudgetHeadsController.cs" />

@@ -1,0 +1,865 @@
+﻿@model BISERP.Areas.TimingPlan.Models.TP_TaskMaster
+@Scripts.Render("~/bundles/jquerymodels")
+<style>
+    .projectDetails {
+        font-size: medium;
+        font-weight: bold;
+    }
+</style>
+<script>
+    $(function () {
+        $(".datepicker").datepicker({
+            showOn: "button",
+            buttonImage: "/Content/images/calendar.gif",
+            buttonImageOnly: true,
+            buttonText: "Select date",
+            'changeMonth': true,
+            'changeYear': true,
+            'yearRange': '2021:2030',
+            "format": "dd-M-yyyy",
+            todayBtn: "linked",
+            pickerPosition: "bottom-left",
+            "todayHighlight": true,
+            autoclose: true,
+        })
+        $("#anim").change(function () {
+            $(".datepicker").datepicker("option", "showAnim", "fadeIn");
+        });
+    });
+</script>
+<h5 class="page-header orangeDottedBottomBorder">Task Schedule</h5>
+<div class="panel-group">
+    <div class="panel panel-default">
+        <div class="panel-groupingBoder">
+            <div class="panel-heading">
+                <div class="panel-title">
+                    <a class="collapsediv" data-toggle="collapse" href="#SearchDetails">
+                        Task Schedule
+                    </a>
+                </div>
+            </div>
+            <div id="SearchDetails" class="panel-collapse collapse in" aria-expanded="true">
+                <div class="panel-body">
+                    <div class="fill">
+                        <div class="submit-row">
+                            <button type="button" id="btnSave" class="btn btn-success" onclick="SaveProjectTaskGrid()">Save</button>
+                            <button type="button" class="btn btn-warning" id="btnResetT" onclick="clearFormData()">Clear</button>
+                            @*<button type="button" class="btn btn-primary" id="btnShiftSchedule">Shift-Schedule</button>*@
+                        </div>
+                        <fieldset class="fieldsetCustom">
+                            <legend class="legendCustom">Project Details</legend>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <label class="required" for="ProjectID">Project</label>
+                                    <select id="ProjectID" name="ProjectID" class="form-control">
+                                        <option value="">--Select Project--</option>
+                                    </select>
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-12 mb-3">
+                                    <br />
+                                    <button type="button" id="btnGo" class="btn btn-primary" onclick="go()">Go</button>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <label class="" for="ProjectName">Name</label>
+                                    <input type="text" id="ProjectName" class="form-control projectDetails" disabled />
+                                </div>
+                                <div class="col-sm-5">
+                                    <label class="" for="ProjectDesc">Desc</label>
+                                    <input type="text" id="ProjectDesc" class="form-control projectDetails" disabled />
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="" for="ClientName">Client</label>
+                                    <input type="text" id="ClientName" class="form-control projectDetails" disabled />
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="required" for="ProjectStartDate">Project Start Date</label>
+                                    <input type="text" id="ProjectStartDate" class="form-control datepicker projectDetails" disabled />
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="required" for="ProjectEndDate">Project End Date</label>
+                                    <input type="text" id="ProjectEndDate" class="form-control datepicker projectDetails" disabled />
+                                </div>
+                            </div>
+                        </fieldset>
+                        <fieldset class="fieldsetCustom">
+                            <legend class="legendCustom">Role & Resp.</legend>
+
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label for="ProjectOwnerID" class="required">Project Owner</label>
+                                    <select id="ProjectOwnerID" name="ProjectOwnerID" class="form-control ddlUser">
+                                        <option value="">--Select Project Owner--</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label for="ProjectHeadID" class="required">Project Head</label>
+                                    <select id="ProjectHeadID" name="ProjectHeadID" class="form-control ddlUser">
+                                        <option value="">--Select Project Head--</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label for="ProjectEngineerID" class="required">Project Engineer</label>
+                                    <select id="ProjectEngineerID" name="ProjectEngineerID" class="form-control ddlUser">
+                                        <option value="">--Select Project Engineer--</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div id="ProjectTaskScheduleGrid"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="SearchGridModal" class="modal fade" role="dialog" data-backdrop="false">
+    <div class="modal-dialog find-search-grid-modal">
+        <div class="modal-content gridmodal-content">
+            <div class="modal-header gridmodal-header">
+                <button type="button" class="close" onclick="closeModal()">&times;</button>
+                <h4 class="modal-title">Shift Task Schedule</h4>
+            </div>
+            <div class="modal-body">
+                <div class="fill">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div id="TaskListGrid"></div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="shiftWeeks">Shift By (Weeks):</label>
+                            <input type="number" id="shiftWeeks" class="form-control" style="width: 100px; display: inline;" min="1" />
+                            <button type="button" class="btn btn-info" onclick="shiftTasks()">Shift</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    var projectData = [];
+    var userList = [];
+    var scheduleTemplate = [];
+    var shiftedTasks = [];
+    $(function () {
+        loadProjectList();
+        loadUsers();
+    });
+
+    function loadUsers() {
+        var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+        $.ajax({
+            type: "GET",
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            url: "/EmployeeEnrollment/GetUserDetails",
+            success: function (data) {
+                userData = data;
+                data.forEach(function (value) {
+                    userList.push(value.UserName);
+                });
+
+                const $ddlUser = $('.ddlUser');
+                $ddlUser.empty().append('<option value="0">Select</option>');
+                data.forEach(item => {
+                    $ddlUser.append(`<option value="${item.UserID}">${item.UserName}</option>`);
+                });
+            }
+        });
+    }
+
+    function loadProjectList() {
+        $.ajax({
+            type: "GET",
+            url: "/Master/AllStores",
+            dataType: "json",
+            success: data => {
+                data.length > 0 ? projectData = data : projectData = [];
+
+                const $projectSelect = $('#ProjectID');
+                $projectSelect.empty().append('<option value="0">Select Project</option>');
+                data.forEach(item => {
+                    $projectSelect.append(`<option value="${item.ID}">${item.Name}</option>`);
+                });
+            },
+            error: (jqXHR, textStatus, errorThrown) => {
+                console.error("Failed to load project list:", textStatus, errorThrown);
+                ShowAlert("error", "Failed to load projects. Please try again later.");
+            }
+        });
+    }
+
+    const autoCompleteEditor = function (ui) {
+        const { $cell, rowData, dataIndx, column: { width }, cls } = ui;
+        const currentValue = $.trim(rowData[dataIndx]);
+
+        const $input = $("<input>", {
+            type: 'text',
+            name: dataIndx,
+            class: `${cls} pq-ac-editor`,
+            width: width - 6,
+            val: currentValue
+        }).appendTo($cell);
+
+        $input.autocomplete({
+            source: userList,
+            minLength: 0
+        }).focus(function () {
+            $(this).autocomplete("search", "");
+        });
+    };
+
+    $("#ProjectID").change(function () {
+        const selectedProjectId = $("#ProjectID").val();
+        const projectDetail = projectData.find(function (p) {
+            return p.ID == selectedProjectId;
+        });
+
+        if (projectDetail) {
+            $("#ProjectName").val(projectDetail.Name);
+            $("#ProjectDesc").val(projectDetail.Description);
+            $("#ClientName").val(projectDetail.ClientName);
+
+            $("#ProjectStartDate").datepicker("setDate", projectDetail.strStartDate || '');
+            $("#ProjectEndDate").datepicker("setDate", projectDetail.strDueDate || '');
+        } else {
+            $("#ProjectName").val('');
+            $("#ProjectDesc").val('');
+            $("#ClientName").val('');
+            $("#ProjectStartDate").val('');
+            $("#ProjectEndDate").val('');
+        }
+
+        var $gridWrapper = $("#ProjectTaskScheduleGrid").parent();
+        $gridWrapper.hide();
+    });
+
+    function go() {
+        const projectID = $("#ProjectID").val();
+        const strStartDate = $("#ProjectStartDate").val();
+        const strEndDate = $("#ProjectEndDate").val();
+
+        if (!projectID || projectID === "0") {
+            ShowAlert("error", "Please select a Project first.");
+            return false;
+        }
+
+        if (!strStartDate || !strEndDate) {
+            ShowAlert("error", "Project start and end dates are required.");
+            return false;
+        }
+
+        const startDate = new Date(strStartDate);
+        const endDate = new Date(strEndDate);
+        if (isNaN(startDate) || isNaN(endDate)) {
+            ShowAlert("error", "Invalid date format.");
+            return false;
+        }
+
+        if (startDate > endDate) {
+            ShowAlert("error", "Start date cannot be after end date.");
+            return false;
+        }
+        const weekEndDates = getWeekEndDatesArray(startDate, endDate);
+
+        scheduleTemplate = weekEndDates.map(item => ({
+            DateKey: item.DateKey,
+            Date: item.Date,
+            IsSchedule: false
+        }));
+
+        getProjectTaskSchedule(projectID, weekEndDates);
+        getProjectTaskRole(projectID);
+    }
+
+    function getProjectTaskRole(projectID) {
+        const antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+
+        $.ajax({
+            url: "/TimingPlan/TimingPlan/GetProjectTaskRole",
+            type: "GET",
+            data: { ProjectID: projectID },
+            dataType: "json",
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            success: (response) => {
+                if (!response.success) {
+                    console.warn("No data found or an issue occurred: ", response.message);
+                    return;
+                }
+                var data = response.records[0];
+                $("#ProjectOwnerID").val(data.ProjectOwnerID);
+                $("#ProjectHeadID").val(data.ProjectHeadID);
+                $("#ProjectEngineerID").val(data.ProjectEngineerID);
+            },
+            error: (jqXHR, textStatus, errorThrown) => {
+                console.error("Error loading ProjectTaskRole:", textStatus, errorThrown);
+                console.error("Response text:", jqXHR.responseText);
+            }
+        });
+    }
+
+    function getWeekEndDatesArray(startDate, endDate) {
+        const WEEK_INTERVAL = 7;
+        const result = [];
+
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+
+        if (isNaN(start) || isNaN(end)) {
+            throw new Error("Invalid date(s) provided.");
+        }
+
+        const formatter = new Intl.DateTimeFormat('en-GB', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric'
+        });
+
+        let current = new Date(start);
+        current.setDate(current.getDate() + WEEK_INTERVAL - 1); // 1st week end = start + 6 days
+
+        while (current <= end) {
+            const formattedDate = formatter.format(current).replace(/ /g, '-'); // e.g., "07-Jun-2025"
+            const dateKey = formattedDate.replace(/-/g, ''); // e.g., "07Jun2025"
+
+            result.push({ DateKey: dateKey, Date: formattedDate });
+
+            current.setDate(current.getDate() + WEEK_INTERVAL);
+        }
+
+        return result;
+    }
+
+    // Fixed base columns
+    const baseColumns = [
+        {
+            dataIndx: "State",
+            maxWidth: 25,
+            minWidth: 25,
+            align: "center",
+            type: 'checkBoxSelection',
+            cls: 'ui-state-default',
+            dataType: 'bool',
+            title: "<input type='checkbox' />",
+            cb: { select: true, all: false, header: true }
+        },
+        { title: "Task", dataIndx: "TaskName", width: 250, editable: false },
+        { title: "Description", dataIndx: "TaskDescription", width: 250, editable: false },
+        {
+            title: "AssignedTo", dataIndx: "AssignedToName", width: 200, dataType: "string", editable: true,
+            editor: { type: autoCompleteEditor },
+            validations: [
+                { type: 'minLen', value: 1, msg: "Required" },
+                {
+                    type: function (ui) {
+                        if ($.inArray(ui.value, userList) === -1) {
+                            ui.msg = `${ui.value} not found in list`;
+                            return false;
+                        }
+                    }
+                }
+            ]
+        }
+    ];
+
+    function getProjectTaskSchedule(projectID, weekEndDates) {
+        const antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+
+        $.ajax({
+            url: "/TimingPlan/TimingPlan/GetProjectTaskSchedule",
+            type: "GET",
+            data: { ProjectID: projectID },
+            dataType: "json",
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            beforeSend: () => {
+                const $grid = $("#ProjectTaskScheduleGrid");
+                if ($grid.length && $grid.data("pqGrid")) {
+                    $grid.pqGrid("showLoading");
+                }
+            },
+            complete: () => {
+                const $grid = $("#ProjectTaskScheduleGrid");
+                if ($grid.length && $grid.data("pqGrid")) {
+                    $grid.pqGrid("hideLoading");
+                }
+            },
+            success: (response) => {
+                if (!response.success) {
+                    console.warn("No data found or an issue occurred: ", response.message);
+                    return;
+                }
+
+                const dynamicColumns = weekEndDates.map(week => ({
+                    dataIndx: week.DateKey,
+                    width: 100,
+                    align: "center",
+                    type: 'checkBoxSelection',
+                    cls: 'ui-state-default',
+                    dataType: 'bool',
+                    title: week.Date,
+                    //cb: { select: false, all: false, header: false }
+                }));
+
+                createGrid(dynamicColumns, response.records);
+            },
+            error: (jqXHR, textStatus, errorThrown) => {
+                console.error("Error loading ProjectTaskSchedule:", textStatus, errorThrown);
+                console.error("Response text:", jqXHR.responseText);
+                const $grid = $("#ProjectTaskScheduleGrid");
+                if ($grid.length && $grid.data("pqGrid")) {
+                    $grid.pqGrid("hideLoading");
+                }
+            }
+        });
+    }
+
+    function createGrid(dynamicColumns, data) {
+        const $gridWrapper = $("#ProjectTaskScheduleGrid").parent();
+        $gridWrapper.show();
+        // Remove and recreate the grid element
+        $("#ProjectTaskScheduleGrid").remove();
+        $gridWrapper.append('<div id="ProjectTaskScheduleGrid"></div>');
+
+        const colModel = [...baseColumns, ...dynamicColumns];
+
+        const gridOptions = {
+            title: 'Task',
+            height: 507,
+            width: 'auto',
+            maxWidth: '150%',
+            minWidth: 800,
+            sortable: true,
+            autofill: true,
+            numberCell: { show: true },
+            hoverMode: 'row',
+            showTop: true,
+            showTitle: true,
+            showBottom: true,
+            resizable: true,
+            scrollModel: { autoFit: false },
+            filterModel: { on: false, mode: "AND", header: false },
+            draggable: false,
+            hwrap: false,
+            wrap: false,
+            editable: true,
+            columnBorders: true,
+            menuIcon: true,
+            selectionModel: { mode: 'multiple', cbHeader: false },
+            colModel: colModel,
+            freezeCols: 4,
+            dataModel: {
+                location: "local",
+                data: data
+            },
+            pageModel: { type: "local", rPP: 20 },
+            beforeCellClick: function (event, ui) {
+                const rowData = ui.rowData;
+                const col = ui.column;
+
+                // Prevent checking/unchecking if validation fails
+                if (col.dataIndx !== 'State' && col.dataType === 'bool') {
+                    if (!rowData.State) {
+                        ShowAlert("error", "Please select the task first.");
+                        return false;
+                    }
+
+                    if (!rowData.AssignedToName) {
+                        ShowAlert("error", "Please assign the task to an employee.");
+                        return false;
+                    }
+                }
+            },
+            check: function (event, ui) {
+                if (!ui.rowData) return;
+
+                const currentRowData = ui.rowData;
+                const projectId = $("#ProjectID").val();
+                currentRowData.ProjectID = projectId;
+
+                if (ui.column.dataIndx !== 'State') {
+
+                    const updatedSchedule = scheduleTemplate.map(item => ({
+                        ...item,
+                        IsSchedule: currentRowData[item.DateKey] === true
+                    }));
+
+                    currentRowData.PTDetails = updatedSchedule;
+                }
+            },
+        };
+
+        // Initialize pqGrid
+        const $grid = $("#ProjectTaskScheduleGrid").pqGrid(gridOptions);
+        $grid.pqGrid("refreshDataAndView");
+
+        // Optional post-initialization logic
+        PqGridRefreshClick($grid);
+
+        getProjectTaskScheduleDetails();
+    }
+
+    function getProjectTaskScheduleDetails() {
+        const antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+
+        $.ajax({
+            url: "/TimingPlan/TimingPlan/GetProjectTaskScheduleDetails",
+            type: "GET",
+            data: { ProjectID: $("#ProjectID").val() },
+            dataType: "json",
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            beforeSend: () => {
+                const $grid = $("#ProjectTaskScheduleGrid");
+                if ($grid.length && $grid.data("pqGrid")) {
+                    $grid.pqGrid("showLoading");
+                }
+            },
+            complete: () => {
+                const $grid = $("#ProjectTaskScheduleGrid");
+                if ($grid.length && $grid.data("pqGrid")) {
+                    $grid.pqGrid("hideLoading");
+                }
+            },
+            success: (response) => {
+                if (!response.success) {
+                    console.warn("No data found or an issue occurred:", response.message);
+                    return;
+                }
+
+                const grid = $("#ProjectTaskScheduleGrid");
+                const gridData = grid.pqGrid("option", "dataModel.data") || [];
+                const details = response.records || [];
+
+                // Group details by ScheduleID using reduce
+                const scheduleMap = details.reduce((map, detail) => {
+                    (map[detail.ScheduleID] = map[detail.ScheduleID] || []).push(detail);
+                    return map;
+                }, Object.create(null));
+
+                // Update each task with PTDetails and set DateKey flags
+                gridData.forEach(task => {
+                    const taskDetails = scheduleMap[task.ScheduleID] || [];
+                    task.PTDetails = taskDetails;
+
+                    taskDetails.forEach(({ IsSchedule, DateKey }) => {
+                        if (IsSchedule && DateKey) {
+                            task[DateKey] = true;
+                        }
+                    });
+                });
+
+                // Refresh the grid once after data update
+                grid.pqGrid("option", "dataModel.data", gridData);
+                grid.pqGrid("refreshDataAndView");
+            },
+            error: (jqXHR, textStatus, errorThrown) => {
+                console.error("Error loading ProjectTaskScheduleDetails:", textStatus, errorThrown);
+                console.error("Response text:", jqXHR.responseText);
+                const $grid = $("#ProjectTaskScheduleGrid");
+                if ($grid.length && $grid.data("pqGrid")) {
+                    $grid.pqGrid("hideLoading");
+                }
+            }
+        });
+    }
+
+    function loadProjectTaskGrid(projectID) {
+        const antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+
+        $.ajax({
+            headers: { "__RequestVerificationToken": antiForgeryToken },
+            type: 'GET',
+            url: "/TimingPlan/TimingPlan/GetProjectTaskSchedule",
+            data: { ProjectID: projectID },
+            dataType: "json",
+            beforeSend: () => $("#ProjectTaskScheduleGrid").pqGrid("showLoading"),
+            complete: () => $("#ProjectTaskScheduleGrid").pqGrid("hideLoading"),
+            success: response => {
+                const grid = $("#ProjectTaskScheduleGrid").pqGrid();
+
+                if (response.success && Array.isArray(response.records)) {
+                    grid.pqGrid("option", "dataModel.data", response.records);
+                } else {
+                    console.warn("No data found or an issue occurred:", response.message || "Unknown error");
+                    grid.pqGrid("option", "dataModel.data", []);
+                }
+            },
+            error: (jqXHR, textStatus, errorThrown) => {
+                console.error("Error loading ProjectTaskScheduleGrid:", textStatus, errorThrown);
+                console.error("Response Text:", jqXHR.responseText);
+            }
+
+        });
+    }
+
+    function SaveProjectTaskGrid() {
+        debugger
+        const projectID = $("#ProjectID").val();
+        if (!projectID || projectID == "0") {
+            ShowAlert("error", "Please select a Project first!");
+            return;
+        }
+
+        const projectOwnerID = $("#ProjectOwnerID").val();
+        if (!projectOwnerID || projectOwnerID == "0") {
+            ShowAlert("error", "Please select a Project Owner!");
+            return;
+        }
+
+        const projectHeadID = $("#ProjectHeadID").val();
+        if (!projectHeadID || projectHeadID == "0") {
+            ShowAlert("error", "Please select a Project Head!");
+            return;
+        }
+
+        const projectEngineerID = $("#ProjectEngineerID").val();
+        if (!projectEngineerID || projectEngineerID == "0") {
+            ShowAlert("error", "Please select a Project Engineer!");
+            return;
+        }
+        const gridData = $("#ProjectTaskScheduleGrid").pqGrid("option", "dataModel.data") || [];
+        const taskDetails = gridData.filter(item => item.State === true);
+
+        if (taskDetails.length === 0) {
+            ShowAlert("info", "No changes to save.");
+            return;
+        }
+
+        var details = {
+            ProjectID: projectID,
+            ProjectOwnerID: projectOwnerID,
+            ProjectHeadID: projectHeadID,
+            ProjectEngineerID: projectEngineerID,
+            TP_PTScheduleList: taskDetails
+        };
+
+        const antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+
+        $.ajax({
+            type: "POST",
+            url: "/TimingPlan/TimingPlan/SaveProjectTaskSchedule",
+            contentType: "application/json; charset=utf-8",
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            data: JSON.stringify(details),
+            success: function (response) {
+                if (response.success) {
+                    ShowAlert("success", "Task schedule saved successfully!");
+                    clearFormData();
+                } else {
+                    ShowAlert("error", response.message || "Failed to save Task schedule.");
+                }
+            },
+            error: function (xhr, status, error) {
+                const errorMessage = xhr.responseText || error || "Unknown error occurred.";
+                ShowAlert("error", "An unexpected error occurred: " + errorMessage);
+            }
+        });
+    }
+
+    //-----------------------------------TaskListGrid (Starts here)-----------------------------------//
+    var TaskListGrid_GDM = { location: "local" };
+    var TaskListGrid_GCM = [
+        {
+            dataIndx: "State",
+            maxWidth: 25,
+            minWidth: 25,
+            align: "center",
+            type: 'checkBoxSelection',
+            cls: 'ui-state-default',
+            dataType: 'bool',
+            title: "<input type='checkbox' />",
+            cb: { select: true, all: false, header: true }
+        },
+        {
+            title: "Task", dataIndx: "TaskName", width: 250, editable: false,
+            filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] }
+        }
+    ];
+
+    var setTaskListGrid = {
+        height: 350,
+        width: 'auto',
+        maxWidth: '100%',
+        minWidth: 800,
+        sortable: true,
+        autofill: true,
+        numberCell: { show: true },
+        hoverMode: 'row',
+        showTop: true,
+        showTitle: true,
+        showBottom: true,
+        resizable: true,
+        scrollModel: { autoFit: true },
+        filterModel: { on: true, mode: "AND", header: true },
+        draggable: false,
+        hwrap: false,
+        wrap: false,
+        editable: true,
+        columnBorders: true,
+        menuIcon: true,
+        selectionModel: { type: 'row', mode: 'multiple', cbHeader: false },
+        colModel: TaskListGrid_GCM,
+        dataModel: TaskListGrid_GDM
+    }
+    var $TaskListGrid = $("#TaskListGrid").pqGrid(setTaskListGrid);
+
+    function loadTaskListGrid() {
+        const $taskListGrid = $("#TaskListGrid");
+        const $projectGrid = $("#ProjectTaskScheduleGrid");
+
+        const projectTasks = $projectGrid.pqGrid("option", "dataModel.data") || [];
+
+        const selectedTasks = projectTasks
+            .filter(task => task.State)
+            .map(({ TaskID, TaskName }) => ({ TaskID, TaskName }));
+
+        if (selectedTasks.length === 0) {
+            closeModal();
+            ShowAlert("warning", "No tasks selected for schedule shifting.");
+            return false;
+        }
+
+        $taskListGrid.pqGrid("option", "dataModel.data", selectedTasks);
+        $taskListGrid.pqGrid("refreshDataAndView");
+        PqGridRefreshClick($taskListGrid);
+    }
+
+    $('#btnShiftSchedule').on('click', function () {
+
+        $("#shiftWeeks").val('');
+        $TaskListGrid.pqGrid("option", "dataModel.data", []);
+        const projectID = $("#ProjectID").val();
+        if (!projectID || projectID == "0") {
+            ShowAlert("warning", "Please select a project first!");
+            return false;
+        }
+
+        showModal();
+        loadTaskListGrid();
+    });
+
+    function shiftTasks() {
+
+        const $taskListGrid = $("#TaskListGrid");
+        const taskList = $taskListGrid.pqGrid("option", "dataModel.data") || [];
+
+        // Get selected TaskIDs
+        const selectedTaskIDs = taskList.filter(t => t.State).map(t => t.TaskID);
+
+        // Get number of weeks to shift
+        const weeksToAdd = parseInt($("#shiftWeeks").val(), 10);
+        if (isNaN(weeksToAdd) || weeksToAdd <= 0) {
+            ShowAlert("error", "Enter a valid number of weeks.");
+            return;
+        }
+
+        const $grid = $("#ProjectTaskScheduleGrid");
+        const data = $grid.pqGrid("option", "dataModel.data") || [];
+        if (data.length === 0) {
+            ShowAlert("info", "No tasks to shift.");
+            return;
+        }
+
+        // Extract all date columns (e.g. "06May2024")
+        const allCols = $grid.pqGrid("option", "colModel").map(c => c.dataIndx);
+        const dateCols = allCols.filter(col => /^\d{2}[A-Za-z]{3}\d{4}$/.test(col));
+        if (dateCols.length === 0) {
+            ShowAlert("error", "No schedule dates found.");
+            return;
+        }
+
+        shiftedTasks = [];
+
+        // Loop through each task in grid data
+        data.forEach(task => {
+            if (!task.State || !task.PTDetails || !selectedTaskIDs.includes(task.TaskID)) return;
+
+            // Get scheduled date keys from PTDetails
+            let scheduledDates = task.PTDetails
+                .filter(d => d.IsSchedule && dateCols.includes(d.DateKey))
+                .map(d => d.DateKey);
+
+            if (scheduledDates.length === 0) return;
+
+            // Sort scheduled dates based on their position in dateCols
+            scheduledDates.sort((a, b) => dateCols.indexOf(a) - dateCols.indexOf(b));
+
+            const firstIndex = dateCols.indexOf(scheduledDates[0]);
+            const newStartIndex = firstIndex + weeksToAdd;
+            const newEndIndex = newStartIndex + scheduledDates.length - 1;
+
+            if (newEndIndex >= dateCols.length) return; // Prevent overflow
+
+            const newDates = dateCols.slice(newStartIndex, newEndIndex + 1);
+
+            // Clear old date columns in grid UI
+            dateCols.forEach(date => task[date] = newDates.includes(date));
+
+            // Update PTDetails: mark all existing schedule entries
+            task.PTDetails.forEach(detail => {
+                if (dateCols.includes(detail.DateKey)) {
+                    detail.IsSchedule = newDates.includes(detail.DateKey);
+                }
+            });
+
+            // Add missing new dates to PTDetails
+            newDates.forEach(date => {
+                const exists = task.PTDetails.some(d => d.DateKey === date);
+                if (!exists) {
+                    task.PTDetails.push({ DateKey: date, IsSchedule: true });
+                }
+            });
+
+            // Add shifted task to result array
+            shiftedTasks.push({ TaskID: task.TaskID });
+        });
+
+        // If tasks shifted, refresh the grid
+        if (shiftedTasks.length > 0) {
+            $grid.pqGrid("option", "dataModel.data", data);
+            $grid.pqGrid("refreshDataAndView");
+            ShowAlert("success", "Tasks shifted successfully.");
+            closeModal();
+            $('#btnShiftSchedule').prop('disabled', true);
+        } else {
+            ShowAlert("info", "No tasks shifted.");
+        }
+    }
+
+    function showModal() {
+        $("#SearchGridModal").modal('show');
+    }
+
+    function closeModal() {
+        $("#SearchGridModal").modal('hide');
+    }
+
+    function clearFormData() {
+        $("#ProjectID").val('0');
+        const $gridWrapper = $("#ProjectTaskScheduleGrid").parent();
+        $gridWrapper.hide();
+        $(".projectDetails").val('');
+        $(".ddlUser").val('0');
+        $('#btnShiftSchedule').prop('disabled', false);
+        shiftedTasks = [];
+    }
+
+    clearFormData();
+</script>
