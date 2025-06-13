@@ -1,9 +1,12 @@
 ﻿@model BISERP.Areas.TimingPlan.Models.TP_TaskMaster
 @Scripts.Render("~/bundles/jquerymodels")
 <style>
-    .datepicker {
-        font-size: medium;
+    .projectDetails, .ddlUser {
         font-weight: bold;
+    }
+
+    label {
+        color: darkblue;
     }
 </style>
 <script>
@@ -27,14 +30,14 @@
         });
     });
 </script>
-<h5 class="page-header orangeDottedBottomBorder">Task Schedule</h5>
+<h5 class="page-header orangeDottedBottomBorder">Task Tracking</h5>
 <div class="panel-group">
     <div class="panel panel-default">
         <div class="panel-groupingBoder">
             <div class="panel-heading">
                 <div class="panel-title">
                     <a class="collapsediv" data-toggle="collapse" href="#SearchDetails">
-                        Task Schedule
+                        Task Tracking
                     </a>
                 </div>
             </div>
@@ -42,30 +45,60 @@
                 <div class="panel-body">
                     <div class="fill">
                         <div class="submit-row">
-                            <div class="col-sm-8">
-                                <div class="col-sm-4">
-                                    <label class="required" for="ProjectID">Project</label>
-                                    <select id="ProjectID" name="ProjectID" class="form-control">
-                                        <option value="">--Select Project--</option>
-                                    </select>
-                                </div>
-                                <div class="col-lg-2 col-md-4 col-sm-12 mb-3">
-                                    <br />
-                                    <button type="button" id="btnGo" class="btn btn-primary" onclick="go()">Go</button>
-                                </div>
-                            </div>
                             <div class="col-sm-4">
-                                <div class="col-sm-6">
-                                    <label class="required" for="ProjectStartDate">Project Start Date</label>
-                                    <input type="text" id="ProjectStartDate" class="form-control datepicker" disabled />
+                                <label for="ProjectID" class="required">Project</label>
+                                <select id="ProjectID" name="ProjectID" class="form-control">
+                                    <option value="">--Select Project--</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-2 col-md-4 col-sm-12 mb-3">
+                                <br />
+                                <button type="button" id="btnGo" class="btn btn-primary" onclick="go()">Go</button>
+                            </div>
+                        </div>
+                        <fieldset class="fieldsetCustom">
+                            <legend class="legendCustom">Project Details</legend>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <label for="ProjectName">Name</label>
+                                    <input type="text" id="ProjectName" class="form-control projectDetails" disabled />
                                 </div>
-                                <div class="col-sm-6">
-                                    <label class="required" for="ProjectEndDate">Project End Date</label>
-                                    <input type="text" id="ProjectEndDate" class="form-control datepicker" disabled />
+                                <div class="col-sm-3">
+                                    <label for="ProjectDesc">Desc</label>
+                                    <input type="text" id="ProjectDesc" class="form-control projectDetails" disabled />
+                                </div>
+                                <div class="col-sm-3">
+                                    <label for="ClientName">Client</label>
+                                    <input type="text" id="ClientName" class="form-control projectDetails" disabled />
+                                </div>
+                                <div class="col-sm-2">
+                                    <label for="ProjectStartDate">Project Start Date</label>
+                                    <input type="text" id="ProjectStartDate" class="form-control datepicker projectDetails" disabled />
+                                </div>
+                                <div class="col-sm-2">
+                                    <label for="ProjectEndDate">Project End Date</label>
+                                    <input type="text" id="ProjectEndDate" class="form-control datepicker projectDetails" disabled />
                                 </div>
                             </div>
+                        </fieldset>
 
-                        </div>
+                        <fieldset class="fieldsetCustom">
+                            <legend class="legendCustom">Role & Resp.</legend>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label for="ProjectOwner">Project Owner</label>
+                                    <input type="text" id="ProjectOwner" class="form-control projectDetails" disabled />
+                                </div>
+                                <div class="col-sm-4">
+                                    <label for="ProjectHead">Project Head</label>
+                                    <input type="text" id="ProjectHead" class="form-control projectDetails" disabled />
+                                </div>
+                                <div class="col-sm-4">
+                                    <label for="ProjectEngineer">Project Engineer</label>
+                                    <input type="text" id="ProjectEngineer" class="form-control projectDetails" disabled />
+                                </div>
+                            </div>
+                        </fieldset>
                         <fieldset class="fieldsetCustom" id="chartContainer" hidden>
                             <legend class="legendCustom">Schedule Details</legend>
                         </fieldset>
@@ -80,6 +113,7 @@
     var projectData = [];
     $(function () {
         loadProjectList();
+        loadUsers();
     });
 
     function loadProjectList() {
@@ -103,18 +137,38 @@
         });
     }
 
+    function loadUsers() {
+        var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+        $.ajax({
+            type: "GET",
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            url: "/EmployeeEnrollment/GetUserDetails",
+            success: function (data) {
+                const $ddlUser = $('.ddlUser');
+                $ddlUser.empty().append('<option value="0">Select</option>');
+                data.forEach(item => {
+                    $ddlUser.append(`<option value="${item.UserID}">${item.UserName}</option>`);
+                });
+            }
+        });
+    }
+
     $("#ProjectID").change(function () {
         const selectedProjectId = $("#ProjectID").val();
         const projectDetail = projectData.find(function (p) {
             return p.ID == selectedProjectId;
         });
 
+        $(".projectDetails").val('');
+
         if (projectDetail) {
+            $("#ProjectName").val(projectDetail.Name);
+            $("#ProjectDesc").val(projectDetail.Description);
+            $("#ClientName").val(projectDetail.ClientName);
             $("#ProjectStartDate").datepicker("setDate", projectDetail.strStartDate || '');
             $("#ProjectEndDate").datepicker("setDate", projectDetail.strDueDate || '');
-        } else {
-            $("#ProjectStartDate").val('');
-            $("#ProjectEndDate").val('');
         }
         $('#chartContainer #chart').remove();
         $('#chartContainer').hide();
@@ -127,6 +181,35 @@
             return false;
         }
         getTaskTracking(projectID);
+        getProjectTaskRole(projectID);
+    }
+
+    function getProjectTaskRole(projectID) {
+        const antiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+
+        $.ajax({
+            url: "/TimingPlan/TimingPlan/GetProjectTaskRole",
+            type: "GET",
+            data: { ProjectID: projectID },
+            dataType: "json",
+            headers: {
+                "__RequestVerificationToken": antiForgeryToken
+            },
+            success: (response) => {
+                if (!response.success) {
+                    console.warn("No data found or an issue occurred: ", response.message);
+                    return;
+                }
+                var data = response.records[0];
+                $("#ProjectOwner").val(data.ProjectOwner);
+                $("#ProjectHead").val(data.ProjectHead);
+                $("#ProjectEngineer").val(data.ProjectEngineer);
+            },
+            error: (jqXHR, textStatus, errorThrown) => {
+                console.error("Error loading ProjectTaskRole:", textStatus, errorThrown);
+                console.error("Response text:", jqXHR.responseText);
+            }
+        });
     }
 
     function getTaskTracking(projectID) {

@@ -61,24 +61,24 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-sm-3">
+                                <div class="col-sm-2">
                                     <label class="" for="ProjectName">Name</label>
                                     <input type="text" id="ProjectName" class="form-control projectDetails" disabled />
                                 </div>
-                                <div class="col-sm-5">
+                                <div class="col-sm-3">
                                     <label class="" for="ProjectDesc">Desc</label>
                                     <input type="text" id="ProjectDesc" class="form-control projectDetails" disabled />
                                 </div>
-                                <div class="col-sm-4">
+                                <div class="col-sm-3">
                                     <label class="" for="ClientName">Client</label>
                                     <input type="text" id="ClientName" class="form-control projectDetails" disabled />
                                 </div>
-                                <div class="col-sm-3">
-                                    <label class="required" for="ProjectStartDate">Project Start Date</label>
+                                <div class="col-sm-2">
+                                    <label for="ProjectStartDate" class="required">Project Start Date</label>
                                     <input type="text" id="ProjectStartDate" class="form-control datepicker projectDetails" disabled />
                                 </div>
-                                <div class="col-sm-3">
-                                    <label class="required" for="ProjectEndDate">Project End Date</label>
+                                <div class="col-sm-2">
+                                    <label for="ProjectEndDate" class="required">Project End Date</label>
                                     <input type="text" id="ProjectEndDate" class="form-control datepicker projectDetails" disabled />
                                 </div>
                             </div>
@@ -229,15 +229,10 @@
             $("#ProjectName").val(projectDetail.Name);
             $("#ProjectDesc").val(projectDetail.Description);
             $("#ClientName").val(projectDetail.ClientName);
-
             $("#ProjectStartDate").datepicker("setDate", projectDetail.strStartDate || '');
             $("#ProjectEndDate").datepicker("setDate", projectDetail.strDueDate || '');
         } else {
-            $("#ProjectName").val('');
-            $("#ProjectDesc").val('');
-            $("#ClientName").val('');
-            $("#ProjectStartDate").val('');
-            $("#ProjectEndDate").val('');
+            $(".projectDetails").val('');
         }
 
         var $gridWrapper = $("#ProjectTaskScheduleGrid").parent();

@@ -17,8 +17,11 @@ namespace BISERPBusinessLayer.Entities.TimingPlan
     {
         public int? ProjectID { get; set; }
         public int? ProjectOwnerID { get; set; }
+        public string ProjectOwner { get; set; }
         public int? ProjectHeadID { get; set; }
+        public string ProjectHead { get; set; }
         public int? ProjectEngineerID { get; set; }
+        public string ProjectEngineer { get; set; }
         public List<TP_ProjectTaskSchedule> TP_PTScheduleList { get; set; }
         public int LoginId { get; set; }
         public int? isDeleted { get; set; }

@@ -7,8 +7,8 @@ by editing this MSBuild file. In order to learn more about this please visit htt
   <PropertyGroup>
     <TimeStampOfAssociatedLegacyPublishXmlFile />
     <EncryptedPassword>AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAsazn7zDGR0qTsc35mpZIHAAAAAACAAAAAAADZgAAwAAAABAAAAA3PsekFgMdem3WCqZVlU7SAAAAAASAAACgAAAAEAAAANaY5jydmVfJJHGTF0ClG0MYAAAAMD32gvrGmSY8YmCmUA+kX6nebiOhrT3VFAAAANAyGhL5uelJiQ6JkTfjoaXaLxRS</EncryptedPassword>
-    <_PublishTargetUrl>D:\ALL_PUBLISHED\Mechcon\22-05-25\UI</_PublishTargetUrl>
-    <History>True|2025-05-22T13:41:31.8232555Z;True|2025-05-12T16:30:15.4158744+05:30;True|2025-04-28T20:16:26.0339060+05:30;True|2025-04-18T20:48:09.5692601+05:30;True|2025-03-27T13:57:50.7006203+05:30;True|2024-09-13T13:04:40.5420765+05:30;True|2024-09-12T20:28:46.6163637+05:30;True|2024-08-09T18:55:28.0590578+05:30;True|2024-08-02T21:08:00.2878131+05:30;True|2024-08-02T17:03:41.1035445+05:30;True|2024-07-31T14:38:49.2235555+05:30;True|2024-07-18T20:47:48.7253175+05:30;True|2024-07-12T18:54:18.1534548+05:30;True|2024-06-11T17:53:41.9025833+05:30;True|2024-05-16T17:15:45.1643068+05:30;True|2024-05-15T20:02:54.6194929+05:30;True|2024-03-22T18:51:40.7051916+05:30;True|2024-02-26T13:06:57.2857067+05:30;True|2024-02-23T21:24:56.3359181+05:30;False|2024-02-23T21:23:21.9952395+05:30;False|2024-02-23T21:22:09.0586386+05:30;False|2024-02-23T21:20:53.3263685+05:30;False|2024-02-23T21:16:51.6233785+05:30;False|2024-02-23T21:08:19.2804069+05:30;False|2024-02-23T21:06:09.8933913+05:30;False|2024-02-23T21:05:34.8896109+05:30;False|2024-02-23T21:04:54.4458664+05:30;</History>
+    <_PublishTargetUrl>D:\ALL_PUBLISHED\Mechcon\13-06-25\UI</_PublishTargetUrl>
+    <History>True|2025-06-13T12:23:05.9439149Z;False|2025-06-13T17:50:56.2936325+05:30;True|2025-05-22T19:11:31.8232555+05:30;True|2025-05-12T16:30:15.4158744+05:30;True|2025-04-28T20:16:26.0339060+05:30;True|2025-04-18T20:48:09.5692601+05:30;True|2025-03-27T13:57:50.7006203+05:30;True|2024-09-13T13:04:40.5420765+05:30;True|2024-09-12T20:28:46.6163637+05:30;True|2024-08-09T18:55:28.0590578+05:30;True|2024-08-02T21:08:00.2878131+05:30;True|2024-08-02T17:03:41.1035445+05:30;True|2024-07-31T14:38:49.2235555+05:30;True|2024-07-18T20:47:48.7253175+05:30;True|2024-07-12T18:54:18.1534548+05:30;True|2024-06-11T17:53:41.9025833+05:30;True|2024-05-16T17:15:45.1643068+05:30;True|2024-05-15T20:02:54.6194929+05:30;True|2024-03-22T18:51:40.7051916+05:30;True|2024-02-26T13:06:57.2857067+05:30;True|2024-02-23T21:24:56.3359181+05:30;False|2024-02-23T21:23:21.9952395+05:30;False|2024-02-23T21:22:09.0586386+05:30;False|2024-02-23T21:20:53.3263685+05:30;False|2024-02-23T21:16:51.6233785+05:30;False|2024-02-23T21:08:19.2804069+05:30;False|2024-02-23T21:06:09.8933913+05:30;False|2024-02-23T21:05:34.8896109+05:30;False|2024-02-23T21:04:54.4458664+05:30;</History>
   </PropertyGroup>
   <ItemGroup>
     <File Include="Areas/Accounts/Views/Accounts/Accounts.cshtml">
@@ -330,7 +330,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>06/25/2024 19:58:02</publishTime>
     </File>
     <File Include="Areas/Masters/Views/Masters/MasterListOfProject.cshtml">
-      <publishTime>05/22/2025 18:21:14</publishTime>
+      <publishTime>06/02/2025 19:12:51</publishTime>
     </File>
     <File Include="Areas/Masters/Views/Masters/Masters.cshtml">
       <publishTime>02/13/2024 17:14:25</publishTime>
@@ -354,7 +354,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>01/10/2025 20:02:29</publishTime>
     </File>
     <File Include="Areas/Masters/Views/Masters/ProjectCostingSummary.cshtml">
-      <publishTime>05/22/2025 18:23:43</publishTime>
+      <publishTime>06/10/2025 18:00:05</publishTime>
     </File>
     <File Include="Areas/Masters/Views/Masters/ProjectsApproval.cshtml">
       <publishTime>06/25/2024 20:03:41</publishTime>
@@ -830,6 +830,21 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="Areas/Ticket/Views/Web.config">
       <publishTime>01/10/2025 20:02:29</publishTime>
     </File>
+    <File Include="Areas/TimingPlan/Views/TimingPlan/CreateProjectTaskSchedule.cshtml">
+      <publishTime>06/13/2025 17:32:49</publishTime>
+    </File>
+    <File Include="Areas/TimingPlan/Views/TimingPlan/TaskMonitor.cshtml">
+      <publishTime>06/02/2025 20:31:00</publishTime>
+    </File>
+    <File Include="Areas/TimingPlan/Views/TimingPlan/TaskProgress.cshtml">
+      <publishTime>06/03/2025 15:29:44</publishTime>
+    </File>
+    <File Include="Areas/TimingPlan/Views/TimingPlan/TaskTracking.cshtml">
+      <publishTime>06/09/2025 14:28:55</publishTime>
+    </File>
+    <File Include="Areas/TimingPlan/Views/Web.config">
+      <publishTime>05/26/2025 18:05:43</publishTime>
+    </File>
     <File Include="Areas/Training/Views/Shared/_TrainingLayout.cshtml">
       <publishTime>02/15/2024 17:45:11</publishTime>
     </File>
@@ -999,16 +1014,16 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>09/26/2019 18:33:45</publishTime>
     </File>
     <File Include="bin/BISERP.dll">
-      <publishTime>05/22/2025 19:10:29</publishTime>
+      <publishTime>06/13/2025 17:50:08</publishTime>
     </File>
     <File Include="bin/BISERP.pdb">
-      <publishTime>05/22/2025 19:10:29</publishTime>
+      <publishTime>06/13/2025 17:50:08</publishTime>
     </File>
     <File Include="bin/BISERPCommon.dll">
-      <publishTime>05/22/2025 19:10:24</publishTime>
+      <publishTime>06/09/2025 13:05:55</publishTime>
     </File>
     <File Include="bin/BISERPCommon.pdb">
-      <publishTime>05/22/2025 19:10:24</publishTime>
+      <publishTime>06/09/2025 13:05:55</publishTime>
     </File>
     <File Include="bin/de/Microsoft.Data.Edm.resources.dll">
       <publishTime>10/10/2019 12:27:26</publishTime>
@@ -1263,13 +1278,13 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>10/10/2019 12:27:25</publishTime>
     </File>
     <File Include="bin/Mono.Math.dll">
-      <publishTime>05/21/2025 16:54:52</publishTime>
+      <publishTime>06/13/2025 17:44:26</publishTime>
     </File>
     <File Include="bin/Newtonsoft.Json.dll">
       <publishTime>10/10/2019 12:27:30</publishTime>
     </File>
     <File Include="bin/Org.Mentalis.Security.Cryptography.dll">
-      <publishTime>05/21/2025 16:54:52</publishTime>
+      <publishTime>06/13/2025 17:44:26</publishTime>
     </File>
     <File Include="bin/pt/Microsoft.ReportViewer.Common.resources.dll">
       <publishTime>01/18/2024 03:38:54</publishTime>
@@ -3987,7 +4002,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>10/10/2019 12:26:37</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>05/22/2025 19:10:30</publishTime>
+      <publishTime>06/13/2025 17:50:09</publishTime>
     </File>
   </ItemGroup>
 </Project>

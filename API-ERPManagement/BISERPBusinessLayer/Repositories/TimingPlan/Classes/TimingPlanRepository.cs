@@ -173,8 +173,11 @@ namespace BISERPBusinessLayer.Repositories.TimingPlan.Classes
                             .Select(row => new TP_PTSchedule
                             {
                                 ProjectOwnerID = row.Field<int?>("ProjectOwnerID"),
+                                ProjectOwner = row.Field<string>("ProjectOwner"),
                                 ProjectHeadID = row.Field<int?>("ProjectHeadID"),
-                                ProjectEngineerID = row.Field<int?>("ProjectEngineerID")
+                                ProjectHead = row.Field<string>("ProjectHead"),
+                                ProjectEngineerID = row.Field<int?>("ProjectEngineerID"),
+                                ProjectEngineer = row.Field<string>("ProjectEngineer")
                             }).ToList();
             }
             return data;
